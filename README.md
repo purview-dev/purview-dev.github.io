@@ -240,17 +240,26 @@ and `just check-generated`.
 
 `.github/workflows/deploy.yml` builds and deploys the site through the official
 GitHub Pages actions (`configure-pages`, `upload-pages-artifact`,
-`deploy-pages`). Configuration:
+`deploy-pages`). The workflow resolves the deployment base and site URL
+automatically:
 
-- Set `SITE_URL=https://purview.dev` (default) and `PAGES_BASE=/` (default) for
-  a custom domain or organisation Pages site.
-- For project-level Pages (`https://purview-dev.github.io/purview-dev/`) without
-  a custom domain, pass `pages-base: /purview-dev/` on `workflow_dispatch` or
-  set `PAGES_BASE` in the environment.
+- **Organisation Pages** (`<owner>.github.io`): base `/`, site
+  `https://<owner>.github.io`.
+- **Project Pages** (`<owner>/<repo>`): base `/<repo>`, site
+  `https://<owner>.github.io`.
+- **Custom domain** (recommended for `purview.dev`): set repository **variables**
+  `SITE_URL=https://purview.dev` and `PAGES_BASE=/`, or pass
+  `pages-base: /` on `workflow_dispatch`.
+
+Configuration notes:
+
 - `public/CNAME` pins the custom domain. Remove it if you do not use
   `purview.dev`.
 - Enable Pages with **Source: GitHub Actions** in the repository settings and
   create the `github-pages` environment.
+- After enabling the custom domain, add the required DNS records at your
+  registrar (CNAME/ALIAS to `purview-dev.github.io`, or A/AAAA per GitHub's
+  guidance) and verify the domain in the Pages settings.
 
 The workflow validates (`just validate`), refreshes live release/documentation
 data, builds, and uploads `./dist`.

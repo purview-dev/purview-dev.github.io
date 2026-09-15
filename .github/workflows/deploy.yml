@@ -60,10 +60,34 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: DATA_MODE=live bun run data:sync
 
+      - name: Resolve deployment base and site URL
+        id: pages-config
+        env:
+          REPO_NAME: ${{ github.event.repository.name }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          BASE="${{ vars.PAGES_BASE }}"
+          if [ -n "${{ inputs.pages-base }}" ]; then
+            BASE="${{ inputs.pages-base }}"
+          fi
+          if [ -z "$BASE" ]; then
+            if [ "$REPO_NAME" = "$OWNER.github.io" ]; then
+              BASE="/"
+            else
+              BASE="/$REPO_NAME"
+            fi
+          fi
+          SITE="${{ vars.SITE_URL }}"
+          if [ -z "$SITE" ]; then
+            SITE="https://$OWNER.github.io"
+          fi
+          echo "pages-base=$BASE" >> "$GITHUB_OUTPUT"
+          echo "site-url=$SITE" >> "$GITHUB_OUTPUT"
+
       - name: Build site with live data
         env:
-          PAGES_BASE: ${{ inputs.pages-base || '' }}
-          SITE_URL: https://purview.dev
+          PAGES_BASE: ${{ steps.pages-config.outputs.pages-base }}
+          SITE_URL: ${{ steps.pages-config.outputs.site-url }}
         run: bun run build
 
       - name: Configure Pages
