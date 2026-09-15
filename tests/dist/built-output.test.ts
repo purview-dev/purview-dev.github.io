@@ -63,7 +63,6 @@ describe('built SEO outputs', () => {
       'apple-touch-icon.png',
       'og/default.png',
       'site.webmanifest',
-      'CNAME',
     ]) {
       expect(existsSync(resolve(DIST, file)), `missing ${file}`).toBe(true);
     }

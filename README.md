@@ -238,28 +238,29 @@ and `just check-generated`.
 
 ## GitHub Pages deployment
 
-`.github/workflows/deploy.yml` builds and deploys the site through the official
-GitHub Pages actions (`configure-pages`, `upload-pages-artifact`,
-`deploy-pages`). The workflow resolves the deployment base and site URL
-automatically:
+This repository is the organisation Pages repository
+(`purview-dev/purview-dev.github.io`), so the site is served at the root
+(`https://purview-dev.github.io/`). `.github/workflows/deploy.yml` builds and
+deploys through the official GitHub Pages actions (`configure-pages`,
+`upload-pages-artifact`, `deploy-pages`) and resolves the deployment base and
+site URL automatically:
 
 - **Organisation Pages** (`<owner>.github.io`): base `/`, site
   `https://<owner>.github.io`.
 - **Project Pages** (`<owner>/<repo>`): base `/<repo>`, site
   `https://<owner>.github.io`.
-- **Custom domain** (recommended for `purview.dev`): set repository **variables**
-  `SITE_URL=https://purview.dev` and `PAGES_BASE=/`, or pass
-  `pages-base: /` on `workflow_dispatch`.
+- **Custom domain** (recommended for `purview.dev`): once DNS is configured at
+  your registrar (CNAME/ALIAS to `purview-dev.github.io`, or A/AAAA per GitHub's
+  guidance), set repository **variables** `SITE_URL=https://purview.dev` and
+  `PAGES_BASE=/`, and restore a `public/CNAME` file containing `purview.dev`.
 
 Configuration notes:
 
-- `public/CNAME` pins the custom domain. Remove it if you do not use
-  `purview.dev`.
 - Enable Pages with **Source: GitHub Actions** in the repository settings and
   create the `github-pages` environment.
-- After enabling the custom domain, add the required DNS records at your
-  registrar (CNAME/ALIAS to `purview-dev.github.io`, or A/AAAA per GitHub's
-  guidance) and verify the domain in the Pages settings.
+- The `public/CNAME` file is intentionally absent until the `purview.dev` DNS
+  records are configured, so the site stays reachable at the root of
+  `purview-dev.github.io`.
 
 The workflow validates (`just validate`), refreshes live release/documentation
 data, builds, and uploads `./dist`.
@@ -271,7 +272,7 @@ granting that repository any secrets. In that repository's release workflow,
 call:
 
 ```shell
-gh api repos/purview-dev/purview-dev/dispatches \
+gh api repos/purview-dev/purview-dev.github.io/dispatches \
   -f event_type=purview-site-rebuild \
   -f "client_payload[repository]=purview-dev/<repo>" \
   -f "client_payload[version]=<v1.2.3>"

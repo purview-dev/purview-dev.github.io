@@ -87,7 +87,7 @@ export default defineConfig({
         // Fallback only: documentation pages render their edit link from the
         // `editUrl` front matter via an EditLink override, since documentation
         // originates from many repositories.
-        baseUrl: 'https://github.com/purview-dev/purview-dev/edit/main/',
+        baseUrl: 'https://github.com/purview-dev/purview-dev.github.io/edit/main/',
       },
       disable404Route: true,
       sidebar: buildSidebar(projects, docsManifest),
