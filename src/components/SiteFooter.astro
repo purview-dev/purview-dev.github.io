@@ -1,0 +1,63 @@
+---
+import SiteBrand from '~/components/SiteBrand.astro';
+import { NAV_ITEMS } from '~/components/SiteNav.astro';
+import { SITE } from '~/lib/site';
+import { withBase } from '~/lib/urls';
+---
+
+<footer class="border-t border-border bg-surface">
+  <div class="pv-container py-10">
+    <div class="grid gap-8 md:grid-cols-[2fr_1fr_1fr_1fr]">
+      <div class="max-w-sm space-y-3">
+        <SiteBrand />
+        <p class="text-sm text-muted">
+          {SITE.tagline} {SITE.orgName} builds developer tooling for .NET — event sourcing, telemetry, validation, source generators, and build automation.
+        </p>
+      </div>
+
+      <nav aria-label="Site">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-muted">Site</h2>
+        <ul class="mt-3 space-y-2 text-sm">
+          {NAV_ITEMS.map((item) => (
+            <li>
+              <a href={withBase(item.href)} class="pv-link">
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <nav aria-label="Projects">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-muted">Projects</h2>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href="https://github.com/purview-dev/telemetry-sourcegenerator" class="pv-link">Telemetry SourceGenerator</a></li>
+          <li><a href="https://github.com/purview-dev/eventsourcing" class="pv-link">EventSourcing</a></li>
+          <li><a href="https://github.com/purview-dev/zodsharp" class="pv-link">ZodSharp</a></li>
+          <li><a href={withBase('/projects/')} class="pv-link">All projects</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="Community">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-muted">Community</h2>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li><a href={SITE.githubUrl} class="pv-link">GitHub</a></li>
+          <li><a href={`${SITE.nugetUrl}/search?q=purview`} class="pv-link">NuGet</a></li>
+          <li><a href={`${SITE.nugetUrl}/search?q=purview`} class="pv-link">Packages</a></li>
+          <li><a href={withBase('/about/')} class="pv-link">About</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="mt-10 flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-xs text-muted md:flex-row md:items-center">
+      <p>© {new Date().getFullYear()} {SITE.orgName}. All public projects are MIT licensed.</p>
+      <p class="flex items-center gap-2">
+        <span class="beta-badge">Beta</span>
+        This site is under active development.
+      </p>
+      <p class="flex items-center gap-2">
+        Built with <a href="https://astro.build" class="pv-link">Astro</a> and <a href="https://starlight.astro.build" class="pv-link">Starlight</a>.
+      </p>
+    </div>
+  </div>
+</footer>

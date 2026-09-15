@@ -1,0 +1,7 @@
+---
+import SiteHeader from '~/components/SiteHeader.astro';
+
+const { hasSidebar } = Astro.locals.starlightRoute;
+---
+
+<SiteHeader hasSidebar={hasSidebar} />

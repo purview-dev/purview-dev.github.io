@@ -1,0 +1,21 @@
+{
+  "name": "Purview Dev",
+  "short_name": "Purview",
+  "description": "Purview-Dev .NET developer tooling — projects, releases, and documentation.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f4fa",
+  "theme_color": "#8B3DFF",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+---
+import '~/styles/global.css';
+import ThemeProvider from '@astrojs/starlight/components/ThemeProvider.astro';
+import SiteFooter from '~/components/SiteFooter.astro';
+import SiteHeader from '~/components/SiteHeader.astro';
+import { BRAND, SITE } from '~/lib/site';
+import { absoluteUrl, withBase } from '~/lib/urls';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Optional site-relative OG image (defaults to the generated brand card). */
+  image?: string;
+  /** Optional JSON-LD structured data object. */
+  structuredData?: Record<string, unknown>;
+}
+
+const {
+  title,
+  description = SITE.description,
+  image,
+  structuredData,
+} = Astro.props;
+const canonical = absoluteUrl(Astro.url.pathname === '' ? '/' : Astro.url.pathname);
+const ogImage = absoluteUrl(image ?? '/og/default.png');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.fullName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={withBase('/favicon-32.png')} sizes="32x32" type="image/png" />
+    <link rel="icon" href={withBase('/favicon-16.png')} sizes="16x16" type="image/png" />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+    <link rel="manifest" href={withBase('/site.webmanifest')} />
+    <meta name="theme-color" content={BRAND.purple} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={BRAND.inkLight} media="(prefers-color-scheme: dark)" />
+    <ThemeProvider />
+    {
+      structuredData && (
+        <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+      )
+    }
+  </head>
+  <body class="min-h-screen bg-background text-foreground">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:px-4 focus:py-2 focus:text-foreground"
+    >
+      Skip to content
+    </a>
+    <header class="fixed inset-x-0 top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
+      <div class="pv-container flex h-16 items-center justify-between">
+        <SiteHeader hasSidebar={false} />
+      </div>
+    </header>
+    <main id="main" class="pt-16">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

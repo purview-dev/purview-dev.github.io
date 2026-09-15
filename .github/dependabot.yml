@@ -1,0 +1,58 @@
+# Dependabot keeps the Bun-managed JavaScript dependencies and GitHub Actions
+# up to date. Grouped updates keep PRs manageable; major bumps are separated so
+# their review risk stays isolated.
+
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/London
+    groups:
+      oxc-toolchain:
+        patterns:
+          - 'oxlint'
+          - 'oxfmt'
+        update-types:
+          - minor
+          - patch
+      astro-core:
+        patterns:
+          - 'astro'
+          - '@astrojs/*'
+        update-types:
+          - minor
+          - patch
+      content-and-tooling:
+        patterns:
+          - 'zod'
+          - 'yaml'
+          - 'fast-glob'
+          - 'semver'
+          - 'sharp'
+          - 'typescript'
+          - '@types/*'
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # oxfmt does not yet support `.astro` files; keep the formatter's own
+      # major upgrades separate for review.
+      - dependency-name: 'oxfmt'
+        update-types:
+          - major
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/London
+    groups:
+      actions:
+        patterns:
+          - '*'

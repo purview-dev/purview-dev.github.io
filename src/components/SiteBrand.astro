@@ -1,0 +1,56 @@
+---
+import { SITE } from '~/lib/site';
+import { withBase } from '~/lib/urls';
+
+interface Props {
+  /** Compact icon-only mark for dense contexts (default: false). */
+  iconOnly?: boolean;
+}
+
+const { iconOnly = false } = Astro.props;
+---
+
+<a
+  href={withBase('/')}
+  class="pv-brand flex items-center gap-2.5"
+  aria-label={iconOnly ? `${SITE.fullName} — home` : undefined}
+>
+  {
+    iconOnly ? (
+      <img
+        src={withBase('/branding/icon-light-512.png')}
+        alt=""
+        width="28"
+        height="28"
+        class="theme-light block h-7 w-7"
+      />
+    ) : (
+      <img
+        src={withBase('/branding/logo-horizontal-light.png')}
+        alt=""
+        width="120"
+        height="41"
+        class="theme-light block h-9 w-auto"
+      />
+    )
+  }
+  {
+    iconOnly ? (
+      <img
+        src={withBase('/branding/icon-dark-512.png')}
+        alt=""
+        width="28"
+        height="28"
+        class="theme-dark h-7 w-7"
+      />
+    ) : (
+      <img
+        src={withBase('/branding/logo-horizontal-dark.png')}
+        alt=""
+        width="120"
+        height="41"
+        class="theme-dark h-9 w-auto"
+      />
+    )
+  }
+</a>

@@ -1,0 +1,59 @@
+{
+  "@context": {
+    "@vocab": "http://schema.nuget.org/schema#",
+    "@base": "https://api.nuget.org/v3/registration5-semver1/"
+  },
+  "totalHits": 1,
+  "data": [
+    {
+      "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/index.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration5-semver1/purview.build/index.json",
+      "id": "Purview.Build",
+      "version": "0.2.4",
+      "description": "Shared build/test/release pipeline for purview-dev. A Modular Pipelines based .NET tool (Purview.Build) with a GitHub composite action and reusable workflows; consumers configure, the pipeline runs.",
+      "summary": "",
+      "title": "Purview.Build",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.build/0.2.4/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.Build/0.2.4/license",
+      "projectUrl": "https://github.com/purview-dev/build",
+      "tags": [],
+      "authors": [
+        "Purview Contributors"
+      ],
+      "owners": [
+        "kieronlanning"
+      ],
+      "totalDownloads": 471,
+      "verified": false,
+      "packageTypes": [
+        {
+          "name": "DotnetTool"
+        }
+      ],
+      "versions": [
+        {
+          "version": "0.2.1",
+          "downloads": 132,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.1.json"
+        },
+        {
+          "version": "0.2.2",
+          "downloads": 81,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.2.json"
+        },
+        {
+          "version": "0.2.3",
+          "downloads": 207,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.3.json"
+        },
+        {
+          "version": "0.2.4",
+          "downloads": 51,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.4.json"
+        }
+      ],
+      "vulnerabilities": []
+    }
+  ]
+}

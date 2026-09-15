@@ -1,0 +1,10 @@
+---
+interface Props {
+  status: 'stable' | 'preview' | 'archived';
+}
+
+const { status } = Astro.props;
+const label = { stable: 'Stable', preview: 'Preview', archived: 'Archived' }[status];
+---
+
+<span class:list={['pv-chip', `pv-status-${status}`]}>{label}</span>

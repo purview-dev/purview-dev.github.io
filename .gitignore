@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.astro/
+artifacts/
+
+# Generated data caches and mirrors
+.cache/
+src/content/docs/
+src/assets/branding/
+public/branding/
+public/favicon.svg
+public/favicon-*.png
+public/apple-touch-icon.png
+public/icon-*.png
+public/og/
+
+# Local environment
+.env
+.env.local
+
+# Tooling
+*.log
+bun-debug.*
+bun-error.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/*
+!.vscode/extensions.json

@@ -1,0 +1,90 @@
+---
+import StatusBadge from '~/components/StatusBadge.astro';
+import { isStale, STALE_AFTER_DAYS } from '~/lib/docs/staleness';
+import { withBase } from '~/lib/urls';
+
+const { entry } = Astro.locals.starlightRoute;
+const data = entry?.data;
+const lastReviewed = typeof data?.lastReviewed === 'string' ? data.lastReviewed : undefined;
+const stale = lastReviewed ? isStale(lastReviewed) : false;
+---
+
+<h1 id="_top">{data?.title}</h1>
+
+{
+  data && (
+    <div class="doc-meta">
+      {
+        data.status && (
+          <span class="doc-meta-item">
+            <StatusBadge status={data.status} />
+          </span>
+        )
+      }
+      {
+        data.sourceProject && (
+          <span class="doc-meta-item">
+            <a href={withBase(`/projects/${data.sourceProject}/`)} class="pv-link">
+              {data.sourceProject}
+            </a>
+          </span>
+        )
+      }
+      {lastReviewed && (
+        <span class="doc-meta-item" title={`Last reviewed ${lastReviewed}`}>
+          Reviewed {lastReviewed}
+          {stale && (
+            <span class="stale-badge" title={`Older than ${STALE_AFTER_DAYS} days`}>
+              stale
+            </span>
+          )}
+        </span>
+      )}
+      {
+        data.sourceRepo && (
+          <span class="doc-meta-item">
+            <a
+              href={`https://github.com/${data.sourceRepo}`}
+              rel="noopener noreferrer"
+              target="_blank"
+              class="pv-link"
+            >
+              {data.sourceRepo}
+            </a>
+          </span>
+        )
+      }
+    </div>
+  )
+}
+
+<style>
+  .doc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    align-items: center;
+    margin-top: 0.75rem;
+    font-size: 0.8125rem;
+    color: var(--sl-color-gray-3);
+  }
+
+  .doc-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .stale-badge {
+    margin-left: 0.375rem;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in oklab, var(--sl-color-red-high) 40%, transparent);
+    background-color: color-mix(in oklab, var(--sl-color-red-high) 10%, transparent);
+    color: var(--sl-color-red-high);
+    padding: 0 0.375rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+</style>

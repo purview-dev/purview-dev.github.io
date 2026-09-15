@@ -1,0 +1,227 @@
+$schema: ../lib/manifest/schema.ts
+projects:
+  - id: telemetry-sourcegenerator
+    name: Purview Telemetry SourceGenerator
+    shortDescription: Interface-based telemetry for .NET with zero boilerplate.
+    description: >-
+      A source generator that turns simple interface methods into
+      OpenTelemetry-aligned Activities, structured ILogger logging, and Metrics.
+      Define telemetry once on an interface; the generator emits the
+      implementation, DI registration helpers, and multi-target generation —
+      no runtime reflection, no boilerplate.
+    repository: purview-dev/telemetry-sourcegenerator
+    category: observability
+    status: stable
+    featured: true
+    order: 10
+    docs:
+      source: wiki
+      exclude:
+        - _Sidebar.md
+        - _Footer.md
+    targetFrameworks:
+      - net8.0
+      - net9.0
+      - net10.0
+    packages:
+      - id: Purview.Telemetry.SourceGenerator
+        description: Core package with the Roslyn source generator and attribute library.
+        primary: true
+        targetFrameworks:
+          - netstandard2.0
+    discussions: true
+
+  - id: event-sourcing
+    name: Purview EventSourcing
+    shortDescription: Aggregate-based event sourcing for .NET across any store.
+    description: >-
+      A .NET event sourcing framework for building aggregate-based applications.
+      Provider-agnostic store facades, source-generated aggregates and events,
+      transaction coordination for multi-aggregate saves, queryable snapshots
+      and read models, and storage providers for SQL Server, PostgreSQL,
+      MongoDB, Azure Storage, Azure Cosmos DB, and in-memory.
+    repository: purview-dev/eventsourcing
+    category: application-framework
+    status: preview
+    featured: true
+    order: 20
+    docs:
+      source: github-path
+      path: docs/wiki
+      exclude:
+        - _Sidebar.md
+    targetFrameworks:
+      - net8.0
+      - net9.0
+      - net10.0
+    packages:
+      - id: Purview.EventSourcing
+        description: Core abstractions, aggregates, facades, transactions, DI, and source generation.
+        primary: true
+      - id: Purview.EventSourcing.SqlServer
+        description: Azure SQL / SQL Server event stream and queryable snapshot stores.
+      - id: Purview.EventSourcing.Postgres
+        description: PostgreSQL event stream and queryable snapshot stores.
+      - id: Purview.EventSourcing.AzureStorage
+        description: Azure Table / Blob event store.
+      - id: Purview.EventSourcing.MongoDB
+        description: MongoDB event stream and queryable snapshot stores.
+      - id: Purview.EventSourcing.CosmosDb
+        description: Azure Cosmos DB queryable snapshot store.
+      - id: Purview.EventSourcing.InMemory
+        description: In-memory event and snapshot stores for local and test scenarios.
+      - id: Purview.EventSourcing.Validation.FluentValidation
+        description: FluentValidation adapter for aggregate save-time validation.
+      - id: Purview.EventSourcing.Validation.ZodSharp
+        description: ZodSharp adapter for aggregate save-time validation.
+    related:
+      - zodsharp
+    discussions: true
+
+  - id: zodsharp
+    name: Purview ZodSharp
+    shortDescription: Zero-allocation schema validation for C# — a Zod port.
+    description: >-
+      A high-performance schema validation library for C#, ported from
+      TypeScript Zod. Struct-based rules, a fluent API, JSON Schema export and
+      import, source-generated validators, and zero-allocation validation on
+      every valid input path. Integrates with System.Text.Json, Newtonsoft.Json,
+      and ASP.NET Core ProblemDetails.
+    repository: purview-dev/zodsharp
+    category: validation
+    status: preview
+    featured: true
+    order: 30
+    docs:
+      source: readme
+    targetFrameworks:
+      - net8.0
+      - net9.0
+      - net10.0
+    packages:
+      - id: Purview.ZodSharp
+        description: Core validation library and source generator.
+        primary: true
+      - id: Purview.ZodSharp.SystemTextJson
+        description: System.Text.Json integration and JSON Schema import.
+      - id: Purview.ZodSharp.NewtonsoftJson
+        description: Newtonsoft.Json integration and JSON Schema import.
+      - id: Purview.ZodSharp.AspNetCore
+        description: ASP.NET Core ProblemDetails integration.
+
+  - id: sourcegeneratorframework
+    name: Purview SourceGeneratorFramework
+    shortDescription: A typed framework for building incremental C# source generators.
+    description: >-
+      A strongly typed framework for building, testing, and maintaining
+      incremental C# source generators with Roslyn. Includes structured code
+      generation, attribute data models, type libraries, and a step-cache test
+      runner for verifying incremental behaviour.
+    repository: purview-dev/sourcegeneratorframework
+    category: source-generation
+    status: preview
+    featured: true
+    order: 40
+    docs:
+      source: github-path
+      path: docs
+      readmeAsIndex: true
+    targetFrameworks:
+      - net8.0
+      - net9.0
+      - net10.0
+    packages:
+      - id: Purview.SourceGeneratorFramework
+        description: Core helpers, models, and MSBuild integration for incremental generators.
+        primary: true
+      - id: Purview.SourceGeneratorFramework.Testing
+        description: Framework-agnostic test runner and assertions for generator tests.
+      - id: Purview.SourceGeneratorFramework.Testing.TUnit
+        description: TUnit-specific test base classes and assertions.
+
+  - id: aspire-resourcekit
+    name: Purview Aspire ResourceKit
+    shortDescription: Strongly typed, source-generated resource kits for .NET Aspire.
+    description: >-
+      A source-generator-powered framework for structuring .NET Aspire AppHost
+      resource composition as strongly typed, test-friendly classes. Generated
+      host wiring, typed options, and enablement toggles keep large AppHosts
+      maintainable and discoverable.
+    repository: purview-dev/aspire-resourcekit
+    category: aspire
+    status: preview
+    order: 50
+    docs:
+      source: github-path
+      path: docs
+      readmeAsIndex: true
+      exclude:
+        - README.md
+    targetFrameworks:
+      - net10.0
+    packages:
+      - id: Purview.Aspire.ResourceKit
+        description: Runtime and source generator for resource kits.
+        primary: true
+
+  - id: build
+    name: Purview.Build
+    shortDescription: The shared build, test, and release system for purview-dev.
+    description: >-
+      The shared build/test/release system for the purview-dev organisation. A
+      Modular Pipelines based .NET tool packaged as a pinned dotnet tool, exposed
+      through a GitHub composite action and thin reusable workflows. Consuming
+      repositories own configuration; they do not own pipeline source code.
+    repository: purview-dev/build
+    category: build-tooling
+    status: stable
+    order: 60
+    docs:
+      source: github-path
+      path: docs
+      readmeAsIndex: true
+    targetFrameworks:
+      - net10.0
+    packages:
+      - id: Purview.Build
+        description: Pinned dotnet tool implementing the shared pipeline.
+        primary: true
+
+  - id: dotnet-project-sdk
+    name: Purview DotNetProjectSdk
+    shortDescription: Convention-driven MSBuild SDK for .NET project defaults.
+    description: >-
+      A reusable MSBuild SDK NuGet package that delivers standardised .NET
+      project defaults, code-style enforcement, test-framework wiring, and
+      Central Package Management integration. Install it once per repo; every
+      project beneath the repo root inherits everything automatically.
+    repository: purview-dev/dotnet-project-sdk
+    category: build-tooling
+    status: preview
+    order: 70
+    docs:
+      source: readme
+    targetFrameworks:
+      - net10.0
+    packages:
+      - id: Purview.DotNetProjectSdk
+        description: MSBuild SDK for standardised project defaults.
+        primary: true
+
+  - id: dotnet-logging-source-generators
+    name: Purview Logging Source Generators
+    shortDescription: Early interface-based logging generation (archived).
+    description: >-
+      The original experiment in interface-based logging generation for .NET.
+      Archived and superseded by the Purview Telemetry SourceGenerator, which
+      generates logging together with Activities and Metrics from the same
+      interfaces.
+    repository: purview-dev/dotnet-logging-source-generators
+    category: source-generation
+    status: archived
+    supersededBy: telemetry-sourcegenerator
+    order: 80
+    targetFrameworks:
+      - net6.0
+      - net7.0
+    packages: []

@@ -1,0 +1,124 @@
+---
+import SiteLayout from '~/layouts/SiteLayout.astro';
+import { loadProjects } from '~/lib/manifest/load';
+import { SITE } from '~/lib/site';
+import { withBase } from '~/lib/urls';
+
+const projects = loadProjects();
+const active = projects.filter((project) => project.status !== 'archived');
+---
+
+<SiteLayout
+  title={`About — ${SITE.fullName}`}
+  description="About Purview Development, the people and principles behind the Purview-Dev .NET tooling family."
+>
+  <div class="pv-container py-12 md:py-16">
+    <div class="max-w-3xl">
+      <p class="pv-chip mb-4 border-brand/30 bg-brand/5 text-brand">About</p>
+      <h1 class="text-3xl font-bold tracking-tight md:text-4xl">
+        {SITE.orgName}
+      </h1>
+      <p class="mt-4 text-lg text-muted">
+        {SITE.tagline} We build the developer tooling that .NET projects need
+        but rarely want to write by hand.
+      </p>
+    </div>
+
+    <div class="mt-12 grid gap-10 lg:grid-cols-[1fr_320px]">
+      <div class="min-w-0 space-y-10">
+        <section>
+          <h2 class="text-xl font-semibold">What we do</h2>
+          <p class="mt-4 leading-relaxed text-muted">
+            Purview-Dev is an open-source organisation creating a coherent family
+            of .NET libraries. The emphasis is on compile-time generation where
+            it pays off — source generators that remove boilerplate, eliminate
+            reflection, and make the correct wiring the only wiring.
+          </p>
+          <p class="mt-4 leading-relaxed text-muted">
+            Today the family spans {active.length} active projects: an event
+            sourcing framework with pluggable storage, interface-based telemetry
+            generation, zero-allocation schema validation, a framework for
+            building incremental source generators, resource kits for .NET
+            Aspire, and the shared build pipeline every project uses.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-semibold">How the projects fit together</h2>
+          <p class="mt-4 leading-relaxed text-muted">
+            The projects share a common foundation. The build, test, and release
+            pipeline is {`Purview.Build`}, and repositories standardise on
+            {`Purview.DotNetProjectSdk`}. Libraries that benefit from compile-time
+            validation are built with {`Purview.SourceGeneratorFramework`}, and
+            integrations connect them — for example, event sourcing uses
+            ZodSharp for aggregate validation. Adopt one tool or combine several;
+            they are designed to stay composable.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-semibold">Release process</h2>
+          <p class="mt-4 leading-relaxed text-muted">
+            Every project follows a changeset-based release flow: pull requests
+            add changesets, merging to main triggers a validation, build, and
+            pack through the shared pipeline, and releases publish to both
+            GitHub and nuget.org. Because most projects are still pre-1.0, most
+            published packages are marked as prereleases — this site surfaces
+            both the latest stable and prerelease versions.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-semibold">Licensing</h2>
+          <p class="mt-4 leading-relaxed text-muted">
+            All public projects are licensed under MIT. Contributions are
+            welcome via the issue trackers and documentation edit links on every
+            page.
+          </p>
+        </section>
+      </div>
+
+      <aside class="space-y-6">
+        <div class="rounded-xl border border-border bg-surface p-5">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-muted">Organisation</h2>
+          <dl class="mt-4 space-y-3 text-sm">
+            <div class="flex justify-between gap-3">
+              <dt class="text-muted">Home</dt>
+              <dd class="text-right">
+                <a href={SITE.url} class="pv-link">{SITE.domain}</a>
+              </dd>
+            </div>
+            <div class="flex justify-between gap-3">
+              <dt class="text-muted">GitHub</dt>
+              <dd class="text-right">
+                <a href={SITE.githubUrl} class="pv-link" rel="noopener noreferrer" target="_blank">
+                  purview-dev
+                </a>
+              </dd>
+            </div>
+            <div class="flex justify-between gap-3">
+              <dt class="text-muted">Packages</dt>
+              <dd class="text-right">
+                <a href={`${SITE.nugetUrl}/search?q=purview`} class="pv-link" rel="noopener noreferrer" target="_blank">
+                  nuget.org
+                </a>
+              </dd>
+            </div>
+            <div class="flex justify-between gap-3">
+              <dt class="text-muted">Active projects</dt>
+              <dd class="text-right">{active.length}</dd>
+            </div>
+          </dl>
+        </div>
+        <div class="rounded-xl border border-border bg-surface p-5">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-muted">Explore</h2>
+          <ul class="mt-4 space-y-2 text-sm">
+            <li><a href={withBase('/projects/')} class="pv-link">Projects</a></li>
+            <li><a href={withBase('/docs/')} class="pv-link">Documentation</a></li>
+            <li><a href={withBase('/releases/')} class="pv-link">Releases</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</SiteLayout>
