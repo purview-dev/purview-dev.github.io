@@ -1079,7 +1079,7 @@
         "state": "uploaded",
         "size": 198724,
         "digest": null,
-        "download_count": 2,
+        "download_count": 3,
         "created_at": "2024-06-03T11:13:23Z",
         "updated_at": "2024-06-03T11:13:23Z",
         "browser_download_url": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/download/v1.0.10/Purview.Telemetry.SourceGenerator.1.0.10.symbols.nupkg.tar.xz"

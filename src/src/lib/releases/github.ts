@@ -5,6 +5,7 @@ import type {
   NuGetVersionIndex,
 } from './types';
 
+import { resolveGitHubToken } from '../github/token';
 import { OWNER } from '../site';
 
 const API = 'https://api.github.com';
@@ -23,7 +24,7 @@ export class ApiError extends Error {
 }
 
 function githubToken(): string | undefined {
-  return process.env.GITHUB_TOKEN?.trim() || undefined;
+  return resolveGitHubToken();
 }
 
 async function githubRequest(path: string, token?: string): Promise<unknown> {

@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "retrievedAt": "2026-09-15T21:37:48.443Z",
+  "retrievedAt": "2026-09-16T16:33:38.150Z",
   "repos": {
     "purview-dev/telemetry-sourcegenerator": {
       "name": "telemetry-sourcegenerator",
       "fullName": "purview-dev/telemetry-sourcegenerator",
       "description": ".NET source generator for interface-based telemetry. Generates OpenTelemetry-aligned Activities, structured ILogger logging, and Metrics from interface methods with zero boilerplate.",
       "archived": false,
-      "homepage": "https://nuget.org/packages/Purview.Telemetry.SourceGenerator/",
+      "homepage": "https://purview.dev/projects/telemetry-sourcegenerator/",
       "topics": [
         "activity",
         "c-sharp",
@@ -33,15 +33,15 @@
       "stargazersCount": 35,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-14T13:28:37Z",
-      "hasDiscussions": true
+      "updatedAt": "2026-09-16T15:25:13Z",
+      "hasDiscussions": false
     },
     "purview-dev/eventsourcing": {
       "name": "eventsourcing",
       "fullName": "purview-dev/eventsourcing",
       "description": "A .NET event sourcing framework for building aggregate-based applications - provider-agnostic store facades, source-generated aggregates, transaction coordination, queryable snapshots and read models, and storage providers for SQL Server, PostgreSQL, MongoDB, Azure Storage, Azure Cosmos DB, and in-memory.",
       "archived": false,
-      "homepage": "",
+      "homepage": "https://purview.dev/event-sourcing/",
       "topics": [
         "aggregates",
         "azure-cosmosdb",
@@ -61,18 +61,18 @@
         "sql-server",
         "transactions"
       ],
-      "stargazersCount": 3,
+      "stargazersCount": 4,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-15T09:03:03Z",
-      "hasDiscussions": true
+      "updatedAt": "2026-09-16T15:21:27Z",
+      "hasDiscussions": false
     },
     "purview-dev/zodsharp": {
       "name": "zodsharp",
       "fullName": "purview-dev/zodsharp",
       "description": "High-performance, zero-allocation schema validation for C# — a Zod port with struct-based rules, a fluent API, JSON Schema interop, and compile-time source generation.",
       "archived": false,
-      "homepage": "",
+      "homepage": "https://purview.dev/projects/zodsharp/",
       "topics": [
         "aspnetcore",
         "c-sharp",
@@ -90,7 +90,7 @@
       "stargazersCount": 1,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-14T16:06:56Z",
+      "updatedAt": "2026-09-16T15:54:50Z",
       "hasDiscussions": false
     },
     "purview-dev/sourcegeneratorframework": {
@@ -98,7 +98,7 @@
       "fullName": "purview-dev/sourcegeneratorframework",
       "description": "A strongly typed framework for building, testing, and maintaining incremental C# source generators with Roslyn.",
       "archived": false,
-      "homepage": "",
+      "homepage": "https://purview.dev/projects/sourcegeneratorframework/",
       "topics": [
         "analyzers",
         "code-generation",
@@ -117,10 +117,10 @@
         "source-generators",
         "testing"
       ],
-      "stargazersCount": 1,
+      "stargazersCount": 2,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-14T12:49:39Z",
+      "updatedAt": "2026-09-16T16:21:01Z",
       "hasDiscussions": false
     },
     "purview-dev/aspire-resourcekit": {
@@ -128,7 +128,7 @@
       "fullName": "purview-dev/aspire-resourcekit",
       "description": "Source-generator-powered resource kits for .NET Aspire: turn AppHost resource composition into strongly typed, testable classes with generated host wiring, typed options, and enablement toggles for local, test, and publish modes.",
       "archived": false,
-      "homepage": "",
+      "homepage": "https://purview.dev/projects/aspire-resourcekit/",
       "topics": [
         "apphost",
         "aspire",
@@ -148,7 +148,40 @@
       "stargazersCount": 2,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-15T15:57:07Z",
+      "updatedAt": "2026-09-16T16:02:30Z",
+      "hasDiscussions": false
+    },
+    "purview-dev/aspirec4": {
+      "name": "aspirec4",
+      "fullName": "purview-dev/aspirec4",
+      "description": "Aspire extension that generates live LikeC4 C4 architecture diagrams from the Aspire resource graph, with a Roslyn source generator for compile-time validation of tags, kinds, groups, and metadata.",
+      "archived": false,
+      "homepage": "https://purview.dev/projects/aspirec4/",
+      "topics": [
+        "architecture",
+        "architecture-as-code",
+        "architecture-diagrams",
+        "aspire",
+        "aspire-dashboard",
+        "aspire-dotnet",
+        "aspire-hosting",
+        "aspnetcore",
+        "c4",
+        "c4-model",
+        "developer-experience",
+        "devex",
+        "diagram",
+        "diagrams",
+        "dotnet",
+        "likec4",
+        "roslyn",
+        "source-generator",
+        "visualization"
+      ],
+      "stargazersCount": 9,
+      "openIssuesCount": 1,
+      "defaultBranch": "main",
+      "updatedAt": "2026-09-16T16:08:46Z",
       "hasDiscussions": false
     },
     "purview-dev/build": {
@@ -156,7 +189,7 @@
       "fullName": "purview-dev/build",
       "description": "Shared build/test/release pipeline for purview-dev. A Modular Pipelines based .NET tool (Purview.Build) with a GitHub composite action and reusable workflows; consumers configure, the pipeline runs.",
       "archived": false,
-      "homepage": null,
+      "homepage": "https://purview.dev/projects/build/",
       "topics": [
         "build-pipeline",
         "cd",
@@ -174,7 +207,7 @@
       "stargazersCount": 0,
       "openIssuesCount": 1,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-14T12:27:53Z",
+      "updatedAt": "2026-09-16T16:29:28Z",
       "hasDiscussions": false
     },
     "purview-dev/dotnet-project-sdk": {
@@ -182,7 +215,7 @@
       "fullName": "purview-dev/dotnet-project-sdk",
       "description": "A reusable MSBuild SDK providing convention-driven .NET project defaults, code style, analyzers, testing frameworks, package management, and agent tooling.",
       "archived": false,
-      "homepage": "",
+      "homepage": "https://purview.dev/projects/dotnet-project-sdk/",
       "topics": [
         "central-package-management",
         "code-style",
@@ -204,7 +237,7 @@
       "stargazersCount": 0,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-15T08:10:30Z",
+      "updatedAt": "2026-09-16T16:24:02Z",
       "hasDiscussions": false
     },
     "purview-dev/dotnet-logging-source-generators": {
@@ -772,6 +805,15 @@
     ],
     "purview-dev/aspire-resourcekit": [
       {
+        "tagName": "v1.0.0-prerelease.28",
+        "name": "v1.0.0-prerelease.28",
+        "body": "## What's Changed\n* fix: IsEnabled by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/30\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.27...v1.0.0-prerelease.28",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-16T00:08:56Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.28"
+      },
+      {
         "tagName": "v1.0.0-prerelease.27",
         "name": "v1.0.0-prerelease.27",
         "body": "## What's Changed\n* fix: option properties have setters instead of init to support Option… by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/29\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.26...v1.0.0-prerelease.27",
@@ -833,6 +875,116 @@
         "draft": false,
         "publishedAt": "2026-09-02T08:07:32Z",
         "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.21"
+      }
+    ],
+    "purview-dev/aspirec4": [
+      {
+        "tagName": "v13.5.3.1",
+        "name": "v13.5.3.1",
+        "body": "## What's Changed\n* docs: updated readme with badges by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/37\n\n\n**Full Changelog**: https://github.com/purview-dev/aspirec4/compare/v13.5.3...v13.5.3.1",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-14T13:45:18Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.5.3.1"
+      },
+      {
+        "tagName": "v13.5.3",
+        "name": "v13.5.3",
+        "body": "## What's Changed\n* feat: rebuilt on new source gen framework by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/34\n* chore: bumped version by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/35\n* Fixing test during build by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/36\n\n\n**Full Changelog**: https://github.com/purview-dev/aspirec4/compare/v13.3.5...v13.5.3",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-13T16:42:37Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.5.3"
+      },
+      {
+        "tagName": "v13.3.5",
+        "name": "v13.3.5",
+        "body": "### Improvements\n\n- source gen update - best practices to follow\n- mass refactor to support updated source gen package\n",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-08-18T13:33:10Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.3.5"
+      },
+      {
+        "tagName": "v13.3.2",
+        "name": "v13.3.2",
+        "body": "\n### Patch Changes\n\n- service release - using new Project Sdk",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-06-11T13:07:42Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.3.2"
+      },
+      {
+        "tagName": "v13.3.1",
+        "name": "v13.3.1",
+        "body": "\n### Patch Changes\n\n- ### Bug Fixes\n\n  - prevent sync-over-async deadlock when async configure callback is used in TypeScript AppHost ([#26](https://github.com/kjldev/aspirec4/issues/26))",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-06-04T21:30:49Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.3.1"
+      },
+      {
+        "tagName": "v13.3.0-prerelease.10",
+        "name": "v13.3.0-prerelease.10",
+        "body": "\n### Patch Changes\n\n- ### Bug Fixes\n\n  - add missing build/AspireC4.Hosting.props for source generator ([#20](https://github.com/kjldev/aspirec4/issues/20))\n\n  ### Changes\n\n  - Updated for likec4 with hmrport config ([#24](https://github.com/kjldev/aspirec4/issues/24))\n  - source-generator + other fixes ([#19](https://github.com/kjldev/aspirec4/issues/19))",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-05-24T09:56:19Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.3.0-prerelease.10"
+      },
+      {
+        "tagName": "v13.3.0-prerelease.9",
+        "name": "v13.3.0-prerelease.9",
+        "body": "\n### Minor Changes\n\n- ### Features\n\n  - updated the source gen to have its own validation, rather than double loading\n  - normalise metadata keys for case/punctuation-insensitive validation\n\n  ### Bug Fixes\n\n  - yarn dlx peer deps and deno node-modules-dir for e2e cli tests\n\n  ### Changes",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-05-20T14:25:50Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.3.0-prerelease.9"
+      },
+      {
+        "tagName": "v13.3.0-prerelease.8",
+        "name": "v13.3.0-prerelease.8",
+        "body": "\n### Patch Changes\n\n- ### Bug Fixes\n\n  - resolve nuget assembly name mismatch and beforestart hang\n\n  ### Changes",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-05-18T17:02:39Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.3.0-prerelease.8"
+      },
+      {
+        "tagName": "v13.3.0-prerelease.7",
+        "name": "v13.3.0-prerelease.7",
+        "body": "\n### Minor Changes\n\n- ### Features\n\n  - bundle SG with runtime bridge via ModuleInitializer\n  - redesign source generators with [LikeC4Registry] attribute\n  - extend source generators with WithLikeC4Group support and ASPIREC4004 diagnostic\n  - adding correct support for TypeScript app hosts\n\n  ### Bug Fixes\n\n  - resolve ASPIREEXPORT010/008 warnings on exported methods\n\n  ### Changes",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-05-17T22:07:15Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.3.0-prerelease.7"
+      },
+      {
+        "tagName": "v13.3.0-prerelease.6",
+        "name": "v13.3.0-prerelease.6",
+        "body": "\n> **Note:** versions `13.3.0-prerelease.4` and `13.3.0-prerelease.5` were never published.\n> Both tags were permanently tombstoned by GitHub's immutable-release feature after failed\n> release attempts during CD pipeline repairs. This version contains all changes originally\n> intended for `prerelease.4`.\n\n### Minor Changes\n\n- ### Features\n\n  - adding first-pass source generator - very much a WIP\n  - add KnownLikeC4Elements source generator\n  - stable model generation across resource state changes\n  - make WithRelationshipKindSpec strict param nullable with auto-detect\n  - add technology support to relationship kind specifications\n  - add strict mode validation to aspire c4 diagram options\n  - add guards and context-aware release guide\n\n  ### Bug Fixes\n\n  - resolve build errors and update tests post-refactor\n  - relationship kind technology uses no colon in dsl output\n  - always show release guide; exit on blockers before proceeding\n  - block release when branch is behind origin/main\n  - validate unknown args and simplify justfile recipe\n  - moved the Aspire browser token inclusion behind a AppHost options property\n  - fix test extension views to use current resource element names\n  - create GitHub release as draft before uploading assets to prevent immutable-release errors\n\n  ### Changes\n\n  - cd: releases are gated to main; workflow is enforced to reject non-main refs even on manual dispatch\n  - cd: update GitHub Actions to Node.js 24-compatible versions (checkout@v6, setup-dotnet@v5, setup-node@v6)",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-05-15T09:00:02Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.3.0-prerelease.6"
+      },
+      {
+        "tagName": "v13.3.0-prerelease.3",
+        "name": "v13.3.0-prerelease.3",
+        "body": "\n### Minor Changes\n\n- ### Features\n\n  - add guards and context-aware release guide\n\n  ### Bug Fixes\n\n  - always show release guide; exit on blockers before proceeding\n  - block release when branch is behind origin/main\n  - validate unknown args and simplify justfile recipe\n  - moved the Aspire browser token inclusion behind a AppHost options property\n\n  ### Changes",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-05-13T10:26:17Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.3.0-prerelease.3"
+      },
+      {
+        "tagName": "v13.3.0-prerelease.2",
+        "name": "v13.3.0-prerelease.2",
+        "body": "\n### Patch Changes\n\n- [#5](https://github.com/kjldev/aspirec4/pull/5) [`32b7cbd`](https://github.com/kjldev/aspirec4/commit/32b7cbdcbc7eddad915405b69cc9ee4aa47b33a1) Thanks [@kieronlanning](https://github.com/kieronlanning)! - ### Bug Fixes\n\n  - Fix unit test `AddAspireC4_ExposesHttpAndHmrEndpoints` to always expect `null` HMR port (relay always active with `latest` image tag)\n  - Fix `ValidatedDsl_*` unit tests failing in CI due to missing Node.js setup step\n\n  ### Changes\n\n  - Add `actions/setup-node@v6` to CI and CD workflows for reliable Node.js availability\n  - Generate `.snupkg` symbol packages alongside `.nupkg` in `dotnet pack`\n  - `just pack` now reads version from `package.json` instead of using the fallback from `Directory.Build.props`\n  - Add `@changesets/cli` release flow: `just changeset` and `just release [prerelease]`",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-05-13T09:05:53Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.3.0-prerelease.2"
       }
     ],
     "purview-dev/build": [
@@ -1463,7 +1615,27 @@
         "1.0.0-prerelease.24",
         "1.0.0-prerelease.25",
         "1.0.0-prerelease.26",
-        "1.0.0-prerelease.27"
+        "1.0.0-prerelease.27",
+        "1.0.0-prerelease.28"
+      ]
+    },
+    "AspireC4.Hosting": {
+      "id": "AspireC4.Hosting",
+      "versions": [
+        "13.3.0-prerelease.1",
+        "13.3.0-prerelease.2",
+        "13.3.0-prerelease.3",
+        "13.3.0-prerelease.6",
+        "13.3.0-prerelease.7",
+        "13.3.0-prerelease.8",
+        "13.3.0-prerelease.9",
+        "13.3.0-prerelease.10",
+        "13.3.1",
+        "13.3.2",
+        "13.3.3",
+        "13.3.5",
+        "13.5.3",
+        "13.5.3.1"
       ]
     },
     "Purview.Build": {
@@ -1542,7 +1714,7 @@
       "id": "Purview.Telemetry.SourceGenerator",
       "version": "4.4.0",
       "description": ".NET Source Generator for interface-based telemetry generating tracing, logs, and metrics.",
-      "totalDownloads": 16175,
+      "totalDownloads": 16253,
       "tags": [
         "logs",
         "log",
@@ -1589,11 +1761,32 @@
     "Purview.SourceGeneratorFramework.Testing": null,
     "Purview.SourceGeneratorFramework.Testing.TUnit": null,
     "Purview.Aspire.ResourceKit": null,
+    "AspireC4.Hosting": {
+      "id": "AspireC4.Hosting",
+      "version": "13.5.3.1",
+      "description": "Aspire hosting extension for the AspireC4 plugin, generating a dynamic LikeC4 architecture diagram for your Aspire application.",
+      "totalDownloads": 1342,
+      "tags": [
+        "aspire",
+        "dotnet",
+        "aspnetcore",
+        "c4",
+        "likec4",
+        "architecture",
+        "diagram",
+        "visualisation",
+        "visualization",
+        "polyglot"
+      ],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
     "Purview.Build": {
       "id": "Purview.Build",
       "version": "0.2.4",
       "description": "Shared build/test/release pipeline for purview-dev. A Modular Pipelines based .NET tool (Purview.Build) with a GitHub composite action and reusable workflows; consumers configure, the pipeline runs.",
-      "totalDownloads": 471,
+      "totalDownloads": 530,
       "tags": [],
       "published": null,
       "deprecated": false,

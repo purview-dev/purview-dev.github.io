@@ -19,8 +19,13 @@ install:
 install-hooks:
     bunx lefthook install
 
-# Refresh docs mirrors and release data (cache-first unless DATA_MODE=live).
+# Refresh docs mirrors and release data (cache-first).
 data-sync:
+    bun run data:sync
+
+# Refresh docs mirrors and release data (live mode).
+[env("DATA_MODE", "live")]
+live-data-sync:
     bun run data:sync
 
 # Start the dev server (runs data sync first so docs are available).
