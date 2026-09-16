@@ -1,0 +1,80 @@
+{
+  "@context": {
+    "@vocab": "http://schema.nuget.org/schema#",
+    "@base": "https://api.nuget.org/v3/registration5-semver1/"
+  },
+  "totalHits": 1,
+  "data": [
+    {
+      "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/index.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/index.json",
+      "id": "AspireC4.Hosting",
+      "version": "13.5.3.1",
+      "description": "Aspire hosting extension for the AspireC4 plugin, generating a dynamic LikeC4 architecture diagram for your Aspire application.",
+      "summary": "",
+      "title": "AspireC4.Hosting - Aspire LikeC4 Visualisation",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/aspirec4.hosting/13.5.3.1/icon",
+      "licenseUrl": "https://www.nuget.org/packages/AspireC4.Hosting/13.5.3.1/license",
+      "tags": [
+        "aspire",
+        "dotnet",
+        "aspnetcore",
+        "c4",
+        "likec4",
+        "architecture",
+        "diagram",
+        "visualisation",
+        "visualization",
+        "polyglot"
+      ],
+      "authors": [
+        "Purview Contributors"
+      ],
+      "owners": [
+        "kieronlanning",
+        "KJL.dev"
+      ],
+      "totalDownloads": 1342,
+      "verified": false,
+      "packageTypes": [
+        {
+          "name": "Dependency"
+        }
+      ],
+      "versions": [
+        {
+          "version": "13.3.1",
+          "downloads": 123,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.3.1.json"
+        },
+        {
+          "version": "13.3.2",
+          "downloads": 310,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.3.2.json"
+        },
+        {
+          "version": "13.3.3",
+          "downloads": 107,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.3.3.json"
+        },
+        {
+          "version": "13.3.5",
+          "downloads": 120,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.3.5.json"
+        },
+        {
+          "version": "13.5.3",
+          "downloads": 48,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.json"
+        },
+        {
+          "version": "13.5.3.1",
+          "downloads": 50,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.1.json"
+        }
+      ],
+      "vulnerabilities": []
+    }
+  ]
+}

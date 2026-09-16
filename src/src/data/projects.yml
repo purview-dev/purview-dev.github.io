@@ -17,6 +17,8 @@ projects:
     docs:
       source: github-path
       path: docs/wiki
+      exclude:
+        - _Sidebar.md
     targetFrameworks:
       - net8.0
       - net9.0
@@ -27,7 +29,7 @@ projects:
         primary: true
         targetFrameworks:
           - netstandard2.0
-    discussions: true
+    discussions: false
 
   - id: event-sourcing
     name: Event Sourcing
@@ -74,7 +76,7 @@ projects:
         description: ZodSharp adapter for aggregate save-time validation.
     related:
       - zodsharp
-    discussions: true
+    discussions: false
 
   - id: zodsharp
     name: ZodSharp

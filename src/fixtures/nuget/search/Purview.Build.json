@@ -24,7 +24,7 @@
       "owners": [
         "kieronlanning"
       ],
-      "totalDownloads": 471,
+      "totalDownloads": 530,
       "verified": false,
       "packageTypes": [
         {
@@ -34,22 +34,22 @@
       "versions": [
         {
           "version": "0.2.1",
-          "downloads": 132,
+          "downloads": 141,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.1.json"
         },
         {
           "version": "0.2.2",
-          "downloads": 81,
+          "downloads": 90,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.2.json"
         },
         {
           "version": "0.2.3",
-          "downloads": 207,
+          "downloads": 216,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.3.json"
         },
         {
           "version": "0.2.4",
-          "downloads": 51,
+          "downloads": 83,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.4.json"
         }
       ],
