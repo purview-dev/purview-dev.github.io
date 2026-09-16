@@ -19,21 +19,31 @@ The site is built with [Astro](https://astro.build) and
 [Preact](https://preactjs.com) islands. Every page is pre-rendered to static
 HTML; nothing depends on a server at runtime.
 
+The repository is a [Bun workspace](https://bun.sh/docs/install/workspaces) whose
+single package — the Astro site — lives in `src/`. All commands are run from the
+repo root and delegated to the package:
+
 ```
-src/
-├── content.config.ts          # Starlight docs collection schema
-├── content/docs/              # GENERATED documentation mirror (gitignored)
-├── data/projects.yml          # Typed, validated project catalogue manifest
-├── lib/
-│   ├── manifest/              # Project manifest schema + validation
-│   ├── releases/              # GitHub/NuGet clients, normalisation, transform
-│   ├── docs/                  # Documentation aggregation + link/alerts transforms
-│   ├── urls.ts                # Canonical URL + base path handling
-│   └── site.ts                # Site + brand constants
-├── components/                # Shared chrome, Starlight overrides, islands
-├── layouts/SiteLayout.astro   # Marketing page layout
-├── pages/                     # Home, catalogue, releases, about, 404
-└── styles/global.css          # Design tokens + Tailwind/Starlight theme
+purview-dev/                  # workspace root
+├── package.json              # workspace root; delegates scripts to src/
+├── justfile                  # task runner (runs in the src/ package)
+├── docs/decisions/           # architectural decision records
+└── src/                      # the Astro site package (@purview-dev/website)
+    ├── assets/branding/      # approved branding sources (never modified)
+    ├── astro.config.ts       # Astro + Starlight configuration
+    ├── public/               # committed static assets (robots.txt, site.webmanifest)
+    ├── scripts/              # data sync, branding, checks, fetchers
+    ├── src/
+    │   ├── content.config.ts # Starlight docs collection schema
+    │   ├── content/docs/     # GENERATED documentation mirror (gitignored)
+    │   ├── data/projects.yml # Typed, validated project catalogue manifest
+    │   ├── lib/              # manifest, releases, docs, urls, site constants
+    │   ├── components/       # shared chrome, Starlight overrides, islands
+    │   ├── layouts/          # SiteLayout.astro (marketing pages)
+    │   ├── pages/            # Home, catalogue, releases, about, 404
+    │   └── styles/global.css # design tokens + Tailwind/Starlight theme
+    ├── tests/                # unit tests + built-output assertions
+    └── fixtures/             # committed offline data fixtures
 ```
 
 See `docs/decisions/0001-architecture.md` for the architectural decision record.
@@ -53,6 +63,7 @@ See `docs/decisions/0001-architecture.md` for the architectural decision record.
 | Search                    | Pagefind (bundled with Starlight)      | —       |
 | LLM outputs               | starlight-llms-txt                     | 0.12.0  |
 | Link validation           | starlight-links-validator + dist crawl | —       |
+| Sidebar topics            | starlight-sidebar-topics               | 0.9.0   |
 
 All application and configuration code is TypeScript. oxfmt does not yet
 support `.astro` files (oxc-project/oxc#15665), so `.astro` components are
@@ -148,39 +159,40 @@ bundle.
 just dev
 ```
 
-The dev server starts after a data sync. Edit `src/pages/` for marketing pages
-and `src/data/projects.yml` for catalogue content. Documentation pages are
-generated under `src/content/docs/` and should not be edited by hand — change
-the source repository instead and re-run `just data-sync`.
+The dev server starts after a data sync. Edit `src/src/pages/` for marketing
+pages and `src/src/data/projects.yml` for catalogue content. Documentation pages
+are generated under `src/src/content/docs/` and should not be edited by hand —
+change the source repository instead and re-run `just data-sync`.
 
 ## Testing and validation
 
-Unit tests live in `tests/unit/` (Bun's test runner) and run without network or
-live APIs — they use committed fixtures under `fixtures/`. Built-output
-assertions live in `tests/dist/`. `just validate` runs everything needed to
+Unit tests live in `src/tests/unit/` (Bun's test runner) and run without network
+or live APIs — they use committed fixtures under `src/fixtures/`. Built-output
+assertions live in `src/tests/dist/`. `just validate` runs everything needed to
 prove the site is safe to merge.
 
 ## Branding asset handling
 
-The approved branding sources live in `assets/branding/` and are never modified.
-`just data-sync` runs `scripts/process-branding.ts`, which copies the assets the
-built site needs into `public/` (SVG masters, light/dark logo variants, raster
-favicons, touch/application icons, and the generated Open Graph image). The
-design tokens in `src/styles/global.css` are derived from the brand values in
-`assets/branding/README.md` (purple `#8B3DFF`, deep purple `#6820D2`, ink
+The approved branding sources live in `src/assets/branding/` and are never
+modified. `just data-sync` runs `src/scripts/process-branding.ts`, which copies
+the assets the built site needs into `src/public/` (adaptive SVG masters for the
+favicon, header logo, and banner, light/dark PNG variants, raster favicons,
+touch/application icons, and the generated Open Graph image). The design tokens
+in `src/src/styles/global.css` are derived from the brand values in
+`src/assets/branding/README.md` (purple `#8B3DFF`, deep purple `#6820D2`, ink
 `#17141F`/`#FFFFFF`). `just check-assets` validates the sources and the
 generated copies.
 
 ## Project catalogue
 
-`src/data/projects.yml` is the single source of truth for the catalogue. It is
-validated at build time by a typed Zod schema (`src/lib/manifest/schema.ts`).
-Validation failures report the source file, the offending property, the
-expected shape, and a remediation hint.
+`src/src/data/projects.yml` is the single source of truth for the catalogue. It
+is validated at build time by a typed Zod schema
+(`src/src/lib/manifest/schema.ts`). Validation failures report the source file,
+the offending property, the expected shape, and a remediation hint.
 
 ### Adding a new Purview-Dev project
 
-1. Add a record to `src/data/projects.yml` with a unique `id`, `name`,
+1. Add a record to `src/src/data/projects.yml` with a unique `id`, `name`,
    `shortDescription`, `description`, `repository` (a purview-dev repo),
    `category`, `status`, and optional `order`.
 2. Declare its NuGet packages under `packages` — every package id must belong to
@@ -195,6 +207,13 @@ expected shape, and a remediation hint.
 5. Run `just validate` — the manifest schema, catalogue page, project page,
    docs aggregation, and release transforms are all regenerated from this one
    file.
+
+### Adding an external (collaboration) project
+
+Projects the organisation contributes to but does not own are listed under
+`externalProjects` in the same file. They are rendered in a "Collaborations"
+section on the catalogue page and link to their own site/repository (e.g.
+`https://likec4.dev` for LikeC4) rather than the Purview catalogue.
 
 ## Documentation aggregation
 
@@ -221,10 +240,10 @@ cache. Version selection is based on semver tags because the organisation's
 changesets automation publishes `vX.Y.Z-prerelease.N` tags with the GitHub
 `prerelease` flag set to `false`.
 
-- `just fetch-releases` fetches live data into `.cache/releases/releases.json`
+- `just fetch-releases` fetches live data into `src/.cache/releases/releases.json`
   (typed, versioned, timestamped, gitignored).
 - Without a cache, the site falls back to committed fixtures under
-  `fixtures/releases/` and labels the data source (`live` / `cache` /
+  `src/fixtures/releases/` and labels the data source (`live` / `cache` /
   `fixture`) in the UI.
 - `just refresh-fixtures` regenerates the committed test fixtures from live
   sources (review the diff before committing).
@@ -263,7 +282,7 @@ Configuration notes:
   `purview-dev.github.io`.
 
 The workflow validates (`just validate`), refreshes live release/documentation
-data, builds, and uploads `./dist`.
+data, builds, and uploads `./src/dist`.
 
 ### Repository-dispatch integration
 
@@ -299,5 +318,5 @@ kept separate for review.
 - **`.astro` files are not reformatted**: oxfmt does not support Astro yet
   (oxc-project/oxc#15665); format them by hand — they are still linted and
   type-checked.
-- **Formatting diffs in generated content**: never edit `src/content/docs/` or
-  `.cache/` by hand; regenerate them with `just data-sync`.
+- **Formatting diffs in generated content**: never edit `src/src/content/docs/`
+  or `src/.cache/` by hand; regenerate them with `just data-sync`.

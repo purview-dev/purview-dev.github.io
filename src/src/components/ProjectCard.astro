@@ -1,0 +1,83 @@
+---
+import StatusBadge from '~/components/StatusBadge.astro';
+import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '~/lib/badges';
+import { projectRepoEnrichment } from '~/lib/releases/repo';
+import { getReleaseIndex } from '~/lib/releases/runtime';
+import type { ResolvedProject } from '~/lib/manifest/load';
+import { nugetPackageUrl, withBase } from '~/lib/urls';
+
+interface Props {
+  project: ResolvedProject;
+  /** Show NuGet/build badges below the card (hidden on the home page). */
+  showBadges?: boolean;
+}
+
+const { project, showBadges = true } = Astro.props;
+const { tags } = projectRepoEnrichment(project, getReleaseIndex().data);
+const primaryPackage = project.packages.find((pkg) => pkg.primary) ?? project.packages[0];
+const badges =
+  project.status === 'archived'
+    ? []
+    : [
+        ...(primaryPackage
+          ? [
+              {
+                href: nugetPackageUrl(primaryPackage.id),
+                src: nugetVersionBadge(primaryPackage.id),
+                alt: `NuGet version of ${primaryPackage.id}`,
+              },
+              {
+                href: nugetPackageUrl(primaryPackage.id),
+                src: nugetDownloadsBadge(primaryPackage.id),
+                alt: `NuGet downloads of ${primaryPackage.id}`,
+              },
+            ]
+          : []),
+        {
+          href: actionsUrl(project.repository),
+          src: buildBadge(project.repository),
+          alt: `Build status of ${project.name}`,
+        },
+      ];
+---
+
+<div class="pv-card pv-card-interactive flex flex-col gap-3 p-5">
+  <a
+    href={withBase(`/projects/${project.id}/`)}
+    class="flex flex-1 flex-col gap-3 no-underline"
+  >
+    <div class="flex items-start justify-between gap-3">
+      <h3 class="text-lg font-semibold leading-snug">{project.name}</h3>
+      <StatusBadge status={project.status} />
+    </div>
+    <p class="text-sm text-muted">{project.shortDescription}</p>
+    <div class="mt-auto flex flex-wrap items-center gap-2 pt-2">
+      <span class="pv-chip">{project.category}</span>
+      {
+        project.packages.length > 0 && (
+          <span class="pv-chip">
+            {project.packages.length} package{project.packages.length === 1 ? '' : 's'}
+          </span>
+        )
+      }
+      {
+        tags.slice(0, 4).map((tag) => (
+          <span class="pv-chip" title={tag}>
+            {tag}
+          </span>
+        ))
+      }
+    </div>
+  </a>
+  {
+    showBadges && badges.length > 0 && (
+      <div class="flex flex-wrap items-center gap-1.5">
+        {badges.map((badge) => (
+          <a href={badge.href} target="_blank" rel="noopener noreferrer" class="inline-flex">
+            <img src={badge.src} alt={badge.alt} loading="lazy" class="h-5 w-auto" />
+          </a>
+        ))}
+      </div>
+    )
+  }
+</div>

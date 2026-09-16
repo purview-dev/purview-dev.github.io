@@ -1,0 +1,84 @@
+---
+import SiteLayout from '~/layouts/SiteLayout.astro';
+import { loadProjects } from '~/lib/manifest/load';
+import { readDocsManifest } from '~/lib/docs/aggregate';
+import { projectRepoEnrichment } from '~/lib/releases/repo';
+import { getReleaseIndex } from '~/lib/releases/runtime';
+import { SITE } from '~/lib/site';
+import { withBase } from '~/lib/urls';
+
+const projects = loadProjects().filter(
+  (project) => project.docs && project.status !== 'archived',
+);
+const releaseIndex = getReleaseIndex();
+const docsManifest = readDocsManifest();
+const pageCount = docsManifest?.projects.reduce(
+  (total, entry) => total + entry.pages.length,
+  0,
+);
+---
+
+<SiteLayout
+  title={`Documentation — ${SITE.fullName}`}
+  description="Unified documentation for every Purview-Dev project, aggregated from each repository and searchable in one place."
+>
+  <div class="pv-container py-12 md:py-16">
+    <div class="max-w-3xl">
+      <p class="pv-chip mb-4 border-brand/30 bg-brand/5 text-brand">Documentation</p>
+      <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Documentation</h1>
+      <p class="mt-4 text-lg text-muted">
+        One portal for the whole product family. Documentation is owned by each
+        project repository and aggregated here into a single, searchable site —
+        {pageCount ?? 0} pages across {projects.length} projects.
+      </p>
+    </div>
+
+    <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        projects.map((project) => {
+          const entry = docsManifest?.projects.find((item) => item.projectId === project.id);
+          const { tags } = projectRepoEnrichment(project, releaseIndex.data);
+          return (
+            <a
+              href={withBase(`/docs/${project.id}/`)}
+              class="pv-card pv-card-interactive flex flex-col gap-3 p-5 no-underline"
+            >
+              <h2 class="text-lg font-semibold leading-snug">{project.name}</h2>
+              <p class="text-sm text-muted">{project.shortDescription}</p>
+              {
+                tags.length > 0 && (
+                  <div class="flex flex-wrap gap-1.5">
+                    {tags.slice(0, 4).map((tag) => (
+                      <span class="pv-chip">{tag}</span>
+                    ))}
+                  </div>
+                )
+              }
+              <p class="mt-auto pt-2 text-sm text-accent">
+                {entry?.pages.length ?? 0} page{(entry?.pages.length ?? 0) === 1 ? '' : 's'} →
+              </p>
+            </a>
+          );
+        })
+      }
+    </div>
+
+    <section class="mt-16 rounded-xl border border-border bg-surface p-6 md:p-8">
+      <h2 class="text-xl font-semibold">Documentation conventions</h2>
+      <ul class="mt-4 list-disc space-y-2 pl-5 text-sm text-muted">
+        <li>
+          Every page shows its owning project, lifecycle status, and last review
+          date at the bottom of the article.
+        </li>
+        <li>
+          Each page links back to its source repository so you can suggest an
+          edit in the project that owns the documentation.
+        </li>
+        <li>
+          Search covers the entire site — projects, releases, and docs — powered
+          by Pagefind.
+        </li>
+      </ul>
+    </section>
+  </div>
+</SiteLayout>
