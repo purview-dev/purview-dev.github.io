@@ -20,15 +20,15 @@ updates:
           - 'oxlint'
           - 'oxfmt'
         update-types:
-          - minor
-          - patch
+          - version-update:semver-minor
+          - version-update:semver-patch
       astro-core:
         patterns:
           - 'astro'
           - '@astrojs/*'
         update-types:
-          - minor
-          - patch
+          - version-update:semver-minor
+          - version-update:semver-patch
       content-and-tooling:
         patterns:
           - 'zod'
@@ -39,14 +39,14 @@ updates:
           - 'typescript'
           - '@types/*'
         update-types:
-          - minor
-          - patch
+          - version-update:semver-minor
+          - version-update:semver-patch
     ignore:
       # oxfmt does not yet support `.astro` files; keep the formatter's own
       # major upgrades separate for review.
       - dependency-name: 'oxfmt'
         update-types:
-          - major
+          - version-update:semver-major
 
   - package-ecosystem: github-actions
     directory: /
