@@ -671,6 +671,20 @@ sketch
 .history
 .ionide
 
+# The generic template ignores `[Rr]elease*/` and `dist` as build output, but
+# the site uses those names for source: the releases catalogue page, release
+# transforms, committed release fixtures, and the built-output test suite.
+!src/fixtures/github/releases/
+!src/fixtures/github/releases/**
+!src/fixtures/releases/
+!src/fixtures/releases/**
+!src/src/lib/releases/
+!src/src/lib/releases/**
+!src/src/pages/releases/
+!src/src/pages/releases/**
+!src/tests/dist/
+!src/tests/dist/**
+
 # End of https://www.toptal.com/developers/gitignore/api/openframeworks+visualstudio,visualstudiocode,jetbrains,react,node,astro,aspnetcore,ncrunch,go
 
 BenchmarkDotNet.Artifacts/
