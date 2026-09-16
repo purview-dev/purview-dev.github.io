@@ -130,7 +130,7 @@ function usableHash(hash: string, slug: string, context: DocLinkContext): string
  * - relative images are rewritten to the configured absolute `imageBase`.
  */
 export function rewriteDocMarkdown(markdown: string, context: DocLinkContext): string {
-  const linkPattern = /!?\[([^\]]*)\]\(([^)\s]+)(?:\s+["'][^"']*["'])?\)/g;
+  const linkPattern = /!?\[([^\][]*(?:\[[^\][]*\][^\][]*)*)\]\(([^)\s]+)(?:\s+["'][^"']*["'])?\)/g;
   return markdown.replace(linkPattern, (match, label: string, target: string) => {
     const isImage = match.startsWith('!');
     const { path, hash } = stripUrlSuffix(target);

@@ -104,6 +104,22 @@ describe('link rewriting', () => {
     expect(output).toBe('[Install](<doclink:getting-started>)');
   });
 
+  test('rewrites links whose label contains brackets (code spans)', () => {
+    const output = rewriteDocMarkdown(
+      'See [`[Tag]`](Tags-and-Baggage.md).',
+      context({ knownSlugs: new Set(['index', 'tags-and-baggage']) }),
+    );
+    expect(output).toBe('See [`[Tag]`](<doclink:tags-and-baggage>).');
+  });
+
+  test('rewrites links whose label spans multiple lines', () => {
+    const output = rewriteDocMarkdown(
+      'See [Source\nGenerator Behaviors](Source-Generator-Behaviors.md).',
+      context({ knownSlugs: new Set(['index', 'source-generator-behaviors']) }),
+    );
+    expect(output).toBe('See [Source\nGenerator Behaviors](<doclink:source-generator-behaviors>).');
+  });
+
   test('rewrites extensionless wiki links to known pages', () => {
     const output = rewriteDocMarkdown('[Multi target](./Multi-Targeting)', context());
     expect(output).toBe('[Multi target](<doclink:multi-targeting>)');

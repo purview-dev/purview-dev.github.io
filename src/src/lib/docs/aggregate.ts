@@ -6,6 +6,7 @@ import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 
+import { resolveGitHubToken } from '../github/token';
 import { getReleaseIndex } from '../releases/runtime';
 import { OWNER } from '../site';
 import { convertGithubAlerts } from './alerts';
@@ -50,13 +51,17 @@ async function githubJson(path: string): Promise<unknown> {
     'User-Agent': 'purview-dev-website',
     'X-GitHub-Api-Version': '2022-11-28',
   };
-  const token = process.env.GITHUB_TOKEN?.trim();
+  const token = resolveGitHubToken();
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
   const response = await fetch(`https://api.github.com${path}`, { headers });
   if (!response.ok) {
-    throw new Error(`GitHub API ${response.status} for ${path}`);
+    const detail =
+      response.status === 403 || response.status === 429
+        ? ' (rate limited; run `gh auth login` or set GITHUB_TOKEN)'
+        : '';
+    throw new Error(`GitHub API ${response.status} for ${path}${detail}`);
   }
   return response.json() as Promise<unknown>;
 }
