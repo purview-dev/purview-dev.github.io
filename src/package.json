@@ -1,0 +1,59 @@
+{
+  "name": "@purview-dev/website",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Purview-Dev public website and unified documentation portal.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "check:assets": "bun run scripts/check-assets.ts",
+    "check:generated": "bun run scripts/check-generated.ts",
+    "check:links": "bun run scripts/check-links.ts",
+    "clean": "bun run scripts/clean.ts",
+    "data:sync": "bun run scripts/data-sync.ts",
+    "dev": "astro dev",
+    "fetch:releases": "bun run scripts/fetch-releases.ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "preview": "astro preview",
+    "refresh:fixtures": "bun run scripts/refresh-fixtures.ts",
+    "test": "bun test tests/unit",
+    "test:dist": "bun test tests/dist",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "preact": "10.29.8"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@astrojs/preact": "6.0.5",
+    "@astrojs/sitemap": "3.7.4",
+    "@astrojs/starlight": "0.42.1",
+    "@astrojs/starlight-tailwind": "5.0.0",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/bun": "1.4.2",
+    "@types/semver": "^7.8.0",
+    "astro": "7.3.2",
+    "fast-glob": "3.3.3",
+    "lefthook": "2.1.14",
+    "oxfmt": "0.68.0",
+    "oxlint": "1.83.0",
+    "semver": "7.8.5",
+    "sharp": "0.35.4",
+    "starlight-links-validator": "0.26.0",
+    "starlight-llms-txt": "0.12.0",
+    "starlight-sidebar-topics": "0.9.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3",
+    "yaml": "2.9.1",
+    "zod": "4.6.5"
+  },
+  "engines": {
+    "bun": ">=1.4.2",
+    "node": ">=22.12.0"
+  },
+  "packageManager": "bun@1.4.2"
+}

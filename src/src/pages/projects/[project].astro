@@ -1,0 +1,350 @@
+---
+import SiteLayout from '~/layouts/SiteLayout.astro';
+import CopyCommand from '~/components/islands/CopyCommand.tsx';
+import StatusBadge from '~/components/StatusBadge.astro';
+import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '~/lib/badges';
+import { loadProjects } from '~/lib/manifest/load';
+import { projectRepoEnrichment } from '~/lib/releases/repo';
+import { projectReleaseSummary } from '~/lib/releases/transform';
+import { getReleaseIndex } from '~/lib/releases/runtime';
+import { SITE } from '~/lib/site';
+import { nugetPackageUrl, withBase } from '~/lib/urls';
+
+export function getStaticPaths() {
+  return loadProjects().map((project) => ({
+    params: { project: project.id },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: ReturnType<typeof loadProjects>[number];
+}
+
+const { project } = Astro.props;
+const releaseIndex = getReleaseIndex();
+const releases = projectReleaseSummary(project, releaseIndex.data, releaseIndex.source);
+const { tags, repoDescription } = projectRepoEnrichment(project, releaseIndex.data);
+const supplementalRepoDescription =
+  repoDescription &&
+  repoDescription !== project.shortDescription &&
+  repoDescription !== project.description
+    ? repoDescription
+    : null;
+const related = project.related
+  .map((id) => loadProjects().find((candidate) => candidate.id === id))
+  .filter((candidate) => candidate !== undefined);
+const supersededBy = project.supersededBy
+  ? loadProjects().find((candidate) => candidate.id === project.supersededBy)
+  : undefined;
+const primaryPackage = project.packages.find((pkg) => pkg.primary) ?? project.packages[0];
+const docsPath = project.docs ? withBase(`/docs/${project.id}/`) : null;
+const targetFrameworks = project.targetFrameworks ?? [];
+---
+
+<SiteLayout
+  title={`${project.name} — ${SITE.fullName}`}
+  description={project.shortDescription}
+>
+  <div class="pv-container py-12 md:py-16">
+    <nav aria-label="Breadcrumb" class="mb-6 text-sm text-muted">
+      <a href={withBase('/projects/')} class="pv-link">Projects</a>
+      <span aria-hidden="true"> / </span>
+      <span class="text-foreground">{project.name}</span>
+    </nav>
+
+    <div class="max-w-3xl">
+      <div class="flex flex-wrap items-center gap-3">
+        <h1 class="text-3xl font-bold tracking-tight md:text-4xl">{project.name}</h1>
+        <StatusBadge status={project.status} />
+      </div>
+      <p class="mt-4 text-lg text-muted">{project.shortDescription}</p>
+
+      {
+        tags.length > 0 && (
+          <div class="mt-4 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span class="pv-chip" title={`Repository topic: ${tag}`}>
+                {tag}
+              </span>
+            ))}
+          </div>
+        )
+      }
+
+      {
+        project.status === 'archived' && (
+          <div class="mt-6 rounded-lg border border-error/40 bg-error/10 p-4 text-sm">
+            <strong>Archived.</strong> This project is no longer actively developed.
+            {
+              supersededBy && (
+                <>
+                  {' '}It has been superseded by{' '}
+                  <a href={withBase(`/projects/${supersededBy.id}/`)} class="pv-link">
+                    {supersededBy.name}
+                  </a>
+                  .
+                </>
+              )
+            }
+          </div>
+        )
+      }
+
+      <div class="mt-8 flex flex-wrap gap-2">
+        <a
+          href={project.sourceUrl}
+          rel="noopener noreferrer"
+          target="_blank"
+          class="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-emphasis"
+        >
+          Source code
+        </a>
+        {
+          docsPath && (
+            <a
+              href={docsPath}
+              class="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium transition-colors hover:border-brand/40"
+            >
+              Documentation
+            </a>
+          )
+        }
+        <a
+          href={project.releasesUrl}
+          rel="noopener noreferrer"
+          target="_blank"
+          class="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium transition-colors hover:border-brand/40"
+        >
+          Releases
+        </a>
+        <a
+          href={project.issuesUrl}
+          rel="noopener noreferrer"
+          target="_blank"
+          class="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium transition-colors hover:border-brand/40"
+        >
+          Issues
+        </a>
+        {
+          project.discussionsUrl && (
+            <a
+              href={project.discussionsUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+              class="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium transition-colors hover:border-brand/40"
+            >
+              Discussions
+            </a>
+          )
+        }
+      </div>
+
+      <div class="mt-6 flex flex-wrap items-center gap-1.5">
+        {
+          project.status !== 'archived' && (
+            <>
+              {
+                primaryPackage && (
+                  <>
+                    <a
+                      href={nugetPackageUrl(primaryPackage.id)}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      class="inline-flex"
+                    >
+                      <img
+                        src={nugetVersionBadge(primaryPackage.id)}
+                        alt={`NuGet version of ${primaryPackage.id}`}
+                        loading="lazy"
+                        class="h-5 w-auto"
+                      />
+                    </a>
+                    <a
+                      href={nugetPackageUrl(primaryPackage.id)}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      class="inline-flex"
+                    >
+                      <img
+                        src={nugetDownloadsBadge(primaryPackage.id)}
+                        alt={`NuGet downloads of ${primaryPackage.id}`}
+                        loading="lazy"
+                        class="h-5 w-auto"
+                      />
+                    </a>
+                  </>
+                )
+              }
+              <a
+                href={actionsUrl(project.repository)}
+                rel="noopener noreferrer"
+                target="_blank"
+                class="inline-flex"
+              >
+                <img
+                  src={buildBadge(project.repository)}
+                  alt={`Build status of ${project.name}`}
+                  loading="lazy"
+                  class="h-5 w-auto"
+                />
+              </a>
+            </>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="mt-12 grid gap-10 lg:grid-cols-[1fr_320px]">
+      <div class="min-w-0 space-y-12">
+        <section>
+          <h2 class="text-xl font-semibold">Overview</h2>
+          <p class="mt-4 leading-relaxed text-muted">{project.description}</p>
+          {
+            supplementalRepoDescription && (
+              <p class="mt-3 text-sm text-muted">
+                From the repository: <span class="text-foreground">{supplementalRepoDescription}</span>
+              </p>
+            )
+          }
+        </section>
+
+        {
+          project.packages.length > 0 && (
+            <section>
+              <h2 class="text-xl font-semibold">Packages</h2>
+              <div class="mt-4 overflow-x-auto rounded-xl border border-border">
+                <table class="w-full min-w-[32rem] text-left text-sm">
+                  <thead class="border-b border-border bg-surface">
+                    <tr>
+                      <th scope="col" class="px-4 py-3 font-semibold">Package</th>
+                      <th scope="col" class="px-4 py-3 font-semibold">Stable</th>
+                      <th scope="col" class="px-4 py-3 font-semibold">Prerelease</th>
+                      <th scope="col" class="px-4 py-3 font-semibold">Downloads</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      releases.packages.map((pkg) => (
+                        <tr class="border-b border-border last:border-0">
+                          <td class="px-4 py-3">
+                            <a
+                              href={pkg.nugetUrl}
+                              rel="noopener noreferrer"
+                              target="_blank"
+                              class="pv-link break-all"
+                            >
+                              {pkg.packageId}
+                            </a>
+                            {
+                              pkg.deprecated && (
+                                <span class="ml-2 rounded-full border border-warning/40 bg-warning/10 px-2 py-0.5 text-xs text-warning">
+                                  deprecated
+                                </span>
+                              )
+                            }
+                          </td>
+                          <td class="px-4 py-3 font-mono text-xs">
+                            {pkg.latestStable ?? <span class="text-muted">—</span>}
+                          </td>
+                          <td class="px-4 py-3 font-mono text-xs">
+                            {pkg.latestPrerelease ?? <span class="text-muted">—</span>}
+                          </td>
+                          <td class="px-4 py-3 text-muted">
+                            {pkg.totalDownloads != null
+                              ? pkg.totalDownloads.toLocaleString('en-US')
+                              : '—'}
+                          </td>
+                        </tr>
+                      ))
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )
+        }
+
+        {
+          primaryPackage && project.status !== 'archived' && (
+            <section>
+              <h2 class="text-xl font-semibold">Install</h2>
+              <CopyCommand
+                client:idle
+                command={`dotnet add package ${primaryPackage.id}`}
+              />
+            </section>
+          )
+        }
+      </div>
+
+      <aside class="space-y-6">
+        <div class="rounded-xl border border-border bg-surface p-5">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-muted">Details</h2>
+          <dl class="mt-4 space-y-3 text-sm">
+            <div class="flex justify-between gap-3">
+              <dt class="text-muted">Status</dt>
+              <dd><StatusBadge status={project.status} /></dd>
+            </div>
+            <div class="flex justify-between gap-3">
+              <dt class="text-muted">Category</dt>
+              <dd class="text-right">{project.category}</dd>
+            </div>
+            {
+              targetFrameworks.length > 0 && (
+                <div class="flex justify-between gap-3">
+                  <dt class="text-muted">Targets</dt>
+                  <dd class="text-right font-mono text-xs">{targetFrameworks.join(', ')}</dd>
+                </div>
+              )
+            }
+            {
+              releases.latestRelease && (
+                <div class="flex justify-between gap-3">
+                  <dt class="text-muted">Latest release</dt>
+                  <dd>
+                    <a
+                      href={releases.latestRelease.htmlUrl}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      class="pv-link font-mono text-xs"
+                    >
+                      {releases.latestRelease.tagName}
+                    </a>
+                  </dd>
+                </div>
+              )
+            }
+            <div class="flex justify-between gap-3">
+              <dt class="text-muted">Repository</dt>
+              <dd class="text-right font-mono text-xs">{project.repository}</dd>
+            </div>
+          </dl>
+        </div>
+
+        {
+          related.length > 0 && (
+            <div class="rounded-xl border border-border bg-surface p-5">
+              <h2 class="text-sm font-semibold uppercase tracking-wider text-muted">Related</h2>
+              <ul class="mt-4 list-none space-y-2 text-sm">
+                {
+                  related.map((relatedProject) => (
+                    <li>
+                      <a href={withBase(`/projects/${relatedProject.id}/`)} class="pv-link">
+                        {relatedProject.name}
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+          )
+        }
+
+        <p class="text-xs text-muted">
+          Release data retrieved {releases.retrievedAt ? `on ${releases.retrievedAt.slice(0, 10)}` : 'from committed fixtures'}.
+        </p>
+      </aside>
+    </div>
+  </div>
+</SiteLayout>

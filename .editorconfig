@@ -1,6 +1,3 @@
-# Editor configuration for the Purview-Dev website repository.
-# https://editorconfig.org
-
 root = true
 
 [*]

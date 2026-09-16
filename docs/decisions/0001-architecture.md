@@ -43,10 +43,11 @@ repository, edit URL), converts GitHub alert blockquotes to Starlight asides,
 rewrites relative links and images so they work inside the portal, and resolves
 `_Sidebar.md` ordering where the source provides it. Each page exposes its
 owning project, lifecycle status, staleness, and an edit link back to the source
-repository. Documentation is served at project-root paths (e.g.
-`/telemetry-sourcegenerator/`) rather than `/docs/<project>/`: keeping content
-in the default locale is required for `llms.txt` generation and avoids a
-misleading language selector.
+repository. Documentation is served under `/docs/<project>/` (e.g.
+`/docs/telemetry-sourcegenerator/`), keeping all documentation pages under a
+single `/docs/*` namespace while each project keeps its own sidebar section.
+Content stays in the default locale, which is required for `llms.txt`
+generation and avoids a misleading language selector.
 
 ### 4. Preact islands instead of a client-heavy application
 
