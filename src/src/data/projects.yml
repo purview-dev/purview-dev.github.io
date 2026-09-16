@@ -15,10 +15,8 @@ projects:
     featured: true
     order: 10
     docs:
-      source: wiki
-      exclude:
-        - _Sidebar.md
-        - _Footer.md
+      source: github-path
+      path: docs/wiki
     targetFrameworks:
       - net8.0
       - net9.0
@@ -93,7 +91,10 @@ projects:
     featured: true
     order: 30
     docs:
-      source: readme
+      source: github-path
+      path: docs/wiki
+      exclude:
+        - _Sidebar.md
     targetFrameworks:
       - net8.0
       - net9.0
@@ -124,8 +125,9 @@ projects:
     order: 40
     docs:
       source: github-path
-      path: docs
-      readmeAsIndex: true
+      path: docs/wiki
+      exclude:
+        - _Sidebar.md
     targetFrameworks:
       - net8.0
       - net9.0
@@ -153,10 +155,9 @@ projects:
     order: 50
     docs:
       source: github-path
-      path: docs
-      readmeAsIndex: true
+      path: docs/wiki
       exclude:
-        - README.md
+        - _Sidebar.md
     targetFrameworks:
       - net10.0
     packages:
@@ -176,7 +177,10 @@ projects:
     status: preview
     order: 55
     docs:
-      source: readme
+      source: github-path
+      path: docs/wiki
+      exclude:
+        - _Sidebar.md
     packages:
       - id: AspireC4.Hosting
         description: Aspire hosting extension for the AspireC4 plugin, generating a dynamic LikeC4 architecture diagram for your Aspire application.
@@ -196,8 +200,9 @@ projects:
     order: 60
     docs:
       source: github-path
-      path: docs
-      readmeAsIndex: true
+      path: docs/wiki
+      exclude:
+        - _Sidebar.md
     targetFrameworks:
       - net10.0
     packages:
@@ -218,7 +223,10 @@ projects:
     status: preview
     order: 70
     docs:
-      source: readme
+      source: github-path
+      path: docs/wiki
+      exclude:
+        - _Sidebar.md
     targetFrameworks:
       - msbuild
     packages:
