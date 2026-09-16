@@ -4,6 +4,9 @@
 
 version: 2
 updates:
+  # The repository is a Bun workspace: the lockfile (`bun.lock`) and the
+  # workspace root `package.json` live at `/`; the site's dependencies are
+  # declared in `src/package.json` and are resolved through the root lockfile.
   - package-ecosystem: npm
     directory: /
     schedule:
