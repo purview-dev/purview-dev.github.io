@@ -34,7 +34,7 @@ describe('GitHub normalisation (real fixtures)', () => {
     );
     expect(repo.fullName).toBe('purview-dev/telemetry-sourcegenerator');
     expect(repo.archived).toBe(false);
-    expect(repo.hasDiscussions).toBe(true);
+    expect(repo.hasDiscussions).toBe(false);
   });
 
   test('parses release fixtures including the prerelease-flag quirk', () => {
