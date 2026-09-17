@@ -114,15 +114,15 @@ describe('version selection (semver)', () => {
     expect(selectPrereleaseVersion(versions)).toBe('1.0.0-prerelease.55');
   });
 
-  test('selects the latest prerelease for the DotNetProjectSdk fixture', () => {
+  test('selects the latest prerelease for the BuildSdk fixture', () => {
     const index = parseNuGetIndex(
-      fixture('nuget/purview.dotnetprojectsdk.json') as Record<string, unknown>,
-      'Purview.DotNetProjectSdk',
+      fixture('nuget/purview.buildsdk.json') as Record<string, unknown>,
+      'Purview.BuildSdk',
     );
-    expect(index.versions).toContain('1.0.0-reprelease.0');
+    expect(index.versions).toContain('1.0.0-prerelease.56');
     expect(selectVersions(index.versions)).toEqual({
       stable: null,
-      prerelease: '1.0.0-prerelease.55',
+      prerelease: '1.0.0-prerelease.56',
     });
   });
 

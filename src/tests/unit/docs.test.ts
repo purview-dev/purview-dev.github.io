@@ -69,10 +69,10 @@ describe('front matter', () => {
       status: 'preview',
       lastReviewed: '2026-09-15',
       sourceProject: 'event-sourcing',
-      sourceRepo: 'purview-dev/eventsourcing',
+      sourceRepo: 'purview-dev/event-sourcing',
       sourcePath: 'docs/wiki/Getting-Started.md',
       editUrl:
-        'https://github.com/purview-dev/eventsourcing/edit/main/docs/wiki/Getting-Started.md',
+        'https://github.com/purview-dev/event-sourcing/edit/main/docs/wiki/Getting-Started.md',
     };
     const rendered = renderFrontmatter(frontmatter);
     expect(rendered).toContain('lastReviewed: "2026-09-15"');
@@ -88,9 +88,9 @@ describe('front matter', () => {
       status: 'preview',
       lastReviewed: '2026-09-15',
       sourceProject: 'event-sourcing',
-      sourceRepo: 'purview-dev/eventsourcing',
+      sourceRepo: 'purview-dev/event-sourcing',
       sourcePath: 'docs/wiki/Getting-Started.md',
-      editUrl: 'https://github.com/purview-dev/eventsourcing/edit/main/Getting-Started.md',
+      editUrl: 'https://github.com/purview-dev/event-sourcing/edit/main/Getting-Started.md',
       tags: ['event-sourcing', 'dotnet', 'csharp'],
     };
     const rendered = renderFrontmatter(frontmatter);

@@ -49,7 +49,7 @@ describe('project manifest', () => {
     const projects = loadProjects();
     const telemetry = projects.find((p) => p.id === 'telemetry-sourcegenerator');
     expect(telemetry?.install).toBe('nuget');
-    const sdk = projects.find((p) => p.id === 'dotnet-project-sdk');
+    const sdk = projects.find((p) => p.id === 'build-sdk');
     expect(sdk?.install).toBe('msbuild-sdk');
     const build = projects.find((p) => p.id === 'build');
     expect(build?.install).toBe('dotnet-tool');

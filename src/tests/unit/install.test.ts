@@ -47,23 +47,17 @@ describe('installOptions — nuget', () => {
 
 describe('installOptions — msbuild-sdk', () => {
   test('renders the SDK options with version interpolation', () => {
-    const options = installOptions(
-      'msbuild-sdk',
-      'Purview.DotNetProjectSdk',
-      '1.0.0-prerelease.55',
-    );
+    const options = installOptions('msbuild-sdk', 'Purview.BuildSdk', '1.0.0-prerelease.56');
     expect(options.map((option) => option.label)).toEqual([
       'global.json',
       'SDK',
       'File-Based Apps',
     ]);
     expect(options[0]?.code).toBe(
-      '{\n  "msbuild-sdks": {\n    "Purview.DotNetProjectSdk": "1.0.0-prerelease.55"\n  }\n}',
+      '{\n  "msbuild-sdks": {\n    "Purview.BuildSdk": "1.0.0-prerelease.56"\n  }\n}',
     );
-    expect(options[1]?.code).toBe(
-      '<Sdk Name="Purview.DotNetProjectSdk" Version="1.0.0-prerelease.55" />',
-    );
-    expect(options[2]?.code).toBe('#:sdk Purview.DotNetProjectSdk@1.0.0-prerelease.55');
+    expect(options[1]?.code).toBe('<Sdk Name="Purview.BuildSdk" Version="1.0.0-prerelease.56" />');
+    expect(options[2]?.code).toBe('#:sdk Purview.BuildSdk@1.0.0-prerelease.56');
   });
 });
 

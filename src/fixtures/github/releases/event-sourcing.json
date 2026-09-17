@@ -1,9 +1,9 @@
 [
   {
-    "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/388969020",
-    "assets_url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/388969020/assets",
-    "upload_url": "https://uploads.github.com/repos/purview-dev/eventsourcing/releases/388969020/assets{?name,label}",
-    "html_url": "https://github.com/purview-dev/eventsourcing/releases/tag/v2.0.0-prerelease.32",
+    "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/388969020",
+    "assets_url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/388969020/assets",
+    "upload_url": "https://uploads.github.com/repos/purview-dev/event-sourcing/releases/388969020/assets{?name,label}",
+    "html_url": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.32",
     "id": 388969020,
     "author": {
       "login": "github-actions[bot]",
@@ -37,16 +37,16 @@
     "updated_at": "2026-09-15T08:12:56Z",
     "published_at": "2026-09-15T08:12:56Z",
     "assets": [],
-    "tarball_url": "https://api.github.com/repos/purview-dev/eventsourcing/tarball/v2.0.0-prerelease.32",
-    "zipball_url": "https://api.github.com/repos/purview-dev/eventsourcing/zipball/v2.0.0-prerelease.32",
+    "tarball_url": "https://api.github.com/repos/purview-dev/event-sourcing/tarball/v2.0.0-prerelease.32",
+    "zipball_url": "https://api.github.com/repos/purview-dev/event-sourcing/zipball/v2.0.0-prerelease.32",
     "body": "## What's Changed\n* Package update by @kieronlanning in https://github.com/purview-dev/eventsourcing/pull/49\n\n\n**Full Changelog**: https://github.com/purview-dev/eventsourcing/compare/v2.0.0-prerelease.31...v2.0.0-prerelease.32",
     "mentions_count": 1
   },
   {
-    "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/387664671",
-    "assets_url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/387664671/assets",
-    "upload_url": "https://uploads.github.com/repos/purview-dev/eventsourcing/releases/387664671/assets{?name,label}",
-    "html_url": "https://github.com/purview-dev/eventsourcing/releases/tag/v2.0.0-prerelease.31",
+    "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/387664671",
+    "assets_url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/387664671/assets",
+    "upload_url": "https://uploads.github.com/repos/purview-dev/event-sourcing/releases/387664671/assets{?name,label}",
+    "html_url": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.31",
     "id": 387664671,
     "author": {
       "login": "github-actions[bot]",
@@ -81,7 +81,7 @@
     "published_at": "2026-09-12T18:30:10Z",
     "assets": [
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745396",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745396",
         "id": 559745396,
         "node_id": "RA_kwDOL0aKDs4hXQl0",
         "name": "Purview.EventSourcing.2.0.0-prerelease.31.nupkg",
@@ -114,10 +114,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:26Z",
         "updated_at": "2026-09-12T18:30:26Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745427",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745427",
         "id": 559745427,
         "node_id": "RA_kwDOL0aKDs4hXQmT",
         "name": "Purview.EventSourcing.2.0.0-prerelease.31.snupkg",
@@ -150,10 +150,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:27Z",
         "updated_at": "2026-09-12T18:30:27Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745007",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745007",
         "id": 559745007,
         "node_id": "RA_kwDOL0aKDs4hXQfv",
         "name": "Purview.EventSourcing.Admin.Abstractions.2.0.0-prerelease.31.nupkg",
@@ -186,10 +186,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:11Z",
         "updated_at": "2026-09-12T18:30:11Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Abstractions.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Abstractions.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745176",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745176",
         "id": 559745176,
         "node_id": "RA_kwDOL0aKDs4hXQiY",
         "name": "Purview.EventSourcing.Admin.Abstractions.2.0.0-prerelease.31.snupkg",
@@ -222,10 +222,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:19Z",
         "updated_at": "2026-09-12T18:30:19Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Abstractions.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Abstractions.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745205",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745205",
         "id": 559745205,
         "node_id": "RA_kwDOL0aKDs4hXQi1",
         "name": "Purview.EventSourcing.Admin.API.2.0.0-prerelease.31.nupkg",
@@ -258,10 +258,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:20Z",
         "updated_at": "2026-09-12T18:30:20Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.API.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.API.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745223",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745223",
         "id": 559745223,
         "node_id": "RA_kwDOL0aKDs4hXQjH",
         "name": "Purview.EventSourcing.Admin.API.2.0.0-prerelease.31.snupkg",
@@ -294,10 +294,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:21Z",
         "updated_at": "2026-09-12T18:30:21Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.API.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.API.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559744991",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559744991",
         "id": 559744991,
         "node_id": "RA_kwDOL0aKDs4hXQff",
         "name": "Purview.EventSourcing.Admin.AzureStorage.2.0.0-prerelease.31.nupkg",
@@ -330,10 +330,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:11Z",
         "updated_at": "2026-09-12T18:30:11Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.AzureStorage.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.AzureStorage.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745090",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745090",
         "id": 559745090,
         "node_id": "RA_kwDOL0aKDs4hXQhC",
         "name": "Purview.EventSourcing.Admin.AzureStorage.2.0.0-prerelease.31.snupkg",
@@ -366,10 +366,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:14Z",
         "updated_at": "2026-09-12T18:30:15Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.AzureStorage.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.AzureStorage.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745256",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745256",
         "id": 559745256,
         "node_id": "RA_kwDOL0aKDs4hXQjo",
         "name": "Purview.EventSourcing.Admin.Client.2.0.0-prerelease.31.nupkg",
@@ -402,10 +402,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:22Z",
         "updated_at": "2026-09-12T18:30:22Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Client.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Client.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745292",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745292",
         "id": 559745292,
         "node_id": "RA_kwDOL0aKDs4hXQkM",
         "name": "Purview.EventSourcing.Admin.Client.2.0.0-prerelease.31.snupkg",
@@ -438,10 +438,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:24Z",
         "updated_at": "2026-09-12T18:30:24Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Client.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Client.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745064",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745064",
         "id": 559745064,
         "node_id": "RA_kwDOL0aKDs4hXQgo",
         "name": "Purview.EventSourcing.Admin.MongoDB.2.0.0-prerelease.31.nupkg",
@@ -474,10 +474,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:14Z",
         "updated_at": "2026-09-12T18:30:14Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.MongoDB.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.MongoDB.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745269",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745269",
         "id": 559745269,
         "node_id": "RA_kwDOL0aKDs4hXQj1",
         "name": "Purview.EventSourcing.Admin.MongoDB.2.0.0-prerelease.31.snupkg",
@@ -510,10 +510,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:23Z",
         "updated_at": "2026-09-12T18:30:23Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.MongoDB.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.MongoDB.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745099",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745099",
         "id": 559745099,
         "node_id": "RA_kwDOL0aKDs4hXQhL",
         "name": "Purview.EventSourcing.Admin.Postgres.2.0.0-prerelease.31.nupkg",
@@ -546,10 +546,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:15Z",
         "updated_at": "2026-09-12T18:30:15Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Postgres.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Postgres.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745259",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745259",
         "id": 559745259,
         "node_id": "RA_kwDOL0aKDs4hXQjr",
         "name": "Purview.EventSourcing.Admin.Postgres.2.0.0-prerelease.31.snupkg",
@@ -582,10 +582,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:22Z",
         "updated_at": "2026-09-12T18:30:23Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Postgres.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Postgres.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745051",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745051",
         "id": 559745051,
         "node_id": "RA_kwDOL0aKDs4hXQgb",
         "name": "Purview.EventSourcing.Admin.Security.2.0.0-prerelease.31.nupkg",
@@ -618,10 +618,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:13Z",
         "updated_at": "2026-09-12T18:30:13Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Security.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Security.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745351",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745351",
         "id": 559745351,
         "node_id": "RA_kwDOL0aKDs4hXQlH",
         "name": "Purview.EventSourcing.Admin.Security.2.0.0-prerelease.31.snupkg",
@@ -654,10 +654,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:25Z",
         "updated_at": "2026-09-12T18:30:25Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Security.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Security.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745185",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745185",
         "id": 559745185,
         "node_id": "RA_kwDOL0aKDs4hXQih",
         "name": "Purview.EventSourcing.Admin.Site.2.0.0-prerelease.31.nupkg",
@@ -690,10 +690,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:19Z",
         "updated_at": "2026-09-12T18:30:19Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Site.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Site.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745021",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745021",
         "id": 559745021,
         "node_id": "RA_kwDOL0aKDs4hXQf9",
         "name": "Purview.EventSourcing.Admin.Site.2.0.0-prerelease.31.snupkg",
@@ -726,10 +726,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:12Z",
         "updated_at": "2026-09-12T18:30:12Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Site.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.Site.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745144",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745144",
         "id": 559745144,
         "node_id": "RA_kwDOL0aKDs4hXQh4",
         "name": "Purview.EventSourcing.Admin.SqlServer.2.0.0-prerelease.31.nupkg",
@@ -762,10 +762,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:17Z",
         "updated_at": "2026-09-12T18:30:17Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.SqlServer.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.SqlServer.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745096",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745096",
         "id": 559745096,
         "node_id": "RA_kwDOL0aKDs4hXQhI",
         "name": "Purview.EventSourcing.Admin.SqlServer.2.0.0-prerelease.31.snupkg",
@@ -798,10 +798,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:15Z",
         "updated_at": "2026-09-12T18:30:15Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.SqlServer.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Admin.SqlServer.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745321",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745321",
         "id": 559745321,
         "node_id": "RA_kwDOL0aKDs4hXQkp",
         "name": "Purview.EventSourcing.AzureStorage.2.0.0-prerelease.31.nupkg",
@@ -834,10 +834,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:24Z",
         "updated_at": "2026-09-12T18:30:24Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.AzureStorage.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.AzureStorage.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745408",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745408",
         "id": 559745408,
         "node_id": "RA_kwDOL0aKDs4hXQmA",
         "name": "Purview.EventSourcing.AzureStorage.2.0.0-prerelease.31.snupkg",
@@ -870,10 +870,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:27Z",
         "updated_at": "2026-09-12T18:30:27Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.AzureStorage.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.AzureStorage.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745076",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745076",
         "id": 559745076,
         "node_id": "RA_kwDOL0aKDs4hXQg0",
         "name": "Purview.EventSourcing.CosmosDb.2.0.0-prerelease.31.nupkg",
@@ -906,10 +906,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:14Z",
         "updated_at": "2026-09-12T18:30:14Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.CosmosDb.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.CosmosDb.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745128",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745128",
         "id": 559745128,
         "node_id": "RA_kwDOL0aKDs4hXQho",
         "name": "Purview.EventSourcing.CosmosDb.2.0.0-prerelease.31.snupkg",
@@ -942,10 +942,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:17Z",
         "updated_at": "2026-09-12T18:30:17Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.CosmosDb.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.CosmosDb.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745110",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745110",
         "id": 559745110,
         "node_id": "RA_kwDOL0aKDs4hXQhW",
         "name": "Purview.EventSourcing.InMemory.2.0.0-prerelease.31.nupkg",
@@ -978,10 +978,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:16Z",
         "updated_at": "2026-09-12T18:30:16Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.InMemory.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.InMemory.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745339",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745339",
         "id": 559745339,
         "node_id": "RA_kwDOL0aKDs4hXQk7",
         "name": "Purview.EventSourcing.InMemory.2.0.0-prerelease.31.snupkg",
@@ -1014,10 +1014,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:25Z",
         "updated_at": "2026-09-12T18:30:25Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.InMemory.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.InMemory.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745284",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745284",
         "id": 559745284,
         "node_id": "RA_kwDOL0aKDs4hXQkE",
         "name": "Purview.EventSourcing.MongoDB.2.0.0-prerelease.31.nupkg",
@@ -1050,10 +1050,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:23Z",
         "updated_at": "2026-09-12T18:30:23Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.MongoDB.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.MongoDB.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745200",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745200",
         "id": 559745200,
         "node_id": "RA_kwDOL0aKDs4hXQiw",
         "name": "Purview.EventSourcing.MongoDB.2.0.0-prerelease.31.snupkg",
@@ -1086,10 +1086,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:20Z",
         "updated_at": "2026-09-12T18:30:20Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.MongoDB.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.MongoDB.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745375",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745375",
         "id": 559745375,
         "node_id": "RA_kwDOL0aKDs4hXQlf",
         "name": "Purview.EventSourcing.Postgres.2.0.0-prerelease.31.nupkg",
@@ -1122,10 +1122,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:25Z",
         "updated_at": "2026-09-12T18:30:26Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Postgres.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Postgres.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745163",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745163",
         "id": 559745163,
         "node_id": "RA_kwDOL0aKDs4hXQiL",
         "name": "Purview.EventSourcing.Postgres.2.0.0-prerelease.31.snupkg",
@@ -1158,10 +1158,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:18Z",
         "updated_at": "2026-09-12T18:30:18Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Postgres.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Postgres.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745152",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745152",
         "id": 559745152,
         "node_id": "RA_kwDOL0aKDs4hXQiA",
         "name": "Purview.EventSourcing.SqlServer.2.0.0-prerelease.31.nupkg",
@@ -1194,10 +1194,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:18Z",
         "updated_at": "2026-09-12T18:30:18Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.SqlServer.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.SqlServer.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745043",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745043",
         "id": 559745043,
         "node_id": "RA_kwDOL0aKDs4hXQgT",
         "name": "Purview.EventSourcing.SqlServer.2.0.0-prerelease.31.snupkg",
@@ -1230,10 +1230,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:13Z",
         "updated_at": "2026-09-12T18:30:13Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.SqlServer.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.SqlServer.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745240",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745240",
         "id": 559745240,
         "node_id": "RA_kwDOL0aKDs4hXQjY",
         "name": "Purview.EventSourcing.Validation.FluentValidation.2.0.0-prerelease.31.nupkg",
@@ -1266,10 +1266,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:21Z",
         "updated_at": "2026-09-12T18:30:22Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Validation.FluentValidation.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Validation.FluentValidation.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745114",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745114",
         "id": 559745114,
         "node_id": "RA_kwDOL0aKDs4hXQha",
         "name": "Purview.EventSourcing.Validation.FluentValidation.2.0.0-prerelease.31.snupkg",
@@ -1302,10 +1302,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:16Z",
         "updated_at": "2026-09-12T18:30:16Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Validation.FluentValidation.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Validation.FluentValidation.2.0.0-prerelease.31.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745033",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745033",
         "id": 559745033,
         "node_id": "RA_kwDOL0aKDs4hXQgJ",
         "name": "Purview.EventSourcing.Validation.ZodSharp.2.0.0-prerelease.31.nupkg",
@@ -1338,10 +1338,10 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:12Z",
         "updated_at": "2026-09-12T18:30:12Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Validation.ZodSharp.2.0.0-prerelease.31.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Validation.ZodSharp.2.0.0-prerelease.31.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/559745213",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/559745213",
         "id": 559745213,
         "node_id": "RA_kwDOL0aKDs4hXQi9",
         "name": "Purview.EventSourcing.Validation.ZodSharp.2.0.0-prerelease.31.snupkg",
@@ -1374,19 +1374,19 @@
         "download_count": 1,
         "created_at": "2026-09-12T18:30:20Z",
         "updated_at": "2026-09-12T18:30:21Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Validation.ZodSharp.2.0.0-prerelease.31.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.31/Purview.EventSourcing.Validation.ZodSharp.2.0.0-prerelease.31.snupkg"
       }
     ],
-    "tarball_url": "https://api.github.com/repos/purview-dev/eventsourcing/tarball/v2.0.0-prerelease.31",
-    "zipball_url": "https://api.github.com/repos/purview-dev/eventsourcing/zipball/v2.0.0-prerelease.31",
+    "tarball_url": "https://api.github.com/repos/purview-dev/event-sourcing/tarball/v2.0.0-prerelease.31",
+    "zipball_url": "https://api.github.com/repos/purview-dev/event-sourcing/zipball/v2.0.0-prerelease.31",
     "body": "## What's Changed\n* chore: removed old ZodSharp packages by @kieronlanning in https://github.com/purview-dev/eventsourcing/pull/47\n* Sg update by @kieronlanning in https://github.com/purview-dev/eventsourcing/pull/48\n\n\n**Full Changelog**: https://github.com/purview-dev/eventsourcing/compare/v2.0.0-prerelease.30...v2.0.0-prerelease.31",
     "mentions_count": 1
   },
   {
-    "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/384943575",
-    "assets_url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/384943575/assets",
-    "upload_url": "https://uploads.github.com/repos/purview-dev/eventsourcing/releases/384943575/assets{?name,label}",
-    "html_url": "https://github.com/purview-dev/eventsourcing/releases/tag/v2.0.0-prerelease.30",
+    "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/384943575",
+    "assets_url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/384943575/assets",
+    "upload_url": "https://uploads.github.com/repos/purview-dev/event-sourcing/releases/384943575/assets{?name,label}",
+    "html_url": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.30",
     "id": 384943575,
     "author": {
       "login": "github-actions[bot]",
@@ -1421,7 +1421,7 @@
     "published_at": "2026-09-08T17:49:03Z",
     "assets": [
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994063",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994063",
         "id": 550994063,
         "node_id": "RA_kwDOL0aKDs4g14CP",
         "name": "Purview.EventSourcing.2.0.0-prerelease.30.nupkg",
@@ -1454,10 +1454,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:15Z",
         "updated_at": "2026-09-08T17:49:15Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993815",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993815",
         "id": 550993815,
         "node_id": "RA_kwDOL0aKDs4g13-X",
         "name": "Purview.EventSourcing.2.0.0-prerelease.30.snupkg",
@@ -1490,10 +1490,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:06Z",
         "updated_at": "2026-09-08T17:49:06Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994119",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994119",
         "id": 550994119,
         "node_id": "RA_kwDOL0aKDs4g14DH",
         "name": "Purview.EventSourcing.Admin.Abstractions.2.0.0-prerelease.30.nupkg",
@@ -1526,10 +1526,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:17Z",
         "updated_at": "2026-09-08T17:49:17Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Abstractions.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Abstractions.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994167",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994167",
         "id": 550994167,
         "node_id": "RA_kwDOL0aKDs4g14D3",
         "name": "Purview.EventSourcing.Admin.Abstractions.2.0.0-prerelease.30.snupkg",
@@ -1562,10 +1562,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:18Z",
         "updated_at": "2026-09-08T17:49:18Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Abstractions.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Abstractions.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994250",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994250",
         "id": 550994250,
         "node_id": "RA_kwDOL0aKDs4g14FK",
         "name": "Purview.EventSourcing.Admin.API.2.0.0-prerelease.30.nupkg",
@@ -1598,10 +1598,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:20Z",
         "updated_at": "2026-09-08T17:49:21Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.API.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.API.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993912",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993912",
         "id": 550993912,
         "node_id": "RA_kwDOL0aKDs4g13_4",
         "name": "Purview.EventSourcing.Admin.API.2.0.0-prerelease.30.snupkg",
@@ -1634,10 +1634,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:10Z",
         "updated_at": "2026-09-08T17:49:10Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.API.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.API.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993849",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993849",
         "id": 550993849,
         "node_id": "RA_kwDOL0aKDs4g13-5",
         "name": "Purview.EventSourcing.Admin.AzureStorage.2.0.0-prerelease.30.nupkg",
@@ -1670,10 +1670,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:07Z",
         "updated_at": "2026-09-08T17:49:08Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.AzureStorage.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.AzureStorage.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993924",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993924",
         "id": 550993924,
         "node_id": "RA_kwDOL0aKDs4g14AE",
         "name": "Purview.EventSourcing.Admin.AzureStorage.2.0.0-prerelease.30.snupkg",
@@ -1706,10 +1706,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:10Z",
         "updated_at": "2026-09-08T17:49:11Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.AzureStorage.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.AzureStorage.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994138",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994138",
         "id": 550994138,
         "node_id": "RA_kwDOL0aKDs4g14Da",
         "name": "Purview.EventSourcing.Admin.Client.2.0.0-prerelease.30.nupkg",
@@ -1742,10 +1742,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:17Z",
         "updated_at": "2026-09-08T17:49:17Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Client.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Client.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993865",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993865",
         "id": 550993865,
         "node_id": "RA_kwDOL0aKDs4g13_J",
         "name": "Purview.EventSourcing.Admin.Client.2.0.0-prerelease.30.snupkg",
@@ -1778,10 +1778,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:08Z",
         "updated_at": "2026-09-08T17:49:08Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Client.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Client.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994096",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994096",
         "id": 550994096,
         "node_id": "RA_kwDOL0aKDs4g14Cw",
         "name": "Purview.EventSourcing.Admin.MongoDB.2.0.0-prerelease.30.nupkg",
@@ -1814,10 +1814,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:16Z",
         "updated_at": "2026-09-08T17:49:16Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.MongoDB.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.MongoDB.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993936",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993936",
         "id": 550993936,
         "node_id": "RA_kwDOL0aKDs4g14AQ",
         "name": "Purview.EventSourcing.Admin.MongoDB.2.0.0-prerelease.30.snupkg",
@@ -1850,10 +1850,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:11Z",
         "updated_at": "2026-09-08T17:49:11Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.MongoDB.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.MongoDB.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993968",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993968",
         "id": 550993968,
         "node_id": "RA_kwDOL0aKDs4g14Aw",
         "name": "Purview.EventSourcing.Admin.Postgres.2.0.0-prerelease.30.nupkg",
@@ -1886,10 +1886,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:12Z",
         "updated_at": "2026-09-08T17:49:12Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Postgres.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Postgres.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993804",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993804",
         "id": 550993804,
         "node_id": "RA_kwDOL0aKDs4g13-M",
         "name": "Purview.EventSourcing.Admin.Postgres.2.0.0-prerelease.30.snupkg",
@@ -1922,10 +1922,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:05Z",
         "updated_at": "2026-09-08T17:49:06Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Postgres.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Postgres.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994151",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994151",
         "id": 550994151,
         "node_id": "RA_kwDOL0aKDs4g14Dn",
         "name": "Purview.EventSourcing.Admin.Security.2.0.0-prerelease.30.nupkg",
@@ -1958,10 +1958,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:18Z",
         "updated_at": "2026-09-08T17:49:18Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Security.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Security.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994105",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994105",
         "id": 550994105,
         "node_id": "RA_kwDOL0aKDs4g14C5",
         "name": "Purview.EventSourcing.Admin.Security.2.0.0-prerelease.30.snupkg",
@@ -1994,10 +1994,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:16Z",
         "updated_at": "2026-09-08T17:49:17Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Security.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Security.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993934",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993934",
         "id": 550993934,
         "node_id": "RA_kwDOL0aKDs4g14AO",
         "name": "Purview.EventSourcing.Admin.Site.2.0.0-prerelease.30.nupkg",
@@ -2030,10 +2030,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:11Z",
         "updated_at": "2026-09-08T17:49:11Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Site.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Site.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993886",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993886",
         "id": 550993886,
         "node_id": "RA_kwDOL0aKDs4g13_e",
         "name": "Purview.EventSourcing.Admin.Site.2.0.0-prerelease.30.snupkg",
@@ -2066,10 +2066,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:09Z",
         "updated_at": "2026-09-08T17:49:09Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Site.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.Site.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993879",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993879",
         "id": 550993879,
         "node_id": "RA_kwDOL0aKDs4g13_X",
         "name": "Purview.EventSourcing.Admin.SqlServer.2.0.0-prerelease.30.nupkg",
@@ -2102,10 +2102,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:09Z",
         "updated_at": "2026-09-08T17:49:09Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.SqlServer.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.SqlServer.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993771",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993771",
         "id": 550993771,
         "node_id": "RA_kwDOL0aKDs4g139r",
         "name": "Purview.EventSourcing.Admin.SqlServer.2.0.0-prerelease.30.snupkg",
@@ -2138,10 +2138,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:04Z",
         "updated_at": "2026-09-08T17:49:04Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.SqlServer.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Admin.SqlServer.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993952",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993952",
         "id": 550993952,
         "node_id": "RA_kwDOL0aKDs4g14Ag",
         "name": "Purview.EventSourcing.AzureStorage.2.0.0-prerelease.30.nupkg",
@@ -2174,10 +2174,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:12Z",
         "updated_at": "2026-09-08T17:49:12Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.AzureStorage.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.AzureStorage.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994216",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994216",
         "id": 550994216,
         "node_id": "RA_kwDOL0aKDs4g14Eo",
         "name": "Purview.EventSourcing.AzureStorage.2.0.0-prerelease.30.snupkg",
@@ -2210,10 +2210,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:19Z",
         "updated_at": "2026-09-08T17:49:20Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.AzureStorage.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.AzureStorage.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994180",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994180",
         "id": 550994180,
         "node_id": "RA_kwDOL0aKDs4g14EE",
         "name": "Purview.EventSourcing.CosmosDb.2.0.0-prerelease.30.nupkg",
@@ -2246,10 +2246,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:18Z",
         "updated_at": "2026-09-08T17:49:19Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.CosmosDb.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.CosmosDb.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994077",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994077",
         "id": 550994077,
         "node_id": "RA_kwDOL0aKDs4g14Cd",
         "name": "Purview.EventSourcing.CosmosDb.2.0.0-prerelease.30.snupkg",
@@ -2282,10 +2282,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:15Z",
         "updated_at": "2026-09-08T17:49:16Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.CosmosDb.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.CosmosDb.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994033",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994033",
         "id": 550994033,
         "node_id": "RA_kwDOL0aKDs4g14Bx",
         "name": "Purview.EventSourcing.InMemory.2.0.0-prerelease.30.nupkg",
@@ -2318,10 +2318,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:14Z",
         "updated_at": "2026-09-08T17:49:14Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.InMemory.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.InMemory.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993901",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993901",
         "id": 550993901,
         "node_id": "RA_kwDOL0aKDs4g13_t",
         "name": "Purview.EventSourcing.InMemory.2.0.0-prerelease.30.snupkg",
@@ -2354,10 +2354,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:10Z",
         "updated_at": "2026-09-08T17:49:10Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.InMemory.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.InMemory.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994049",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994049",
         "id": 550994049,
         "node_id": "RA_kwDOL0aKDs4g14CB",
         "name": "Purview.EventSourcing.MongoDB.2.0.0-prerelease.30.nupkg",
@@ -2390,10 +2390,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:14Z",
         "updated_at": "2026-09-08T17:49:15Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.MongoDB.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.MongoDB.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994241",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994241",
         "id": 550994241,
         "node_id": "RA_kwDOL0aKDs4g14FB",
         "name": "Purview.EventSourcing.MongoDB.2.0.0-prerelease.30.snupkg",
@@ -2426,10 +2426,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:20Z",
         "updated_at": "2026-09-08T17:49:20Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.MongoDB.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.MongoDB.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993783",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993783",
         "id": 550993783,
         "node_id": "RA_kwDOL0aKDs4g1393",
         "name": "Purview.EventSourcing.Postgres.2.0.0-prerelease.30.nupkg",
@@ -2462,10 +2462,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:04Z",
         "updated_at": "2026-09-08T17:49:05Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Postgres.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Postgres.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994017",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994017",
         "id": 550994017,
         "node_id": "RA_kwDOL0aKDs4g14Bh",
         "name": "Purview.EventSourcing.Postgres.2.0.0-prerelease.30.snupkg",
@@ -2498,10 +2498,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:13Z",
         "updated_at": "2026-09-08T17:49:14Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Postgres.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Postgres.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993835",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993835",
         "id": 550993835,
         "node_id": "RA_kwDOL0aKDs4g13-r",
         "name": "Purview.EventSourcing.SqlServer.2.0.0-prerelease.30.nupkg",
@@ -2534,10 +2534,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:07Z",
         "updated_at": "2026-09-08T17:49:07Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.SqlServer.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.SqlServer.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994202",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994202",
         "id": 550994202,
         "node_id": "RA_kwDOL0aKDs4g14Ea",
         "name": "Purview.EventSourcing.SqlServer.2.0.0-prerelease.30.snupkg",
@@ -2570,10 +2570,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:19Z",
         "updated_at": "2026-09-08T17:49:19Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.SqlServer.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.SqlServer.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993798",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993798",
         "id": 550993798,
         "node_id": "RA_kwDOL0aKDs4g13-G",
         "name": "Purview.EventSourcing.Validation.FluentValidation.2.0.0-prerelease.30.nupkg",
@@ -2606,10 +2606,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:05Z",
         "updated_at": "2026-09-08T17:49:05Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Validation.FluentValidation.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Validation.FluentValidation.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993827",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993827",
         "id": 550993827,
         "node_id": "RA_kwDOL0aKDs4g13-j",
         "name": "Purview.EventSourcing.Validation.FluentValidation.2.0.0-prerelease.30.snupkg",
@@ -2642,10 +2642,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:06Z",
         "updated_at": "2026-09-08T17:49:06Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Validation.FluentValidation.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Validation.FluentValidation.2.0.0-prerelease.30.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550994002",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550994002",
         "id": 550994002,
         "node_id": "RA_kwDOL0aKDs4g14BS",
         "name": "Purview.EventSourcing.Validation.ZodSharp.2.0.0-prerelease.30.nupkg",
@@ -2678,10 +2678,10 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:13Z",
         "updated_at": "2026-09-08T17:49:13Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Validation.ZodSharp.2.0.0-prerelease.30.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Validation.ZodSharp.2.0.0-prerelease.30.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/550993992",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/550993992",
         "id": 550993992,
         "node_id": "RA_kwDOL0aKDs4g14BI",
         "name": "Purview.EventSourcing.Validation.ZodSharp.2.0.0-prerelease.30.snupkg",
@@ -2714,19 +2714,19 @@
         "download_count": 0,
         "created_at": "2026-09-08T17:49:13Z",
         "updated_at": "2026-09-08T17:49:13Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Validation.ZodSharp.2.0.0-prerelease.30.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.30/Purview.EventSourcing.Validation.ZodSharp.2.0.0-prerelease.30.snupkg"
       }
     ],
-    "tarball_url": "https://api.github.com/repos/purview-dev/eventsourcing/tarball/v2.0.0-prerelease.30",
-    "zipball_url": "https://api.github.com/repos/purview-dev/eventsourcing/zipball/v2.0.0-prerelease.30",
+    "tarball_url": "https://api.github.com/repos/purview-dev/event-sourcing/tarball/v2.0.0-prerelease.30",
+    "zipball_url": "https://api.github.com/repos/purview-dev/event-sourcing/zipball/v2.0.0-prerelease.30",
     "body": "## What's Changed\n* Productionsation by @kieronlanning in https://github.com/purview-dev/eventsourcing/pull/46\n\n\n**Full Changelog**: https://github.com/purview-dev/eventsourcing/compare/v2.0.0-prerelease.29...v2.0.0-prerelease.30",
     "mentions_count": 1
   },
   {
-    "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/382820898",
-    "assets_url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/382820898/assets",
-    "upload_url": "https://uploads.github.com/repos/purview-dev/eventsourcing/releases/382820898/assets{?name,label}",
-    "html_url": "https://github.com/purview-dev/eventsourcing/releases/tag/v2.0.0-prerelease.29",
+    "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/382820898",
+    "assets_url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/382820898/assets",
+    "upload_url": "https://uploads.github.com/repos/purview-dev/event-sourcing/releases/382820898/assets{?name,label}",
+    "html_url": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.29",
     "id": 382820898,
     "author": {
       "login": "github-actions[bot]",
@@ -2760,16 +2760,16 @@
     "updated_at": "2026-09-04T15:11:28Z",
     "published_at": "2026-09-04T15:11:28Z",
     "assets": [],
-    "tarball_url": "https://api.github.com/repos/purview-dev/eventsourcing/tarball/v2.0.0-prerelease.29",
-    "zipball_url": "https://api.github.com/repos/purview-dev/eventsourcing/zipball/v2.0.0-prerelease.29",
+    "tarball_url": "https://api.github.com/repos/purview-dev/event-sourcing/tarball/v2.0.0-prerelease.29",
+    "zipball_url": "https://api.github.com/repos/purview-dev/event-sourcing/zipball/v2.0.0-prerelease.29",
     "body": "## What's Changed\n* fix(ci): checkout before release publish by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/26\n* chore(release): prepare prerelease.6 by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/27\n* fix(ci): configure NuGet login user by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/28\n* fix(ci): allow release reruns with existing tag by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/29\n* build: updated CI/CD + release by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/30\n* build: updated CI/CD + release by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/31\n* Scope release GitHub App tokens to the invoking repository by @kieronlanning with @Copilot in https://github.com/purview-dev/purview-eventsourcing/pull/32\n* Merge pull request #32 from kjldev/copilot/configure-github-app by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/33\n* Copilot/configure GitHub app by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/34\n* Inconsistencies by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/35\n* feat: added snapshot strategy to all snapshot stores + azure table store by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/36\n* Snapshot strategies by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/37\n* Cleaning by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/41\n* Sample app repair by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/42\n* Code writer by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/44\n* build: using shared build by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/45\n\n\n**Full Changelog**: https://github.com/purview-dev/purview-eventsourcing/compare/v2.0.0-prerelease.5...v2.0.0-prerelease.29",
     "mentions_count": 1
   },
   {
-    "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/340801973",
-    "assets_url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/340801973/assets",
-    "upload_url": "https://uploads.github.com/repos/purview-dev/eventsourcing/releases/340801973/assets{?name,label}",
-    "html_url": "https://github.com/purview-dev/eventsourcing/releases/tag/v2.0.0-prerelease.5",
+    "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/340801973",
+    "assets_url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/340801973/assets",
+    "upload_url": "https://uploads.github.com/repos/purview-dev/event-sourcing/releases/340801973/assets{?name,label}",
+    "html_url": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.5",
     "id": 340801973,
     "author": {
       "login": "github-actions[bot]",
@@ -2804,7 +2804,7 @@
     "published_at": "2026-06-17T13:33:32Z",
     "assets": [
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/450249346",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/450249346",
         "id": 450249346,
         "node_id": "RA_kwDOL0aKDs4a1kKC",
         "name": "Purview.EventSourcing.2.0.0-prerelease.5.nupkg",
@@ -2837,10 +2837,10 @@
         "download_count": 0,
         "created_at": "2026-06-17T13:33:32Z",
         "updated_at": "2026-06-17T13:33:32Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.5/Purview.EventSourcing.2.0.0-prerelease.5.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.5/Purview.EventSourcing.2.0.0-prerelease.5.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/450249347",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/450249347",
         "id": 450249347,
         "node_id": "RA_kwDOL0aKDs4a1kKD",
         "name": "Purview.EventSourcing.AzureStorage.2.0.0-prerelease.5.nupkg",
@@ -2873,10 +2873,10 @@
         "download_count": 0,
         "created_at": "2026-06-17T13:33:32Z",
         "updated_at": "2026-06-17T13:33:32Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.5/Purview.EventSourcing.AzureStorage.2.0.0-prerelease.5.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.5/Purview.EventSourcing.AzureStorage.2.0.0-prerelease.5.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/450249349",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/450249349",
         "id": 450249349,
         "node_id": "RA_kwDOL0aKDs4a1kKF",
         "name": "Purview.EventSourcing.CosmosDb.2.0.0-prerelease.5.nupkg",
@@ -2909,10 +2909,10 @@
         "download_count": 0,
         "created_at": "2026-06-17T13:33:32Z",
         "updated_at": "2026-06-17T13:33:32Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.5/Purview.EventSourcing.CosmosDb.2.0.0-prerelease.5.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.5/Purview.EventSourcing.CosmosDb.2.0.0-prerelease.5.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/450249350",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/450249350",
         "id": 450249350,
         "node_id": "RA_kwDOL0aKDs4a1kKG",
         "name": "Purview.EventSourcing.MongoDB.2.0.0-prerelease.5.nupkg",
@@ -2945,10 +2945,10 @@
         "download_count": 0,
         "created_at": "2026-06-17T13:33:32Z",
         "updated_at": "2026-06-17T13:33:32Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.5/Purview.EventSourcing.MongoDB.2.0.0-prerelease.5.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.5/Purview.EventSourcing.MongoDB.2.0.0-prerelease.5.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/450249348",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/450249348",
         "id": 450249348,
         "node_id": "RA_kwDOL0aKDs4a1kKE",
         "name": "Purview.EventSourcing.SqlServer.2.0.0-prerelease.5.nupkg",
@@ -2981,18 +2981,18 @@
         "download_count": 0,
         "created_at": "2026-06-17T13:33:32Z",
         "updated_at": "2026-06-17T13:33:32Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v2.0.0-prerelease.5/Purview.EventSourcing.SqlServer.2.0.0-prerelease.5.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v2.0.0-prerelease.5/Purview.EventSourcing.SqlServer.2.0.0-prerelease.5.nupkg"
       }
     ],
-    "tarball_url": "https://api.github.com/repos/purview-dev/eventsourcing/tarball/v2.0.0-prerelease.5",
-    "zipball_url": "https://api.github.com/repos/purview-dev/eventsourcing/zipball/v2.0.0-prerelease.5",
+    "tarball_url": "https://api.github.com/repos/purview-dev/event-sourcing/tarball/v2.0.0-prerelease.5",
+    "zipball_url": "https://api.github.com/repos/purview-dev/event-sourcing/zipball/v2.0.0-prerelease.5",
     "body": "## 2.0.0-prerelease.5\n\n### Patch Changes\n\n- Prepare prerelease.5 release\n\n"
   },
   {
-    "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/311150924",
-    "assets_url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/311150924/assets",
-    "upload_url": "https://uploads.github.com/repos/purview-dev/eventsourcing/releases/311150924/assets{?name,label}",
-    "html_url": "https://github.com/purview-dev/eventsourcing/releases/tag/v1.1.1",
+    "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/311150924",
+    "assets_url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/311150924/assets",
+    "upload_url": "https://uploads.github.com/repos/purview-dev/event-sourcing/releases/311150924/assets{?name,label}",
+    "html_url": "https://github.com/purview-dev/event-sourcing/releases/tag/v1.1.1",
     "id": 311150924,
     "author": {
       "login": "github-actions[bot]",
@@ -3027,7 +3027,7 @@
     "published_at": "2026-04-20T11:58:54Z",
     "assets": [
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676741",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676741",
         "id": 400676741,
         "node_id": "RA_kwDOL0aKDs4X4deF",
         "name": "Purview.EventSourcing.1.1.1.nupkg",
@@ -3060,10 +3060,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.1.1.1.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.1.1.1.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676748",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676748",
         "id": 400676748,
         "node_id": "RA_kwDOL0aKDs4X4deM",
         "name": "Purview.EventSourcing.1.1.1.snupkg",
@@ -3096,10 +3096,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.1.1.1.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.1.1.1.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676743",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676743",
         "id": 400676743,
         "node_id": "RA_kwDOL0aKDs4X4deH",
         "name": "Purview.EventSourcing.AzureStorage.1.1.1.nupkg",
@@ -3132,10 +3132,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.AzureStorage.1.1.1.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.AzureStorage.1.1.1.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676731",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676731",
         "id": 400676731,
         "node_id": "RA_kwDOL0aKDs4X4dd7",
         "name": "Purview.EventSourcing.AzureStorage.1.1.1.snupkg",
@@ -3168,10 +3168,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.AzureStorage.1.1.1.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.AzureStorage.1.1.1.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676740",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676740",
         "id": 400676740,
         "node_id": "RA_kwDOL0aKDs4X4deE",
         "name": "Purview.EventSourcing.CosmosDb.Snapshot.1.1.1.nupkg",
@@ -3204,10 +3204,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.CosmosDb.Snapshot.1.1.1.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.CosmosDb.Snapshot.1.1.1.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676739",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676739",
         "id": 400676739,
         "node_id": "RA_kwDOL0aKDs4X4deD",
         "name": "Purview.EventSourcing.CosmosDb.Snapshot.1.1.1.snupkg",
@@ -3240,10 +3240,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.CosmosDb.Snapshot.1.1.1.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.CosmosDb.Snapshot.1.1.1.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676745",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676745",
         "id": 400676745,
         "node_id": "RA_kwDOL0aKDs4X4deJ",
         "name": "Purview.EventSourcing.MongoDB.Events.1.1.1.nupkg",
@@ -3276,10 +3276,10 @@
         "download_count": 2,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.MongoDB.Events.1.1.1.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.MongoDB.Events.1.1.1.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676734",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676734",
         "id": 400676734,
         "node_id": "RA_kwDOL0aKDs4X4dd-",
         "name": "Purview.EventSourcing.MongoDB.Events.1.1.1.snupkg",
@@ -3312,10 +3312,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.MongoDB.Events.1.1.1.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.MongoDB.Events.1.1.1.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676737",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676737",
         "id": 400676737,
         "node_id": "RA_kwDOL0aKDs4X4deB",
         "name": "Purview.EventSourcing.MongoDB.Snapshot.1.1.1.nupkg",
@@ -3348,10 +3348,10 @@
         "download_count": 2,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.MongoDB.Snapshot.1.1.1.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.MongoDB.Snapshot.1.1.1.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676744",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676744",
         "id": 400676744,
         "node_id": "RA_kwDOL0aKDs4X4deI",
         "name": "Purview.EventSourcing.MongoDB.Snapshot.1.1.1.snupkg",
@@ -3384,10 +3384,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.MongoDB.Snapshot.1.1.1.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.MongoDB.Snapshot.1.1.1.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676736",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676736",
         "id": 400676736,
         "node_id": "RA_kwDOL0aKDs4X4deA",
         "name": "Purview.EventSourcing.Shared.1.1.1.nupkg",
@@ -3420,10 +3420,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.Shared.1.1.1.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.Shared.1.1.1.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676746",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676746",
         "id": 400676746,
         "node_id": "RA_kwDOL0aKDs4X4deK",
         "name": "Purview.EventSourcing.Shared.1.1.1.snupkg",
@@ -3456,10 +3456,10 @@
         "download_count": 0,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.Shared.1.1.1.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.Shared.1.1.1.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676733",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676733",
         "id": 400676733,
         "node_id": "RA_kwDOL0aKDs4X4dd9",
         "name": "Purview.EventSourcing.SourceGenerator.1.1.1.nupkg",
@@ -3492,10 +3492,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.SourceGenerator.1.1.1.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.SourceGenerator.1.1.1.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676732",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676732",
         "id": 400676732,
         "node_id": "RA_kwDOL0aKDs4X4dd8",
         "name": "Purview.EventSourcing.SourceGenerator.1.1.1.symbols.nupkg",
@@ -3528,10 +3528,10 @@
         "download_count": 0,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.SourceGenerator.1.1.1.symbols.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.SourceGenerator.1.1.1.symbols.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676735",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676735",
         "id": 400676735,
         "node_id": "RA_kwDOL0aKDs4X4dd_",
         "name": "Purview.EventSourcing.SqlServer.Events.1.1.1.nupkg",
@@ -3564,10 +3564,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.SqlServer.Events.1.1.1.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.SqlServer.Events.1.1.1.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676738",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676738",
         "id": 400676738,
         "node_id": "RA_kwDOL0aKDs4X4deC",
         "name": "Purview.EventSourcing.SqlServer.Events.1.1.1.snupkg",
@@ -3600,10 +3600,10 @@
         "download_count": 0,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.SqlServer.Events.1.1.1.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.SqlServer.Events.1.1.1.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676742",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676742",
         "id": 400676742,
         "node_id": "RA_kwDOL0aKDs4X4deG",
         "name": "Purview.EventSourcing.SqlServer.Snapshot.1.1.1.nupkg",
@@ -3636,10 +3636,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.SqlServer.Snapshot.1.1.1.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.SqlServer.Snapshot.1.1.1.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400676747",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400676747",
         "id": 400676747,
         "node_id": "RA_kwDOL0aKDs4X4deL",
         "name": "Purview.EventSourcing.SqlServer.Snapshot.1.1.1.snupkg",
@@ -3672,18 +3672,18 @@
         "download_count": 0,
         "created_at": "2026-04-20T11:58:53Z",
         "updated_at": "2026-04-20T11:58:53Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.1/Purview.EventSourcing.SqlServer.Snapshot.1.1.1.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.1/Purview.EventSourcing.SqlServer.Snapshot.1.1.1.snupkg"
       }
     ],
-    "tarball_url": "https://api.github.com/repos/purview-dev/eventsourcing/tarball/v1.1.1",
-    "zipball_url": "https://api.github.com/repos/purview-dev/eventsourcing/zipball/v1.1.1",
+    "tarball_url": "https://api.github.com/repos/purview-dev/event-sourcing/tarball/v1.1.1",
+    "zipball_url": "https://api.github.com/repos/purview-dev/event-sourcing/zipball/v1.1.1",
     "body": "## What's Changed\n* Release v1.1.1: pack EventSourcing.Shared and standardize NuGet package IDs under `Purview.EventSourcing*` by @Copilot in https://github.com/kjldev/purview-eventsourcing/pull/20\n\n\n**Full Changelog**: https://github.com/kjldev/purview-eventsourcing/compare/v1.1.0...v1.1.1"
   },
   {
-    "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/311116892",
-    "assets_url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/311116892/assets",
-    "upload_url": "https://uploads.github.com/repos/purview-dev/eventsourcing/releases/311116892/assets{?name,label}",
-    "html_url": "https://github.com/purview-dev/eventsourcing/releases/tag/v1.1.0",
+    "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/311116892",
+    "assets_url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/311116892/assets",
+    "upload_url": "https://uploads.github.com/repos/purview-dev/event-sourcing/releases/311116892/assets{?name,label}",
+    "html_url": "https://github.com/purview-dev/event-sourcing/releases/tag/v1.1.0",
     "id": 311116892,
     "author": {
       "login": "github-actions[bot]",
@@ -3718,7 +3718,7 @@
     "published_at": "2026-04-20T10:30:45Z",
     "assets": [
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629714",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629714",
         "id": 400629714,
         "node_id": "RA_kwDOL0aKDs4X4R_S",
         "name": "EventSourcing.1.1.0.nupkg",
@@ -3751,10 +3751,10 @@
         "download_count": 2,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:44Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.1.1.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.1.1.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629716",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629716",
         "id": 400629716,
         "node_id": "RA_kwDOL0aKDs4X4R_U",
         "name": "EventSourcing.1.1.0.snupkg",
@@ -3787,10 +3787,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:44Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.1.1.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.1.1.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629712",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629712",
         "id": 400629712,
         "node_id": "RA_kwDOL0aKDs4X4R_Q",
         "name": "EventSourcing.AzureStorage.1.1.0.nupkg",
@@ -3823,10 +3823,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:45Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.AzureStorage.1.1.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.AzureStorage.1.1.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629719",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629719",
         "id": 400629719,
         "node_id": "RA_kwDOL0aKDs4X4R_X",
         "name": "EventSourcing.AzureStorage.1.1.0.snupkg",
@@ -3859,10 +3859,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:45Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.AzureStorage.1.1.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.AzureStorage.1.1.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629705",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629705",
         "id": 400629705,
         "node_id": "RA_kwDOL0aKDs4X4R_J",
         "name": "EventSourcing.CosmosDb.Snapshot.1.1.0.nupkg",
@@ -3895,10 +3895,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:44Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.CosmosDb.Snapshot.1.1.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.CosmosDb.Snapshot.1.1.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629704",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629704",
         "id": 400629704,
         "node_id": "RA_kwDOL0aKDs4X4R_I",
         "name": "EventSourcing.CosmosDb.Snapshot.1.1.0.snupkg",
@@ -3931,10 +3931,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:44Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.CosmosDb.Snapshot.1.1.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.CosmosDb.Snapshot.1.1.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629706",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629706",
         "id": 400629706,
         "node_id": "RA_kwDOL0aKDs4X4R_K",
         "name": "EventSourcing.MongoDB.Events.1.1.0.nupkg",
@@ -3967,10 +3967,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:45Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.MongoDB.Events.1.1.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.MongoDB.Events.1.1.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629713",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629713",
         "id": 400629713,
         "node_id": "RA_kwDOL0aKDs4X4R_R",
         "name": "EventSourcing.MongoDB.Events.1.1.0.snupkg",
@@ -4003,10 +4003,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:44Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.MongoDB.Events.1.1.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.MongoDB.Events.1.1.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629718",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629718",
         "id": 400629718,
         "node_id": "RA_kwDOL0aKDs4X4R_W",
         "name": "EventSourcing.MongoDB.Snapshot.1.1.0.nupkg",
@@ -4039,10 +4039,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:45Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.MongoDB.Snapshot.1.1.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.MongoDB.Snapshot.1.1.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629711",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629711",
         "id": 400629711,
         "node_id": "RA_kwDOL0aKDs4X4R_P",
         "name": "EventSourcing.MongoDB.Snapshot.1.1.0.snupkg",
@@ -4075,10 +4075,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:44Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.MongoDB.Snapshot.1.1.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.MongoDB.Snapshot.1.1.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629717",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629717",
         "id": 400629717,
         "node_id": "RA_kwDOL0aKDs4X4R_V",
         "name": "EventSourcing.SqlServer.Events.1.1.0.nupkg",
@@ -4111,10 +4111,10 @@
         "download_count": 2,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:45Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.SqlServer.Events.1.1.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.SqlServer.Events.1.1.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629709",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629709",
         "id": 400629709,
         "node_id": "RA_kwDOL0aKDs4X4R_N",
         "name": "EventSourcing.SqlServer.Events.1.1.0.snupkg",
@@ -4147,10 +4147,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:44Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.SqlServer.Events.1.1.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.SqlServer.Events.1.1.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629710",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629710",
         "id": 400629710,
         "node_id": "RA_kwDOL0aKDs4X4R_O",
         "name": "EventSourcing.SqlServer.Snapshot.1.1.0.nupkg",
@@ -4183,10 +4183,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:45Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.SqlServer.Snapshot.1.1.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.SqlServer.Snapshot.1.1.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629708",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629708",
         "id": 400629708,
         "node_id": "RA_kwDOL0aKDs4X4R_M",
         "name": "EventSourcing.SqlServer.Snapshot.1.1.0.snupkg",
@@ -4219,10 +4219,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:44Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/EventSourcing.SqlServer.Snapshot.1.1.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/EventSourcing.SqlServer.Snapshot.1.1.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629715",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629715",
         "id": 400629715,
         "node_id": "RA_kwDOL0aKDs4X4R_T",
         "name": "Purview.EventSourcing.SourceGenerator.1.1.0.nupkg",
@@ -4255,10 +4255,10 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:45Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/Purview.EventSourcing.SourceGenerator.1.1.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/Purview.EventSourcing.SourceGenerator.1.1.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/400629707",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/400629707",
         "id": 400629707,
         "node_id": "RA_kwDOL0aKDs4X4R_L",
         "name": "Purview.EventSourcing.SourceGenerator.1.1.0.symbols.nupkg",
@@ -4291,18 +4291,18 @@
         "download_count": 1,
         "created_at": "2026-04-20T10:30:44Z",
         "updated_at": "2026-04-20T10:30:44Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.1.0/Purview.EventSourcing.SourceGenerator.1.1.0.symbols.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.1.0/Purview.EventSourcing.SourceGenerator.1.1.0.symbols.nupkg"
       }
     ],
-    "tarball_url": "https://api.github.com/repos/purview-dev/eventsourcing/tarball/v1.1.0",
-    "zipball_url": "https://api.github.com/repos/purview-dev/eventsourcing/zipball/v1.1.0",
+    "tarball_url": "https://api.github.com/repos/purview-dev/event-sourcing/tarball/v1.1.0",
+    "zipball_url": "https://api.github.com/repos/purview-dev/event-sourcing/zipball/v1.1.0",
     "body": "## What's Changed\n* Publish CD NuGet packages to GitHub Packages and add release backfill support by @Copilot in https://github.com/kjldev/purview-eventsourcing/pull/17\n* Fix CD manual publish path by creating the temporary NuGet config by @Copilot in https://github.com/kjldev/purview-eventsourcing/pull/18\n* Refresh repository/package READMEs and NuGet package metadata for the 1.1.0 release by @Copilot in https://github.com/kjldev/purview-eventsourcing/pull/19\n\n\n**Full Changelog**: https://github.com/kjldev/purview-eventsourcing/compare/v1.0.0...v1.1.0"
   },
   {
-    "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/310299386",
-    "assets_url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/310299386/assets",
-    "upload_url": "https://uploads.github.com/repos/purview-dev/eventsourcing/releases/310299386/assets{?name,label}",
-    "html_url": "https://github.com/purview-dev/eventsourcing/releases/tag/v1.0.0",
+    "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/310299386",
+    "assets_url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/310299386/assets",
+    "upload_url": "https://uploads.github.com/repos/purview-dev/event-sourcing/releases/310299386/assets{?name,label}",
+    "html_url": "https://github.com/purview-dev/event-sourcing/releases/tag/v1.0.0",
     "id": 310299386,
     "author": {
       "login": "github-actions[bot]",
@@ -4337,7 +4337,7 @@
     "published_at": "2026-04-17T11:02:03Z",
     "assets": [
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533905",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533905",
         "id": 398533905,
         "node_id": "RA_kwDOL0aKDs4XwSUR",
         "name": "EventSourcing.1.0.0.nupkg",
@@ -4370,10 +4370,10 @@
         "download_count": 2,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.1.0.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.1.0.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533917",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533917",
         "id": 398533917,
         "node_id": "RA_kwDOL0aKDs4XwSUd",
         "name": "EventSourcing.1.0.0.snupkg",
@@ -4406,10 +4406,10 @@
         "download_count": 0,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.1.0.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.1.0.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533904",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533904",
         "id": 398533904,
         "node_id": "RA_kwDOL0aKDs4XwSUQ",
         "name": "EventSourcing.AzureStorage.1.0.0.nupkg",
@@ -4442,10 +4442,10 @@
         "download_count": 2,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.AzureStorage.1.0.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.AzureStorage.1.0.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533908",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533908",
         "id": 398533908,
         "node_id": "RA_kwDOL0aKDs4XwSUU",
         "name": "EventSourcing.AzureStorage.1.0.0.snupkg",
@@ -4478,10 +4478,10 @@
         "download_count": 0,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.AzureStorage.1.0.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.AzureStorage.1.0.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533914",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533914",
         "id": 398533914,
         "node_id": "RA_kwDOL0aKDs4XwSUa",
         "name": "EventSourcing.CosmosDb.Snapshot.1.0.0.nupkg",
@@ -4514,10 +4514,10 @@
         "download_count": 2,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.CosmosDb.Snapshot.1.0.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.CosmosDb.Snapshot.1.0.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533903",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533903",
         "id": 398533903,
         "node_id": "RA_kwDOL0aKDs4XwSUP",
         "name": "EventSourcing.CosmosDb.Snapshot.1.0.0.snupkg",
@@ -4550,10 +4550,10 @@
         "download_count": 0,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.CosmosDb.Snapshot.1.0.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.CosmosDb.Snapshot.1.0.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533911",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533911",
         "id": 398533911,
         "node_id": "RA_kwDOL0aKDs4XwSUX",
         "name": "EventSourcing.MongoDB.Events.1.0.0.nupkg",
@@ -4586,10 +4586,10 @@
         "download_count": 2,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.MongoDB.Events.1.0.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.MongoDB.Events.1.0.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533916",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533916",
         "id": 398533916,
         "node_id": "RA_kwDOL0aKDs4XwSUc",
         "name": "EventSourcing.MongoDB.Events.1.0.0.snupkg",
@@ -4622,10 +4622,10 @@
         "download_count": 0,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.MongoDB.Events.1.0.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.MongoDB.Events.1.0.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533909",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533909",
         "id": 398533909,
         "node_id": "RA_kwDOL0aKDs4XwSUV",
         "name": "EventSourcing.MongoDB.Snapshot.1.0.0.nupkg",
@@ -4658,10 +4658,10 @@
         "download_count": 2,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.MongoDB.Snapshot.1.0.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.MongoDB.Snapshot.1.0.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533906",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533906",
         "id": 398533906,
         "node_id": "RA_kwDOL0aKDs4XwSUS",
         "name": "EventSourcing.MongoDB.Snapshot.1.0.0.snupkg",
@@ -4694,10 +4694,10 @@
         "download_count": 0,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.MongoDB.Snapshot.1.0.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.MongoDB.Snapshot.1.0.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533907",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533907",
         "id": 398533907,
         "node_id": "RA_kwDOL0aKDs4XwSUT",
         "name": "EventSourcing.SqlServer.Events.1.0.0.nupkg",
@@ -4730,10 +4730,10 @@
         "download_count": 2,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.SqlServer.Events.1.0.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.SqlServer.Events.1.0.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533913",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533913",
         "id": 398533913,
         "node_id": "RA_kwDOL0aKDs4XwSUZ",
         "name": "EventSourcing.SqlServer.Events.1.0.0.snupkg",
@@ -4766,10 +4766,10 @@
         "download_count": 0,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.SqlServer.Events.1.0.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.SqlServer.Events.1.0.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533910",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533910",
         "id": 398533910,
         "node_id": "RA_kwDOL0aKDs4XwSUW",
         "name": "EventSourcing.SqlServer.Snapshot.1.0.0.nupkg",
@@ -4802,10 +4802,10 @@
         "download_count": 2,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.SqlServer.Snapshot.1.0.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.SqlServer.Snapshot.1.0.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533912",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533912",
         "id": 398533912,
         "node_id": "RA_kwDOL0aKDs4XwSUY",
         "name": "EventSourcing.SqlServer.Snapshot.1.0.0.snupkg",
@@ -4838,10 +4838,10 @@
         "download_count": 0,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/EventSourcing.SqlServer.Snapshot.1.0.0.snupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/EventSourcing.SqlServer.Snapshot.1.0.0.snupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533915",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533915",
         "id": 398533915,
         "node_id": "RA_kwDOL0aKDs4XwSUb",
         "name": "Purview.EventSourcing.SourceGenerator.1.0.0.nupkg",
@@ -4874,10 +4874,10 @@
         "download_count": 2,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/Purview.EventSourcing.SourceGenerator.1.0.0.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/Purview.EventSourcing.SourceGenerator.1.0.0.nupkg"
       },
       {
-        "url": "https://api.github.com/repos/purview-dev/eventsourcing/releases/assets/398533902",
+        "url": "https://api.github.com/repos/purview-dev/event-sourcing/releases/assets/398533902",
         "id": 398533902,
         "node_id": "RA_kwDOL0aKDs4XwSUO",
         "name": "Purview.EventSourcing.SourceGenerator.1.0.0.symbols.nupkg",
@@ -4910,11 +4910,11 @@
         "download_count": 2,
         "created_at": "2026-04-17T11:02:02Z",
         "updated_at": "2026-04-17T11:02:02Z",
-        "browser_download_url": "https://github.com/purview-dev/eventsourcing/releases/download/v1.0.0/Purview.EventSourcing.SourceGenerator.1.0.0.symbols.nupkg"
+        "browser_download_url": "https://github.com/purview-dev/event-sourcing/releases/download/v1.0.0/Purview.EventSourcing.SourceGenerator.1.0.0.symbols.nupkg"
       }
     ],
-    "tarball_url": "https://api.github.com/repos/purview-dev/eventsourcing/tarball/v1.0.0",
-    "zipball_url": "https://api.github.com/repos/purview-dev/eventsourcing/zipball/v1.0.0",
+    "tarball_url": "https://api.github.com/repos/purview-dev/event-sourcing/tarball/v1.0.0",
+    "zipball_url": "https://api.github.com/repos/purview-dev/event-sourcing/zipball/v1.0.0",
     "body": "## What's Changed\n* Bringing over storage implementations by @kieronlanning in https://github.com/kjldev/purview-eventsourcing/pull/1\n* Mongodb eventstore by @kieronlanning in https://github.com/kjldev/purview-eventsourcing/pull/2\n* chore: package updates by @kieronlanning in https://github.com/kjldev/purview-eventsourcing/pull/3\n* Package updates by @kieronlanning in https://github.com/kjldev/purview-eventsourcing/pull/4\n* Updates by @kieronlanning in https://github.com/kjldev/purview-eventsourcing/pull/5\n* Default data compression to true, add source generator package, sample app, comprehensive tests, CI workflow, and distributed tracing by @Copilot in https://github.com/kjldev/purview-eventsourcing/pull/6\n* feat: holistic EventSourcing framework improvements — upcasting, snapshot strategy, tracing, perf by @Copilot in https://github.com/kjldev/purview-eventsourcing/pull/8\n* chore: fix for Justfile on Windows- don't know why this is needed all of a sudden by @kieronlanning in https://github.com/kjldev/purview-eventsourcing/pull/9\n* Copilot/investigate newtonsoft json removal by @kieronlanning in https://github.com/kjldev/purview-eventsourcing/pull/10\n* ci: target self-hosted runner `t-x-kjldev` by @Copilot in https://github.com/kjldev/purview-eventsourcing/pull/7\n* fix: correct CI and CD workflow packaging by @kieronlanning in https://github.com/kjldev/purview-eventsourcing/pull/11\n* Fix CD release publishing for immutable GitHub releases by @Copilot in https://github.com/kjldev/purview-eventsourcing/pull/12\n* Make CD release workflow idempotent when version tag/release already exists by @Copilot in https://github.com/kjldev/purview-eventsourcing/pull/13\n* Release by @kieronlanning in https://github.com/kjldev/purview-eventsourcing/pull/14\n* Automate release tag creation in CD workflow by @Copilot in https://github.com/kjldev/purview-eventsourcing/pull/15\n* CD: make main-merge release flow robust with private draft releases by @Copilot in https://github.com/kjldev/purview-eventsourcing/pull/16\n\n## New Contributors\n* @kieronlanning made their first contribution in https://github.com/kjldev/purview-eventsourcing/pull/1\n* @Copilot made their first contribution in https://github.com/kjldev/purview-eventsourcing/pull/6\n\n**Full Changelog**: https://github.com/kjldev/purview-eventsourcing/commits/v1.0.0",
     "mentions_count": 1
   }

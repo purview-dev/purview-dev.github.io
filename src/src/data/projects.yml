@@ -40,7 +40,7 @@ projects:
       transaction coordination for multi-aggregate saves, queryable snapshots
       and read models, and storage providers for SQL Server, PostgreSQL,
       MongoDB, Azure Storage, Azure Cosmos DB, and in-memory.
-    repository: purview-dev/eventsourcing
+    repository: purview-dev/event-sourcing
     category: application-framework
     status: preview
     featured: true
@@ -112,7 +112,7 @@ projects:
       - id: Purview.ZodSharp.AspNetCore
         description: ASP.NET Core ProblemDetails integration.
 
-  - id: sourcegeneratorframework
+  - id: sourcegenerator-framework
     name: SourceGenerator Framework
     shortDescription: A typed framework for building incremental C# source generators.
     description: >-
@@ -120,7 +120,7 @@ projects:
       incremental C# source generators with Roslyn. Includes structured code
       generation, attribute data models, type libraries, and a step-cache test
       runner for verifying incremental behaviour.
-    repository: purview-dev/sourcegeneratorframework
+    repository: purview-dev/sourcegenerator-framework
     category: source-generation
     status: preview
     featured: true
@@ -213,15 +213,15 @@ projects:
         description: Pinned dotnet tool implementing the shared pipeline.
         primary: true
 
-  - id: dotnet-project-sdk
-    name: .NET Project SDK
+  - id: build-sdk
+    name: Build SDK
     shortDescription: Convention-driven MSBuild SDK for .NET project defaults.
     description: >-
       A reusable MSBuild SDK NuGet package that delivers standardised .NET
       project defaults, code-style enforcement, test-framework wiring, and
       Central Package Management integration. Install it once per repo; every
       project beneath the repo root inherits everything automatically.
-    repository: purview-dev/dotnet-project-sdk
+    repository: purview-dev/build-sdk
     category: build-tooling
     status: preview
     order: 70
@@ -234,7 +234,7 @@ projects:
       - msbuild
     install: msbuild-sdk
     packages:
-      - id: Purview.DotNetProjectSdk
+      - id: Purview.BuildSdk
         description: MSBuild SDK for standardised project defaults.
         primary: true
 
