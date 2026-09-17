@@ -73,13 +73,13 @@ projects:
       - id: Purview.EventSourcing.Validation.FluentValidation
         description: FluentValidation adapter for aggregate save-time validation.
       - id: Purview.EventSourcing.Validation.ZodSharp
-        description: ZodSharp adapter for aggregate save-time validation.
+        description: Purview.ZodSharp adapter for aggregate save-time validation.
     related:
       - zodsharp
     discussions: false
 
   - id: zodsharp
-    name: ZodSharp
+    name: Purview.ZodSharp
     shortDescription: Zero-allocation schema validation for C# — a Zod port.
     description: >-
       A high-performance schema validation library for C#, ported from
