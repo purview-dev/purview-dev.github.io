@@ -24,7 +24,7 @@
       "owners": [
         "kieronlanning"
       ],
-      "totalDownloads": 552,
+      "totalDownloads": 571,
       "verified": false,
       "packageTypes": [
         {
@@ -49,7 +49,7 @@
         },
         {
           "version": "0.2.4",
-          "downloads": 105,
+          "downloads": 124,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.4.json"
         }
       ],

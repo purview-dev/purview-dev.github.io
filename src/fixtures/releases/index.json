@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "retrievedAt": "2026-09-17T06:31:26.351Z",
+  "retrievedAt": "2026-09-17T17:27:57.521Z",
   "repos": {
     "purview-dev/telemetry-sourcegenerator": {
       "name": "telemetry-sourcegenerator",
@@ -36,9 +36,9 @@
       "updatedAt": "2026-09-16T22:01:36Z",
       "hasDiscussions": false
     },
-    "purview-dev/eventsourcing": {
-      "name": "eventsourcing",
-      "fullName": "purview-dev/eventsourcing",
+    "purview-dev/event-sourcing": {
+      "name": "event-sourcing",
+      "fullName": "purview-dev/event-sourcing",
       "description": "A .NET event sourcing framework for building aggregate-based applications - provider-agnostic store facades, source-generated aggregates, transaction coordination, queryable snapshots and read models, and storage providers for SQL Server, PostgreSQL, MongoDB, Azure Storage, Azure Cosmos DB, and in-memory.",
       "archived": false,
       "homepage": "https://purview.dev/event-sourcing/",
@@ -64,7 +64,7 @@
       "stargazersCount": 4,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-16T15:21:27Z",
+      "updatedAt": "2026-09-17T16:26:52Z",
       "hasDiscussions": false
     },
     "purview-dev/zodsharp": {
@@ -90,15 +90,15 @@
       "stargazersCount": 1,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-16T15:54:50Z",
+      "updatedAt": "2026-09-17T08:08:07Z",
       "hasDiscussions": false
     },
-    "purview-dev/sourcegeneratorframework": {
-      "name": "sourcegeneratorframework",
-      "fullName": "purview-dev/sourcegeneratorframework",
+    "purview-dev/sourcegenerator-framework": {
+      "name": "sourcegenerator-framework",
+      "fullName": "purview-dev/sourcegenerator-framework",
       "description": "A strongly typed framework for building, testing, and maintaining incremental C# source generators with Roslyn.",
       "archived": false,
-      "homepage": "https://purview.dev/projects/sourcegeneratorframework/",
+      "homepage": "https://purview.dev/projects/sourcegenerator-framework/",
       "topics": [
         "analyzers",
         "code-generation",
@@ -120,7 +120,7 @@
       "stargazersCount": 2,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-16T16:21:01Z",
+      "updatedAt": "2026-09-17T16:26:28Z",
       "hasDiscussions": false
     },
     "purview-dev/aspire-resourcekit": {
@@ -210,12 +210,12 @@
       "updatedAt": "2026-09-16T21:00:15Z",
       "hasDiscussions": false
     },
-    "purview-dev/dotnet-project-sdk": {
-      "name": "dotnet-project-sdk",
-      "fullName": "purview-dev/dotnet-project-sdk",
+    "purview-dev/build-sdk": {
+      "name": "build-sdk",
+      "fullName": "purview-dev/build-sdk",
       "description": "A reusable MSBuild SDK providing convention-driven .NET project defaults, code style, analyzers, testing frameworks, package management, and agent tooling.",
       "archived": false,
-      "homepage": "https://purview.dev/projects/dotnet-project-sdk/",
+      "homepage": "https://purview.dev/projects/build-sdk/",
       "topics": [
         "central-package-management",
         "code-style",
@@ -237,7 +237,7 @@
       "stargazersCount": 0,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-16T16:24:02Z",
+      "updatedAt": "2026-09-17T17:18:03Z",
       "hasDiscussions": false
     },
     "purview-dev/dotnet-logging-source-generators": {
@@ -536,7 +536,7 @@
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v1.0.0"
       }
     ],
-    "purview-dev/eventsourcing": [
+    "purview-dev/event-sourcing": [
       {
         "tagName": "v2.0.0-prerelease.32",
         "name": "v2.0.0-prerelease.32",
@@ -544,7 +544,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-15T08:12:56Z",
-        "htmlUrl": "https://github.com/purview-dev/eventsourcing/releases/tag/v2.0.0-prerelease.32"
+        "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.32"
       },
       {
         "tagName": "v2.0.0-prerelease.31",
@@ -553,7 +553,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-12T18:30:10Z",
-        "htmlUrl": "https://github.com/purview-dev/eventsourcing/releases/tag/v2.0.0-prerelease.31"
+        "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.31"
       },
       {
         "tagName": "v2.0.0-prerelease.30",
@@ -562,7 +562,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-08T17:49:03Z",
-        "htmlUrl": "https://github.com/purview-dev/eventsourcing/releases/tag/v2.0.0-prerelease.30"
+        "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.30"
       },
       {
         "tagName": "v2.0.0-prerelease.29",
@@ -571,7 +571,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-04T15:11:28Z",
-        "htmlUrl": "https://github.com/purview-dev/eventsourcing/releases/tag/v2.0.0-prerelease.29"
+        "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.29"
       },
       {
         "tagName": "v2.0.0-prerelease.5",
@@ -580,7 +580,7 @@
         "prerelease": true,
         "draft": false,
         "publishedAt": "2026-06-17T13:33:32Z",
-        "htmlUrl": "https://github.com/purview-dev/eventsourcing/releases/tag/v2.0.0-prerelease.5"
+        "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.5"
       },
       {
         "tagName": "v1.1.1",
@@ -589,7 +589,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-04-20T11:58:54Z",
-        "htmlUrl": "https://github.com/purview-dev/eventsourcing/releases/tag/v1.1.1"
+        "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v1.1.1"
       },
       {
         "tagName": "v1.1.0",
@@ -598,7 +598,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-04-20T10:30:45Z",
-        "htmlUrl": "https://github.com/purview-dev/eventsourcing/releases/tag/v1.1.0"
+        "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v1.1.0"
       },
       {
         "tagName": "v1.0.0",
@@ -607,10 +607,19 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-04-17T11:02:03Z",
-        "htmlUrl": "https://github.com/purview-dev/eventsourcing/releases/tag/v1.0.0"
+        "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v1.0.0"
       }
     ],
     "purview-dev/zodsharp": [
+      {
+        "tagName": "v2.0.0-prerelease.7",
+        "name": "v2.0.0-prerelease.7",
+        "body": "## What's Changed\n* docs: updated urls in documentation by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/21\n* feat: added uuid version rule support by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/22\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.6...v2.0.0-prerelease.7",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-17T08:10:24Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.7"
+      },
       {
         "tagName": "v2.0.0-prerelease.6",
         "name": "v2.0.0-prerelease.6",
@@ -666,7 +675,7 @@
         "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.1"
       }
     ],
-    "purview-dev/sourcegeneratorframework": [
+    "purview-dev/sourcegenerator-framework": [
       {
         "tagName": "v1.0.0-prerelease.42",
         "name": "v1.0.0-prerelease.42",
@@ -674,7 +683,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-14T12:53:48Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.42"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.42"
       },
       {
         "tagName": "v1.0.0-prerelease.41",
@@ -683,7 +692,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-14T08:16:35Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.41"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.41"
       },
       {
         "tagName": "v1.0.0-prerelease.40",
@@ -692,7 +701,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-13T13:14:59Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.40"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.40"
       },
       {
         "tagName": "v1.0.0-prerelease.39",
@@ -701,7 +710,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-12T13:39:13Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.39"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.39"
       },
       {
         "tagName": "v1.0.0-prerelease.38",
@@ -710,7 +719,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-12T12:11:55Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.38"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.38"
       },
       {
         "tagName": "v1.0.0-prerelease.37",
@@ -719,7 +728,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-08T09:45:06Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.37"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.37"
       },
       {
         "tagName": "v1.0.0-prerelease.36",
@@ -728,7 +737,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-06T08:26:19Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.36"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.36"
       },
       {
         "tagName": "v1.0.0-prerelease.35",
@@ -737,7 +746,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-05T15:46:21Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.35"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.35"
       },
       {
         "tagName": "v1.0.0-prerelease.34",
@@ -746,7 +755,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-05T08:26:12Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.34"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.34"
       },
       {
         "tagName": "v1.0.0-prerelease.33",
@@ -755,7 +764,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-04T12:20:13Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.33"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.33"
       },
       {
         "tagName": "v1.0.0-prerelease.32",
@@ -764,7 +773,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-03T23:44:13Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.32"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.32"
       },
       {
         "tagName": "v1.0.0-prerelease.31",
@@ -773,7 +782,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-03T22:53:07Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.31"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.31"
       },
       {
         "tagName": "v1.0.0-prerelease.30",
@@ -782,7 +791,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-03T15:11:51Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.30"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.30"
       },
       {
         "tagName": "v1.0.0-prerelease.29",
@@ -791,7 +800,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-03T09:29:18Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.29"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.29"
       },
       {
         "tagName": "v1.0.0-prerelease.28",
@@ -800,7 +809,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-02T22:07:13Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.28"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.28"
       },
       {
         "tagName": "v1.0.0-prerelease.27",
@@ -809,7 +818,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-01T21:38:48Z",
-        "htmlUrl": "https://github.com/purview-dev/sourcegeneratorframework/releases/tag/v1.0.0-prerelease.27"
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.27"
       }
     ],
     "purview-dev/aspire-resourcekit": [
@@ -1052,7 +1061,16 @@
         "htmlUrl": "https://github.com/purview-dev/build/releases/tag/v0.1.0"
       }
     ],
-    "purview-dev/dotnet-project-sdk": [
+    "purview-dev/build-sdk": [
+      {
+        "tagName": "v1.0.0-prerelease.56",
+        "name": "v1.0.0-prerelease.56",
+        "body": "## What's Changed\n* docs: updated urls in documentation by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/18\n* docs: updated links to new docs in repos by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/19\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.0-prerelease.55...v1.0.0-prerelease.56",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-17T17:19:07Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.56"
+      },
       {
         "tagName": "v1.0.0-prerelease.55",
         "name": "v1.0.0-prerelease.55",
@@ -1060,7 +1078,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-15T08:11:22Z",
-        "htmlUrl": "https://github.com/purview-dev/dotnet-project-sdk/releases/tag/v1.0.0-prerelease.55"
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.55"
       },
       {
         "tagName": "v1.0.0-prerelease.54",
@@ -1069,7 +1087,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-14T11:54:59Z",
-        "htmlUrl": "https://github.com/purview-dev/dotnet-project-sdk/releases/tag/v1.0.0-prerelease.54"
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.54"
       },
       {
         "tagName": "v1.0.0-prerelease.53",
@@ -1078,7 +1096,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-14T07:48:46Z",
-        "htmlUrl": "https://github.com/purview-dev/dotnet-project-sdk/releases/tag/v1.0.0-prerelease.53"
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.53"
       },
       {
         "tagName": "v1.0.0-prerelease.52",
@@ -1087,7 +1105,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-12T14:29:37Z",
-        "htmlUrl": "https://github.com/purview-dev/dotnet-project-sdk/releases/tag/v1.0.0-prerelease.52"
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.52"
       },
       {
         "tagName": "v1.0.0-prerelease.51",
@@ -1096,7 +1114,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-12T11:52:00Z",
-        "htmlUrl": "https://github.com/purview-dev/dotnet-project-sdk/releases/tag/v1.0.0-prerelease.51"
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.51"
       },
       {
         "tagName": "v1.0.0-prerelease.50",
@@ -1105,7 +1123,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-11T12:54:52Z",
-        "htmlUrl": "https://github.com/purview-dev/dotnet-project-sdk/releases/tag/v1.0.0-prerelease.50"
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.50"
       },
       {
         "tagName": "v1.0.0-prerelease.49",
@@ -1114,7 +1132,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-11T08:21:07Z",
-        "htmlUrl": "https://github.com/purview-dev/dotnet-project-sdk/releases/tag/v1.0.0-prerelease.49"
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.49"
       },
       {
         "tagName": "v1.0.0-prerelease.48",
@@ -1123,7 +1141,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-08T16:09:13Z",
-        "htmlUrl": "https://github.com/purview-dev/dotnet-project-sdk/releases/tag/v1.0.0-prerelease.48"
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.48"
       },
       {
         "tagName": "v1.0.0-prerelease.47",
@@ -1132,7 +1150,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-03T23:07:54Z",
-        "htmlUrl": "https://github.com/purview-dev/dotnet-project-sdk/releases/tag/v1.0.0-prerelease.47"
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.47"
       },
       {
         "tagName": "v1.0.0-prerelease.46",
@@ -1141,7 +1159,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-03T14:45:33Z",
-        "htmlUrl": "https://github.com/purview-dev/dotnet-project-sdk/releases/tag/v1.0.0-prerelease.46"
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.46"
       },
       {
         "tagName": "v1.0.0-prerelease.45",
@@ -1150,7 +1168,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-09-02T21:40:52Z",
-        "htmlUrl": "https://github.com/purview-dev/dotnet-project-sdk/releases/tag/v1.0.0-prerelease.45"
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.45"
       },
       {
         "tagName": "v1.0.0-prerelease.44",
@@ -1159,7 +1177,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-08-31T21:00:46Z",
-        "htmlUrl": "https://github.com/purview-dev/dotnet-project-sdk/releases/tag/v1.0.0-prerelease.44"
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.44"
       },
       {
         "tagName": "v1.0.0-prerelease.43",
@@ -1168,7 +1186,7 @@
         "prerelease": false,
         "draft": false,
         "publishedAt": "2026-08-31T16:23:47Z",
-        "htmlUrl": "https://github.com/purview-dev/dotnet-project-sdk/releases/tag/v1.0.0-prerelease.43"
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.43"
       }
     ],
     "purview-dev/dotnet-logging-source-generators": []
@@ -1422,7 +1440,8 @@
         "2.0.0-prerelease.3",
         "2.0.0-prerelease.4",
         "2.0.0-prerelease.5",
-        "2.0.0-prerelease.6"
+        "2.0.0-prerelease.6",
+        "2.0.0-prerelease.7"
       ]
     },
     "Purview.ZodSharp.SystemTextJson": {
@@ -1433,7 +1452,8 @@
         "2.0.0-prerelease.3",
         "2.0.0-prerelease.4",
         "2.0.0-prerelease.5",
-        "2.0.0-prerelease.6"
+        "2.0.0-prerelease.6",
+        "2.0.0-prerelease.7"
       ]
     },
     "Purview.ZodSharp.NewtonsoftJson": {
@@ -1444,7 +1464,8 @@
         "2.0.0-prerelease.3",
         "2.0.0-prerelease.4",
         "2.0.0-prerelease.5",
-        "2.0.0-prerelease.6"
+        "2.0.0-prerelease.6",
+        "2.0.0-prerelease.7"
       ]
     },
     "Purview.ZodSharp.AspNetCore": {
@@ -1455,7 +1476,8 @@
         "2.0.0-prerelease.3",
         "2.0.0-prerelease.4",
         "2.0.0-prerelease.5",
-        "2.0.0-prerelease.6"
+        "2.0.0-prerelease.6",
+        "2.0.0-prerelease.7"
       ]
     },
     "Purview.SourceGeneratorFramework": {
@@ -1657,65 +1679,10 @@
         "0.2.4"
       ]
     },
-    "Purview.DotNetProjectSdk": {
-      "id": "Purview.DotNetProjectSdk",
+    "Purview.BuildSdk": {
+      "id": "Purview.BuildSdk",
       "versions": [
-        "1.0.0-prerelease.1",
-        "1.0.0-prerelease.2",
-        "1.0.0-prerelease.3",
-        "1.0.0-prerelease.4",
-        "1.0.0-prerelease.5",
-        "1.0.0-prerelease.6",
-        "1.0.0-prerelease.7",
-        "1.0.0-prerelease.8",
-        "1.0.0-prerelease.9",
-        "1.0.0-prerelease.10",
-        "1.0.0-prerelease.11",
-        "1.0.0-prerelease.12",
-        "1.0.0-prerelease.13",
-        "1.0.0-prerelease.14",
-        "1.0.0-prerelease.15",
-        "1.0.0-prerelease.16",
-        "1.0.0-prerelease.17",
-        "1.0.0-prerelease.18",
-        "1.0.0-prerelease.19",
-        "1.0.0-prerelease.20",
-        "1.0.0-prerelease.21",
-        "1.0.0-prerelease.22",
-        "1.0.0-prerelease.23",
-        "1.0.0-prerelease.24",
-        "1.0.0-prerelease.25",
-        "1.0.0-prerelease.26",
-        "1.0.0-prerelease.27",
-        "1.0.0-prerelease.28",
-        "1.0.0-prerelease.29",
-        "1.0.0-prerelease.30",
-        "1.0.0-prerelease.31",
-        "1.0.0-prerelease.32",
-        "1.0.0-prerelease.33",
-        "1.0.0-prerelease.34",
-        "1.0.0-prerelease.35",
-        "1.0.0-prerelease.36",
-        "1.0.0-prerelease.37",
-        "1.0.0-prerelease.38",
-        "1.0.0-prerelease.39",
-        "1.0.0-prerelease.40",
-        "1.0.0-prerelease.41",
-        "1.0.0-prerelease.42",
-        "1.0.0-prerelease.43",
-        "1.0.0-prerelease.44",
-        "1.0.0-prerelease.45",
-        "1.0.0-prerelease.46",
-        "1.0.0-prerelease.47",
-        "1.0.0-prerelease.48",
-        "1.0.0-prerelease.49",
-        "1.0.0-prerelease.50",
-        "1.0.0-prerelease.51",
-        "1.0.0-prerelease.52",
-        "1.0.0-prerelease.53",
-        "1.0.0-prerelease.54",
-        "1.0.0-prerelease.55",
-        "1.0.0-reprelease.0"
+        "1.0.0-prerelease.56"
       ]
     }
   },
@@ -1724,7 +1691,7 @@
       "id": "Purview.Telemetry.SourceGenerator",
       "version": "4.4.0",
       "description": ".NET Source Generator for interface-based telemetry generating tracing, logs, and metrics.",
-      "totalDownloads": 16276,
+      "totalDownloads": 16339,
       "tags": [
         "logs",
         "log",
@@ -1775,7 +1742,7 @@
       "id": "AspireC4.Hosting",
       "version": "13.5.3.1",
       "description": "Aspire hosting extension for the AspireC4 plugin, generating a dynamic LikeC4 architecture diagram for your Aspire application.",
-      "totalDownloads": 1380,
+      "totalDownloads": 1404,
       "tags": [
         "aspire",
         "dotnet",
@@ -1796,12 +1763,12 @@
       "id": "Purview.Build",
       "version": "0.2.4",
       "description": "Shared build/test/release pipeline for purview-dev. A Modular Pipelines based .NET tool (Purview.Build) with a GitHub composite action and reusable workflows; consumers configure, the pipeline runs.",
-      "totalDownloads": 552,
+      "totalDownloads": 571,
       "tags": [],
       "published": null,
       "deprecated": false,
       "listed": true
     },
-    "Purview.DotNetProjectSdk": null
+    "Purview.BuildSdk": null
   }
 }
