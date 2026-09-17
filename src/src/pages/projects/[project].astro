@@ -3,7 +3,7 @@ import SiteLayout from '~/layouts/SiteLayout.astro';
 import InstallPanel from '~/components/islands/InstallPanel.tsx';
 import StatusBadge from '~/components/StatusBadge.astro';
 import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '~/lib/badges';
-import { installKindFor, installOptions } from '~/lib/install';
+import { installKindFor, installTabs } from '~/lib/install';
 import { loadProjects } from '~/lib/manifest/load';
 import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { projectReleaseSummary } from '~/lib/releases/transform';
@@ -44,9 +44,9 @@ const targetFrameworks = project.targetFrameworks ?? [];
 const primaryRelease = primaryPackage
   ? releases.packages.find((pkg) => pkg.packageId === primaryPackage.id)
   : undefined;
-const installSnippets =
+const installTabsOptions =
   primaryPackage && project.status !== 'archived'
-    ? installOptions(
+    ? installTabs(
         installKindFor(project),
         primaryPackage.id,
         primaryRelease?.latestStable ?? primaryRelease?.latestPrerelease ?? null,
@@ -281,7 +281,7 @@ const installSnippets =
           primaryPackage && project.status !== 'archived' && (
             <section>
               <h2 class="text-xl font-semibold">Install</h2>
-              <InstallPanel client:idle options={installSnippets} />
+              <InstallPanel client:idle tabs={installTabsOptions} />
             </section>
           )
         }
