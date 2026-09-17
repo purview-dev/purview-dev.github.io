@@ -1,13 +1,33 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
 import ProjectCard from '~/components/ProjectCard.astro';
+import PackageVersions, { type PackageRow } from '~/components/islands/PackageVersions.tsx';
 import { loadProjects } from '~/lib/manifest/load';
+import { projectReleaseSummary } from '~/lib/releases/transform';
+import { getReleaseIndex } from '~/lib/releases/runtime';
 import { SITE } from '~/lib/site';
 import { absoluteUrl, withBase } from '~/lib/urls';
 
 const projects = loadProjects();
 const featured = projects.filter((project) => project.featured);
 const active = projects.filter((project) => project.status !== 'archived');
+
+const releaseIndex = getReleaseIndex();
+const packageRows: PackageRow[] = projects
+  .filter((project) => project.status !== 'archived')
+  .flatMap((project) => {
+    const summary = projectReleaseSummary(project, releaseIndex.data, releaseIndex.source);
+    return summary.packages.map((pkg) => ({
+      projectId: summary.projectId,
+      projectName: summary.projectName,
+      packageId: pkg.packageId,
+      latestStable: pkg.latestStable,
+      latestPrerelease: pkg.latestPrerelease,
+      totalDownloads: pkg.totalDownloads,
+      nugetUrl: pkg.nugetUrl,
+      projectUrl: withBase(`/projects/${summary.projectId}/`),
+    }));
+  });
 
 const organizationStructuredData = {
   '@context': 'https://schema.org',
@@ -128,6 +148,27 @@ const organizationStructuredData = {
     <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
       {featured.map((project) => <ProjectCard project={project} showBadges={false} />)}
     </div>
+  </section>
+
+  <section class="pv-container py-16 md:py-20">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 class="text-2xl font-bold tracking-tight md:text-3xl">Package status</h2>
+        <p class="mt-2 max-w-2xl text-muted">
+          The latest stable and prerelease version of every NuGet package at a
+          glance. Search, or click a column to sort.
+        </p>
+      </div>
+      <a href={withBase('/releases/')} class="pv-link hidden shrink-0 sm:inline">
+        View all releases →
+      </a>
+    </div>
+    <div class="mt-8">
+      <PackageVersions client:visible packages={packageRows} />
+    </div>
+    <p class="mt-3 text-xs text-muted">
+      Release data retrieved on {releaseIndex.data.retrievedAt.slice(0, 10)} ({releaseIndex.source} source).
+    </p>
   </section>
 
   <section class="border-y border-border bg-surface/60">
