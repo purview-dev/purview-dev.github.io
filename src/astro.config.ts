@@ -116,6 +116,7 @@ export default defineConfig({
         PageFrame: './src/components/starlight/PageFrame.astro',
         EditLink: './src/components/starlight/EditLink.astro',
         PageTitle: './src/components/starlight/PageTitle.astro',
+        Search: './src/components/starlight/Search.astro',
       },
       plugins: [
         starlightSidebarTopics(sidebarTopics),

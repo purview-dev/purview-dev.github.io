@@ -207,6 +207,7 @@ projects:
         - _Sidebar.md
     targetFrameworks:
       - net10.0
+    install: dotnet-tool
     packages:
       - id: Purview.Build
         description: Pinned dotnet tool implementing the shared pipeline.
@@ -231,6 +232,7 @@ projects:
         - _Sidebar.md
     targetFrameworks:
       - msbuild
+    install: msbuild-sdk
     packages:
       - id: Purview.DotNetProjectSdk
         description: MSBuild SDK for standardised project defaults.

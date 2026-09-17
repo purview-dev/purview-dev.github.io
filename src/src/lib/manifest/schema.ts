@@ -12,6 +12,9 @@ export const CATEGORIES = [
 
 export const STATUSES = ['stable', 'preview', 'archived'] as const;
 
+/** How the primary NuGet package is consumed, which drives the Install options. */
+export const INSTALL_KINDS = ['nuget', 'msbuild-sdk', 'dotnet-tool'] as const;
+
 const docsPathSchema = z.object({
   source: z.literal('github-path'),
   path: z.string().min(1, 'must be a non-empty repository path such as "docs"'),
@@ -57,6 +60,7 @@ const projectSchema = z.object({
   featured: z.boolean().optional(),
   order: z.number().int().nonnegative().optional(),
   docs: docsSchema.optional(),
+  install: z.enum(INSTALL_KINDS).optional(),
   targetFrameworks: z.array(z.string()).optional(),
   packages: z.array(packageSchema).optional(),
   related: z.array(z.string()).optional(),
@@ -99,10 +103,12 @@ export const PROJECT_DEFAULTS = {
   packages: [] as ProjectPackage[],
   related: [] as string[],
   discussions: false,
+  install: 'nuget',
 } satisfies {
   featured: boolean;
   order: number;
   packages: ProjectPackage[];
   related: string[];
   discussions: boolean;
+  install: (typeof INSTALL_KINDS)[number];
 };

@@ -35,7 +35,7 @@
         "kieronlanning",
         "KJL.dev"
       ],
-      "totalDownloads": 1342,
+      "totalDownloads": 1380,
       "verified": false,
       "packageTypes": [
         {
@@ -65,12 +65,12 @@
         },
         {
           "version": "13.5.3",
-          "downloads": 48,
+          "downloads": 67,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.json"
         },
         {
           "version": "13.5.3.1",
-          "downloads": 50,
+          "downloads": 69,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.1.json"
         }
       ],

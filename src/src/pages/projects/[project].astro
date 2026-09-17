@@ -1,8 +1,9 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
-import CopyCommand from '~/components/islands/CopyCommand.tsx';
+import InstallPanel from '~/components/islands/InstallPanel.tsx';
 import StatusBadge from '~/components/StatusBadge.astro';
 import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '~/lib/badges';
+import { installKindFor, installOptions } from '~/lib/install';
 import { loadProjects } from '~/lib/manifest/load';
 import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { projectReleaseSummary } from '~/lib/releases/transform';
@@ -40,6 +41,17 @@ const supersededBy = project.supersededBy
 const primaryPackage = project.packages.find((pkg) => pkg.primary) ?? project.packages[0];
 const docsPath = project.docs ? withBase(`/docs/${project.id}/`) : null;
 const targetFrameworks = project.targetFrameworks ?? [];
+const primaryRelease = primaryPackage
+  ? releases.packages.find((pkg) => pkg.packageId === primaryPackage.id)
+  : undefined;
+const installSnippets =
+  primaryPackage && project.status !== 'archived'
+    ? installOptions(
+        installKindFor(project),
+        primaryPackage.id,
+        primaryRelease?.latestStable ?? primaryRelease?.latestPrerelease ?? null,
+      )
+    : [];
 ---
 
 <SiteLayout
@@ -269,10 +281,7 @@ const targetFrameworks = project.targetFrameworks ?? [];
           primaryPackage && project.status !== 'archived' && (
             <section>
               <h2 class="text-xl font-semibold">Install</h2>
-              <CopyCommand
-                client:idle
-                command={`dotnet add package ${primaryPackage.id}`}
-              />
+              <InstallPanel client:idle options={installSnippets} />
             </section>
           )
         }

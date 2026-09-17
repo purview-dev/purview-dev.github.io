@@ -66,14 +66,14 @@
   "releases_url": "https://api.github.com/repos/purview-dev/telemetry-sourcegenerator/releases{/id}",
   "deployments_url": "https://api.github.com/repos/purview-dev/telemetry-sourcegenerator/deployments",
   "created_at": "2024-03-04T18:31:56Z",
-  "updated_at": "2026-09-16T15:25:13Z",
-  "pushed_at": "2026-09-16T15:25:09Z",
+  "updated_at": "2026-09-16T22:01:36Z",
+  "pushed_at": "2026-09-16T22:05:51Z",
   "git_url": "git://github.com/purview-dev/telemetry-sourcegenerator.git",
   "ssh_url": "git@github.com:purview-dev/telemetry-sourcegenerator.git",
   "clone_url": "https://github.com/purview-dev/telemetry-sourcegenerator.git",
   "svn_url": "https://github.com/purview-dev/telemetry-sourcegenerator",
   "homepage": "https://purview.dev/projects/telemetry-sourcegenerator/",
-  "size": 7357,
+  "size": 7448,
   "stargazers_count": 35,
   "watchers_count": 35,
   "language": "C#",
@@ -127,7 +127,25 @@
   "open_issues": 0,
   "watchers": 35,
   "default_branch": "main",
-  "temp_clone_token": null,
+  "permissions": {
+    "admin": true,
+    "maintain": true,
+    "push": true,
+    "triage": true,
+    "pull": true
+  },
+  "temp_clone_token": "",
+  "allow_squash_merge": true,
+  "allow_merge_commit": true,
+  "allow_rebase_merge": false,
+  "allow_auto_merge": true,
+  "delete_branch_on_merge": true,
+  "allow_update_branch": true,
+  "use_squash_pr_title_as_default": false,
+  "squash_merge_commit_message": "COMMIT_MESSAGES",
+  "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+  "merge_commit_message": "PR_TITLE",
+  "merge_commit_title": "MERGE_MESSAGE",
   "custom_properties": {},
   "organization": {
     "login": "purview-dev",
@@ -149,6 +167,32 @@
     "type": "Organization",
     "user_view_type": "public",
     "site_admin": false
+  },
+  "security_and_analysis": {
+    "secret_scanning": {
+      "status": "enabled"
+    },
+    "secret_scanning_push_protection": {
+      "status": "enabled"
+    },
+    "dependabot_security_updates": {
+      "status": "enabled"
+    },
+    "secret_scanning_non_provider_patterns": {
+      "status": "disabled"
+    },
+    "secret_scanning_ai_detection": {
+      "status": "disabled"
+    },
+    "secret_scanning_validity_checks": {
+      "status": "disabled"
+    },
+    "secret_scanning_delegated_alert_dismissal": {
+      "status": "disabled"
+    },
+    "secret_scanning_delegated_bypass": {
+      "status": "disabled"
+    }
   },
   "network_count": 2,
   "subscribers_count": 1

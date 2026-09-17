@@ -7,7 +7,12 @@ import type {
 } from './types';
 
 import { nugetPackageUrl } from '../urls';
-import { isPrereleaseRelease, selectVersions, sortGitHubReleasesDescending } from './normalize';
+import {
+  isPrereleaseRelease,
+  normalizePrereleaseVersion,
+  selectVersions,
+  sortGitHubReleasesDescending,
+} from './normalize';
 
 export type DataSource = 'live' | 'cache' | 'fixture';
 
@@ -23,6 +28,24 @@ export interface ReleaseEntry {
   publishedAt: string | null;
   url: string;
   prerelease: boolean;
+}
+
+/**
+ * Fold GitHub release tag versions into the NuGet candidate list when the
+ * flat-container index has not caught up with a release. Tags already present
+ * in the NuGet list are left untouched; only missing tags are appended.
+ */
+function reconcileWithGitHubReleases(versions: string[], releases: GitHubReleaseInfo[]): string[] {
+  const known = new Set(versions.map(normalizePrereleaseVersion));
+  const reconciled = [...versions];
+  for (const release of releases) {
+    const version = normalizePrereleaseVersion(release.tagName);
+    if (!known.has(version)) {
+      known.add(version);
+      reconciled.push(version);
+    }
+  }
+  return reconciled;
 }
 
 /** Build the release summary for a single catalogue project. */
@@ -41,7 +64,16 @@ export function projectReleaseSummary(
     const index = cache.packages[pkg.id];
     const search = cache.packageSearch[pkg.id] ?? null;
     const versions = index?.versions ?? [];
-    const selection = selectVersions(versions);
+    // The NuGet flat-container index can lag behind a just-completed release
+    // (the pipeline pushes to NuGet before creating the GitHub release), so
+    // GitHub release tags missing from the NuGet list are added as candidates.
+    // NuGet remains authoritative whenever it is caught up: an absent tag only
+    // ever fills a gap and never outranks a version NuGet already lists. The
+    // package must already exist on NuGet to reconcile, so a version is never
+    // invented for a package NuGet has not published.
+    const candidateVersions =
+      versions.length > 0 ? reconcileWithGitHubReleases(versions, releases) : versions;
+    const selection = selectVersions(candidateVersions);
     return {
       packageId: pkg.id,
       description: pkg.description ?? search?.description ?? null,

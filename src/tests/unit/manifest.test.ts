@@ -45,6 +45,16 @@ describe('project manifest', () => {
     expect(telemetry?.sourceUrl).toBe('https://github.com/purview-dev/telemetry-sourcegenerator');
   });
 
+  test('resolves the install kind, defaulting to nuget', () => {
+    const projects = loadProjects();
+    const telemetry = projects.find((p) => p.id === 'telemetry-sourcegenerator');
+    expect(telemetry?.install).toBe('nuget');
+    const sdk = projects.find((p) => p.id === 'dotnet-project-sdk');
+    expect(sdk?.install).toBe('msbuild-sdk');
+    const build = projects.find((p) => p.id === 'build');
+    expect(build?.install).toBe('dotnet-tool');
+  });
+
   test('rejects a repository outside the purview-dev org', () => {
     expect(() =>
       parseManifest(

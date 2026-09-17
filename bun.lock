@@ -9,6 +9,7 @@
       "name": "@purview-dev/website",
       "version": "0.1.0",
       "dependencies": {
+        "@pagefind/default-ui": "1.5.2",
         "preact": "10.29.8",
       },
       "devDependencies": {

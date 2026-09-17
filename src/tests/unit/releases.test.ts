@@ -1,3 +1,5 @@
+import type { ReleaseCacheData } from '../../src/lib/releases/types';
+
 import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -47,7 +49,7 @@ describe('GitHub normalisation (real fixtures)', () => {
     if (!latest) {
       throw new Error('The release fixture is unexpectedly empty.');
     }
-    expect(latest.tagName).toBe('v5.0.0-prerelease.8');
+    expect(latest.tagName).toBe('v5.0.0-prerelease.9');
     // The org publishes prerelease tags with the GitHub prerelease flag set to
     // false; classification must follow the semver tag, not the flag.
     expect(latest.prerelease).toBe(false);
@@ -191,7 +193,7 @@ describe('project/package association and release summaries', () => {
     const telemetry = projects.find((project) => project.id === 'telemetry-sourcegenerator');
     expect(telemetry).toBeDefined();
     const summary = projectReleaseSummary(telemetry!, cache!, 'fixture');
-    expect(summary.latestRelease?.tagName).toBe('v5.0.0-prerelease.8');
+    expect(summary.latestRelease?.tagName).toBe('v5.0.0-prerelease.9');
     expect(summary.latestStableRelease?.tagName).toBe('v4.1.0');
     expect(summary.repoDescription).toContain('source generator');
     expect(summary.tags.length).toBeGreaterThan(0);
@@ -200,7 +202,7 @@ describe('project/package association and release summaries', () => {
       (entry) => entry.packageId === 'Purview.Telemetry.SourceGenerator',
     );
     expect(pkg?.latestStable).toBe('4.4.0');
-    expect(pkg?.latestPrerelease).toBe('5.0.0-prerelease.8');
+    expect(pkg?.latestPrerelease).toBe('5.0.0-prerelease.9');
     expect(pkg?.totalDownloads).toBeGreaterThan(0);
   });
 
@@ -223,5 +225,81 @@ describe('project/package association and release summaries', () => {
     const archived = projects.find((project) => project.id === 'dotnet-logging-source-generators');
     const summary = projectReleaseSummary(archived!, cache!, 'fixture');
     expect(summary.archived).toBe(true);
+  });
+});
+
+describe('NuGet index lag reconciliation', () => {
+  const PACKAGE = 'Purview.Telemetry.SourceGenerator';
+  const REPOSITORY = 'purview-dev/telemetry-sourcegenerator';
+
+  function laggedCache(): ReleaseCacheData {
+    const cache = readReleaseFixture('index');
+    expect(cache).not.toBeNull();
+    const releases = cache!.releases[REPOSITORY] ?? [];
+    const packageIndex = cache!.packages[PACKAGE] ?? { id: PACKAGE, versions: [] };
+    // Drop the latest prerelease from the NuGet index while the GitHub release
+    // for it still exists, simulating the flat-container index lagging behind
+    // a just-completed release (publish runs before the GitHub release is cut).
+    return {
+      ...cache!,
+      releases: {
+        ...cache!.releases,
+        [REPOSITORY]: [
+          parseGitHubRelease({ tag_name: 'v5.0.0-prerelease.9', prerelease: false }),
+          ...releases,
+        ],
+      },
+      packages: {
+        ...cache!.packages,
+        [PACKAGE]: {
+          id: PACKAGE,
+          versions: packageIndex.versions.filter((version) => version !== '5.0.0-prerelease.9'),
+        },
+      },
+    };
+  }
+
+  test('surfaces a GitHub prerelease tag missing from the NuGet index', () => {
+    const projects = loadProjects();
+    const telemetry = projects.find((project) => project.id === 'telemetry-sourcegenerator');
+    expect(telemetry).toBeDefined();
+    const summary = projectReleaseSummary(telemetry!, laggedCache(), 'fixture');
+    const pkg = summary.packages.find((entry) => entry.packageId === PACKAGE);
+    expect(pkg?.latestPrerelease).toBe('5.0.0-prerelease.9');
+    // The stable selection is unaffected by the lag.
+    expect(pkg?.latestStable).toBe('4.4.0');
+  });
+
+  test('surfaces a GitHub stable tag missing from the NuGet index', () => {
+    const cache = laggedCache();
+    cache.releases[REPOSITORY] = [
+      parseGitHubRelease({ tag_name: 'v4.4.0', prerelease: false }),
+      ...(cache.releases[REPOSITORY] ?? []),
+    ];
+    const packageIndex = cache.packages[PACKAGE] ?? { id: PACKAGE, versions: [] };
+    cache.packages[PACKAGE] = {
+      id: PACKAGE,
+      versions: packageIndex.versions.filter((version) => version !== '4.4.0'),
+    };
+    const projects = loadProjects();
+    const telemetry = projects.find((project) => project.id === 'telemetry-sourcegenerator');
+    expect(telemetry).toBeDefined();
+    const summary = projectReleaseSummary(telemetry!, cache, 'fixture');
+    const pkg = summary.packages.find((entry) => entry.packageId === PACKAGE);
+    expect(pkg?.latestStable).toBe('4.4.0');
+    expect(pkg?.latestPrerelease).toBe('5.0.0-prerelease.9');
+  });
+
+  test('does not invent versions for packages NuGet has never published', () => {
+    const cache = laggedCache();
+    cache.packages[PACKAGE] = { id: PACKAGE, versions: [] };
+    const projects = loadProjects();
+    const telemetry = projects.find((project) => project.id === 'telemetry-sourcegenerator');
+    expect(telemetry).toBeDefined();
+    const summary = projectReleaseSummary(telemetry!, cache, 'fixture');
+    const pkg = summary.packages.find((entry) => entry.packageId === PACKAGE);
+    expect(pkg?.latestStable).toBeNull();
+    expect(pkg?.latestPrerelease).toBeNull();
+    expect(pkg?.hasAnyRelease).toBe(false);
   });
 });

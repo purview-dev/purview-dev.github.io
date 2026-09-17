@@ -22,3 +22,18 @@ declare module 'virtual:starlight/components/MobileMenuToggle' {
   const MobileMenuToggle: AstroComponentFactory;
   export default MobileMenuToggle;
 }
+
+declare module 'virtual:starlight/project-context' {
+  interface StarlightProjectContext {
+    build: { format: 'directory' | 'file' };
+    root: string;
+    srcDir: string;
+    trailingSlash: 'always' | 'never' | 'ignore';
+  }
+  const project: StarlightProjectContext;
+  export default project;
+}
+
+declare module 'virtual:starlight/pagefind-config' {
+  export const pagefindUserConfig: Record<string, unknown>;
+}
