@@ -23,6 +23,7 @@ export interface ResolvedProject extends ProjectRecord {
   packages: NonNullable<ProjectRecord['packages']>;
   related: NonNullable<ProjectRecord['related']>;
   discussions: boolean;
+  install: NonNullable<ProjectRecord['install']>;
 }
 
 export type ResolvedExternalProject = Omit<
@@ -54,6 +55,7 @@ function withDefaults(record: ProjectRecord): ResolvedProject {
     packages: record.packages ?? PROJECT_DEFAULTS.packages,
     related: record.related ?? PROJECT_DEFAULTS.related,
     discussions: record.discussions ?? PROJECT_DEFAULTS.discussions,
+    install: record.install ?? PROJECT_DEFAULTS.install,
     repoOwner,
     repoName,
     sourceUrl: repo,

@@ -66,14 +66,14 @@
   "releases_url": "https://api.github.com/repos/purview-dev/build/releases{/id}",
   "deployments_url": "https://api.github.com/repos/purview-dev/build/deployments",
   "created_at": "2026-09-01T18:12:54Z",
-  "updated_at": "2026-09-16T16:29:28Z",
-  "pushed_at": "2026-09-16T16:29:24Z",
+  "updated_at": "2026-09-16T21:00:15Z",
+  "pushed_at": "2026-09-16T21:00:13Z",
   "git_url": "git://github.com/purview-dev/build.git",
   "ssh_url": "git@github.com:purview-dev/build.git",
   "clone_url": "https://github.com/purview-dev/build.git",
   "svn_url": "https://github.com/purview-dev/build",
   "homepage": "https://purview.dev/projects/build/",
-  "size": 185,
+  "size": 209,
   "stargazers_count": 0,
   "watchers_count": 0,
   "language": "C#",
@@ -119,7 +119,25 @@
   "open_issues": 1,
   "watchers": 0,
   "default_branch": "main",
-  "temp_clone_token": null,
+  "permissions": {
+    "admin": true,
+    "maintain": true,
+    "push": true,
+    "triage": true,
+    "pull": true
+  },
+  "temp_clone_token": "",
+  "allow_squash_merge": true,
+  "allow_merge_commit": true,
+  "allow_rebase_merge": true,
+  "allow_auto_merge": true,
+  "delete_branch_on_merge": true,
+  "allow_update_branch": true,
+  "use_squash_pr_title_as_default": false,
+  "squash_merge_commit_message": "COMMIT_MESSAGES",
+  "squash_merge_commit_title": "COMMIT_OR_PR_TITLE",
+  "merge_commit_message": "PR_TITLE",
+  "merge_commit_title": "MERGE_MESSAGE",
   "custom_properties": {},
   "organization": {
     "login": "purview-dev",
@@ -141,6 +159,32 @@
     "type": "Organization",
     "user_view_type": "public",
     "site_admin": false
+  },
+  "security_and_analysis": {
+    "secret_scanning": {
+      "status": "enabled"
+    },
+    "secret_scanning_push_protection": {
+      "status": "enabled"
+    },
+    "dependabot_security_updates": {
+      "status": "disabled"
+    },
+    "secret_scanning_non_provider_patterns": {
+      "status": "disabled"
+    },
+    "secret_scanning_ai_detection": {
+      "status": "disabled"
+    },
+    "secret_scanning_validity_checks": {
+      "status": "disabled"
+    },
+    "secret_scanning_delegated_alert_dismissal": {
+      "status": "disabled"
+    },
+    "secret_scanning_delegated_bypass": {
+      "status": "disabled"
+    }
   },
   "network_count": 0,
   "subscribers_count": 0

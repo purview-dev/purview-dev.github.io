@@ -264,7 +264,7 @@
         "state": "uploaded",
         "size": 11433619,
         "digest": "sha256:0bd5430870e569ca80e6c141844ff234ed730863a2ae553a1bb23cf573e5079e",
-        "download_count": 2,
+        "download_count": 3,
         "created_at": "2026-09-04T14:18:41Z",
         "updated_at": "2026-09-04T14:18:41Z",
         "browser_download_url": "https://github.com/purview-dev/build/releases/download/v0.2.2/Purview.Build.0.2.2.nupkg"
