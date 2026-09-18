@@ -80,3 +80,17 @@ describe('built HTML safety', () => {
     }
   });
 });
+
+describe('built footer version', () => {
+  test('homepage footer shows the workspace root version', () => {
+    const manifest = JSON.parse(readFileSync(resolve('..', 'package.json'), 'utf8')) as {
+      version?: string;
+    };
+    const version = manifest.version;
+    expect(version).toBeTruthy();
+
+    const content = requireBuilt('index.html');
+    expect(content).toContain(`>v${version}<`);
+    expect(content).toContain('https://github.com/purview-dev/purview-dev.github.io/releases');
+  });
+});

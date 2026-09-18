@@ -1,0 +1,13 @@
+name: PR
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    uses: purview-dev/build/.github/workflows/purview-build.yml@main
+    with:
+      # Web support landed in Purview.Build 0.3.0; pin the tool version so the
+      # shared build is reproducible.
+      build-version: 0.3.0

@@ -1,5 +1,6 @@
 {
   "name": "purview-dev",
+  "version": "0.1.0",
   "private": true,
   "description": "Purview-Dev public website and unified documentation portal (workspace root).",
   "license": "MIT",
@@ -12,6 +13,7 @@
     "check:assets": "bun run --cwd src check:assets",
     "check:generated": "bun run --cwd src check:generated",
     "check:links": "bun run --cwd src check:links",
+    "ci:build": "bun run data:sync && bun run typecheck && bun run check:assets && bun run build && bun run check:links && bun run check:generated && bun run test:dist",
     "clean": "bun run --cwd src clean",
     "data:sync": "bun run --cwd src data:sync",
     "dev": "bun run --cwd src dev",

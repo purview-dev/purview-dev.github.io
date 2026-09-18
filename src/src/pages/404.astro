@@ -14,28 +14,13 @@ import { withBase } from '~/lib/urls';
       This page seems to have evaporated.
     </h1>
     <p class="mt-6 max-w-xl text-lg text-muted">
-      The URL you followed does not exist on {SITE.domain}. The beaker may have
-      bubbled over — or the link may be out of date.
+      The URL you followed does not exist on {SITE.domain}. The beaker may have bubbled over — or
+      the link may be out of date.
     </p>
     <div class="mt-10 flex flex-wrap justify-center gap-3">
-      <a
-        href={withBase('/')}
-        class="rounded-lg bg-brand px-5 py-2.5 font-medium text-white transition-colors hover:bg-brand-emphasis"
-      >
-        Back to the homepage
-      </a>
-      <a
-        href={withBase('/projects/')}
-        class="rounded-lg border border-border bg-surface px-5 py-2.5 font-medium transition-colors hover:border-brand/40"
-      >
-        Browse projects
-      </a>
-      <a
-        href={withBase('/docs/')}
-        class="rounded-lg px-5 py-2.5 font-medium text-accent underline decoration-1 underline-offset-4 hover:decoration-2"
-      >
-        Documentation
-      </a>
+      <a href={withBase('/')} class="pv-btn pv-btn-primary"> Back to the homepage </a>
+      <a href={withBase('/projects/')} class="pv-btn pv-btn-secondary"> Browse projects </a>
+      <a href={withBase('/docs/')} class="pv-btn pv-btn-ghost"> Documentation </a>
     </div>
   </div>
 </SiteLayout>

@@ -64,6 +64,10 @@ build:
     bun run data:sync
     bun run build
 
+# Full CI validation chain used by the shared build pipeline (data sync → typecheck → build → checks).
+ci-build:
+    bun run ci:build
+
 # Preview the production build locally.
 preview:
     bun run preview
