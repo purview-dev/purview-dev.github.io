@@ -13,11 +13,7 @@ jobs:
   release:
     uses: purview-dev/build/.github/workflows/purview-release.yml@main
     with:
-      # The site publishes no NuGet package; tag + GitHub release (with the
-      # dist zip attached) only.
+      # The site publishes no NuGet package; tag + GitHub release (with the dist zip attached) only.
       release-mode: GitHubRelease
       upload-artifacts: true
-      # Web support landed in Purview.Build 0.3.0; pin the tool version so the
-      # shared release is reproducible.
-      build-version: 0.3.0
     secrets: inherit
