@@ -79,7 +79,7 @@ projects:
     discussions: false
 
   - id: zodsharp
-    name: Purview.ZodSharp
+    name: ZodSharp
     shortDescription: Zero-allocation schema validation for C# — a Zod port.
     description: >-
       A high-performance schema validation library for C#, ported from

@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
 import InstallPanel from '~/components/islands/InstallPanel.tsx';
+import PackageVersions, { type PackageRow } from '~/components/islands/PackageVersions.tsx';
 import StatusBadge from '~/components/StatusBadge.astro';
 import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '~/lib/badges';
 import { installKindFor, installTabs } from '~/lib/install';
@@ -27,37 +28,48 @@ const releaseIndex = getReleaseIndex();
 const releases = projectReleaseSummary(project, releaseIndex.data, releaseIndex.source);
 const { tags, repoDescription } = projectRepoEnrichment(project, releaseIndex.data);
 const supplementalRepoDescription =
-  repoDescription &&
-  repoDescription !== project.shortDescription &&
-  repoDescription !== project.description
-    ? repoDescription
-    : null;
+  (
+    repoDescription &&
+    repoDescription !== project.shortDescription &&
+    repoDescription !== project.description
+  ) ?
+    repoDescription
+  : null;
 const related = project.related
   .map((id) => loadProjects().find((candidate) => candidate.id === id))
   .filter((candidate) => candidate !== undefined);
-const supersededBy = project.supersededBy
-  ? loadProjects().find((candidate) => candidate.id === project.supersededBy)
+const supersededBy =
+  project.supersededBy ?
+    loadProjects().find((candidate) => candidate.id === project.supersededBy)
   : undefined;
 const primaryPackage = project.packages.find((pkg) => pkg.primary) ?? project.packages[0];
 const docsPath = project.docs ? withBase(`/docs/${project.id}/`) : null;
 const targetFrameworks = project.targetFrameworks ?? [];
-const primaryRelease = primaryPackage
-  ? releases.packages.find((pkg) => pkg.packageId === primaryPackage.id)
-  : undefined;
+const primaryRelease =
+  primaryPackage ? releases.packages.find((pkg) => pkg.packageId === primaryPackage.id) : undefined;
 const installTabsOptions =
-  primaryPackage && project.status !== 'archived'
-    ? installTabs(
-        installKindFor(project),
-        primaryPackage.id,
-        primaryRelease?.latestStable ?? primaryRelease?.latestPrerelease ?? null,
-      )
-    : [];
+  primaryPackage && project.status !== 'archived' ?
+    installTabs(
+      installKindFor(project),
+      primaryPackage.id,
+      primaryRelease?.latestStable ?? primaryRelease?.latestPrerelease ?? null,
+    )
+  : [];
+const projectUrl = withBase(`/projects/${project.id}/`);
+const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
+  projectId: project.id,
+  projectName: project.name,
+  projectUrl,
+  packageId: pkg.packageId,
+  latestStable: pkg.latestStable,
+  latestPrerelease: pkg.latestPrerelease,
+  totalDownloads: pkg.totalDownloads,
+  nugetUrl: pkg.nugetUrl,
+  deprecated: pkg.deprecated,
+}));
 ---
 
-<SiteLayout
-  title={`${project.name} — ${SITE.fullName}`}
-  description={project.shortDescription}
->
+<SiteLayout title={`${project.name} — ${SITE.fullName}`} description={project.shortDescription}>
   <div class="pv-container py-12 md:py-16">
     <nav aria-label="Breadcrumb" class="mb-6 text-sm text-muted">
       <a href={withBase('/projects/')} class="pv-link">Projects</a>
@@ -88,17 +100,16 @@ const installTabsOptions =
         project.status === 'archived' && (
           <div class="mt-6 rounded-lg border border-error/40 bg-error/10 p-4 text-sm">
             <strong>Archived.</strong> This project is no longer actively developed.
-            {
-              supersededBy && (
-                <>
-                  {' '}It has been superseded by{' '}
-                  <a href={withBase(`/projects/${supersededBy.id}/`)} class="pv-link">
-                    {supersededBy.name}
-                  </a>
-                  .
-                </>
-              )
-            }
+            {supersededBy && (
+              <>
+                {' '}
+                It has been superseded by{' '}
+                <a href={withBase(`/projects/${supersededBy.id}/`)} class="pv-link">
+                  {supersededBy.name}
+                </a>
+                .
+              </>
+            )}
           </div>
         )
       }
@@ -156,38 +167,36 @@ const installTabsOptions =
         {
           project.status !== 'archived' && (
             <>
-              {
-                primaryPackage && (
-                  <>
-                    <a
-                      href={nugetPackageUrl(primaryPackage.id)}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      class="inline-flex"
-                    >
-                      <img
-                        src={nugetVersionBadge(primaryPackage.id)}
-                        alt={`NuGet version of ${primaryPackage.id}`}
-                        loading="lazy"
-                        class="h-5 w-auto"
-                      />
-                    </a>
-                    <a
-                      href={nugetPackageUrl(primaryPackage.id)}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      class="inline-flex"
-                    >
-                      <img
-                        src={nugetDownloadsBadge(primaryPackage.id)}
-                        alt={`NuGet downloads of ${primaryPackage.id}`}
-                        loading="lazy"
-                        class="h-5 w-auto"
-                      />
-                    </a>
-                  </>
-                )
-              }
+              {primaryPackage && (
+                <>
+                  <a
+                    href={nugetPackageUrl(primaryPackage.id)}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    class="inline-flex"
+                  >
+                    <img
+                      src={nugetVersionBadge(primaryPackage.id)}
+                      alt={`NuGet version of ${primaryPackage.id}`}
+                      loading="lazy"
+                      class="h-5 w-auto"
+                    />
+                  </a>
+                  <a
+                    href={nugetPackageUrl(primaryPackage.id)}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    class="inline-flex"
+                  >
+                    <img
+                      src={nugetDownloadsBadge(primaryPackage.id)}
+                      alt={`NuGet downloads of ${primaryPackage.id}`}
+                      loading="lazy"
+                      class="h-5 w-auto"
+                    />
+                  </a>
+                </>
+              )}
               <a
                 href={actionsUrl(project.repository)}
                 rel="noopener noreferrer"
@@ -215,7 +224,8 @@ const installTabsOptions =
           {
             supplementalRepoDescription && (
               <p class="mt-3 text-sm text-muted">
-                From the repository: <span class="text-foreground">{supplementalRepoDescription}</span>
+                From the repository:{' '}
+                <span class="text-foreground">{supplementalRepoDescription}</span>
               </p>
             )
           }
@@ -225,53 +235,8 @@ const installTabsOptions =
           project.packages.length > 0 && (
             <section>
               <h2 class="text-xl font-semibold">Packages</h2>
-              <div class="mt-4 overflow-x-auto rounded-xl border border-border">
-                <table class="w-full min-w-[32rem] text-left text-sm">
-                  <thead class="border-b border-border bg-surface">
-                    <tr>
-                      <th scope="col" class="px-4 py-3 font-semibold">Package</th>
-                      <th scope="col" class="px-4 py-3 font-semibold">Stable</th>
-                      <th scope="col" class="px-4 py-3 font-semibold">Prerelease</th>
-                      <th scope="col" class="px-4 py-3 font-semibold">Downloads</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {
-                      releases.packages.map((pkg) => (
-                        <tr class="border-b border-border last:border-0">
-                          <td class="px-4 py-3">
-                            <a
-                              href={pkg.nugetUrl}
-                              rel="noopener noreferrer"
-                              target="_blank"
-                              class="pv-link break-all"
-                            >
-                              {pkg.packageId}
-                            </a>
-                            {
-                              pkg.deprecated && (
-                                <span class="ml-2 rounded-full border border-warning/40 bg-warning/10 px-2 py-0.5 text-xs text-warning">
-                                  deprecated
-                                </span>
-                              )
-                            }
-                          </td>
-                          <td class="px-4 py-3 font-mono text-xs">
-                            {pkg.latestStable ?? <span class="text-muted">—</span>}
-                          </td>
-                          <td class="px-4 py-3 font-mono text-xs">
-                            {pkg.latestPrerelease ?? <span class="text-muted">—</span>}
-                          </td>
-                          <td class="px-4 py-3 text-muted">
-                            {pkg.totalDownloads != null
-                              ? pkg.totalDownloads.toLocaleString('en-US')
-                              : '—'}
-                          </td>
-                        </tr>
-                      ))
-                    }
-                  </tbody>
-                </table>
+              <div class="mt-4">
+                <PackageVersions client:visible packages={packageRows} showProject={false} />
               </div>
             </section>
           )
@@ -336,22 +301,24 @@ const installTabsOptions =
             <div class="rounded-xl border border-border bg-surface p-5">
               <h2 class="text-sm font-semibold uppercase tracking-wider text-muted">Related</h2>
               <ul class="mt-4 list-none space-y-2 text-sm">
-                {
-                  related.map((relatedProject) => (
-                    <li>
-                      <a href={withBase(`/projects/${relatedProject.id}/`)} class="pv-link">
-                        {relatedProject.name}
-                      </a>
-                    </li>
-                  ))
-                }
+                {related.map((relatedProject) => (
+                  <li>
+                    <a href={withBase(`/projects/${relatedProject.id}/`)} class="pv-link">
+                      {relatedProject.name}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
           )
         }
 
         <p class="text-xs text-muted">
-          Release data retrieved {releases.retrievedAt ? `on ${releases.retrievedAt.slice(0, 10)}` : 'from committed fixtures'}.
+          Release data retrieved {
+            releases.retrievedAt ?
+              `on ${releases.retrievedAt.slice(0, 10)}`
+            : 'from committed fixtures'
+          }.
         </p>
       </aside>
     </div>

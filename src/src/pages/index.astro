@@ -36,10 +36,7 @@ const organizationStructuredData = {
   url: SITE.url,
   logo: absoluteUrl('/branding/icon-light-512.png'),
   description: SITE.description,
-  sameAs: [
-    SITE.githubUrl,
-    `${SITE.nugetUrl}/search?q=purview`,
-  ],
+  sameAs: [SITE.githubUrl, `${SITE.nugetUrl}/search?q=purview`],
 };
 ---
 
@@ -57,16 +54,19 @@ const organizationStructuredData = {
         width="1280"
         height="320"
       />
-      <div class="absolute inset-0 bg-gradient-to-b from-background/30 via-background/70 to-background" />
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-background/30 via-background/70 to-background"
+      >
+      </div>
     </div>
-<div class="pv-container py-20 md:py-28">
+    <div class="pv-container py-20 md:py-28">
       <div class="max-w-3xl">
         <p
           class="mb-6 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface/80 px-4 py-2.5 text-sm text-muted backdrop-blur"
         >
           <span class="beta-badge">Beta</span>
-          This site is in beta — release data and documentation are refreshed
-          from the source repositories on an ongoing basis.
+          This site is in beta — release data and documentation are refreshed from the source repositories
+          on an ongoing basis.
         </p>
         <p class="pv-chip mb-5 border-brand/30 bg-brand/5 text-brand">
           {SITE.tagline}
@@ -75,29 +75,26 @@ const organizationStructuredData = {
           Developer tooling for .NET that gets out of your way.
         </h1>
         <p class="mt-6 max-w-2xl text-lg text-muted">
-          Purview Dev builds the pieces that .NET projects need but rarely want to
-          write by hand — event sourcing, telemetry, schema validation, source
-          generators, and build automation — designed to be fast, typed, and
-          painless to adopt.
+          Purview Dev builds the pieces that .NET projects need but rarely want to write by hand —
+          event sourcing, telemetry, schema validation, source generators, and build automation —
+          designed to be fast, typed, and painless to adopt.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a
-            href={withBase('/projects/')}
-            class="rounded-lg bg-brand px-5 py-2.5 font-medium text-white transition-colors hover:bg-brand-emphasis"
-          >
-            Browse projects
-          </a>
-          <a
-            href={withBase('/docs/')}
-            class="rounded-lg border border-border bg-surface px-5 py-2.5 font-medium text-foreground transition-colors hover:border-brand/40"
-          >
-            Read the documentation
-          </a>
-          <a
-            href={withBase('/releases/')}
-            class="rounded-lg px-5 py-2.5 font-medium text-accent underline decoration-1 underline-offset-4 hover:decoration-2"
-          >
+          <a href={withBase('/projects/')} class="pv-btn pv-btn-primary"> Browse projects </a>
+          <a href={withBase('/docs/')} class="pv-btn pv-btn-secondary"> Read the documentation </a>
+          <a href={withBase('/releases/')} class="pv-btn pv-btn-ghost">
             View releases
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"></path>
+            </svg>
           </a>
         </div>
       </div>
@@ -109,24 +106,24 @@ const organizationStructuredData = {
       <div>
         <h2 class="text-xl font-semibold">Source generators, done deliberately</h2>
         <p class="mt-3 text-muted">
-          Several Purview projects are built on Roslyn source generators to move
-          work from runtime to compile time — zero allocations, no reflection,
-          and APIs that are impossible to wire up wrong.
+          Several Purview projects are built on Roslyn source generators to move work from runtime
+          to compile time — zero allocations, no reflection, and APIs that are impossible to wire up
+          wrong.
         </p>
       </div>
       <div>
         <h2 class="text-xl font-semibold">One coherent product family</h2>
         <p class="mt-3 text-muted">
-          The projects share conventions, a common build pipeline
-          ({`Purview.Build`}), and integration points — for example
+          The projects share conventions, a common build pipeline ({`Purview.Build`}), and
+          integration points — for example
           {`Purview.EventSourcing`} validates aggregates with {`Purview.ZodSharp`}.
         </p>
       </div>
       <div>
         <h2 class="text-xl font-semibold">Provider-agnostic by design</h2>
         <p class="mt-3 text-muted">
-          Storage, serialization, and validation choices stay swappable. Adopt
-          the parts you need without rewriting the parts you already have.
+          Storage, serialization, and validation choices stay swappable. Adopt the parts you need
+          without rewriting the parts you already have.
         </p>
       </div>
     </div>
@@ -137,8 +134,8 @@ const organizationStructuredData = {
       <div>
         <h2 class="text-2xl font-bold tracking-tight md:text-3xl">Featured projects</h2>
         <p class="mt-2 max-w-2xl text-muted">
-          The foundations of the Purview product family. Every project is open
-          source, MIT licensed, and published to NuGet.
+          The foundations of the Purview product family. Every project is open source, MIT licensed,
+          and published to NuGet.
         </p>
       </div>
       <a href={withBase('/projects/')} class="pv-link hidden shrink-0 sm:inline">
@@ -155,8 +152,8 @@ const organizationStructuredData = {
       <div>
         <h2 class="text-2xl font-bold tracking-tight md:text-3xl">Package status</h2>
         <p class="mt-2 max-w-2xl text-muted">
-          The latest stable and prerelease version of every NuGet package at a
-          glance. Search, or click a column to sort.
+          The latest stable and prerelease version of every NuGet package at a glance. Search, or
+          click a column to sort.
         </p>
       </div>
       <a href={withBase('/releases/')} class="pv-link hidden shrink-0 sm:inline">
@@ -178,37 +175,32 @@ const organizationStructuredData = {
         <div class="rounded-xl border border-border p-6">
           <p class="text-sm font-semibold text-brand">1 · Pick a project</p>
           <p class="mt-2 text-muted">
-            Explore the {active.length} active projects in the catalogue and find
-            the one that solves your problem.
+            Explore the {active.length} active projects in the catalogue and find the one that solves
+            your problem.
           </p>
         </div>
         <div class="rounded-xl border border-border p-6">
           <p class="text-sm font-semibold text-brand">2 · Add the package</p>
           <p class="mt-2 text-muted">
-            Every project ships real NuGet packages. {`dotnet add package`} and a
-            source generator or two is usually all it takes.
+            Every project ships real NuGet packages. {`dotnet add package`} and a source generator or
+            two is usually all it takes.
           </p>
         </div>
         <div class="rounded-xl border border-border p-6">
           <p class="text-sm font-semibold text-brand">3 · Read the docs</p>
           <p class="mt-2 text-muted">
-            Full documentation is aggregated here from each repository — guides,
-            provider matrices, guarantees, and examples.
+            Full documentation is aggregated here from each repository — guides, provider matrices,
+            guarantees, and examples.
           </p>
         </div>
       </div>
       <div class="mt-10 flex flex-wrap gap-3">
-        <a
-          href={withBase('/projects/')}
-          class="rounded-lg bg-brand px-5 py-2.5 font-medium text-white transition-colors hover:bg-brand-emphasis"
-        >
-          Open the catalogue
-        </a>
+        <a href={withBase('/projects/')} class="pv-btn pv-btn-primary"> Open the catalogue </a>
         <a
           href={SITE.githubUrl}
           rel="noopener noreferrer"
           target="_blank"
-          class="rounded-lg border border-border bg-surface px-5 py-2.5 font-medium transition-colors hover:border-brand/40"
+          class="pv-btn pv-btn-secondary"
         >
           Visit the GitHub organisation
         </a>

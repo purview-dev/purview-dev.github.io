@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'preact/hooks';
 
-const STORAGE_KEY = 'purview.project-filter.v1';
+const STORAGE_KEY = 'purview.project-filter.v2';
 
 interface FilterState {
   search: string;
   category: string;
   status: string;
+  showArchived: boolean;
 }
 
 interface Props {
@@ -15,7 +16,7 @@ interface Props {
 
 function initialFilters(): FilterState {
   if (typeof window === 'undefined') {
-    return { search: '', category: 'all', status: 'all' };
+    return { search: '', category: 'all', status: 'all', showArchived: false };
   }
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -25,12 +26,13 @@ function initialFilters(): FilterState {
         search: typeof parsed.search === 'string' ? parsed.search : '',
         category: typeof parsed.category === 'string' ? parsed.category : 'all',
         status: typeof parsed.status === 'string' ? parsed.status : 'all',
+        showArchived: typeof parsed.showArchived === 'boolean' ? parsed.showArchived : false,
       };
     }
   } catch {
     // Ignore unreadable storage; fall back to defaults.
   }
-  return { search: '', category: 'all', status: 'all' };
+  return { search: '', category: 'all', status: 'all', showArchived: false };
 }
 
 export default function ProjectFilter({ categories, statuses }: Props) {
@@ -54,7 +56,8 @@ export default function ProjectFilter({ categories, statuses }: Props) {
       const matchesCategory = filters.category === 'all' || category === filters.category;
       const matchesStatus = filters.status === 'all' || status === filters.status;
       const matchesSearch = query === '' || searchText.includes(query);
-      const show = matchesCategory && matchesStatus && matchesSearch;
+      const matchesArchived = filters.showArchived || status !== 'archived';
+      const show = matchesCategory && matchesStatus && matchesSearch && matchesArchived;
       card.hidden = !show;
       if (show) {
         visible += 1;
@@ -143,6 +146,22 @@ export default function ProjectFilter({ categories, statuses }: Props) {
           </option>
         ))}
       </select>
+
+      <label class="text-muted flex items-center gap-2 text-sm" htmlFor="filter-archived">
+        <input
+          id="filter-archived"
+          type="checkbox"
+          checked={filters.showArchived}
+          onChange={(event) =>
+            setFilters((current) => ({
+              ...current,
+              showArchived: (event.target as HTMLInputElement).checked,
+            }))
+          }
+          class="border-border text-brand focus:ring-focus rounded"
+        />
+        Show archived
+      </label>
 
       <p class="text-muted text-sm" aria-live="polite">
         {visibleCount} project{visibleCount === 1 ? '' : 's'}

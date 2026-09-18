@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useMemo, useState } from 'preact/hooks';
 import { compare, valid } from 'semver';
 
 export interface PackageRow {
@@ -10,6 +10,7 @@ export interface PackageRow {
   totalDownloads: number | null;
   nugetUrl: string;
   projectUrl: string;
+  deprecated?: boolean;
 }
 
 type SortKey = 'package' | 'project' | 'stable' | 'prerelease' | 'downloads';
@@ -17,6 +18,8 @@ type SortDir = 'asc' | 'desc';
 
 interface Props {
   packages: PackageRow[];
+  /** Show the project column and allow grouping by project. Set to false on a single-project page, where the project is already implicit. */
+  showProject?: boolean;
 }
 
 function normalizeVersion(version: string | null): string | null {
@@ -39,20 +42,53 @@ function compareVersions(a: string | null, b: string | null): number {
   return (va ?? '').localeCompare(vb ?? '');
 }
 
-const COLUMNS: { key: SortKey; label: string; title: string }[] = [
-  { key: 'package', label: 'Package', title: 'Sort by package name' },
-  { key: 'project', label: 'Project', title: 'Sort by project name' },
-  { key: 'stable', label: 'Stable', title: 'Sort by latest stable version' },
-  { key: 'prerelease', label: 'Prerelease', title: 'Sort by latest prerelease version' },
-  { key: 'downloads', label: 'Downloads', title: 'Sort by total downloads' },
-];
+function formatDownloads(value: number | null): string {
+  return value == null ? '—' : value.toLocaleString('en-US');
+}
 
-export default function PackageVersions({ packages }: Props) {
+function VersionBadge({
+  version,
+  tone,
+}: {
+  version: string | null;
+  tone: 'stable' | 'prerelease';
+}) {
+  if (!version) {
+    return <span class="text-muted text-xs">—</span>;
+  }
+  return (
+    <span
+      class={[
+        'inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-xs',
+        tone === 'stable'
+          ? 'border-success/30 bg-success/10 text-success'
+          : 'border-warning/30 bg-warning/10 text-warning',
+      ].join(' ')}
+    >
+      {version}
+    </span>
+  );
+}
+
+export default function PackageVersions({ packages, showProject = true }: Props) {
   const [search, setSearch] = useState('');
   const [sortKey, setSortKey] = useState<SortKey>('project');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const [groupByProject, setGroupByProject] = useState(true);
 
   const query = search.trim().toLowerCase();
+  const canGroup = showProject && new Set(packages.map((row) => row.projectId)).size > 1;
+  const isGrouped = canGroup && groupByProject;
+  const showProjectColumn = showProject && !isGrouped;
+  const columns: { key: SortKey; label: string; title: string }[] = [
+    { key: 'package', label: 'Package', title: 'Sort by package name' },
+    ...(showProjectColumn
+      ? ([{ key: 'project', label: 'Project', title: 'Sort by project name' }] as const)
+      : []),
+    { key: 'stable', label: 'Stable', title: 'Sort by latest stable version' },
+    { key: 'prerelease', label: 'Prerelease', title: 'Sort by latest prerelease version' },
+    { key: 'downloads', label: 'Downloads', title: 'Sort by total downloads' },
+  ];
 
   const rows = packages
     .filter(
@@ -88,6 +124,29 @@ export default function PackageVersions({ packages }: Props) {
       }
     });
 
+  const groups = useMemo(() => {
+    if (!canGroup || !groupByProject) {
+      return null;
+    }
+    const byProject = new Map<
+      string,
+      { projectName: string; projectUrl: string; rows: PackageRow[] }
+    >();
+    for (const row of rows) {
+      const existing = byProject.get(row.projectId);
+      if (existing) {
+        existing.rows.push(row);
+      } else {
+        byProject.set(row.projectId, {
+          projectName: row.projectName,
+          projectUrl: row.projectUrl,
+          rows: [row],
+        });
+      }
+    }
+    return [...byProject.values()].toSorted((a, b) => a.projectName.localeCompare(b.projectName));
+  }, [canGroup, groupByProject, rows]);
+
   function toggleSort(key: SortKey) {
     if (sortKey === key) {
       setSortDir((current) => (current === 'asc' ? 'desc' : 'asc'));
@@ -95,6 +154,49 @@ export default function PackageVersions({ packages }: Props) {
     }
     setSortKey(key);
     setSortDir(key === 'downloads' ? 'desc' : 'asc');
+  }
+
+  const colSpan = columns.length;
+
+  function renderRow(row: PackageRow) {
+    return (
+      <tr key={row.packageId} class="border-border hover:bg-surface/60 border-b last:border-0">
+        <td class="px-4 py-3">
+          <a
+            href={row.nugetUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+            class="pv-link break-all"
+          >
+            {row.packageId}
+          </a>
+          {row.deprecated && (
+            <span class="border-warning/40 bg-warning/10 text-warning ml-2 rounded-full border px-2 py-0.5 text-xs">
+              deprecated
+            </span>
+          )}
+        </td>
+        {showProjectColumn && (
+          <td class="px-4 py-3">
+            <a href={row.projectUrl} class="pv-link">
+              {row.projectName}
+            </a>
+          </td>
+        )}
+        <td class="px-4 py-3">
+          <VersionBadge version={row.latestStable} tone="stable" />
+        </td>
+        <td class="px-4 py-3">
+          <VersionBadge version={row.latestPrerelease} tone="prerelease" />
+        </td>
+        <td
+          class="text-muted px-4 py-3 text-xs"
+          title={row.totalDownloads == null ? 'Not yet indexed by NuGet search' : undefined}
+        >
+          {formatDownloads(row.totalDownloads)}
+        </td>
+      </tr>
+    );
   }
 
   return (
@@ -126,16 +228,28 @@ export default function PackageVersions({ packages }: Props) {
             class="w-full bg-transparent text-sm outline-none"
           />
         </label>
+        {canGroup && (
+          <label class="text-muted flex items-center gap-2 text-sm" htmlFor="package-group">
+            <input
+              id="package-group"
+              type="checkbox"
+              checked={groupByProject}
+              onChange={(event) => setGroupByProject((event.target as HTMLInputElement).checked)}
+              class="border-border text-brand focus:ring-focus rounded"
+            />
+            Group by project
+          </label>
+        )}
         <p class="text-muted text-sm" aria-live="polite">
           {rows.length} package{rows.length === 1 ? '' : 's'}
         </p>
       </div>
 
-      <div class="border-border mt-4 overflow-x-auto rounded-xl border">
+      <div class="pv-card mt-4 overflow-hidden overflow-x-auto">
         <table class="w-full min-w-[52rem] text-left text-sm">
-          <thead class="border-border bg-surface border-b">
+          <thead class="border-border bg-surface/80 border-b backdrop-blur">
             <tr>
-              {COLUMNS.map((column) => (
+              {columns.map((column) => (
                 <th
                   key={column.key}
                   scope="col"
@@ -164,34 +278,37 @@ export default function PackageVersions({ packages }: Props) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
-              <tr key={row.packageId} class="border-border border-b last:border-0">
-                <td class="px-4 py-3">
-                  <a
-                    href={row.nugetUrl}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    class="pv-link break-all"
-                  >
-                    {row.packageId}
-                  </a>
-                </td>
-                <td class="px-4 py-3">
-                  <a href={row.projectUrl} class="pv-link">
-                    {row.projectName}
-                  </a>
-                </td>
-                <td class="px-4 py-3 font-mono text-xs">
-                  {row.latestStable ?? <span class="text-muted">—</span>}
-                </td>
-                <td class="px-4 py-3 font-mono text-xs">
-                  {row.latestPrerelease ?? <span class="text-muted">—</span>}
-                </td>
-                <td class="text-muted px-4 py-3 text-xs">
-                  {row.totalDownloads == null ? '—' : row.totalDownloads.toLocaleString('en-US')}
-                </td>
-              </tr>
-            ))}
+            {groups
+              ? groups.map((group) => {
+                  const subtotal = group.rows.reduce(
+                    (sum, row) => (row.totalDownloads == null ? sum : sum + row.totalDownloads),
+                    0,
+                  );
+                  const hasAnyDownloads = group.rows.some((row) => row.totalDownloads != null);
+                  return (
+                    <>
+                      <tr
+                        key={`group-${group.projectName}`}
+                        class="border-border bg-brand/5 border-b"
+                      >
+                        <th
+                          scope="colgroup"
+                          colspan={colSpan - 1}
+                          class="px-4 py-2 text-left text-xs font-semibold tracking-wider uppercase"
+                        >
+                          <a href={group.projectUrl} class="text-brand-emphasis hover:underline">
+                            {group.projectName}
+                          </a>
+                        </th>
+                        <td class="text-muted px-4 py-2 text-right text-xs font-semibold">
+                          {hasAnyDownloads ? `${formatDownloads(subtotal)} total` : '—'}
+                        </td>
+                      </tr>
+                      {group.rows.map((row) => renderRow(row))}
+                    </>
+                  );
+                })
+              : rows.map((row) => renderRow(row))}
           </tbody>
         </table>
       </div>
