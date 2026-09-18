@@ -45,6 +45,13 @@ export interface RawSourceFile {
   lastModified: string;
 }
 
+export class DocsValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'DocsValidationError';
+  }
+}
+
 async function githubJson(path: string): Promise<unknown> {
   const headers: Record<string, string> = {
     Accept: 'application/vnd.github+json',
@@ -178,6 +185,76 @@ function isIndexFile(baseName: string): boolean {
   return ['home.md', 'index.md', 'readme.md'].includes(baseName.toLowerCase());
 }
 
+function normalizeRootPage(path: string): string {
+  return path.replace(/\\/g, '/').replace(/^\.\//, '').replace(/^\/+/, '').replace(/\/+$/, '');
+}
+
+function relativeToDocRoot(rawPath: string, docRoot: string): string {
+  if (!docRoot) {
+    return normalizeRootPage(rawPath);
+  }
+  return normalizeRootPage(rawPath.slice(docRoot.length + 1));
+}
+
+export function selectDocsRootFile(
+  projectId: string,
+  rawFiles: RawSourceFile[],
+  docRoot: string,
+  configuredRootPage: string | undefined,
+): { index: RawSourceFile; regular: RawSourceFile[]; slugAliases: Map<string, string> } {
+  const defaultIndex = rawFiles.find((raw) => isIndexFile(relativeToDocRoot(raw.path, docRoot)));
+  const normalizedRootPage = configuredRootPage ? normalizeRootPage(configuredRootPage) : null;
+
+  let index: RawSourceFile | undefined = defaultIndex;
+  if (normalizedRootPage) {
+    const configuredRoot = rawFiles.find(
+      (raw) =>
+        relativeToDocRoot(raw.path, docRoot).toLowerCase() === normalizedRootPage.toLowerCase(),
+    );
+    if (!configuredRoot) {
+      throw new DocsValidationError(
+        [
+          `Invalid docs configuration for ${projectId}`,
+          `  docs.rootPage: "${configuredRootPage}" does not exist under "${docRoot || '.'}".`,
+          '',
+          'Remediation: point docs.rootPage at an existing markdown file or add a conventional index.md/Home.md/readme.md root page.',
+        ].join('\n'),
+      );
+    }
+    const configuredRelative = relativeToDocRoot(configuredRoot.path, docRoot);
+    if (defaultIndex && configuredRoot !== defaultIndex && !isIndexFile(configuredRelative)) {
+      throw new DocsValidationError(
+        [
+          `Invalid docs configuration for ${projectId}`,
+          `  docs.rootPage: "${configuredRootPage}" selects a non-index page while a conventional root page already exists.`,
+          `  Existing root page: ${relativeToDocRoot(defaultIndex.path, docRoot)}`,
+          '',
+          'Remediation: remove docs.rootPage or set it to the existing index.md/Home.md/readme.md root page.',
+        ].join('\n'),
+      );
+    }
+    index = configuredRoot;
+  }
+
+  if (!index) {
+    throw new DocsValidationError(
+      [
+        `Invalid docs configuration for ${projectId}`,
+        `  docs: no root page exists under "${docRoot || '.'}".`,
+        '',
+        'Remediation: add index.md/Home.md/readme.md or set docs.rootPage to the markdown file that should render at /docs/{project}/.',
+      ].join('\n'),
+    );
+  }
+
+  const rootSourceSlug = slugifyDocFile(relativeToDocRoot(index.path, docRoot));
+  return {
+    index,
+    regular: rawFiles.filter((raw) => raw !== index),
+    slugAliases: rootSourceSlug === 'index' ? new Map() : new Map([[rootSourceSlug, 'index']]),
+  };
+}
+
 function sourceName(slug: string, raw: RawSourceFile): string {
   return slug === 'index' ? 'Home.md' : (raw.path.split('/').pop() ?? raw.path);
 }
@@ -191,6 +268,7 @@ async function buildPage(
   order: number,
   knownSlugs: Set<string>,
   headingSlugs: Map<string, Set<string>>,
+  slugAliases?: Map<string, string>,
 ): Promise<AggregatedPage> {
   const imageBase: string | null =
     project.docs?.source === 'wiki'
@@ -207,6 +285,7 @@ async function buildPage(
     sourcePath: sourceDir,
     imageBase,
     headingSlugs,
+    slugAliases,
   };
 
   const converted = convertGithubAlerts(raw.content);
@@ -281,36 +360,71 @@ async function collectGithubPathDocs(
   const orderBySidebar = new Map<string, number>();
   sidebarOrder.forEach((name, index) => orderBySidebar.set(slugifyDocFile(name), index));
 
-  const indexSource = rawFiles.find((raw) => isIndexFile(raw.path.slice(docRoot.length + 1)));
-  const regular = rawFiles.filter((raw) => raw !== indexSource);
-
+  let selectedRoot: {
+    index: RawSourceFile;
+    regular: RawSourceFile[];
+    slugAliases: Map<string, string>;
+  };
   if (config.readmeAsIndex) {
-    const readme = await fetchRawFile(project.repository, branch, 'README.md');
-    if (readme) {
-      rawFiles.unshift(readme);
+    if (config.rootPage) {
+      throw new DocsValidationError(
+        [
+          `Invalid docs configuration for ${project.id}`,
+          '  docs.rootPage cannot be combined with docs.readmeAsIndex.',
+          '',
+          'Remediation: remove docs.rootPage or disable docs.readmeAsIndex.',
+        ].join('\n'),
+      );
     }
+    const readme = await fetchRawFile(project.repository, branch, 'README.md');
+    if (!readme) {
+      throw new DocsValidationError(
+        [
+          `Invalid docs configuration for ${project.id}`,
+          '  docs.readmeAsIndex is enabled but README.md does not exist.',
+          '',
+          'Remediation: add README.md or disable docs.readmeAsIndex.',
+        ].join('\n'),
+      );
+    }
+    const indexSource = rawFiles.find((raw) => isIndexFile(relativeToDocRoot(raw.path, docRoot)));
+    selectedRoot = {
+      index: readme,
+      regular: rawFiles.filter((raw) => raw !== indexSource),
+      slugAliases: new Map([['readme', 'index']]),
+    };
+  } else {
+    selectedRoot = selectDocsRootFile(project.id, rawFiles, docRoot, config.rootPage);
   }
 
   const knownSlugs = new Set<string>(['index']);
-  for (const raw of regular) {
-    knownSlugs.add(slugifyDocFile(raw.path.slice(docRoot.length + 1)));
+  for (const raw of selectedRoot.regular) {
+    knownSlugs.add(slugifyDocFile(relativeToDocRoot(raw.path, docRoot)));
   }
 
-  const index = config.readmeAsIndex ? rawFiles[0] : indexSource;
   const headingSlugs = new Map<string, Set<string>>();
-  for (const raw of [...regular, ...(index ? [index] : [])]) {
-    const slug = raw === index ? 'index' : slugifyDocFile(raw.path.slice(docRoot.length + 1));
+  for (const raw of [...selectedRoot.regular, selectedRoot.index]) {
+    const slug =
+      raw === selectedRoot.index ? 'index' : slugifyDocFile(relativeToDocRoot(raw.path, docRoot));
     headingSlugs.set(slug, extractHeadingSlugs(raw.content));
   }
 
   const pages: AggregatedPage[] = [];
-  if (index) {
-    pages.push(
-      await buildPage(project, branch, config.path, 'index', index, -1, knownSlugs, headingSlugs),
-    );
-  }
-  for (const raw of regular) {
-    const relative = raw.path.slice(docRoot.length + 1);
+  pages.push(
+    await buildPage(
+      project,
+      branch,
+      config.path,
+      'index',
+      selectedRoot.index,
+      -1,
+      knownSlugs,
+      headingSlugs,
+      selectedRoot.slugAliases,
+    ),
+  );
+  for (const raw of selectedRoot.regular) {
+    const relative = relativeToDocRoot(raw.path, docRoot);
     const slug = slugifyDocFile(relative);
     const explicitOrder = config.order?.indexOf(slug);
     const order =
@@ -318,7 +432,17 @@ async function collectGithubPathDocs(
         ? explicitOrder
         : (orderBySidebar.get(slug) ?? 1000);
     pages.push(
-      await buildPage(project, branch, config.path, slug, raw, order, knownSlugs, headingSlugs),
+      await buildPage(
+        project,
+        branch,
+        config.path,
+        slug,
+        raw,
+        order,
+        knownSlugs,
+        headingSlugs,
+        selectedRoot.slugAliases,
+      ),
     );
   }
 
@@ -348,36 +472,52 @@ async function collectWikiDocs(project: ResolvedProject): Promise<AggregatedProj
   const orderBySidebar = new Map<string, number>();
   sidebarOrder.forEach((name, index) => orderBySidebar.set(slugifyDocFile(name), index));
 
+  const rawFiles: RawSourceFile[] = candidates.map((candidate) => ({
+    path: candidate.name,
+    content: candidate.content,
+    lastModified: snapshot,
+  }));
+  const selectedRoot = selectDocsRootFile(project.id, rawFiles, '', config.rootPage);
+
   const knownSlugs = new Set<string>(['index']);
-  for (const candidate of candidates) {
-    knownSlugs.add(slugifyDocFile(candidate.name));
+  for (const raw of selectedRoot.regular) {
+    knownSlugs.add(slugifyDocFile(raw.path));
   }
 
   const headingSlugs = new Map<string, Set<string>>();
-  for (const candidate of candidates) {
-    headingSlugs.set(slugifyDocFile(candidate.name), extractHeadingSlugs(candidate.content));
+  for (const raw of [...selectedRoot.regular, selectedRoot.index]) {
+    const slug = raw === selectedRoot.index ? 'index' : slugifyDocFile(raw.path);
+    headingSlugs.set(slug, extractHeadingSlugs(raw.content));
   }
 
   const pages: AggregatedPage[] = [];
-  for (const candidate of candidates) {
-    const slug = slugifyDocFile(candidate.name);
-    const isIndex = candidate.name.toLowerCase() === 'home.md';
-    const order = isIndex ? -1 : (orderBySidebar.get(slug) ?? 1000);
-    const raw: RawSourceFile = {
-      path: candidate.name,
-      content: candidate.content,
-      lastModified: snapshot,
-    };
+  pages.push(
+    await buildPage(
+      project,
+      'main',
+      'docs/wiki',
+      'index',
+      selectedRoot.index,
+      -1,
+      knownSlugs,
+      headingSlugs,
+      selectedRoot.slugAliases,
+    ),
+  );
+  for (const raw of selectedRoot.regular) {
+    const slug = slugifyDocFile(raw.path);
+    const order = orderBySidebar.get(slug) ?? 1000;
     pages.push(
       await buildPage(
         project,
         'main',
         'docs/wiki',
-        isIndex ? 'index' : slug,
+        slug,
         raw,
         order,
         knownSlugs,
         headingSlugs,
+        selectedRoot.slugAliases,
       ),
     );
   }
@@ -431,6 +571,9 @@ export async function aggregateDocs(projects: ResolvedProject[]): Promise<Aggreg
       results.push(aggregated);
       console.log(`  docs ${project.id}: ${aggregated.pages.length} pages`);
     } catch (error) {
+      if (error instanceof DocsValidationError) {
+        throw error;
+      }
       console.warn(`  docs ${project.id}: ${(error as Error).message}`);
     }
   }

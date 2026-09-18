@@ -48,7 +48,7 @@
         "kieronlanning",
         "KJL.dev"
       ],
-      "totalDownloads": 16339,
+      "totalDownloads": 16495,
       "verified": false,
       "packageTypes": [
         {
@@ -158,7 +158,7 @@
         },
         {
           "version": "3.2.4",
-          "downloads": 4445,
+          "downloads": 4497,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/3.2.4.json"
         },
         {
@@ -178,7 +178,7 @@
         },
         {
           "version": "4.4.0",
-          "downloads": 596,
+          "downloads": 621,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/4.4.0.json"
         }
       ],

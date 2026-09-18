@@ -35,7 +35,10 @@ export interface ReleaseEntry {
  * flat-container index has not caught up with a release. Tags already present
  * in the NuGet list are left untouched; only missing tags are appended.
  */
-function reconcileWithGitHubReleases(versions: string[], releases: GitHubReleaseInfo[]): string[] {
+export function reconcileWithGitHubReleases(
+  versions: string[],
+  releases: GitHubReleaseInfo[],
+): string[] {
   const known = new Set(versions.map(normalizePrereleaseVersion));
   const reconciled = [...versions];
   for (const release of releases) {

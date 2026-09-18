@@ -26,6 +26,9 @@ function writeJson(file: string, data: unknown): void {
  * The fixtures are representative sample data with no secrets and are used by
  * the unit tests and as an offline data fallback. Run `just refresh-fixtures`
  * to update them; review the diff before committing.
+ *
+ * Fixture-driven unit tests derive their expectations from the fixtures
+ * themselves, so no test updates are required after a refresh.
  */
 async function main(): Promise<void> {
   const projects = loadProjects();

@@ -76,6 +76,7 @@ projects:
         description: Purview.ZodSharp adapter for aggregate save-time validation.
     related:
       - zodsharp
+      - value-objects
     discussions: false
 
   - id: zodsharp
@@ -111,6 +112,40 @@ projects:
         description: Newtonsoft.Json integration and JSON Schema import.
       - id: Purview.ZodSharp.AspNetCore
         description: ASP.NET Core ProblemDetails integration.
+    related:
+      - value-objects
+
+  - id: value-objects
+    name: Value Objects
+    shortDescription: Source-generated scalar and complex value objects for .NET.
+    description: >-
+      F#-style single-case types for C#. Mark a partial struct or class with
+      [Scalar] or [ValueObject] and an incremental source generator produces
+      Create/Hydrate factories with normalization and validation, equality,
+      comparison, implicit conversions, JSON converters, and contextual
+      creation. Value objects serialize as their underlying value, map cleanly
+      onto Entity Framework JSON columns, and can be validated with
+      Purview.ZodSharp schemas.
+    repository: purview-dev/value-objects
+    category: source-generation
+    status: preview
+    featured: true
+    order: 35
+    docs:
+      source: github-path
+      path: docs
+      rootPage: Getting-Started.md
+    targetFrameworks:
+      - net8.0
+      - net9.0
+      - net10.0
+    packages:
+      - id: Purview.ValueObjects
+        description: Runtime contracts, source generator, and analyzer for scalar and complex value objects.
+        primary: true
+    related:
+      - zodsharp
+      - event-sourcing
 
   - id: sourcegenerator-framework
     name: SourceGenerator Framework

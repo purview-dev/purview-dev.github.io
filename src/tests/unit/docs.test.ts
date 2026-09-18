@@ -3,6 +3,7 @@ import type { DocLinkContext } from '../../src/lib/docs/links';
 
 import { describe, expect, test } from 'bun:test';
 
+import { DocsValidationError, selectDocsRootFile } from '../../src/lib/docs/aggregate';
 import { convertGithubAlerts, parseGithubAlerts } from '../../src/lib/docs/alerts';
 import {
   extractDescription,
@@ -31,6 +32,10 @@ function context(overrides: Partial<DocLinkContext> = {}): DocLinkContext {
     ]),
     ...overrides,
   };
+}
+
+function rawDoc(path: string) {
+  return { path, content: `# ${path}`, lastModified: '2026-09-18' };
 }
 
 describe('slugifyDocFile', () => {
@@ -161,6 +166,55 @@ describe('link rewriting', () => {
     expect(kept).toBe('[Setup](<doclink:sql-server-guide>#setup)');
     const dropped = rewriteDocMarkdown('[Nope](SQL-Server-Guide.md#missing)', context());
     expect(dropped).toBe('[Nope](<doclink:sql-server-guide>)');
+  });
+
+  test('rewrites links to a non-index source root to the generated index page', () => {
+    const output = rewriteDocMarkdown(
+      '[Start](Getting-Started.md) and [Home](./Getting-Started)',
+      context({
+        knownSlugs: new Set(['index', 'advanced']),
+        slugAliases: new Map([['getting-started', 'index']]),
+      }),
+    );
+    expect(output).toBe('[Start](<doclink:index>) and [Home](<doclink:index>)');
+  });
+});
+
+describe('docs root page selection', () => {
+  test('allows a configured non-index root when no conventional root exists', () => {
+    const selected = selectDocsRootFile(
+      'value-objects',
+      [rawDoc('docs/Getting-Started.md'), rawDoc('docs/ZodSharp-Validation.md')],
+      'docs',
+      'getting-started.md',
+    );
+
+    expect(selected.index.path).toBe('docs/Getting-Started.md');
+    expect(selected.regular.map((file) => file.path)).toEqual(['docs/ZodSharp-Validation.md']);
+    expect(selected.slugAliases.get('getting-started')).toBe('index');
+  });
+
+  test('rejects docs without a root page', () => {
+    expect(() => selectDocsRootFile('demo', [rawDoc('docs/Guide.md')], 'docs', undefined)).toThrow(
+      DocsValidationError,
+    );
+  });
+
+  test('rejects a configured root page that does not exist', () => {
+    expect(() =>
+      selectDocsRootFile('demo', [rawDoc('docs/Guide.md')], 'docs', 'Missing.md'),
+    ).toThrow(/does not exist/);
+  });
+
+  test('rejects a non-index configured root when an index already exists', () => {
+    expect(() =>
+      selectDocsRootFile(
+        'demo',
+        [rawDoc('docs/index.md'), rawDoc('docs/Getting-Started.md')],
+        'docs',
+        'Getting-Started.md',
+      ),
+    ).toThrow(/conventional root page already exists/);
   });
 });
 
