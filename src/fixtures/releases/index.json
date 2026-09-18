@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "retrievedAt": "2026-09-18T17:05:30.958Z",
+  "retrievedAt": "2026-09-18T17:28:23.132Z",
   "repos": {
     "purview-dev/telemetry-sourcegenerator": {
       "name": "telemetry-sourcegenerator",
@@ -64,7 +64,7 @@
       "stargazersCount": 4,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-18T08:19:28Z",
+      "updatedAt": "2026-09-18T17:17:37Z",
       "hasDiscussions": false
     },
     "purview-dev/zodsharp": {
@@ -588,6 +588,15 @@
     ],
     "purview-dev/event-sourcing": [
       {
+        "tagName": "v2.0.0-prerelease.35",
+        "name": "v2.0.0-prerelease.35",
+        "body": "## What's Changed\n* Migrate to valueobjects by @kieronlanning in https://github.com/purview-dev/event-sourcing/pull/55\n\n\n**Full Changelog**: https://github.com/purview-dev/event-sourcing/compare/v2.0.0-prerelease.34...v2.0.0-prerelease.35",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-18T17:21:36Z",
+        "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.35"
+      },
+      {
         "tagName": "v2.0.0-prerelease.34",
         "name": "v2.0.0-prerelease.34",
         "body": "## What's Changed\n* docs: reference framework as Purview.ZodSharp and fix stale package IDs by @kieronlanning in https://github.com/purview-dev/event-sourcing/pull/53\n* chore: update branding assets, bump version, and use human-readable name by @kieronlanning in https://github.com/purview-dev/event-sourcing/pull/54\n\n\n**Full Changelog**: https://github.com/purview-dev/event-sourcing/compare/v2.0.0-prerelease.33...v2.0.0-prerelease.34",
@@ -762,6 +771,15 @@
       }
     ],
     "purview-dev/value-objects": [
+      {
+        "tagName": "v1.0.0-prerelease.2",
+        "name": "v1.0.0-prerelease.2",
+        "body": "## What's Changed\n* docs: added nuget and build badges£ by @kieronlanning in https://github.com/purview-dev/value-objects/pull/1\n\n## New Contributors\n* @kieronlanning made their first contribution in https://github.com/purview-dev/value-objects/pull/1\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0-prerelease.1...v1.0.0-prerelease.2",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-18T17:06:24Z",
+        "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.0-prerelease.2"
+      },
       {
         "tagName": "v1.0.0-prerelease.1",
         "name": "v1.0.0-prerelease.1",
@@ -1468,7 +1486,8 @@
         "2.0.0-prerelease.31",
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
-        "2.0.0-prerelease.34"
+        "2.0.0-prerelease.34",
+        "2.0.0-prerelease.35"
       ]
     },
     "Purview.EventSourcing.SqlServer": {
@@ -1497,7 +1516,8 @@
         "2.0.0-prerelease.31",
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
-        "2.0.0-prerelease.34"
+        "2.0.0-prerelease.34",
+        "2.0.0-prerelease.35"
       ]
     },
     "Purview.EventSourcing.Postgres": {
@@ -1508,7 +1528,8 @@
         "2.0.0-prerelease.31",
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
-        "2.0.0-prerelease.34"
+        "2.0.0-prerelease.34",
+        "2.0.0-prerelease.35"
       ]
     },
     "Purview.EventSourcing.AzureStorage": {
@@ -1537,7 +1558,8 @@
         "2.0.0-prerelease.31",
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
-        "2.0.0-prerelease.34"
+        "2.0.0-prerelease.34",
+        "2.0.0-prerelease.35"
       ]
     },
     "Purview.EventSourcing.MongoDB": {
@@ -1566,7 +1588,8 @@
         "2.0.0-prerelease.31",
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
-        "2.0.0-prerelease.34"
+        "2.0.0-prerelease.34",
+        "2.0.0-prerelease.35"
       ]
     },
     "Purview.EventSourcing.CosmosDb": {
@@ -1595,7 +1618,8 @@
         "2.0.0-prerelease.31",
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
-        "2.0.0-prerelease.34"
+        "2.0.0-prerelease.34",
+        "2.0.0-prerelease.35"
       ]
     },
     "Purview.EventSourcing.InMemory": {
@@ -1616,7 +1640,8 @@
         "2.0.0-prerelease.31",
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
-        "2.0.0-prerelease.34"
+        "2.0.0-prerelease.34",
+        "2.0.0-prerelease.35"
       ]
     },
     "Purview.EventSourcing.Validation.FluentValidation": {
@@ -1626,7 +1651,8 @@
         "2.0.0-prerelease.31",
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
-        "2.0.0-prerelease.34"
+        "2.0.0-prerelease.34",
+        "2.0.0-prerelease.35"
       ]
     },
     "Purview.EventSourcing.Validation.ZodSharp": {
@@ -1636,7 +1662,8 @@
         "2.0.0-prerelease.31",
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
-        "2.0.0-prerelease.34"
+        "2.0.0-prerelease.34",
+        "2.0.0-prerelease.35"
       ]
     },
     "Purview.ZodSharp": {
@@ -1698,7 +1725,8 @@
     "Purview.ValueObjects": {
       "id": "Purview.ValueObjects",
       "versions": [
-        "1.0.0-prerelease.1"
+        "1.0.0-prerelease.1",
+        "1.0.0-prerelease.2"
       ]
     },
     "Purview.SourceGeneratorFramework": {
