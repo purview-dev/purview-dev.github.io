@@ -11,6 +11,7 @@ import { absoluteUrl, withBase } from '~/lib/urls';
 const projects = loadProjects();
 const featured = projects.filter((project) => project.featured);
 const active = projects.filter((project) => project.status !== 'archived');
+const featuredGridClass = `featured-projects-grid${featured.length === 5 ? ' featured-projects-grid-five' : ''}`;
 
 const releaseIndex = getReleaseIndex();
 const packageRows: PackageRow[] = projects
@@ -55,7 +56,7 @@ const organizationStructuredData = {
         height="320"
       />
       <div
-        class="absolute inset-0 bg-gradient-to-b from-background/30 via-background/70 to-background"
+        class="absolute inset-0 bg-linear-to-b from-background/30 via-background/70 to-background"
       >
       </div>
     </div>
@@ -142,8 +143,14 @@ const organizationStructuredData = {
         View all projects →
       </a>
     </div>
-    <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-      {featured.map((project) => <ProjectCard project={project} showBadges={false} />)}
+    <div class={featuredGridClass}>
+      {
+        featured.map((project) => (
+          <div class="featured-project-card">
+            <ProjectCard project={project} showBadges={false} />
+          </div>
+        ))
+      }
     </div>
   </section>
 
@@ -208,3 +215,47 @@ const organizationStructuredData = {
     </div>
   </section>
 </SiteLayout>
+
+<style>
+  .featured-projects-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 2rem;
+    align-items: stretch;
+  }
+
+  .featured-project-card {
+    display: flex;
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .featured-project-card :global(.pv-card) {
+    width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .featured-project-card {
+      flex-basis: calc((100% - 1.25rem) / 2);
+    }
+
+    .featured-projects-grid-five .featured-project-card:last-child {
+      flex-basis: 100%;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .featured-project-card {
+      flex-basis: calc((100% - 3.75rem) / 4);
+    }
+
+    .featured-projects-grid-five .featured-project-card {
+      flex-basis: calc((100% - 2.5rem) / 3);
+    }
+
+    .featured-projects-grid-five .featured-project-card:nth-child(n + 4) {
+      flex-basis: calc((100% - 1.25rem) / 2);
+    }
+  }
+</style>

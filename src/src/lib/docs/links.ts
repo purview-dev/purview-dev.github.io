@@ -31,6 +31,8 @@ export interface DocLinkContext {
   imageBase: string | null;
   /** Lowercased heading slugs per page slug, used to validate link fragments. */
   headingSlugs: Map<string, Set<string>>;
+  /** Source-file slugs that render at a different project-relative slug. */
+  slugAliases?: Map<string, string>;
 }
 
 function stripUrlSuffix(target: string): { path: string; hash: string } {
@@ -141,8 +143,15 @@ export function rewriteDocMarkdown(markdown: string, context: DocLinkContext): s
     const baseName = path.split(/[/\\]/).pop() ?? path;
     const candidateSlug = slugifyDocFile(baseName.replace(/\.(md|mdx)$/i, ''));
 
-    if (DOC_EXTENSIONS.has(extension) || context.knownSlugs.has(candidateSlug)) {
-      const slug = context.knownSlugs.has(candidateSlug) ? candidateSlug : slugifyDocFile(baseName);
+    if (
+      DOC_EXTENSIONS.has(extension) ||
+      context.knownSlugs.has(candidateSlug) ||
+      context.slugAliases?.has(candidateSlug)
+    ) {
+      const candidate = context.knownSlugs.has(candidateSlug)
+        ? candidateSlug
+        : slugifyDocFile(baseName);
+      const slug = context.slugAliases?.get(candidate) ?? candidate;
       if (context.knownSlugs.has(slug)) {
         const rendered = isImage ? `![${label}]` : `[${label}]`;
         return `${rendered}(<doclink:${slug}>${usableHash(hash, slug, context)})`;

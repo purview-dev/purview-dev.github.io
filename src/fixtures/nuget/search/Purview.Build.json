@@ -10,13 +10,13 @@
       "@type": "Package",
       "registration": "https://api.nuget.org/v3/registration5-semver1/purview.build/index.json",
       "id": "Purview.Build",
-      "version": "0.2.4",
+      "version": "0.3.2",
       "description": "Shared build/test/release pipeline for purview-dev. A Modular Pipelines based .NET tool (Purview.Build) with a GitHub composite action and reusable workflows; consumers configure, the pipeline runs.",
       "summary": "",
       "title": "Purview.Build",
-      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.build/0.2.4/icon",
-      "licenseUrl": "https://www.nuget.org/packages/Purview.Build/0.2.4/license",
-      "projectUrl": "https://github.com/purview-dev/build",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.build/0.3.2/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.Build/0.3.2/license",
+      "projectUrl": "https://purview.dev/projects/build/",
       "tags": [],
       "authors": [
         "Purview Contributors"
@@ -24,7 +24,7 @@
       "owners": [
         "kieronlanning"
       ],
-      "totalDownloads": 571,
+      "totalDownloads": 595,
       "verified": false,
       "packageTypes": [
         {
@@ -49,8 +49,28 @@
         },
         {
           "version": "0.2.4",
-          "downloads": 124,
+          "downloads": 148,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.4.json"
+        },
+        {
+          "version": "0.2.6",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.6.json"
+        },
+        {
+          "version": "0.3.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.3.0.json"
+        },
+        {
+          "version": "0.3.1",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.3.1.json"
+        },
+        {
+          "version": "0.3.2",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.3.2.json"
         }
       ],
       "vulnerabilities": []

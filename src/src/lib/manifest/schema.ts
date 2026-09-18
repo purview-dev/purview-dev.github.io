@@ -18,6 +18,7 @@ export const INSTALL_KINDS = ['nuget', 'msbuild-sdk', 'dotnet-tool'] as const;
 const docsPathSchema = z.object({
   source: z.literal('github-path'),
   path: z.string().min(1, 'must be a non-empty repository path such as "docs"'),
+  rootPage: z.string().min(1, 'must be a non-empty markdown file path').optional(),
   readmeAsIndex: z.boolean().optional(),
   order: z.array(z.string()).optional(),
   exclude: z.array(z.string()).optional(),
@@ -25,6 +26,7 @@ const docsPathSchema = z.object({
 
 const docsWikiSchema = z.object({
   source: z.literal('wiki'),
+  rootPage: z.string().min(1, 'must be a non-empty markdown file path').optional(),
   readmeAsIndex: z.boolean().optional(),
   order: z.array(z.string()).optional(),
   exclude: z.array(z.string()).optional(),

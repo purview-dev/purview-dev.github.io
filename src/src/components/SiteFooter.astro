@@ -6,10 +6,16 @@ import { siteVersion } from '~/lib/site-version';
 import { OWNER, SITE } from '~/lib/site';
 import { withBase } from '~/lib/urls';
 
-// Shuffled at build time so the footer doesn't always spotlight the same projects.
+// Keep footer links deterministic: the site is static once deployed, so
+// build-time randomness would make the output arbitrary rather than fresh.
 const footerProjects = loadProjects()
   .filter((project) => project.status !== 'archived')
-  .toSorted(() => Math.random() - 0.5)
+  .toSorted(
+    (a, b) =>
+      Number(b.featured) - Number(a.featured) ||
+      a.order - b.order ||
+      a.name.localeCompare(b.name),
+  )
   .slice(0, 3);
 
 const version = siteVersion();

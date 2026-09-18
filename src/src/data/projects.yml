@@ -134,6 +134,7 @@ projects:
     docs:
       source: github-path
       path: docs
+      rootPage: Getting-Started.md
     targetFrameworks:
       - net8.0
       - net9.0
