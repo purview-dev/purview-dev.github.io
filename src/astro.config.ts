@@ -110,6 +110,20 @@ export default defineConfig({
       customCss: ['./src/styles/global.css'],
       expressiveCode: {
         themes: ['starlight-light', 'starlight-dark'],
+        styleOverrides: {
+          borderRadius: '0.75rem',
+          codeFontFamily: 'var(--font-mono)',
+          uiFontFamily: 'var(--font-sans)',
+          frames: {
+            // Literal hex, not `var(--color-brand)`: Expressive Code parses these
+            // as colors (e.g. for opacity/contrast math), which breaks on CSS
+            // custom properties. #8b3dff is the brand purple in both themes.
+            editorActiveTabIndicatorTopColor: '#8b3dff',
+            editorActiveTabIndicatorBottomColor: '#8b3dff',
+            terminalTitlebarDotsForeground: '#8b3dff',
+            terminalTitlebarDotsOpacity: '0.6',
+          },
+        },
       },
       components: {
         Header: './src/components/starlight/Header.astro',
@@ -117,6 +131,7 @@ export default defineConfig({
         EditLink: './src/components/starlight/EditLink.astro',
         PageTitle: './src/components/starlight/PageTitle.astro',
         Search: './src/components/starlight/Search.astro',
+        Sidebar: './src/components/starlight/Sidebar.astro',
       },
       plugins: [
         starlightSidebarTopics(sidebarTopics),

@@ -2,7 +2,18 @@ import type { InstallOption, InstallTab } from '~/lib/install';
 
 import { useState } from 'preact/hooks';
 
-function CodeBlock({ code }: { code: string }) {
+/** macOS-style traffic light dots that frame the code window, matching Expressive Code. */
+function FrameDots() {
+  return (
+    <span class="flex shrink-0 gap-1.5" aria-hidden="true">
+      <span class="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
+      <span class="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
+      <span class="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
+    </span>
+  );
+}
+
+function CodeBlock({ code, title }: { code: string; title?: string }) {
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -18,17 +29,28 @@ function CodeBlock({ code }: { code: string }) {
   };
 
   return (
-    <div class="border-border bg-code-bg flex items-start justify-between gap-3 rounded-lg border px-4 py-3">
-      <pre class="min-w-0 flex-1 overflow-x-auto text-sm leading-relaxed">
+    <div class="pv-code-frame">
+      <div class="pv-code-frame-header">
+        <FrameDots />
+        <span class="min-w-0 flex-1 truncate text-center text-xs font-medium text-white/50">
+          {title}
+        </span>
+        <button
+          type="button"
+          onClick={copy}
+          class={[
+            'shrink-0 rounded-md border px-2.5 py-1 text-xs font-medium transition-colors',
+            copied
+              ? 'border-[#27c93f]/40 bg-[#27c93f]/15 text-[#7ee89a]'
+              : 'border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:bg-white/10 hover:text-white',
+          ].join(' ')}
+        >
+          {copied ? 'Copied ✓' : 'Copy'}
+        </button>
+      </div>
+      <pre class="pv-code-frame-body">
         <code>{code}</code>
       </pre>
-      <button
-        type="button"
-        onClick={copy}
-        class="border-border bg-surface hover:border-brand/40 shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors"
-      >
-        {copied ? 'Copied ✓' : 'Copy'}
-      </button>
     </div>
   );
 }
@@ -41,7 +63,7 @@ function CopyBlock({ label, detail, code }: InstallOption) {
         {detail && <p class="text-muted text-xs">{detail}</p>}
       </div>
       <div class="mt-2">
-        <CodeBlock code={code} />
+        <CodeBlock code={code} title={label} />
       </div>
     </div>
   );
@@ -79,7 +101,7 @@ export default function InstallPanel({ tabs }: Props) {
         aria-label="Install options"
         onKeyDown={onKeyDown}
         tabIndex={-1}
-        class="border-border flex flex-wrap gap-x-1 border-b"
+        class="flex flex-wrap gap-1 px-1"
       >
         {tabs.map((tabOption, index) => (
           <button
@@ -92,10 +114,8 @@ export default function InstallPanel({ tabs }: Props) {
             tabIndex={active === index ? 0 : -1}
             onClick={() => setActive(index)}
             class={[
-              '-mb-px border-b-2 px-3 py-2 text-sm font-medium transition-colors',
-              active === index
-                ? 'border-brand text-brand-emphasis'
-                : 'border-transparent text-muted hover:border-border hover:text-foreground',
+              'pv-install-tab',
+              active === index ? 'pv-install-tab-active' : 'pv-install-tab-inactive',
             ].join(' ')}
           >
             {tabOption.label}
@@ -106,7 +126,7 @@ export default function InstallPanel({ tabs }: Props) {
         role="tabpanel"
         id={`install-panel-${active}`}
         aria-labelledby={`install-tab-${active}`}
-        class="mt-4 space-y-4"
+        class="pv-install-panel-body space-y-4"
       >
         {tab.snippets.length > 1 ? (
           tab.snippets.map((snippet) => (
@@ -115,7 +135,7 @@ export default function InstallPanel({ tabs }: Props) {
         ) : (
           <div>
             {tab.detail && <p class="text-muted mb-2 text-xs">{tab.detail}</p>}
-            <CodeBlock code={tab.snippets[0]?.code ?? ''} />
+            <CodeBlock code={tab.snippets[0]?.code ?? ''} title={tab.label} />
           </div>
         )}
       </div>

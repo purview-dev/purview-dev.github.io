@@ -1,0 +1,67 @@
+---
+const { topics, isPageWithTopic } = Astro.locals.starlightSidebarTopics;
+
+if (!isPageWithTopic) {
+  return null;
+}
+---
+
+<label class="topic-select">
+  <span class="sr-only">Select a project</span>
+  <select onchange="window.location.assign(this.value)">
+    {
+      topics.map((topic) => (
+        <option value={topic.link} selected={topic.isCurrent}>
+          {topic.label}
+        </option>
+      ))
+    }
+  </select>
+  <svg
+    class="topic-select-caret"
+    viewBox="0 0 24 24"
+    width="16"
+    height="16"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    aria-hidden="true"
+  >
+    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"></path>
+  </svg>
+</label>
+
+<style>
+  .topic-select {
+    position: relative;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  select {
+    width: 100%;
+    appearance: none;
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 0.5rem;
+    background-color: var(--sl-color-bg-nav);
+    color: var(--sl-color-white);
+    font-family: inherit;
+    font-size: var(--sl-text-sm);
+    font-weight: 600;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    cursor: pointer;
+  }
+
+  select:hover {
+    border-color: var(--sl-color-accent);
+  }
+
+  .topic-select-caret {
+    position: absolute;
+    top: 50%;
+    inset-inline-end: 0.625rem;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--sl-color-gray-3);
+  }
+</style>

@@ -1,0 +1,9 @@
+---
+import Default from '@astrojs/starlight/components/Sidebar.astro';
+import TopicSelect from './TopicSelect.astro';
+
+const { hasSidebar } = Astro.locals.starlightRoute;
+---
+
+{hasSidebar && <TopicSelect />}
+<Default><slot /></Default>

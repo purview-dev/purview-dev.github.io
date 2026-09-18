@@ -2,7 +2,7 @@ export const SITE = {
   name: 'Purview',
   fullName: 'Purview Dev',
   orgName: 'Purview Development',
-  tagline: 'Excellent useful tools.',
+  tagline: 'Making development easier.',
   domain: 'purview.dev',
   url: process.env.SITE_URL ?? 'https://purview.dev',
   githubOrg: 'purview-dev',

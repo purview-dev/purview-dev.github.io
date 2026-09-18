@@ -1,13 +1,20 @@
 ---
 import SiteBrand from '~/components/SiteBrand.astro';
 import { NAV_ITEMS } from '~/components/SiteNav.astro';
+import { loadProjects } from '~/lib/manifest/load';
 import { SITE } from '~/lib/site';
 import { withBase } from '~/lib/urls';
+
+// Shuffled at build time so the footer doesn't always spotlight the same projects.
+const footerProjects = loadProjects()
+  .filter((project) => project.status !== 'archived')
+  .toSorted(() => Math.random() - 0.5)
+  .slice(0, 3);
 ---
 
 <footer class="border-t border-border bg-surface">
   <div class="pv-container py-10">
-    <div class="grid gap-8 md:grid-cols-[2fr_1fr_1fr_1fr]">
+    <div class="grid gap-8 md:grid-cols-[2fr_1fr_1fr_1fr_1fr]">
       <div class="max-w-sm space-y-3">
         <SiteBrand />
         <p class="text-sm text-muted">
@@ -35,15 +42,15 @@ import { withBase } from '~/lib/urls';
       <nav aria-label="Projects">
         <h2 class="text-xs font-semibold uppercase tracking-wider text-muted">Projects</h2>
         <ul class="mt-3 list-none space-y-2 text-sm">
-          <li>
-            <a href="https://github.com/purview-dev/telemetry-sourcegenerator" class="pv-link"
-              >Telemetry SourceGenerator</a>
-          </li>
-          <li>
-            <a href="https://github.com/purview-dev/event-sourcing" class="pv-link"
-              >Event Sourcing</a>
-          </li>
-          <li><a href="https://github.com/purview-dev/zodsharp" class="pv-link">Purview.ZodSharp</a></li>
+          {
+            footerProjects.map((project) => (
+              <li>
+                <a href={withBase(`/projects/${project.id}/`)} class="pv-link">
+                  {project.name}
+                </a>
+              </li>
+            ))
+          }
           <li><a href={withBase('/projects/')} class="pv-link">All projects</a></li>
         </ul>
       </nav>
@@ -55,6 +62,15 @@ import { withBase } from '~/lib/urls';
           <!-- <li><a href={`${SITE.nugetUrl}/search?q=purview`} class="pv-link">NuGet</a></li>
           <li><a href={`${SITE.nugetUrl}/search?q=purview`} class="pv-link">Packages</a></li> -->
           <li><a href={withBase('/about/')} class="pv-link">About</a></li>
+        </ul>
+      </nav>
+
+      <nav aria-label="For LLMs">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-muted">For LLMs</h2>
+        <ul class="mt-3 list-none space-y-2 text-sm">
+          <li><a href={withBase('/llms.txt')} class="pv-link">llms.txt</a></li>
+          <li><a href={withBase('/llms-small.txt')} class="pv-link">llms-small.txt</a></li>
+          <li><a href={withBase('/llms-full.txt')} class="pv-link">llms-full.txt</a></li>
         </ul>
       </nav>
     </div>
