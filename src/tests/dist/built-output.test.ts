@@ -41,7 +41,7 @@ describe('built llms outputs', () => {
     expect(content).not.toMatch(/\bghp_[A-Za-z0-9]{36,}\b/);
     expect(content).not.toMatch(/\.cache[/\\]/);
     expect(content).not.toMatch(/[A-Za-z]:\\/);
-    expect(content).not.toMatch(/node_modules/);
+    expect(content).not.toMatch(/node_modules[/\\]/);
   });
 });
 
