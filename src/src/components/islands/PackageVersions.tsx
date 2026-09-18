@@ -11,6 +11,8 @@ export interface PackageRow {
   nugetUrl: string;
   projectUrl: string;
   deprecated?: boolean;
+  /** Hash link to this package's install section, e.g. "#install-purview-foo". */
+  installAnchor?: string;
 }
 
 type SortKey = 'package' | 'project' | 'stable' | 'prerelease' | 'downloads';
@@ -175,6 +177,11 @@ export default function PackageVersions({ packages, showProject = true }: Props)
               deprecated
             </span>
           )}
+          {row.installAnchor && (
+            <a href={row.installAnchor} class="pv-link ml-2 text-xs whitespace-nowrap">
+              Install ↓
+            </a>
+          )}
         </td>
         {showProjectColumn && (
           <td class="px-4 py-3">
@@ -265,7 +272,7 @@ export default function PackageVersions({ packages, showProject = true }: Props)
                   <button
                     type="button"
                     onClick={() => toggleSort(column.key)}
-                    class="hover:text-accent font-semibold"
+                    class="hover:text-accent border-0 bg-transparent p-0 font-semibold"
                     title={column.title}
                   >
                     {column.label}

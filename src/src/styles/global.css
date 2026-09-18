@@ -409,6 +409,13 @@
   .pv-btn-ghost:hover {
     background-color: color-mix(in oklab, var(--color-brand) 8%, transparent);
   }
+
+  .pv-btn-sm {
+    gap: 0.375rem;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+  }
 }
 
 /* ---------------------------------------------------------------------------

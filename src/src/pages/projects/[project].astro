@@ -4,7 +4,7 @@ import InstallPanel from '~/components/islands/InstallPanel.tsx';
 import PackageVersions, { type PackageRow } from '~/components/islands/PackageVersions.tsx';
 import StatusBadge from '~/components/StatusBadge.astro';
 import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '~/lib/badges';
-import { installKindFor, installTabs } from '~/lib/install';
+import { installAnchorId, installKindFor, installTabs } from '~/lib/install';
 import { loadProjects } from '~/lib/manifest/load';
 import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { projectReleaseSummary } from '~/lib/releases/transform';
@@ -45,17 +45,23 @@ const supersededBy =
 const primaryPackage = project.packages.find((pkg) => pkg.primary) ?? project.packages[0];
 const docsPath = project.docs ? withBase(`/docs/${project.id}/`) : null;
 const targetFrameworks = project.targetFrameworks ?? [];
-const primaryRelease =
-  primaryPackage ? releases.packages.find((pkg) => pkg.packageId === primaryPackage.id) : undefined;
-const installTabsOptions =
-  primaryPackage && project.status !== 'archived' ?
-    installTabs(
-      installKindFor(project),
-      primaryPackage.id,
-      primaryRelease?.latestStable ?? primaryRelease?.latestPrerelease ?? null,
-    )
+const installSections =
+  project.status !== 'archived' ?
+    project.packages.map((pkg) => {
+      const release = releases.packages.find((candidate) => candidate.packageId === pkg.id);
+      return {
+        packageId: pkg.id,
+        primary: pkg.primary ?? false,
+        tabs: installTabs(
+          installKindFor(project),
+          pkg.id,
+          release?.latestStable ?? release?.latestPrerelease ?? null,
+        ),
+      };
+    })
   : [];
 const projectUrl = withBase(`/projects/${project.id}/`);
+const hasInstallSections = installSections.length > 0;
 const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
   projectId: project.id,
   projectName: project.name,
@@ -66,6 +72,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
   totalDownloads: pkg.totalDownloads,
   nugetUrl: pkg.nugetUrl,
   deprecated: pkg.deprecated,
+  installAnchor: hasInstallSections ? `#${installAnchorId(pkg.packageId)}` : undefined,
 }));
 ---
 
@@ -119,16 +126,13 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
           href={project.sourceUrl}
           rel="noopener noreferrer"
           target="_blank"
-          class="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-emphasis"
+          class="pv-btn pv-btn-primary pv-btn-sm"
         >
           Source code
         </a>
         {
           docsPath && (
-            <a
-              href={docsPath}
-              class="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium transition-colors hover:border-brand/40"
-            >
+            <a href={docsPath} class="pv-btn pv-btn-secondary pv-btn-sm">
               Documentation
             </a>
           )
@@ -137,7 +141,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
           href={project.releasesUrl}
           rel="noopener noreferrer"
           target="_blank"
-          class="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium transition-colors hover:border-brand/40"
+          class="pv-btn pv-btn-secondary pv-btn-sm"
         >
           Releases
         </a>
@@ -145,7 +149,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
           href={project.issuesUrl}
           rel="noopener noreferrer"
           target="_blank"
-          class="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium transition-colors hover:border-brand/40"
+          class="pv-btn pv-btn-secondary pv-btn-sm"
         >
           Issues
         </a>
@@ -155,7 +159,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
               href={project.discussionsUrl}
               rel="noopener noreferrer"
               target="_blank"
-              class="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium transition-colors hover:border-brand/40"
+              class="pv-btn pv-btn-secondary pv-btn-sm"
             >
               Discussions
             </a>
@@ -243,10 +247,26 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
         }
 
         {
-          primaryPackage && project.status !== 'archived' && (
+          installSections.length > 0 && (
             <section>
               <h2 class="text-xl font-semibold">Install</h2>
-              <InstallPanel client:idle tabs={installTabsOptions} />
+              <div class="mt-4 space-y-8">
+                {installSections.map((install) => (
+                  <div id={installAnchorId(install.packageId)} class="scroll-mt-20">
+                    {installSections.length > 1 && (
+                      <h3 class="flex flex-wrap items-center gap-2 font-mono text-sm font-semibold text-foreground">
+                        {install.packageId}
+                        {install.primary && (
+                          <span class="border-brand/30 bg-brand/5 text-brand pv-chip">primary</span>
+                        )}
+                      </h3>
+                    )}
+                    <div class={installSections.length > 1 ? 'mt-2' : ''}>
+                      <InstallPanel client:idle tabs={install.tabs} />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </section>
           )
         }

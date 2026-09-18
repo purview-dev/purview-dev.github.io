@@ -119,6 +119,7 @@ output tests.
 | `test`             | Deterministic unit test suite                       |
 | `test-dist`        | Assert built outputs (llms, sitemap, no secrets)    |
 | `build`            | Production build (runs data sync first)             |
+| `ci-build`         | Full CI validation chain used by the shared pipeline |
 | `preview`          | Preview the production build                        |
 | `check-assets`     | Validate branding sources and generated assets      |
 | `check-links`      | Validate internal links across `dist/`              |
@@ -254,6 +255,25 @@ The build generates `/llms.txt`, `/llms-small.txt`, and `/llms-full.txt`
 (Starlight's `starlight-llms-txt` plugin) using canonical production URLs and
 the aggregated documentation. The built outputs are asserted by `tests/dist/`
 and `just check-generated`.
+
+## Site versioning and releases
+
+The site is versioned like every other purview-dev repository. The single
+source of truth is the `version` field in the root `package.json`; the footer
+shows the current `v{version}` (linking to the repository's GitHub releases
+page), read at build time by `src/src/lib/site-version.ts`.
+
+Building and release flow run through the shared
+[Purview.Build](https://purview.dev/projects/build/) system as a `Web` project
+(`Build:ProjectType=Web` in `purview-build.json`): the pipeline runs the root
+`package.json` scripts (`bun install`, `bun run format:check`/`bun run lint`,
+`bun run test`) and the `ci:build` script, which chains data sync, typecheck,
+asset checks, the production build, link crawl, generated-output checks, and
+built-output tests. Releasing means bumping `version` in the root
+`package.json` and merging: the `Release` workflow (`purview-release.yml`,
+`release-mode: GitHubRelease`) runs the pipeline, tags `v{version}`, and uploads
+the built `dist/` zip as a GitHub release asset. `deploy.yml` continues to
+publish the site to GitHub Pages.
 
 ## GitHub Pages deployment
 

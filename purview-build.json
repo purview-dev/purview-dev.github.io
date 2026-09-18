@@ -1,0 +1,9 @@
+{
+  "Build": {
+    "ProjectType": "Web",
+    "WebBuildCommand": "bun run ci:build"
+  },
+  "Release": {
+    "Mode": "None"
+  }
+}

@@ -3,6 +3,11 @@ import type { ResolvedProject } from './manifest/load';
 /** How a project's primary NuGet package is consumed. */
 export type InstallKind = 'nuget' | 'msbuild-sdk' | 'dotnet-tool';
 
+/** Anchor id for a package's install section, used to link from the packages table. */
+export function installAnchorId(packageId: string): string {
+  return `install-${packageId.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+}
+
 /** A single copyable install snippet. */
 export interface InstallOption {
   /** Short name for the snippet, e.g. "Directory.Packages.props". */
