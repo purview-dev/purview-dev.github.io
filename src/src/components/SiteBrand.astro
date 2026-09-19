@@ -12,26 +12,24 @@ const { iconOnly = false } = Astro.props;
 
 <a
   href={withBase('/')}
-  class="pv-brand flex items-center gap-2.5"
+  class="pv-brand flex min-w-0 items-center gap-2.5"
   aria-label={`${SITE.fullName} — home`}
 >
   {
-    iconOnly ? (
+    iconOnly ?
       <img
         src={withBase('/branding/icon.svg')}
         alt=""
         width="28"
         height="28"
-        class="h-7 w-7"
+        class="h-7 w-7 shrink-0"
       />
-    ) : (
-      <img
+    : <img
         src={withBase('/branding/logo-horizontal.svg')}
         alt=""
         width="120"
         height="41"
         class="h-9 w-auto"
       />
-    )
   }
 </a>

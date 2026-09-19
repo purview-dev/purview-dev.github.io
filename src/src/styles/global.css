@@ -111,8 +111,20 @@
     color-scheme: dark;
   }
 
+  /* Tailwind's preflight (which normally sets this) isn't imported — see note
+   * below — but every width/padding utility here assumes border-box sizing,
+   * so without this reset elements with both `width` and `padding-inline`
+   * (e.g. `.pv-container`) overflow their parent and cause horizontal
+   * scrolling on narrow viewports. */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -138,6 +150,7 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    overflow-x: clip;
   }
 
   /* Tailwind preflight is intentionally not imported (Starlight owns the base
