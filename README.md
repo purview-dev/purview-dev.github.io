@@ -272,8 +272,9 @@ asset checks, the production build, link crawl, generated-output checks, and
 built-output tests. Releasing means bumping `version` in the root
 `package.json` and merging: the `Release` workflow (`purview-release.yml`,
 `release-mode: GitHubRelease`) runs the pipeline, tags `v{version}`, and uploads
-the built `dist/` zip as a GitHub release asset. `deploy.yml` continues to
-publish the site to GitHub Pages.
+the built `dist/` zip as a GitHub release asset. Content-only updates do not
+need a version bump; they are handled by `deploy.yml`, which republishes the
+site to GitHub Pages from the latest synced data.
 
 ## GitHub Pages deployment
 
@@ -320,6 +321,10 @@ gh api repos/purview-dev/purview-dev.github.io/dispatches \
 The deploy workflow listens for `repository_dispatch` with type
 `purview-site-rebuild`. The payload is informational and is not required for
 the rebuild to succeed; the build always fetches fresh data itself.
+
+The release workflow is intentionally scoped to root `package.json` changes so
+content refreshes do not get blocked by an unchanged version or an existing
+`v{version}` tag.
 
 ## Dependency maintenance
 
