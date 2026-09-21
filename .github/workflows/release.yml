@@ -3,6 +3,8 @@ name: Release
 on:
   push:
     branches: [main]
+    paths:
+      - package.json
 
 # Serialize releases; the reusable workflow skips when the v{version} tag already exists.
 concurrency:
