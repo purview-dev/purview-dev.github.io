@@ -90,7 +90,7 @@ describe('built footer version', () => {
     expect(version).toBeTruthy();
 
     const content = requireBuilt('index.html');
-    expect(content).toContain(`>v${version}<`);
+    expect(content).toContain(`>\nv${version} <`);
     expect(content).toContain('https://github.com/purview-dev/purview-dev.github.io/releases');
   });
 });
