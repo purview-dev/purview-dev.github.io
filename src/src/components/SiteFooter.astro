@@ -18,13 +18,6 @@ const footerProjects = loadProjects()
 
 const releaseInfo = getReleaseInfo();
 const releasesUrl = `${SITE.githubUrl}/${OWNER}.github.io/releases`;
-const buildDateIso = releaseInfo.buildDate.toISOString();
-
-const buildDate = releaseInfo.buildDate.toLocaleDateString('en-GB', {
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric',
-});
 ---
 
 <footer class="border-t border-border bg-surface">
