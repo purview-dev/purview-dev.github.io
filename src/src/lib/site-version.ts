@@ -1,6 +1,6 @@
+import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-
 /**
  * Locate the workspace root: the nearest ancestor package.json that declares a
  * `workspaces` array. This is the repository root, which owns the site's
@@ -41,6 +41,45 @@ export function readVersion(root: string): string {
   return version;
 }
 
-export function siteVersion(): string {
-  return readVersion(findWorkspaceRoot());
+/**
+ * Gets the full Git commit SHA for the revision being built.
+ *
+ * CI-provided values are preferred because some build environments use shallow
+ * clones or do not make the .git directory available. Local builds fall back
+ * to querying Git directly.
+ */
+export function readCommitSha(root: string): string {
+  const environmentSha =
+    process.env.GITHUB_SHA ??
+    process.env.CF_PAGES_COMMIT_SHA ??
+    process.env.VERCEL_GIT_COMMIT_SHA ??
+    process.env.COMMIT_SHA;
+
+  if (environmentSha) {
+    return environmentSha;
+  }
+
+  try {
+    return execFileSync('git', ['rev-parse', 'HEAD'], {
+      cwd: root,
+      encoding: 'utf8',
+    }).trim();
+  } catch {
+    return 'unknown';
+  }
+}
+
+export function getReleaseInfo(): ReleaseInfo {
+  const root = findWorkspaceRoot();
+  return {
+    version: readVersion(root),
+    commitSha: readCommitSha(root),
+    buildDate: new Date(),
+  };
+}
+
+export interface ReleaseInfo {
+  version: string;
+  commitSha: string;
+  buildDate: Date;
 }
