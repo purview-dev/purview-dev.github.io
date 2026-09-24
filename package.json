@@ -1,6 +1,6 @@
 {
   "name": "purview-dev",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "description": "Purview-Dev public website and unified documentation portal (workspace root).",
   "license": "MIT",
