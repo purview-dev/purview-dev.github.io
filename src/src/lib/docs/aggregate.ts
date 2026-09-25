@@ -171,7 +171,15 @@ function parseWikiSidebar(sidebar: string | undefined): string[] {
   return order;
 }
 
-function isExcluded(fileName: string, exclude: string[] | undefined): boolean {
+/**
+ * Whether a source file is removed by `docs.exclude`. Patterns are matched
+ * against the file's base name (`index.md`, `_Sidebar.md`) rather than its
+ * repository path, and `*` matches any run of characters. Exclusions are
+ * applied before the docs root page is selected, so excluding the conventional
+ * `index.md`/`Home.md`/`readme.md` is what lets `docs.rootPage` name a
+ * different landing page.
+ */
+export function isExcluded(fileName: string, exclude: string[] | undefined): boolean {
   return (exclude ?? []).some((pattern) => {
     if (pattern.includes('*')) {
       const regex = new RegExp(`^${pattern.replace(/\*/g, '.*')}$`);
@@ -229,7 +237,7 @@ export function selectDocsRootFile(
           `  docs.rootPage: "${configuredRootPage}" selects a non-index page while a conventional root page already exists.`,
           `  Existing root page: ${relativeToDocRoot(defaultIndex.path, docRoot)}`,
           '',
-          'Remediation: remove docs.rootPage or set it to the existing index.md/Home.md/readme.md root page.',
+          'Remediation: remove docs.rootPage, point it at the existing index.md/Home.md/readme.md root page, or — when docs.rootPage must win — add that existing root page to docs.exclude (e.g. `exclude: [index.md]`).',
         ].join('\n'),
       );
     }
@@ -242,7 +250,7 @@ export function selectDocsRootFile(
         `Invalid docs configuration for ${projectId}`,
         `  docs: no root page exists under "${docRoot || '.'}".`,
         '',
-        'Remediation: add index.md/Home.md/readme.md or set docs.rootPage to the markdown file that should render at /docs/{project}/.',
+        'Remediation: add index.md/Home.md/readme.md, or set docs.rootPage to the markdown file that should render at /docs/{project}/ — required when docs.exclude removed the conventional root page.',
       ].join('\n'),
     );
   }
