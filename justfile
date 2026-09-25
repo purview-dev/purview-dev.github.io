@@ -60,8 +60,7 @@ test-dist:
     bun run test:dist
 
 # Produce a production build (runs data sync first).
-build:
-    bun run data:sync
+build: live-data-sync
     bun run build
 
 # Full CI validation chain used by the shared build pipeline (data sync → typecheck → build → checks).
