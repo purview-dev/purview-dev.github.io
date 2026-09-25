@@ -3,7 +3,7 @@ import type { DocLinkContext } from '../../src/lib/docs/links';
 
 import { describe, expect, test } from 'bun:test';
 
-import { DocsValidationError, selectDocsRootFile } from '../../src/lib/docs/aggregate';
+import { DocsValidationError, isExcluded, selectDocsRootFile } from '../../src/lib/docs/aggregate';
 import { convertGithubAlerts, parseGithubAlerts } from '../../src/lib/docs/alerts';
 import {
   extractDescription,
@@ -194,6 +194,25 @@ describe('docs root page selection', () => {
     expect(selected.slugAliases.get('getting-started')).toBe('index');
   });
 
+  test('honours docs.exclude before selecting a configured non-index root', () => {
+    // `docs.exclude: [index.md]` drops the conventional root page before root
+    // selection runs, which is what lets docs.rootPage name a different landing
+    // page in repositories that ship a Backstage/TechDocs index.md.
+    const sourceFiles = [
+      rawDoc('docs/index.md'),
+      rawDoc('docs/Getting-Started.md'),
+      rawDoc('docs/API.md'),
+    ];
+    const included = sourceFiles.filter(
+      (file) => !isExcluded(file.path.split('/').pop() ?? '', ['index.md']),
+    );
+    const selected = selectDocsRootFile('value-objects', included, 'docs', 'Getting-Started.md');
+
+    expect(selected.index.path).toBe('docs/Getting-Started.md');
+    expect(selected.regular.map((file) => file.path)).toEqual(['docs/API.md']);
+    expect(selected.slugAliases.get('getting-started')).toBe('index');
+  });
+
   test('rejects docs without a root page', () => {
     expect(() => selectDocsRootFile('demo', [rawDoc('docs/Guide.md')], 'docs', undefined)).toThrow(
       DocsValidationError,
@@ -215,6 +234,27 @@ describe('docs root page selection', () => {
         'Getting-Started.md',
       ),
     ).toThrow(/conventional root page already exists/);
+  });
+
+  test('points at the docs.exclude escape hatch when a conventional root exists', () => {
+    expect(() =>
+      selectDocsRootFile(
+        'demo',
+        [rawDoc('docs/index.md'), rawDoc('docs/Getting-Started.md')],
+        'docs',
+        'Getting-Started.md',
+      ),
+    ).toThrow(/docs\.exclude/);
+  });
+});
+
+describe('docs exclude matching', () => {
+  test('matches base file names exactly and supports wildcards', () => {
+    expect(isExcluded('index.md', ['index.md'])).toBe(true);
+    expect(isExcluded('Index.md', ['index.md'])).toBe(false);
+    expect(isExcluded('_Sidebar.md', ['*.md'])).toBe(true);
+    expect(isExcluded('Getting-Started.md', ['index.md', '_Sidebar.md'])).toBe(false);
+    expect(isExcluded('index.md', undefined)).toBe(false);
   });
 });
 

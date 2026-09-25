@@ -203,6 +203,10 @@ the offending property, the expected shape, and a remediation hint.
      `readmeAsIndex: true`),
    - `source: wiki` for a GitHub wiki,
    - `source: readme` for projects documented by their README.
+
+   Use `rootPage` to name the page served at `/docs/<project>/` and `exclude`
+   to drop files from the aggregation — see
+   [Documentation landing pages](#documentation-landing-pages).
 4. Add relationships with `related`, or `supersededBy`/`supersedes` for
    archived projects.
 5. Run `just validate` — the manifest schema, catalogue page, project page,
@@ -224,9 +228,34 @@ docs (in-repo `docs/`, GitHub wikis via a shallow clone, or the README), then:
 
 - injects front matter (title, description, owners, status, last review date,
   source repository, edit URL),
+- selects the page served at `/docs/<project>/` from `docs.rootPage`, otherwise
+  the conventional `index.md`/`Home.md`/`readme.md`, otherwise the repository
+  README when `readmeAsIndex: true`,
 - converts GitHub alert blockquotes to Starlight asides,
 - rewrites relative links and images so they resolve inside the portal,
 - honours `_Sidebar.md` ordering when the source provides it.
+
+### Documentation landing pages
+
+`docs.exclude` removes source files from the aggregation *before* the landing
+page is selected. That ordering is what keeps a designated `rootPage` in charge
+when the repository also ships a conventional `index.md` — for example the
+`index.md` stub required by a Backstage/TechDocs catalogue:
+
+```yaml
+docs:
+  source: github-path
+  path: docs/wiki
+  rootPage: Getting-Started.md
+  exclude:
+    - _Sidebar.md
+    - index.md
+```
+
+Without the exclusion the aggregation raises a `DocsValidationError`: naming a
+non-index page in `docs.rootPage` while an `index.md`/`Home.md`/`readme.md`
+already exists is otherwise treated as a misconfiguration. Exclusion patterns
+match the file's base name (not its repository path) and accept `*` wildcards.
 
 Each documentation page shows its owning project, lifecycle status, staleness
 (last review older than 365 days, configurable in

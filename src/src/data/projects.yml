@@ -96,8 +96,11 @@ projects:
     docs:
       source: github-path
       path: docs/wiki
+      rootPage: Getting-Started.md
       exclude:
         - _Sidebar.md
+        - Home.md
+        - index.md
     targetFrameworks:
       - net8.0
       - net9.0
@@ -135,6 +138,8 @@ projects:
       source: github-path
       path: docs
       rootPage: Getting-Started.md
+      exclude:
+        - index.md
     targetFrameworks:
       - net8.0
       - net9.0
