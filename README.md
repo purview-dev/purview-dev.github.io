@@ -209,7 +209,11 @@ the offending property, the expected shape, and a remediation hint.
    [Documentation landing pages](#documentation-landing-pages).
 4. Add relationships with `related`, or `supersededBy`/`supersedes` for
    archived projects.
-5. Run `just validate` — the manifest schema, catalogue page, project page,
+5. Credit upstream work with `acknowledgments` (`name`, `url`, and an optional
+   `description`) when the project is based on, or forked from, another
+   project — for example ZodSharp credits the original Zod and the
+   `guinhx/ZodSharp` port it was forked from.
+6. Run `just validate` — the manifest schema, catalogue page, project page,
    docs aggregation, and release transforms are all regenerated from this one
    file.
 

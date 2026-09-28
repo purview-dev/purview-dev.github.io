@@ -260,15 +260,45 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
           <p class="mt-4 leading-relaxed text-muted">{project.origin}</p>
         </section>
 
+        {
+          project.acknowledgments.length > 0 && (
+            <section>
+              <h2 class="text-xl font-semibold">Acknowledgments</h2>
+              <p class="mt-4 leading-relaxed text-muted">
+                {project.name} builds on the work of others.
+              </p>
+              <ul class="mt-4 list-none space-y-3">
+                {project.acknowledgments.map((acknowledgment) => (
+                  <li class="rounded-xl border border-border bg-surface p-4">
+                    <a
+                      href={acknowledgment.url}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      class="pv-link font-medium"
+                    >
+                      {acknowledgment.name}
+                    </a>
+                    {acknowledgment.description && (
+                      <p class="mt-1 text-sm leading-relaxed text-muted">
+                        {acknowledgment.description}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
         <section>
           <h2 class="text-xl font-semibold">Where it fits</h2>
           <div class="mt-4 grid gap-4 sm:grid-cols-2">
-            <div class="rounded-xl border border-brand/20 bg-brand/5 p-5">
-              <h3 class="font-semibold">Use it when</h3>
+            <div class="pv-fit-panel rounded-xl p-5">
+              <h3 class="pv-fit-panel-title font-semibold">Use it when</h3>
               <p class="mt-2 text-sm leading-relaxed text-muted">{project.useWhen}</p>
             </div>
-            <div class="rounded-xl border border-border bg-surface p-5">
-              <h3 class="font-semibold">It may not fit when</h3>
+            <div class="pv-avoid-panel rounded-xl p-5">
+              <h3 class="pv-avoid-panel-title font-semibold">It may not fit when</h3>
               <p class="mt-2 text-sm leading-relaxed text-muted">{project.avoidWhen}</p>
             </div>
           </div>

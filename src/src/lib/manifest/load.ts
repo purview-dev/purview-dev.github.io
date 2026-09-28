@@ -22,6 +22,7 @@ export interface ResolvedProject extends ProjectRecord {
   order: number;
   packages: NonNullable<ProjectRecord['packages']>;
   related: NonNullable<ProjectRecord['related']>;
+  acknowledgments: NonNullable<ProjectRecord['acknowledgments']>;
   discussions: boolean;
   install: NonNullable<ProjectRecord['install']>;
 }
@@ -54,6 +55,7 @@ function withDefaults(record: ProjectRecord): ResolvedProject {
     order: record.order ?? PROJECT_DEFAULTS.order,
     packages: record.packages ?? PROJECT_DEFAULTS.packages,
     related: record.related ?? PROJECT_DEFAULTS.related,
+    acknowledgments: record.acknowledgments ?? PROJECT_DEFAULTS.acknowledgments,
     discussions: record.discussions ?? PROJECT_DEFAULTS.discussions,
     install: record.install ?? PROJECT_DEFAULTS.install,
     repoOwner,

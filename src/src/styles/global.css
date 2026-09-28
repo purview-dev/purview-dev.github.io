@@ -221,6 +221,33 @@
     }
   }
 
+  /* "Where it fits" comparison panels (the manifest `useWhen` / `avoidWhen`
+   * pair on the project page). Tailwind opacity utilities (`bg-brand/5`,
+   * `border-brand/20`) mix against transparency rather than against
+   * `--color-surface`, so in dark mode the affirmative and the neutral panel
+   * resolved to near-identical values and the two were hard to tell apart.
+   * Mixing against `--color-surface` — the technique `.pv-status-*` and
+   * `.beta-badge` already use — keeps the affirmative panel visibly branded
+   * in both themes. The neutral panel is deliberately plain and dashed, so the
+   * pair stays distinguishable without relying on hue alone. */
+  .pv-fit-panel {
+    border: 1px solid color-mix(in oklab, var(--color-brand) 30%, var(--color-border));
+    background-color: color-mix(in oklab, var(--color-brand) 12%, var(--color-surface));
+  }
+
+  .pv-fit-panel-title {
+    color: var(--color-brand-emphasis);
+  }
+
+  .pv-avoid-panel {
+    border: 1px dashed var(--color-border);
+    background-color: var(--color-surface);
+  }
+
+  .pv-avoid-panel-title {
+    color: var(--color-muted);
+  }
+
   /* Chips are single-line labels: a squeezed flex row must shrink the content
    * beside a chip, never wrap the chip's own label onto a second line (which
    * made the status chip grow two lines tall next to a card title). */

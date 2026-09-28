@@ -83,6 +83,25 @@ describe('built per-project llms outputs', () => {
     }
   });
 });
+describe('built project pages', () => {
+  test('the ZodSharp project page credits its upstream work', () => {
+    const content = requireBuilt('projects/zodsharp/index.html');
+    expect(content).toContain('Acknowledgments');
+    expect(content).toContain('https://github.com/colinhacks/zod');
+    expect(content).toContain('https://github.com/guinhx/ZodSharp');
+  });
+
+  test('the Where it fits panels use theme-aware classes', () => {
+    const content = requireBuilt('projects/zodsharp/index.html');
+    expect(content).toContain('class="pv-fit-panel rounded-xl p-5"');
+    expect(content).toContain('class="pv-avoid-panel rounded-xl p-5"');
+    // The previous utilities mixed against transparency rather than against
+    // --color-surface, so the tint vanished in dark mode and the two panels
+    // became indistinguishable.
+    expect(content).not.toContain('border-brand/20 bg-brand/5 p-5');
+  });
+});
+
 describe('built llms links', () => {
   // The LLM text bundles are plain files rather than site pages, so every link
   // to one must opt into the external-link treatment.

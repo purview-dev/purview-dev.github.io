@@ -49,6 +49,16 @@ const packageSchema = z.object({
   targetFrameworks: z.array(z.string()).optional(),
 });
 
+/**
+ * Upstream work a project credits: the original library it was based on and/or
+ * the project it was forked from. Optional — only derived projects declare it.
+ */
+const acknowledgmentSchema = z.object({
+  name: z.string().min(1, 'must be a non-empty name'),
+  url: z.url('must be a valid URL'),
+  description: z.string().optional(),
+});
+
 const projectSchema = z.object({
   id: z.string().regex(/^[a-z0-9-]+$/, 'must be a lowercase slug using [a-z0-9-] only'),
   name: z.string().min(1, 'must be a non-empty display name'),
@@ -69,6 +79,7 @@ const projectSchema = z.object({
   targetFrameworks: z.array(z.string()).optional(),
   packages: z.array(packageSchema).optional(),
   related: z.array(z.string()).optional(),
+  acknowledgments: z.array(acknowledgmentSchema).optional(),
   supersedes: z.string().optional(),
   supersededBy: z.string().optional(),
   discussions: z.boolean().optional(),
@@ -101,12 +112,14 @@ export type ProjectRecord = z.infer<typeof projectSchema>;
 export type ExternalProjectRecord = z.infer<typeof externalProjectSchema>;
 export type ProjectDocsConfig = z.infer<typeof docsSchema>;
 export type ProjectPackage = z.infer<typeof packageSchema>;
+export type ProjectAcknowledgment = z.infer<typeof acknowledgmentSchema>;
 
 export const PROJECT_DEFAULTS = {
   featured: false,
   order: 1000,
   packages: [] as ProjectPackage[],
   related: [] as string[],
+  acknowledgments: [] as ProjectAcknowledgment[],
   discussions: false,
   install: 'nuget',
 } satisfies {
@@ -114,6 +127,7 @@ export const PROJECT_DEFAULTS = {
   order: number;
   packages: ProjectPackage[];
   related: string[];
+  acknowledgments: ProjectAcknowledgment[];
   discussions: boolean;
   install: (typeof INSTALL_KINDS)[number];
 };

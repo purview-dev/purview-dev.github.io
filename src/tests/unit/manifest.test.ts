@@ -24,6 +24,36 @@ describe('project manifest', () => {
     expect(external.some((project) => project.id.startsWith('purview-'))).toBe(false);
   });
 
+  test('records the upstream work credited by derived projects', () => {
+    const projects = loadProjects();
+    const zodsharp = projects.find((project) => project.id === 'zodsharp');
+    expect(zodsharp).toBeDefined();
+    expect(zodsharp?.acknowledgments.map((item) => item.url)).toEqual([
+      'https://github.com/colinhacks/zod',
+      'https://github.com/guinhx/ZodSharp',
+    ]);
+
+    // Every other project resolves to an empty list rather than undefined.
+    const telemetry = projects.find((project) => project.id === 'telemetry-sourcegenerator');
+    expect(telemetry?.acknowledgments).toEqual([]);
+  });
+
+  test('rejects an acknowledgment with an invalid url', () => {
+    expect(() =>
+      parseManifest(
+        {
+          projects: [
+            {
+              ...makeProject('a'),
+              acknowledgments: [{ name: 'Zod', url: 'not-a-url' }],
+            },
+          ],
+        },
+        'fixture.yml',
+      ),
+    ).toThrow(ManifestValidationError);
+  });
+
   test('sorts projects by declared order', () => {
     const projects = loadProjects();
     const orders = projects.map((p) => p.order);
