@@ -10,7 +10,12 @@ import { resolveGitHubToken } from '../github/token';
 import { getReleaseIndex } from '../releases/runtime';
 import { OWNER } from '../site';
 import { convertGithubAlerts } from './alerts';
-import { extractDescription, extractTitle, renderFrontmatter } from './frontmatter';
+import {
+  extractDescription,
+  extractTitle,
+  normalizeDocumentHeadings,
+  renderFrontmatter,
+} from './frontmatter';
 import { extractHeadingSlugs, rewriteDocMarkdown, resolveDoclinks, slugifyDocFile } from './links';
 
 export const DOCS_OUTPUT_DIR = resolve('src/content/docs');
@@ -298,7 +303,7 @@ async function buildPage(
 
   const converted = convertGithubAlerts(raw.content);
   const rewritten = rewriteDocMarkdown(converted, linkContext);
-  const content = resolveDoclinks(rewritten, slug);
+  const content = normalizeDocumentHeadings(resolveDoclinks(rewritten, slug));
   // The project's landing page uses the catalogue display name, not the source
   // README's first heading (which can repeat a "Purview.*" package name).
   const title = slug === 'index' ? project.name : extractTitle(raw.content, sourceName(slug, raw));
@@ -306,7 +311,9 @@ async function buildPage(
   const repoTags = repo?.topics ?? [];
   const repoDescription = repo?.description?.trim() || null;
   const description =
-    extractDescription(raw.content) || repoDescription || project.shortDescription;
+    (slug === 'index' ? project.shortDescription : extractDescription(raw.content)) ||
+    repoDescription ||
+    project.shortDescription;
   const editSourcePath = raw.path.replace(/^\/+/, '');
 
   const frontmatter: DocFrontmatter = {

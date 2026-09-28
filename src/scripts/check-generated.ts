@@ -1,6 +1,7 @@
 import { glob } from 'fast-glob';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { parse } from 'yaml';
 
 import {
   DOCS_CACHE_DIR,
@@ -8,6 +9,7 @@ import {
   DOCS_OUTPUT_DIR,
   readDocsManifest,
 } from '../src/lib/docs/aggregate';
+import { extractDescription } from '../src/lib/docs/frontmatter';
 import { loadProjects } from '../src/lib/manifest/load';
 import { isReleaseCache, readReleaseCache } from '../src/lib/releases/cache';
 
@@ -35,6 +37,24 @@ const errors: string[] = [];
 function fail(message: string): void {
   errors.push(message);
   console.error(`  ✗ ${message}`);
+}
+
+function inspectMarkdownStructure(markdown: string): {
+  titleCount: number;
+  unclosedFence: boolean;
+} {
+  let titleCount = 0;
+  let fence: '```' | '~~~' | null = null;
+  for (const line of markdown.split(/\r?\n/)) {
+    const fenceMatch = /^\s*(```|~~~)/.exec(line);
+    if (fenceMatch?.[1]) {
+      const marker = fenceMatch[1] as '```' | '~~~';
+      fence = fence === marker ? null : (fence ?? marker);
+    } else if (!fence && /^#\s+\S/.test(line)) {
+      titleCount += 1;
+    }
+  }
+  return { titleCount, unclosedFence: fence !== null };
 }
 
 function validateDocsManifest(): void {
@@ -97,6 +117,44 @@ function validateDocsMirror(): void {
           `Docs mirror page is missing from the manifest: docs/${entry.name}/${page}. ` +
             'Re-run `just data-sync` so the sidebar and content agree.',
         );
+      }
+      if (!page.endsWith('.md')) {
+        continue;
+      }
+
+      const relativePath = `docs/${entry.name}/${page}`;
+      const markdown = readFileSync(join(mirrorRoot, entry.name, page), 'utf8');
+      const frontmatterMatch = /^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n([\s\S]*)$/.exec(markdown);
+      if (!frontmatterMatch?.[1] || frontmatterMatch[2] === undefined) {
+        fail(`Generated Markdown has invalid front matter: ${relativePath}.`);
+        continue;
+      }
+
+      let frontmatter: Record<string, unknown>;
+      try {
+        frontmatter = parse(frontmatterMatch[1]) as Record<string, unknown>;
+      } catch {
+        fail(`Generated Markdown front matter is not valid YAML: ${relativePath}.`);
+        continue;
+      }
+
+      const body = frontmatterMatch[2];
+      const description = String(frontmatter.description ?? '').trim();
+      if (!description || description === '---' || !/[A-Za-z0-9]/.test(description)) {
+        fail(`Generated Markdown has an unreadable description: ${relativePath}.`);
+      }
+      if (!extractDescription(body)) {
+        fail(`Generated Markdown has no readable prose: ${relativePath}.`);
+      }
+      const { titleCount, unclosedFence } = inspectMarkdownStructure(body);
+      if (titleCount !== 1) {
+        fail(`Generated Markdown must contain exactly one H1: ${relativePath} (${titleCount}).`);
+      }
+      if (unclosedFence) {
+        fail(`Generated Markdown has an unclosed fenced block: ${relativePath}.`);
+      }
+      if (body.includes('<doclink:')) {
+        fail(`Generated Markdown contains an unresolved documentation link: ${relativePath}.`);
       }
     }
   }
