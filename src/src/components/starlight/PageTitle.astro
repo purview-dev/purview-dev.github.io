@@ -1,6 +1,7 @@
 ---
 import StatusBadge from '~/components/StatusBadge.astro';
 import { isStale, STALE_AFTER_DAYS } from '~/lib/docs/staleness';
+import { LLMS_LINK_ATTRS } from '~/lib/llms';
 import { withBase } from '~/lib/urls';
 
 const { entry } = Astro.locals.starlightRoute;
@@ -8,6 +9,17 @@ const data = entry?.data;
 const lastReviewed = typeof data?.lastReviewed === 'string' ? data.lastReviewed : undefined;
 const stale = lastReviewed ? isStale(lastReviewed) : false;
 const tags = Array.isArray(data?.tags) ? data.tags : [];
+// Project overview pages surface the per-project `llms.txt` bundle emitted by
+// the `customSets` option in `astro.config.ts`. Starlight resolves an index
+// page to its directory id (`docs/<project>`), while the content collection —
+// and therefore the plugin's bundle paths — use `docs/<project>/index`, so both
+// forms are accepted here. Other aggregated pages keep the heading lean and only
+// link the global files from the site footer.
+const entryId = typeof entry?.id === 'string' ? entry.id : undefined;
+const isProjectOverview = entryId !== undefined && /^docs\/[^/]+(\/index)?$/.test(entryId);
+const sourceProject = typeof data?.sourceProject === 'string' ? data.sourceProject : undefined;
+const llmsHref =
+  isProjectOverview && sourceProject ? withBase(`/_llms-txt/${sourceProject}.txt`) : null;
 ---
 
 <h1 id="_top">{data?.title}</h1>
@@ -63,6 +75,20 @@ const tags = Array.isArray(data?.tags) ? data.tags : [];
                 {tag}
               </span>
             ))}
+          </span>
+        )
+      }
+      {
+        llmsHref && (
+          <span class="doc-meta-item">
+            <a
+              href={llmsHref}
+              {...LLMS_LINK_ATTRS}
+              class="pv-link"
+              title={`Machine-readable documentation bundle for ${data?.projectName ?? sourceProject}`}
+            >
+              llms.txt
+            </a>
           </span>
         )
       }

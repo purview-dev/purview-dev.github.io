@@ -5,6 +5,7 @@ import PackageVersions, { type PackageRow } from '~/components/islands/PackageVe
 import StatusBadge from '~/components/StatusBadge.astro';
 import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '~/lib/badges';
 import { installAnchorId, installKindFor, installTabs } from '~/lib/install';
+import { LLMS_LINK_ATTRS } from '~/lib/llms';
 import { loadProjects } from '~/lib/manifest/load';
 import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { projectReleaseSummary } from '~/lib/releases/transform';
@@ -44,6 +45,9 @@ const supersededBy =
   : undefined;
 const primaryPackage = project.packages.find((pkg) => pkg.primary) ?? project.packages[0];
 const docsPath = project.docs ? withBase(`/docs/${project.id}/`) : null;
+// Per-project machine-readable bundle emitted by `starlight-llms-txt`'s
+// `customSets` option (one file per documented project at /_llms-txt/<id>.txt).
+const llmsPath = project.docs ? withBase(`/_llms-txt/${project.id}.txt`) : null;
 const targetFrameworks = project.targetFrameworks ?? [];
 const installSections =
   project.status !== 'archived' ?
@@ -134,6 +138,18 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
           docsPath && (
             <a href={docsPath} class="pv-btn pv-btn-secondary pv-btn-sm">
               Documentation
+            </a>
+          )
+        }
+        {
+          llmsPath && (
+            <a
+              href={llmsPath}
+              {...LLMS_LINK_ATTRS}
+              class="pv-btn pv-btn-secondary pv-btn-sm"
+              title={`Machine-readable documentation bundle for ${project.name}`}
+            >
+              llms.txt
             </a>
           )
         }

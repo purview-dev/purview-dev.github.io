@@ -8,6 +8,7 @@ import {
   DOCS_OUTPUT_DIR,
   readDocsManifest,
 } from '../src/lib/docs/aggregate';
+import { loadProjects } from '../src/lib/manifest/load';
 import { isReleaseCache, readReleaseCache } from '../src/lib/releases/cache';
 
 const DIST = resolve('dist');
@@ -124,6 +125,33 @@ function requireDistFile(file: string): void {
   }
 }
 
+/**
+ * Per-project `llms.txt` bundles are emitted by `starlight-llms-txt`'s
+ * `customSets` option, one file per documented project at
+ * `/_llms-txt/<project-id>.txt`. The project pages, the project documentation
+ * overview, and the documentation portal all link to these paths, so a missing
+ * bundle is a broken link — and the link crawl only sees the pages that link it.
+ */
+function validateProjectLlmsBundles(): void {
+  const projects = loadProjects().filter(
+    (project) => project.docs && project.status !== 'archived',
+  );
+  for (const project of projects) {
+    requireDistFile(`_llms-txt/${project.id}.txt`);
+  }
+
+  const entrypointPath = resolve(DIST, 'llms.txt');
+  if (!existsSync(entrypointPath)) {
+    return;
+  }
+  const entrypoint = readFileSync(entrypointPath, 'utf8');
+  for (const project of projects) {
+    if (!entrypoint.includes(`/_llms-txt/${project.id}.txt`)) {
+      fail(`llms.txt does not link the per-project bundle for "${project.id}".`);
+    }
+  }
+}
+
 async function scanForSecrets(): Promise<void> {
   const files = await glob('**/*', { cwd: DIST, onlyFiles: true });
   for (const file of files) {
@@ -165,6 +193,8 @@ async function run(): Promise<number> {
   requireDistFile('llms-full.txt');
   requireDistFile('sitemap-index.xml');
   requireDistFile('robots.txt');
+
+  validateProjectLlmsBundles();
 
   const llmsFull = readFileSync(resolve(DIST, 'llms-full.txt'), 'utf8');
   const llms = readFileSync(resolve(DIST, 'llms.txt'), 'utf8');

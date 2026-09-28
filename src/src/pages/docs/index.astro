@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
+import { LLMS_LINK_ATTRS } from '~/lib/llms';
 import { loadProjects } from '~/lib/manifest/load';
 import { readDocsManifest } from '~/lib/docs/aggregate';
 import { projectRepoEnrichment } from '~/lib/releases/repo';
@@ -74,6 +75,36 @@ const pageCount = docsManifest?.projects.reduce(
         <li>
           Search spans the full site, including projects, releases, and documentation.
         </li>
+      </ul>
+    </section>
+
+    <section class="mt-8 rounded-xl border border-border bg-surface p-6 md:p-8">
+      <h2 class="text-xl font-semibold">Machine-readable documentation</h2>
+      <p class="mt-3 max-w-2xl text-sm text-muted">
+        Each project's documentation is also published as a single <code>llms.txt</code> bundle for
+        language models and other tooling. The whole site is available as
+        <a href={withBase('/llms.txt')} {...LLMS_LINK_ATTRS} class="pv-link">llms.txt</a>,
+        <a href={withBase('/llms-small.txt')} {...LLMS_LINK_ATTRS} class="pv-link">
+          llms-small.txt
+        </a>, and
+        <a href={withBase('/llms-full.txt')} {...LLMS_LINK_ATTRS} class="pv-link">
+          llms-full.txt
+        </a>.
+      </p>
+      <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        {
+          projects.map((project) => (
+            <li>
+              <a
+                href={withBase(`/_llms-txt/${project.id}.txt`)}
+                {...LLMS_LINK_ATTRS}
+                class="pv-link"
+              >
+                {project.name}
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </section>
   </div>
