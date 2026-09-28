@@ -108,10 +108,10 @@ projects:
     shortDescription: Zero-allocation schema validation for C# — a Zod port.
     description: >-
       A high-performance schema validation library for C#, ported from
-      TypeScript Zod. Struct-based rules, a fluent API, JSON Schema export and
-      import, source-generated validators, and zero-allocation validation on
-      every valid input path. Integrates with System.Text.Json, Newtonsoft.Json,
-      and ASP.NET Core ProblemDetails.
+      TypeScript Zod by way of the guinhx/ZodSharp C# port. Struct-based rules,
+      a fluent API, JSON Schema export and import, source-generated validators,
+      and zero-allocation validation on every valid input path. Integrates with
+      System.Text.Json, Newtonsoft.Json, and ASP.NET Core ProblemDetails.
     origin: >-
       Schema validation was repeatedly needed at application boundaries, but existing approaches
       did not combine a fluent Zod-style model with predictable, allocation-conscious execution.
@@ -150,6 +150,13 @@ projects:
         description: ASP.NET Core ProblemDetails integration.
     related:
       - value-objects
+    acknowledgments:
+      - name: Zod
+        url: https://github.com/colinhacks/zod
+        description: The original JavaScript/TypeScript schema validation library.
+      - name: ZodSharp (guinhx)
+        url: https://github.com/guinhx/ZodSharp
+        description: The C# port of Zod, and the fork this project is based on.
 
   - id: value-objects
     name: Value Objects
