@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
+    "@astrojs/markdown-remark": "^7.0.1",
     "@astrojs/preact": "6.0.5",
     "@astrojs/sitemap": "3.7.4",
     "@astrojs/starlight": "0.42.3",
@@ -40,6 +41,7 @@
     "astro": "7.3.4",
     "fast-glob": "3.3.3",
     "lefthook": "2.1.14",
+    "mermaid": "^11.16.1",
     "oxfmt": "0.68.0",
     "oxlint": "1.83.0",
     "semver": "7.8.5",

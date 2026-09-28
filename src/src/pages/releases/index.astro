@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
 import ReleaseFilter from '~/components/islands/ReleaseFilter.tsx';
+import PackageVersions, { type PackageRow } from '~/components/islands/PackageVersions.tsx';
 import { loadProjects } from '~/lib/manifest/load';
 import { flattenReleases, projectReleaseSummary } from '~/lib/releases/transform';
 import { getReleaseIndex } from '~/lib/releases/runtime';
@@ -8,6 +9,9 @@ import { SITE } from '~/lib/site';
 import { withBase } from '~/lib/urls';
 
 const projects = loadProjects();
+const activeProjectIds = new Set(
+  projects.filter((project) => project.status !== 'archived').map((project) => project.id),
+);
 const releaseIndex = getReleaseIndex();
 const summaries = projects.map((project) =>
   projectReleaseSummary(project, releaseIndex.data, releaseIndex.source),
@@ -16,6 +20,23 @@ const releases = flattenReleases(summaries).filter((entry) => !entry.archived);
 const projectOptions = projects
   .filter((project) => project.status !== 'archived' && project.packages.length > 0)
   .map((project) => ({ id: project.id, name: project.name }));
+// Detailed, per-package rows for the sortable/groupable table below. The home
+// page shows the rolled-up per-project snapshot instead.
+const packageRows: PackageRow[] = summaries
+  .filter((summary) => activeProjectIds.has(summary.projectId))
+  .flatMap((summary) =>
+    summary.packages.map((pkg) => ({
+      projectId: summary.projectId,
+      projectName: summary.projectName,
+      packageId: pkg.packageId,
+      latestStable: pkg.latestStable,
+      latestPrerelease: pkg.latestPrerelease,
+      totalDownloads: pkg.totalDownloads,
+      nugetUrl: pkg.nugetUrl,
+      projectUrl: withBase(`/projects/${summary.projectId}/`),
+      deprecated: pkg.deprecated,
+    })),
+  );
 
 function formatDate(value: string | null): string {
   if (!value) {
@@ -34,15 +55,15 @@ function formatDate(value: string | null): string {
 
 <SiteLayout
   title={`Releases — ${SITE.fullName}`}
-  description="GitHub and NuGet release information for every Purview-Dev project."
+  description="Current GitHub releases and NuGet package versions across Purview's .NET projects."
 >
   <div class="pv-container py-12 md:py-16">
     <div class="max-w-3xl">
       <p class="pv-chip mb-4 border-brand/30 bg-brand/5 text-brand">Releases</p>
       <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Releases</h1>
       <p class="mt-4 text-lg text-muted">
-        Recent GitHub releases across the Purview-Dev product family, alongside
-        the latest stable and prerelease NuGet versions for every package.
+        Follow what is changing across Purview, from recent GitHub releases to the latest stable
+        and prerelease version of each NuGet package.
       </p>
     </div>
 
@@ -53,7 +74,8 @@ function formatDate(value: string | null): string {
             Recent releases
           </h2>
           <p class="mt-2 max-w-2xl text-muted">
-            GitHub release tags grouped with project context, status, and publication date.
+            The latest published work, with enough project context to find the release that matters
+            to you.
           </p>
         </div>
         <ReleaseFilter client:visible projects={projectOptions} />
@@ -131,66 +153,14 @@ function formatDate(value: string | null): string {
       </div>
     </section>
 
-    <section class="mt-16">
-      <h2 class="text-xl font-semibold">Package versions</h2>
+    <section class="mt-16" aria-labelledby="package-versions-heading">
+      <h2 id="package-versions-heading" class="text-xl font-semibold">Package versions</h2>
       <p class="mt-2 max-w-2xl text-muted">
-        The latest stable and prerelease versions of each NuGet package, sourced
-        from the NuGet API at build time.
+        A package-level view sourced from NuGet at build time. Search the list, group packages by
+        project, or sort a column to compare versions and downloads.
       </p>
-      <div class="mt-6 overflow-x-auto rounded-xl border border-border">
-        <table class="w-full min-w-4xl text-left text-sm">
-          <thead class="border-b border-border bg-surface">
-            <tr>
-              <th scope="col" class="px-4 py-3 font-semibold">Project</th>
-              <th scope="col" class="px-4 py-3 font-semibold">Package</th>
-              <th scope="col" class="px-4 py-3 font-semibold">Description</th>
-              <th scope="col" class="px-4 py-3 font-semibold">Stable</th>
-              <th scope="col" class="px-4 py-3 font-semibold">Prerelease</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              summaries.map((summary) =>
-                summary.packages.map((pkg) => (
-                  <tr
-                    class="border-b border-border last:border-0"
-                    data-package-project={summary.projectId}
-                  >
-                    <td class="px-4 py-3">
-                      <a
-                        href={withBase(`/projects/${summary.projectId}/`)}
-                        class="pv-link"
-                      >
-                        {summary.projectName}
-                      </a>
-                    </td>
-                    <td class="px-4 py-3">
-                      <a
-                        href={pkg.nugetUrl}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                        class="pv-link break-all"
-                      >
-                        {pkg.packageId}
-                      </a>
-                    </td>
-                    <td class="max-w-[24rem] px-4 py-3 text-xs text-muted line-clamp-2">
-                      {
-                        pkg.description ?? <span class="text-muted">—</span>
-                      }
-                    </td>
-                    <td class="px-4 py-3 font-mono text-xs">
-                      {pkg.latestStable ?? <span class="text-muted">—</span>}
-                    </td>
-                    <td class="px-4 py-3 font-mono text-xs">
-                      {pkg.latestPrerelease ?? <span class="text-muted">—</span>}
-                    </td>
-                  </tr>
-                )),
-              )
-            }
-          </tbody>
-        </table>
+      <div class="mt-6">
+        <PackageVersions client:visible packages={packageRows} />
       </div>
       <p class="mt-3 text-xs text-muted">
         Release data retrieved on {releaseIndex.data.retrievedAt.slice(0, 10)} ({releaseIndex.source} source).

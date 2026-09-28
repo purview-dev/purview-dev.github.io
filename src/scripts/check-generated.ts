@@ -1,8 +1,13 @@
 import { glob } from 'fast-glob';
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
-import { DOCS_MANIFEST_SCHEMA, DOCS_CACHE_DIR } from '../src/lib/docs/aggregate';
+import {
+  DOCS_CACHE_DIR,
+  DOCS_MANIFEST_SCHEMA,
+  DOCS_OUTPUT_DIR,
+  readDocsManifest,
+} from '../src/lib/docs/aggregate';
 import { isReleaseCache, readReleaseCache } from '../src/lib/releases/cache';
 
 const DIST = resolve('dist');
@@ -46,6 +51,53 @@ function validateDocsManifest(): void {
   const projects = candidate.projects;
   if (!Array.isArray(projects)) {
     fail('Docs manifest is missing the projects array.');
+  }
+}
+
+/**
+ * The docs manifest drives the Starlight sidebar while the generated mirror
+ * under `src/content/docs/` provides the pages it links to. They are written by
+ * the same sync, so a mismatch means the sync was interrupted — Starlight would
+ * then fail with `The slug "docs/<project>/<page>" specified in the Starlight
+ * sidebar config does not exist`.
+ */
+function validateDocsMirror(): void {
+  const manifest = readDocsManifest();
+  if (!manifest) {
+    console.warn('  (no docs manifest present — skipping docs mirror validation)');
+    return;
+  }
+  const mirrorRoot = join(DOCS_OUTPUT_DIR, 'docs');
+  if (!existsSync(mirrorRoot)) {
+    console.warn('  (no docs mirror present — skipping docs mirror validation)');
+    return;
+  }
+
+  const expected = new Set<string>();
+  for (const project of manifest.projects) {
+    for (const page of project.pages) {
+      expected.add(`${project.projectId}/${page.slug}`);
+      if (!existsSync(join(mirrorRoot, project.projectId, `${page.slug}.md`))) {
+        fail(
+          `Docs manifest lists a page with no mirror file: docs/${project.projectId}/${page.slug}. ` +
+            'The Starlight sidebar would link to a missing page — re-run `just data-sync`.',
+        );
+      }
+    }
+  }
+
+  for (const entry of readdirSync(mirrorRoot, { withFileTypes: true })) {
+    if (!entry.isDirectory()) {
+      continue;
+    }
+    for (const page of readdirSync(join(mirrorRoot, entry.name))) {
+      if (page.endsWith('.md') && !expected.has(`${entry.name}/${page.slice(0, -3)}`)) {
+        fail(
+          `Docs mirror page is missing from the manifest: docs/${entry.name}/${page}. ` +
+            'Re-run `just data-sync` so the sidebar and content agree.',
+        );
+      }
+    }
   }
 }
 
@@ -100,6 +152,7 @@ async function scanForSecrets(): Promise<void> {
 async function run(): Promise<number> {
   console.log('Checking generated data and build outputs...');
   validateDocsManifest();
+  validateDocsMirror();
   validateReleaseCache();
 
   if (!existsSync(DIST)) {

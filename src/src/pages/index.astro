@@ -1,9 +1,9 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
 import ProjectCard from '~/components/ProjectCard.astro';
-import PackageVersions, { type PackageRow } from '~/components/islands/PackageVersions.tsx';
+import ProjectVersionSnapshot from '~/components/ProjectVersionSnapshot.astro';
 import { loadProjects } from '~/lib/manifest/load';
-import { projectReleaseSummary } from '~/lib/releases/transform';
+import { projectReleaseSummary, projectVersionRollup } from '~/lib/releases/transform';
 import { getReleaseIndex } from '~/lib/releases/runtime';
 import { SITE } from '~/lib/site';
 import { absoluteUrl, withBase } from '~/lib/urls';
@@ -14,21 +14,12 @@ const active = projects.filter((project) => project.status !== 'archived');
 const featuredGridClass = `featured-projects-grid${featured.length === 5 ? ' featured-projects-grid-five' : ''}`;
 
 const releaseIndex = getReleaseIndex();
-const packageRows: PackageRow[] = projects
-  .filter((project) => project.status !== 'archived')
-  .flatMap((project) => {
-    const summary = projectReleaseSummary(project, releaseIndex.data, releaseIndex.source);
-    return summary.packages.map((pkg) => ({
-      projectId: summary.projectId,
-      projectName: summary.projectName,
-      packageId: pkg.packageId,
-      latestStable: pkg.latestStable,
-      latestPrerelease: pkg.latestPrerelease,
-      totalDownloads: pkg.totalDownloads,
-      nugetUrl: pkg.nugetUrl,
-      projectUrl: withBase(`/projects/${summary.projectId}/`),
-    }));
-  });
+const versionRows = active.map((project) =>
+  projectVersionRollup(
+    project,
+    projectReleaseSummary(project, releaseIndex.data, releaseIndex.source),
+  ),
+);
 
 const organizationStructuredData = {
   '@context': 'https://schema.org',
@@ -60,7 +51,7 @@ const organizationStructuredData = {
       >
       </div>
     </div>
-    <div class="pv-container py-20 md:py-28">
+    <div class="pv-container pt-16 pb-10 md:pt-24 md:pb-12">
       <div class="max-w-3xl">
         <p
           class="mb-6 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-surface/80 px-4 py-2.5 text-sm text-muted backdrop-blur"
@@ -73,12 +64,12 @@ const organizationStructuredData = {
           {SITE.tagline}
         </p>
         <h1 class="text-4xl font-bold tracking-tight md:text-6xl">
-          Developer tooling for .NET that gets out of your way.
+          .NET tooling shaped by real work.
         </h1>
         <p class="mt-6 max-w-2xl text-lg text-muted">
-          Purview Dev builds the pieces that .NET projects need but rarely want to write by hand —
-          event sourcing, telemetry, schema validation, source generators, and build automation —
-          designed to be fast, typed, and painless to adopt.
+          Purview is where I turn repeated engineering problems into open-source tools — removing
+          boilerplate, catching mistakes earlier, and automating the work developers shouldn't
+          have to keep doing by hand.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={withBase('/projects/')} class="pv-btn pv-btn-primary"> Browse projects </a>
@@ -102,41 +93,55 @@ const organizationStructuredData = {
     </div>
   </section>
 
-  <section class="pv-container py-16 md:py-20">
+  <section class="pv-container py-10 md:py-12">
     <div class="grid gap-10 md:grid-cols-3">
       <div>
-        <h2 class="text-xl font-semibold">Source generators, done deliberately</h2>
+        <h2 class="text-xl font-semibold">Automate the repetition</h2>
         <p class="mt-3 text-muted">
-          Several Purview projects are built on Roslyn source generators to move work from runtime
-          to compile time — zero allocations, no reflection, and APIs that are impossible to wire up
-          wrong.
+          If a problem is predictable and repeatable, I would rather solve it once in tooling than
+          ask developers to remember the same manual steps forever.
         </p>
       </div>
       <div>
-        <h2 class="text-xl font-semibold">One coherent product family</h2>
+        <h2 class="text-xl font-semibold">Catch problems earlier</h2>
         <p class="mt-3 text-muted">
-          The projects share conventions, a common build pipeline ({`Purview.Build`}), and
-          integration points — for example
-          {`Purview.EventSourcing`} validates aggregates with {`Purview.ZodSharp`}.
+          Source generation and compile-time validation feature heavily because clear feedback
+          during development is better than reflection, runtime wiring, and late surprises.
         </p>
       </div>
       <div>
-        <h2 class="text-xl font-semibold">Provider-agnostic by design</h2>
+        <h2 class="text-xl font-semibold">Adopt only what helps</h2>
         <p class="mt-3 text-muted">
-          Storage, serialization, and validation choices stay swappable. Adopt the parts you need
-          without rewriting the parts you already have.
+          Each project should stand on its own. Use one because it solves a problem you have, then
+          combine projects where their shared conventions genuinely add value.
         </p>
       </div>
     </div>
   </section>
 
-  <section class="pv-container pb-16 md:pb-20">
+  <section class="pv-container pb-10 md:pb-12">
+    <div class="rounded-xl border border-brand/20 bg-brand/5 px-6 py-6 md:flex md:items-center md:justify-between md:gap-8 md:px-8">
+      <div class="max-w-2xl">
+        <p class="text-sm font-medium uppercase tracking-wider text-muted">The principle</p>
+        <h2 class="mt-2 text-2xl font-bold tracking-tight">Automation, not operation.</h2>
+        <p class="mt-3 text-muted">
+          Purview grew from solving the same real-world engineering problems repeatedly. If the
+          work is predictable, I want the tooling to handle it—not another checklist for developers
+          to operate by hand.
+        </p>
+      </div>
+      <a href={withBase('/about/')} class="pv-link mt-5 inline-block shrink-0 md:mt-0">
+        Why I started building Purview →
+      </a>
+    </div>
+  </section>
+
+  <section class="pv-container pb-10 md:pb-12">
     <div class="flex items-end justify-between gap-4">
       <div>
         <h2 class="text-2xl font-bold tracking-tight md:text-3xl">Featured projects</h2>
         <p class="mt-2 max-w-2xl text-muted">
-          The foundations of the Purview product family. Every project is open source, MIT licensed,
-          and published to NuGet.
+          A selection of the tools that have grown from repeated problems in real .NET projects.
         </p>
       </div>
       <a href={withBase('/projects/')} class="pv-link hidden shrink-0 sm:inline">
@@ -154,21 +159,21 @@ const organizationStructuredData = {
     </div>
   </section>
 
-  <section class="pv-container py-16 md:py-20">
+  <section class="pv-container py-10 md:py-12">
     <div class="flex flex-wrap items-end justify-between gap-4">
       <div>
         <h2 class="text-2xl font-bold tracking-tight md:text-3xl">Package status</h2>
         <p class="mt-2 max-w-2xl text-muted">
-          The latest stable and prerelease version of every NuGet package at a glance. Search, or
-          click a column to sort.
+          See the latest stable and prerelease versions across active projects. This summary rolls
+          each project's packages into one row; the releases page has the full package-level view.
         </p>
       </div>
       <a href={withBase('/releases/')} class="pv-link hidden shrink-0 sm:inline">
-        View all releases →
+        Package versions on the releases page →
       </a>
     </div>
     <div class="mt-8">
-      <PackageVersions client:visible packages={packageRows} />
+      <ProjectVersionSnapshot rows={versionRows} />
     </div>
     <p class="mt-3 text-xs text-muted">
       Release data retrieved on {releaseIndex.data.retrievedAt.slice(0, 10)} ({releaseIndex.source} source).
@@ -176,28 +181,28 @@ const organizationStructuredData = {
   </section>
 
   <section class="border-y border-border bg-surface/60">
-    <div class="pv-container py-16 md:py-20">
-      <h2 class="text-2xl font-bold tracking-tight md:text-3xl">Start building today</h2>
+    <div class="pv-container py-12 md:py-16">
+      <h2 class="text-2xl font-bold tracking-tight md:text-3xl">Find the tool that fits</h2>
       <div class="mt-8 grid gap-8 md:grid-cols-3">
         <div class="rounded-xl border border-border p-6">
-          <p class="text-sm font-semibold text-brand">1 · Pick a project</p>
+          <p class="text-sm font-semibold text-brand">1 · Start with the problem</p>
           <p class="mt-2 text-muted">
-            Explore the {active.length} active projects in the catalogue and find the one that solves
-            your problem.
+            Explore {active.length} active projects covering generation, validation, telemetry,
+            event sourcing, Aspire, and build automation.
           </p>
         </div>
         <div class="rounded-xl border border-border p-6">
-          <p class="text-sm font-semibold text-brand">2 · Add the package</p>
+          <p class="text-sm font-semibold text-brand">2 · Adopt one piece</p>
           <p class="mt-2 text-muted">
-            Every project ships real NuGet packages. {`dotnet add package`} and a source generator or
-            two is usually all it takes.
+            Purview is not an all-or-nothing stack. Add the package that helps, without replacing
+            choices that already work for your application.
           </p>
         </div>
         <div class="rounded-xl border border-border p-6">
-          <p class="text-sm font-semibold text-brand">3 · Read the docs</p>
+          <p class="text-sm font-semibold text-brand">3 · Go deeper when needed</p>
           <p class="mt-2 text-muted">
-            Full documentation is aggregated here from each repository — guides, provider matrices,
-            guarantees, and examples.
+            The documentation is brought together from each project's repository, so guides,
+            examples, and technical detail stay close to the code they describe.
           </p>
         </div>
       </div>

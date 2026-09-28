@@ -1,3 +1,4 @@
+import type { ResolvedProject } from '../../src/lib/manifest/load';
 import type { GitHubReleaseInfo, ReleaseCacheData } from '../../src/lib/releases/types';
 
 import { describe, expect, test } from 'bun:test';
@@ -5,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { loadProjects } from '../../src/lib/manifest/load';
+import { compareNuGetVersions, formatNuGetVersion } from '../../src/lib/nuget-version';
 import { readReleaseFixture } from '../../src/lib/releases/cache';
 import {
   parseGitHubRelease,
@@ -27,8 +29,10 @@ import { projectRepoEnrichment } from '../../src/lib/releases/repo';
 import {
   flattenReleases,
   projectReleaseSummary,
+  projectVersionRollup,
   reconcileWithGitHubReleases,
 } from '../../src/lib/releases/transform';
+import { RELEASE_CACHE_SCHEMA_VERSION } from '../../src/lib/releases/types';
 
 function fixture(name: string): unknown {
   return JSON.parse(readFileSync(resolve('fixtures', name), 'utf8')) as unknown;
@@ -55,6 +59,41 @@ function packageCandidates(
     return versions;
   }
   return reconcileWithGitHubReleases(versions, cache.releases[repository] ?? []);
+}
+
+/**
+ * A minimal release cache holding only the supplied package version lists.
+ * Packages left out have no published releases, which the rollup ignores.
+ */
+function cacheFor(packages: Record<string, string[]>): ReleaseCacheData {
+  return {
+    schema: RELEASE_CACHE_SCHEMA_VERSION,
+    retrievedAt: '2026-01-01T00:00:00.000Z',
+    repos: {},
+    releases: {},
+    packages: Object.fromEntries(
+      Object.entries(packages).map(([id, versions]) => [id, { id, versions }]),
+    ),
+    packageSearch: {},
+  };
+}
+
+/** Load a manifest project by id, failing loudly when a fixture project moves. */
+function fixtureProject(id: string): ResolvedProject {
+  const project = loadProjects().find((candidate) => candidate.id === id);
+  expect(project).toBeDefined();
+  if (!project) {
+    throw new Error(`Project fixture missing: ${id}`);
+  }
+  return project;
+}
+
+/** Roll a project up with only the supplied package versions published. */
+function rollupFor(project: ResolvedProject, packages: Record<string, string[]>) {
+  return projectVersionRollup(
+    project,
+    projectReleaseSummary(project, cacheFor(packages), 'fixture'),
+  );
 }
 
 describe('GitHub normalisation (real fixtures)', () => {
@@ -117,7 +156,7 @@ describe('NuGet normalisation (real fixtures)', () => {
   });
 });
 
-describe('version selection (semver)', () => {
+describe('version selection (NuGet precedence)', () => {
   test('handles the changesets prerelease-flag quirk via tags', () => {
     const versions = ['4.4.0', '5.0.0-prerelease.1', '5.0.0-prerelease.8', '4.3.0'];
     expect(selectStableVersion(versions)).toBe('4.4.0');
@@ -172,6 +211,16 @@ describe('version selection (semver)', () => {
       '1.2.3',
       '1.0.0',
     ]);
+  });
+
+  test('keeps four-component NuGet versions, including their build revision', () => {
+    const versions = ['13.3.1', '13.5.3', '13.5.3.1', '13.5.3.6', '13.3.0-prerelease.10'];
+    expect(selectStableVersion(versions)).toBe('13.5.3.6');
+    expect(selectPrereleaseVersion(versions)).toBe('13.3.0-prerelease.10');
+    expect(compareNuGetVersions('13.5.3.6', '13.5.3.1')).toBe(1);
+    // A prerelease label on a four-component version must not read as stable.
+    expect(isPrereleaseVersion('13.5.3.2-prerelease.1')).toBe(true);
+    expect(isValidVersion('13.5.3.6')).toBe(true);
   });
 
   test('classifies a non-semver GitHub release by its flag', () => {
@@ -245,8 +294,12 @@ describe('project/package association and release summaries', () => {
       telemetry!.repository,
       cache!,
     );
-    expect(pkg?.latestStable).toBe(selectStableVersion(candidates));
-    expect(pkg?.latestPrerelease).toBe(selectPrereleaseVersion(candidates));
+    // Summaries report the display form of a version, so a non-zero build
+    // revision is kept while a zero revision is dropped.
+    const stable = selectStableVersion(candidates);
+    const prerelease = selectPrereleaseVersion(candidates);
+    expect(pkg?.latestStable).toBe(stable === null ? null : formatNuGetVersion(stable));
+    expect(pkg?.latestPrerelease).toBe(prerelease === null ? null : formatNuGetVersion(prerelease));
     expect(pkg?.totalDownloads).toBeGreaterThan(0);
   });
 
@@ -365,5 +418,74 @@ describe('NuGet index lag reconciliation', () => {
     expect(pkg?.latestStable).toBeNull();
     expect(pkg?.latestPrerelease).toBeNull();
     expect(pkg?.hasAnyRelease).toBe(false);
+  });
+});
+
+describe('project version rollup (home-page snapshot)', () => {
+  test('folds a package family into a single row', () => {
+    const project = fixtureProject('event-sourcing');
+    const row = rollupFor(project, {
+      'Purview.EventSourcing': ['1.1.1', '2.0.0-prerelease.38'],
+      'Purview.EventSourcing.SqlServer': ['1.1.1', '2.0.0-prerelease.38'],
+    });
+    expect(row.projectName).toBe('Event Sourcing');
+    expect(row.packageCount).toBe(project.packages.length);
+    expect(row.packageCount).toBeGreaterThan(1);
+    expect(row.stableVersion).toBe('1.1.1');
+    // The prerelease outranks the stable release, so it is the project's latest.
+    expect(row.prereleaseVersion).toBe('2.0.0-prerelease.38');
+    expect(row.suppressedPrerelease).toBeNull();
+    expect(row.laggingPackageCount).toBe(0);
+  });
+
+  test('withholds a prerelease that trails the stable release', () => {
+    const row = rollupFor(fixtureProject('aspirec4'), {
+      'AspireC4.Hosting': ['13.3.0-prerelease.10', '13.5.3', '13.5.3.6'],
+    });
+    expect(row.stableVersion).toBe('13.5.3.6');
+    expect(row.prereleaseVersion).toBeNull();
+    expect(row.suppressedPrerelease).toBe('13.3.0-prerelease.10');
+  });
+
+  test('reports a prerelease-only project without a stable version', () => {
+    const row = rollupFor(fixtureProject('event-sourcing'), {
+      'Purview.EventSourcing': ['2.0.0-prerelease.38'],
+    });
+    expect(row.stableVersion).toBeNull();
+    expect(row.prereleaseVersion).toBe('2.0.0-prerelease.38');
+  });
+
+  test('counts packages that trail the headline version', () => {
+    const row = rollupFor(fixtureProject('event-sourcing'), {
+      'Purview.EventSourcing': ['1.1.1'],
+      'Purview.EventSourcing.SqlServer': ['1.1.0'],
+    });
+    expect(row.stableVersion).toBe('1.1.1');
+    expect(row.prereleaseVersion).toBeNull();
+    expect(row.laggingPackageCount).toBe(1);
+  });
+
+  test('every active project rolls up to a version', () => {
+    const cache = readReleaseFixture('index');
+    expect(cache).not.toBeNull();
+    const active = loadProjects().filter((project) => project.status !== 'archived');
+    expect(active.length).toBeGreaterThan(0);
+    for (const project of active) {
+      const summary = projectReleaseSummary(project, cache!, 'fixture');
+      const row = projectVersionRollup(project, summary);
+      expect(row.packageCount).toBe(project.packages.length);
+      if (summary.packages.every((pkg) => !pkg.hasAnyRelease)) {
+        expect(row.stableVersion).toBeNull();
+        expect(row.prereleaseVersion).toBeNull();
+        continue;
+      }
+      expect(row.stableVersion ?? row.prereleaseVersion).not.toBeNull();
+      // A withheld prerelease is always older than the reported stable version.
+      if (row.suppressedPrerelease !== null) {
+        expect(
+          compareNuGetVersions(row.suppressedPrerelease, row.stableVersion ?? ''),
+        ).toBeLessThan(0);
+      }
+    }
   });
 });

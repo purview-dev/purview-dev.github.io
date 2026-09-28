@@ -51,6 +51,9 @@ const ogImage = absoluteUrl(image ?? '/og/default.png');
     <meta name="theme-color" content={BRAND.purple} media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content={BRAND.inkLight} media="(prefers-color-scheme: dark)" />
     <ThemeProvider />
+    <script>
+      import '~/scripts/mermaid';
+    </script>
     {
       structuredData && (
         <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />

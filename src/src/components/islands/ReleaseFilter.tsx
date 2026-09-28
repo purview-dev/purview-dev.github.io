@@ -63,16 +63,8 @@ export default function ReleaseFilter({ projects }: Props) {
       }
     }
 
-    // The package-versions table follows the project filter (rows show both
-    // stable and prerelease columns, so the stability filter does not apply).
-    const packageRows = Array.from(
-      document.querySelectorAll<HTMLElement>('[data-package-project]'),
-    );
-    for (const row of packageRows) {
-      const project = row.dataset.packageProject ?? '';
-      row.hidden = !(filters.project === 'all' || project === filters.project);
-    }
-
+    // The package-versions table below is its own island (search, group, sort),
+    // so it is deliberately not wired into this filter.
     setVisibleCount(visible);
   }, [filters]);
 

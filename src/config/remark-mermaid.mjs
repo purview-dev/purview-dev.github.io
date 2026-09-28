@@ -1,0 +1,29 @@
+/**
+ * Recursively replace Mermaid code fences with plain `<pre class="mermaid">`
+ * nodes. Hoisted to module scope so the walker is created once, not per document.
+ */
+function visit(parent) {
+  for (const [index, node] of parent.children.entries()) {
+    if (node.type === 'code' && node.lang === 'mermaid') {
+      parent.children[index] = {
+        type: 'paragraph',
+        children: [],
+        data: {
+          hName: 'pre',
+          hProperties: { className: ['mermaid'] },
+          hChildren: [{ type: 'text', value: node.value }],
+        },
+        position: node.position,
+      };
+    } else if (Array.isArray(node.children)) {
+      visit(node);
+    }
+  }
+}
+
+/** Turn opted-in Mermaid fences into plain pre elements before code highlighting. */
+export function remarkMermaid() {
+  return (tree) => {
+    visit(tree);
+  };
+}

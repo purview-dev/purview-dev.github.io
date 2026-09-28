@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'preact/hooks';
-import { compare, valid } from 'semver';
+
+import { compareNuGetVersions } from '~/lib/nuget-version';
 
 export interface PackageRow {
   projectId: string;
@@ -24,24 +25,16 @@ interface Props {
   showProject?: boolean;
 }
 
-function normalizeVersion(version: string | null): string | null {
-  if (!version) {
-    return null;
-  }
-  return version.replace(/^v/i, '').replace(/reprelease/gi, 'prerelease');
-}
-
+/**
+ * Compare two version cells for column sorting. NuGet-aware, so `13.5.3.6`
+ * outranks `13.5.3` and `13.5.3.10` outranks `13.5.3.9`; unparseable values fall
+ * back to a string comparison.
+ */
 function compareVersions(a: string | null, b: string | null): number {
-  const va = normalizeVersion(a);
-  const vb = normalizeVersion(b);
-  if (va && vb) {
-    const pa = valid(va);
-    const pb = valid(vb);
-    if (pa && pb) {
-      return compare(pa, pb);
-    }
+  if (a === null || b === null) {
+    return (a ?? '').localeCompare(b ?? '');
   }
-  return (va ?? '').localeCompare(vb ?? '');
+  return compareNuGetVersions(a, b);
 }
 
 function formatDownloads(value: number | null): string {

@@ -9,6 +9,15 @@ projects:
       Define telemetry once on an interface; the generator emits the
       implementation, DI registration helpers, and multi-target generation —
       no runtime reflection, no boilerplate.
+    origin: >-
+      Repeating the same logging, activity, and metric wiring across services made telemetry a
+      strong candidate for one interface-driven, compile-time implementation.
+    useWhen: >-
+      You want strongly typed OpenTelemetry-aligned telemetry from interfaces, with generated
+      implementations and dependency-injection registration.
+    avoidWhen: >-
+      Your telemetry is highly dynamic, cannot be described at compile time, or is already handled
+      consistently by another instrumentation layer.
     repository: purview-dev/telemetry-sourcegenerator
     category: observability
     status: stable
@@ -17,8 +26,11 @@ projects:
     docs:
       source: github-path
       path: docs/wiki
+      rootPage: Getting-Started.md
       exclude:
         - _Sidebar.md
+        - Home.md
+        - index.md
     targetFrameworks:
       - net8.0
       - net9.0
@@ -40,6 +52,15 @@ projects:
       transaction coordination for multi-aggregate saves, queryable snapshots
       and read models, and storage providers for SQL Server, PostgreSQL,
       MongoDB, Azure Storage, Azure Cosmos DB, and in-memory.
+    origin: >-
+      Aggregate, event, persistence, and transaction patterns kept recurring across applications,
+      so the reusable parts were separated from any one storage provider.
+    useWhen: >-
+      Your domain benefits from aggregate-based event sourcing and you want storage choices,
+      snapshots, read models, and transactions behind consistent abstractions.
+    avoidWhen: >-
+      A conventional state-based model is sufficient, or your application does not need the
+      operational and modelling trade-offs that come with event sourcing.
     repository: purview-dev/event-sourcing
     category: application-framework
     status: preview
@@ -48,8 +69,11 @@ projects:
     docs:
       source: github-path
       path: docs/wiki
+      rootPage: Getting-Started.md
       exclude:
         - _Sidebar.md
+        - Home.md
+        - index.md
     targetFrameworks:
       - net8.0
       - net9.0
@@ -88,6 +112,15 @@ projects:
       import, source-generated validators, and zero-allocation validation on
       every valid input path. Integrates with System.Text.Json, Newtonsoft.Json,
       and ASP.NET Core ProblemDetails.
+    origin: >-
+      Schema validation was repeatedly needed at application boundaries, but existing approaches
+      did not combine a fluent Zod-style model with predictable, allocation-conscious execution.
+    useWhen: >-
+      You want composable C# schemas, compile-time validator generation, or JSON Schema interop with
+      tight control over validation behaviour and allocations.
+    avoidWhen: >-
+      Data annotations or an existing validation library already cover your requirements, or Zod-style
+      schemas would add an unnecessary second validation model.
     repository: purview-dev/zodsharp
     category: validation
     status: preview
@@ -129,6 +162,15 @@ projects:
       creation. Value objects serialize as their underlying value, map cleanly
       onto Entity Framework JSON columns, and can be validated with
       Purview.ZodSharp schemas.
+    origin: >-
+      Hand-writing the same factories, equality rules, conversions, serializers, and persistence
+      integration for domain values made the pattern an obvious source-generation target.
+    useWhen: >-
+      Your domain uses meaningful scalar or complex value types and you want their repetitive
+      implementation generated from a small, explicit declaration.
+    avoidWhen: >-
+      A primitive or record already expresses the concept clearly, or generated conversion and
+      serialization behaviour would be more machinery than the domain needs.
     repository: purview-dev/value-objects
     category: source-generation
     status: preview
@@ -139,6 +181,8 @@ projects:
       path: docs
       rootPage: Getting-Started.md
       exclude:
+        - _Sidebar.md
+        - Home.md
         - index.md
     targetFrameworks:
       - net8.0
@@ -160,6 +204,15 @@ projects:
       incremental C# source generators with Roslyn. Includes structured code
       generation, attribute data models, type libraries, and a step-cache test
       runner for verifying incremental behaviour.
+    origin: >-
+      Building several incremental generators exposed the same needs for typed models, structured
+      output, testing, and cache verification, so those foundations became a shared framework.
+    useWhen: >-
+      You are building a non-trivial incremental C# source generator and want reusable modelling,
+      code-writing, packaging, and testing infrastructure.
+    avoidWhen: >-
+      Your generator is small enough for the Roslyn APIs directly, or adopting a framework would
+      hide behaviour your implementation needs to control precisely.
     repository: purview-dev/sourcegenerator-framework
     category: source-generation
     status: preview
@@ -168,8 +221,11 @@ projects:
     docs:
       source: github-path
       path: docs/wiki
+      rootPage: Getting-Started.md
       exclude:
         - _Sidebar.md
+        - Home.md
+        - index.md
     targetFrameworks:
       - net8.0
       - net9.0
@@ -191,6 +247,15 @@ projects:
       resource composition as strongly typed, test-friendly classes. Generated
       host wiring, typed options, and enablement toggles keep large AppHosts
       maintainable and discoverable.
+    origin: >-
+      Large Aspire AppHosts repeatedly accumulated procedural resource wiring and configuration,
+      creating a need for a typed, testable way to package those conventions.
+    useWhen: >-
+      Your Aspire AppHost has reusable resource groups, configuration, or enablement rules that
+      should be strongly typed, discoverable, and testable.
+    avoidWhen: >-
+      Your AppHost is small and direct resource declarations remain clearer than introducing a
+      resource-kit abstraction.
     repository: purview-dev/aspire-resourcekit
     category: aspire
     status: preview
@@ -198,8 +263,11 @@ projects:
     docs:
       source: github-path
       path: docs/wiki
+      rootPage: Getting-Started.md
       exclude:
         - _Sidebar.md
+        - Home.md
+        - index.md
     targetFrameworks:
       - net10.0
     packages:
@@ -214,15 +282,27 @@ projects:
       An Aspire extension that generates live LikeC4 architectural diagrams
       from the Aspire resource graph, with a Roslyn source generator for
       compile-time validation of tags, kinds, groups, and metadata.
+    origin: >-
+      Aspire already holds a useful model of a distributed application, so manually maintaining a
+      separate architecture diagram was repetition that could be removed.
+    useWhen: >-
+      You use .NET Aspire and want live LikeC4 diagrams derived from the resource graph, with
+      compile-time checks for architectural metadata.
+    avoidWhen: >-
+      You do not use Aspire, need a manually curated architecture model, or require diagrams that
+      intentionally differ from the running application topology.
     repository: purview-dev/aspirec4
     category: aspire
-    status: preview
+    status: stable
     order: 55
     docs:
       source: github-path
       path: docs/wiki
+      rootPage: Getting-Started.md
       exclude:
         - _Sidebar.md
+        - Home.md
+        - index.md
     packages:
       - id: AspireC4.Hosting
         description: Aspire hosting extension for the AspireC4 plugin, generating a dynamic LikeC4 architecture diagram for your Aspire application.
@@ -236,6 +316,15 @@ projects:
       Modular Pipelines based .NET tool packaged as a pinned dotnet tool, exposed
       through a GitHub composite action and thin reusable workflows. Consuming
       repositories own configuration; they do not own pipeline source code.
+    origin: >-
+      Maintaining near-identical build, test, pack, and release logic across repositories turned
+      the pipeline itself into reusable tooling.
+    useWhen: >-
+      You maintain a Purview repository and want the shared, centrally versioned build and release
+      conventions used across the organisation.
+    avoidWhen: >-
+      Your repository is outside that convention set or needs a substantially different pipeline
+      whose lifecycle should remain independent.
     repository: purview-dev/build
     category: build-tooling
     status: stable
@@ -243,8 +332,11 @@ projects:
     docs:
       source: github-path
       path: docs/wiki
+      rootPage: Getting-Started.md
       exclude:
         - _Sidebar.md
+        - Home.md
+        - index.md
     targetFrameworks:
       - net10.0
     install: dotnet-tool
@@ -261,6 +353,15 @@ projects:
       project defaults, code-style enforcement, test-framework wiring, and
       Central Package Management integration. Install it once per repo; every
       project beneath the repo root inherits everything automatically.
+    origin: >-
+      Repeating project properties, analyzers, test wiring, and package-management conventions in
+      every repository made a centrally maintained MSBuild SDK the simpler option.
+    useWhen: >-
+      You want Purview's standard .NET project defaults applied consistently across an entire
+      repository from one versioned SDK declaration.
+    avoidWhen: >-
+      Your repository follows different conventions or needs project-by-project control over the
+      settings the SDK intentionally standardises.
     repository: purview-dev/build-sdk
     category: build-tooling
     status: preview
@@ -268,8 +369,11 @@ projects:
     docs:
       source: github-path
       path: docs/wiki
+      rootPage: Getting-Started.md
       exclude:
         - _Sidebar.md
+        - Home.md
+        - index.md
     targetFrameworks:
       - msbuild
     install: msbuild-sdk
@@ -286,6 +390,14 @@ projects:
       Archived and superseded by the Purview Telemetry SourceGenerator, which
       generates logging together with Activities and Metrics from the same
       interfaces.
+    origin: >-
+      This was the original exploration of interface-driven logging generation and established the
+      approach that later grew into the broader Telemetry SourceGenerator.
+    useWhen: >-
+      Use it only when maintaining an existing dependency that cannot yet move to its successor.
+    avoidWhen: >-
+      For new work, use Telemetry SourceGenerator instead; this project is archived and no longer
+      actively developed.
     repository: purview-dev/dotnet-logging-source-generators
     category: source-generation
     status: archived
