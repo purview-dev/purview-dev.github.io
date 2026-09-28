@@ -81,6 +81,18 @@ describe('built HTML safety', () => {
   });
 });
 
+describe('built home-page version snapshot', () => {
+  test('renders one rolled-up version row per active project', () => {
+    const content = requireBuilt('index.html');
+    const rows = content.match(/data-project-id="[^"]+"/g) ?? [];
+    expect(rows.length).toBeGreaterThanOrEqual(8);
+    // The per-package table (and its legacy filter hook) moved to /releases/.
+    expect(content).not.toContain('data-package-project');
+    // The snapshot is server-rendered: no island ships for the home page.
+    expect(content).not.toContain('PackageVersions');
+  });
+});
+
 describe('built footer version', () => {
   test('homepage footer shows the workspace root version', () => {
     const manifest = JSON.parse(readFileSync(resolve('..', 'package.json'), 'utf8')) as {

@@ -52,10 +52,13 @@ generation and avoids a misleading language selector.
 ### 4. Preact islands instead of a client-heavy application
 
 The site is not a single-page application. Client-side interactivity is limited
-to three small Preact islands: catalogue filtering, release filtering, and a
-copy-command button. All meaningful content and links exist in the generated
-HTML before hydration; the islands only enhance them. Hydration uses the least
-expensive directive that works (`client:visible` / `client:idle`).
+to four small Preact islands: catalogue filtering, release filtering, the
+sortable/groupable package-version table, and the copy-command install panel.
+Everything else — including the rolled-up per-project version snapshot on the
+home page — is server-rendered with no client JavaScript. All meaningful content
+and links exist in the generated HTML before hydration; the islands only enhance
+them. Hydration uses the least expensive directive that works (`client:visible` /
+`client:idle`).
 
 ### 5. Bun, Just, and Lefthook for the local-first workflow
 

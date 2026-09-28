@@ -1,0 +1,14 @@
+---
+interface Props {
+  diagram: string;
+  label: string;
+  caption?: string;
+}
+
+const { diagram, label, caption } = Astro.props;
+---
+
+<figure class="my-6">
+  <pre class="mermaid" role="img" aria-label={label} set:text={diagram}></pre>
+  {caption && <figcaption class="-mt-4 text-center text-sm text-muted">{caption}</figcaption>}
+</figure>

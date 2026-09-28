@@ -1,3 +1,4 @@
+import { unified } from '@astrojs/markdown-remark';
 import preact from '@astrojs/preact';
 import sitemap from '@astrojs/sitemap';
 import starlight from '@astrojs/starlight';
@@ -7,6 +8,7 @@ import starlightLinksValidator from 'starlight-links-validator';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import starlightSidebarTopics from 'starlight-sidebar-topics';
 
+import { remarkMermaid } from './config/remark-mermaid.mjs';
 import { readDocsManifest } from './src/lib/docs/aggregate';
 import { buildProjectItems } from './src/lib/docs/sidebar';
 import { loadProjects } from './src/lib/manifest/load';
@@ -84,6 +86,11 @@ export default defineConfig({
     format: 'directory',
   },
   compressHTML: true,
+  markdown: {
+    processor: unified({
+      remarkPlugins: [remarkMermaid],
+    }),
+  },
   integrations: [
     preact(),
     sitemap(),
@@ -126,6 +133,7 @@ export default defineConfig({
         },
       },
       components: {
+        Head: './src/components/starlight/Head.astro',
         Header: './src/components/starlight/Header.astro',
         PageFrame: './src/components/starlight/PageFrame.astro',
         EditLink: './src/components/starlight/EditLink.astro',

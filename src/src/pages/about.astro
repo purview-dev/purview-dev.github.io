@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
+import MermaidDiagram from '~/components/MermaidDiagram.astro';
 import { loadProjects } from '~/lib/manifest/load';
 import { SITE } from '~/lib/site';
 import { withBase } from '~/lib/urls';
@@ -10,70 +11,178 @@ const active = projects.filter((project) => project.status !== 'archived');
 
 <SiteLayout
   title={`About — ${SITE.fullName}`}
-  description="About Purview Development, the people and principles behind the Purview-Dev .NET tooling family."
+  description="About Purview Development, the ideas and principles behind the Purview-Dev .NET developer tooling family."
 >
   <div class="pv-container py-12 md:py-16">
     <div class="max-w-3xl">
       <p class="pv-chip mb-4 border-brand/30 bg-brand/5 text-brand">About</p>
+
       <h1 class="text-3xl font-bold tracking-tight md:text-4xl">
         {SITE.orgName}
       </h1>
+
       <p class="mt-4 text-lg text-muted">
-        {SITE.tagline} We build the developer tooling that .NET projects need
-        but rarely want to write by hand.
+        {SITE.tagline} Purview is where I build open-source tools focused on improving the .NET developer
+        experience — removing repetitive work, catching problems earlier, and automating the things that
+        shouldn't need continual attention.
       </p>
     </div>
 
     <div class="mt-12 grid gap-10 lg:grid-cols-[1fr_320px]">
       <div class="min-w-0 space-y-10">
         <section>
-          <h2 class="text-xl font-semibold">What we do</h2>
+          <h2 class="text-xl font-semibold">Why Purview?</h2>
+
           <p class="mt-4 leading-relaxed text-muted">
-            Purview-Dev is an open-source organisation creating a coherent family
-            of .NET libraries. The emphasis is on compile-time generation where
-            it pays off — source generators that remove boilerplate, eliminate
-            reflection, and make the correct wiring the only wiring.
+            I chose the name <strong class="font-medium text-default">Purview</strong>
+            because I liked what it suggested about developer tooling.
           </p>
+
           <p class="mt-4 leading-relaxed text-muted">
-            Today the family spans {active.length} active projects: an event
-            sourcing framework with pluggable storage, interface-based telemetry
-            generation, zero-allocation schema validation, a framework for
-            building incremental source generators, resource kits for .NET
-            Aspire, and the shared build pipeline every project uses.
+            A purview is an area of influence or responsibility. That's a good description of what
+            these projects represent: the parts of the development experience where I think better
+            tooling can make a meaningful difference.
+          </p>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            Purview isn't intended to be one enormous framework that dictates how an application
+            should be built. It's a collection of focused tools for the areas within that purview —
+            generation, validation, telemetry, event sourcing, .NET Aspire, build infrastructure,
+            and the other repetitive pieces around building and maintaining software.
+          </p>
+
+          <p class="mt-4 font-medium">
+            The common goal is simple: <strong>make development easier.</strong>
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-semibold">From repetition to tooling</h2>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            Most Purview projects are evolutions of something I originally built to solve a real
+            problem.
+          </p>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            I'd build something for one project, encounter the same problem somewhere else, improve
+            the solution, and eventually realise I was writing essentially the same thing again.
+          </p>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            At that point, it probably belongs in a library.
+          </p>
+
+          <MermaidDiagram
+            label="The Purview process: solve a problem, encounter it again, generalise the solution, then automate it"
+            caption="The pattern behind many Purview projects"
+            diagram={`flowchart LR
+              solve["Solve the\nproblem"] --> repeat["Encounter it\nagain"]
+              repeat --> generalise["Generalise the\nsolution"]
+              generalise --> automate["Automate it"]`}
+          />
+
+          <p class="mt-6 leading-relaxed text-muted">
+            That thinking has become one of the principles behind Purview:
+          </p>
+
+          <blockquote class="mt-4 border-l-2 border-brand pl-4">
+            <p class="text-lg font-semibold">Automation, not operation.</p>
+          </blockquote>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            If something is predictable and repeatable, I'd rather automate it once than make
+            developers remember to do it forever.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-semibold">The projects</h2>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            Today, Purview spans {active.length} active projects covering areas such as event sourcing,
+            strongly typed telemetry, schema validation, incremental source generation, .NET Aspire integrations,
+            and shared build infrastructure.
+          </p>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            Source generation features heavily because it fits the philosophy particularly well. If
+            the compiler already has enough information to generate something correctly, I'd rather
+            generate it than maintain repetitive runtime wiring or boilerplate by hand.
+          </p>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            It also moves more mistakes into the development cycle, where they are cheaper and
+            easier to understand.
           </p>
         </section>
 
         <section>
           <h2 class="text-xl font-semibold">How the projects fit together</h2>
+
           <p class="mt-4 leading-relaxed text-muted">
-            The projects share a common foundation. The build, test, and release
-            pipeline is {`Purview.Build`}, and repositories standardise on
-            {`Purview.BuildSdk`}. Libraries that benefit from compile-time
-            validation are built with {`Purview.SourceGeneratorFramework`}, and
-            integrations connect them — for example, event sourcing uses
-            Purview.ZodSharp for aggregate validation. Adopt one tool or combine several;
-            they are designed to stay composable.
+            Each project is intended to be useful independently. There isn't a requirement to adopt
+            a "Purview stack".
+          </p>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            Where projects naturally complement each other, they share foundations and integrate
+            with one another.
+            <code>Purview.SourceGeneratorFramework</code> provides common infrastructure for source-generator-based
+            projects, while
+            <code>Purview.Build</code> and <code>Purview.BuildSdk</code> provide common build conventions
+            and automation. Higher-level libraries can use other Purview components where doing so genuinely
+            adds value.
+          </p>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            The aim is to build
+            <strong class="font-medium text-default">
+              small, composable tools with consistent conventions
+            </strong>, rather than a tightly coupled framework.
+          </p>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            Use one because it solves a problem you have. Combine them where that makes sense.
           </p>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold">Release process</h2>
+          <h2 class="text-xl font-semibold">Building in the open</h2>
+
           <p class="mt-4 leading-relaxed text-muted">
-            Every project follows a changeset-based release flow: pull requests
-            add changesets, merging to main triggers a validation, build, and
-            pack through the shared pipeline, and releases publish to both
-            GitHub and nuget.org. Because most projects are still pre-1.0, most
-            published packages are marked as prereleases — this site surfaces
-            both the latest stable and prerelease versions.
+            Purview is also where I can take ideas that have grown out of day-to-day software
+            development and explore them further.
+          </p>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            Some projects are mature; others are experiments that are still evolving. Many are
+            pre-1.0 while their APIs and approaches settle.
+          </p>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            The projects share common tooling for building, testing, validation, packaging, and
+            publishing. That infrastructure is itself part of Purview: if maintaining multiple
+            projects creates repetitive work, that's another opportunity for automation.
+          </p>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            The same principle applies to maintaining the tools as it does to using them:
+            <strong class="font-medium text-default"> automation, not operation. </strong>
           </p>
         </section>
 
         <section>
-          <h2 class="text-xl font-semibold">Licensing</h2>
+          <h2 class="text-xl font-semibold">Open source</h2>
+
           <p class="mt-4 leading-relaxed text-muted">
-            All public projects are licensed under MIT. Contributions are
-            welcome via the issue trackers and documentation edit links on every
-            page.
+            Purview's public projects are open source and released under the MIT licence.
+          </p>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            Issues, ideas, and contributions are welcome. The projects are built around problems
+            I've encountered, but the aim is for the resulting tools to be useful well beyond the
+            projects that originally inspired them.
           </p>
         </section>
       </div>
@@ -81,6 +190,7 @@ const active = projects.filter((project) => project.status !== 'archived');
       <aside class="space-y-6">
         <div class="rounded-xl border border-border bg-surface p-5">
           <h2 class="text-sm font-semibold uppercase tracking-wider text-muted">Organisation</h2>
+
           <dl class="mt-4 space-y-3 text-sm">
             <div class="flex justify-between gap-3">
               <dt class="text-muted">Home</dt>
@@ -88,6 +198,7 @@ const active = projects.filter((project) => project.status !== 'archived');
                 <a href={SITE.url} class="pv-link">{SITE.domain}</a>
               </dd>
             </div>
+
             <div class="flex justify-between gap-3">
               <dt class="text-muted">GitHub</dt>
               <dd class="text-right">
@@ -96,26 +207,41 @@ const active = projects.filter((project) => project.status !== 'archived');
                 </a>
               </dd>
             </div>
+
             <div class="flex justify-between gap-3">
               <dt class="text-muted">Packages</dt>
               <dd class="text-right">
-                <a href={`${SITE.nugetUrl}/search?q=purview`} class="pv-link" rel="noopener noreferrer" target="_blank">
+                <a
+                  href={`${SITE.nugetUrl}/search?q=purview`}
+                  class="pv-link"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
                   nuget.org
                 </a>
               </dd>
             </div>
+
             <div class="flex justify-between gap-3">
               <dt class="text-muted">Active projects</dt>
               <dd class="text-right">{active.length}</dd>
             </div>
           </dl>
         </div>
+
         <div class="rounded-xl border border-border bg-surface p-5">
           <h2 class="text-sm font-semibold uppercase tracking-wider text-muted">Explore</h2>
+
           <ul class="mt-4 list-none space-y-2 text-sm">
-            <li><a href={withBase('/projects/')} class="pv-link">Projects</a></li>
-            <li><a href={withBase('/docs/')} class="pv-link">Documentation</a></li>
-            <li><a href={withBase('/releases/')} class="pv-link">Releases</a></li>
+            <li>
+              <a href={withBase('/projects/')} class="pv-link">Projects</a>
+            </li>
+            <li>
+              <a href={withBase('/docs/')} class="pv-link">Documentation</a>
+            </li>
+            <li>
+              <a href={withBase('/releases/')} class="pv-link">Releases</a>
+            </li>
           </ul>
         </div>
       </aside>

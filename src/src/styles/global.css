@@ -2,6 +2,7 @@
 @import '@astrojs/starlight-tailwind';
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
+@import './mermaid.css';
 
 /* ---------------------------------------------------------------------------
  * Purview brand tokens (canonical values from ./assets/branding/README.md)
@@ -220,6 +221,9 @@
     }
   }
 
+  /* Chips are single-line labels: a squeezed flex row must shrink the content
+   * beside a chip, never wrap the chip's own label onto a second line (which
+   * made the status chip grow two lines tall next to a card title). */
   .pv-chip {
     display: inline-flex;
     align-items: center;
@@ -232,6 +236,7 @@
     font-weight: 500;
     line-height: 1.25rem;
     color: var(--color-muted);
+    white-space: nowrap;
   }
 
   .pv-status-stable {

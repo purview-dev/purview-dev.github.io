@@ -9,7 +9,7 @@ export const SITE = {
   githubUrl: 'https://github.com/purview-dev',
   nugetUrl: 'https://www.nuget.org',
   description:
-    'Purview Dev builds developer tooling for .NET: event sourcing, telemetry, validation, source generators, and build automation — designed to be fast, typed, and painless to adopt.',
+    'Open-source .NET tools shaped by real projects — built to remove repetition, catch problems earlier, and make development easier.',
 } as const;
 
 export const BRAND = {

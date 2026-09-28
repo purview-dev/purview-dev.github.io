@@ -65,6 +65,9 @@ describe('project manifest', () => {
               name: 'Other',
               shortDescription: 'x',
               description: 'x',
+              origin: 'x',
+              useWhen: 'x',
+              avoidWhen: 'x',
               repository: 'someone-else/repo',
               category: 'validation',
               status: 'preview',
@@ -86,6 +89,9 @@ describe('project manifest', () => {
               name: 'A',
               shortDescription: 'x',
               description: 'x',
+              origin: 'x',
+              useWhen: 'x',
+              avoidWhen: 'x',
               repository: 'purview-dev/a',
               category: 'validation',
               status: 'preview',
@@ -110,6 +116,9 @@ function makeProject(id: string): {
   name: string;
   shortDescription: string;
   description: string;
+  origin: string;
+  useWhen: string;
+  avoidWhen: string;
   repository: string;
   category: 'validation';
   status: 'preview';
@@ -120,6 +129,9 @@ function makeProject(id: string): {
     name: id,
     shortDescription: 'x',
     description: 'x',
+    origin: 'x',
+    useWhen: 'x',
+    avoidWhen: 'x',
     repository: `purview-dev/${id}`,
     category: 'validation',
     status: 'preview',

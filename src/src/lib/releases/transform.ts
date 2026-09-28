@@ -6,6 +6,7 @@ import type {
   ReleaseCacheData,
 } from './types';
 
+import { compareNuGetVersions, formatNuGetVersion } from '../nuget-version';
 import { nugetPackageUrl } from '../urls';
 import {
   isPrereleaseRelease,
@@ -51,6 +52,15 @@ export function reconcileWithGitHubReleases(
   return reconciled;
 }
 
+/**
+ * Display form for a selected version: `13.5.3.0` reads as `13.5.3`, while a
+ * non-zero build revision (`13.5.3.6`) is kept — the two are different versions
+ * on NuGet and dropping the revision would report a stale "latest".
+ */
+function formatVersion(version: string | null): string | null {
+  return version === null ? null : formatNuGetVersion(version);
+}
+
 /** Build the release summary for a single catalogue project. */
 export function projectReleaseSummary(
   project: ResolvedProject,
@@ -80,8 +90,8 @@ export function projectReleaseSummary(
     return {
       packageId: pkg.id,
       description: pkg.description ?? search?.description ?? null,
-      latestStable: selection.stable,
-      latestPrerelease: selection.prerelease,
+      latestStable: formatVersion(selection.stable),
+      latestPrerelease: formatVersion(selection.prerelease),
       totalDownloads: search?.totalDownloads ?? null,
       deprecated: search?.deprecated ?? false,
       listed: search?.listed ?? true,
@@ -137,6 +147,82 @@ export function flattenReleases(summaries: ProjectReleaseSummary[]): ReleaseEntr
     }
   }
   return entries.toSorted((a, b) => (b.publishedAt ?? '').localeCompare(a.publishedAt ?? ''));
+}
+
+/**
+ * A project's packages folded into a single version row for the home-page
+ * snapshot (e.g. `Purview.EventSourcing*` rolls up to Event Sourcing).
+ */
+export interface ProjectVersionRollup {
+  projectId: string;
+  projectName: string;
+  status: ResolvedProject['status'];
+  /** Number of NuGet packages the project publishes. */
+  packageCount: number;
+  /** Highest stable version across the project's packages, when one exists. */
+  stableVersion: string | null;
+  /**
+   * Highest prerelease version, reported only when it outranks the stable
+   * version. A prerelease that trails the stable release stays out of this field
+   * so the snapshot never advertises an older build as a project's latest
+   * version.
+   */
+  prereleaseVersion: string | null;
+  /** The highest prerelease when `prereleaseVersion` withholds it. */
+  suppressedPrerelease: string | null;
+  /** Packages that are not on the project's headline versions (usually 0). */
+  laggingPackageCount: number;
+  /** Most recent GitHub release across the project, used for the snapshot date. */
+  latestRelease: GitHubReleaseInfo | null;
+}
+
+/** Highest version in a list, ignoring nulls, by NuGet precedence. */
+function highestVersion(versions: Array<string | null>): string | null {
+  let highest: string | null = null;
+  for (const version of versions) {
+    if (version === null) {
+      continue;
+    }
+    if (highest === null || compareNuGetVersions(version, highest) > 0) {
+      highest = version;
+    }
+  }
+  return highest;
+}
+
+/**
+ * Roll a project's packages up into the version row shown by the home-page
+ * snapshot: the highest stable and prerelease version across the package family.
+ * The prerelease is withheld when the stable release is newer, so AspireC4 shows
+ * `13.5.3.6` rather than the older `13.3.0-prerelease.10`. The detailed
+ * per-package table on the releases page keeps both channels in full.
+ */
+export function projectVersionRollup(
+  project: ResolvedProject,
+  summary: ProjectReleaseSummary,
+): ProjectVersionRollup {
+  const stableVersion = highestVersion(summary.packages.map((pkg) => pkg.latestStable));
+  const highestPrerelease = highestVersion(summary.packages.map((pkg) => pkg.latestPrerelease));
+  const prereleaseOutranks =
+    highestPrerelease !== null &&
+    (stableVersion === null || compareNuGetVersions(highestPrerelease, stableVersion) > 0);
+  const headline = prereleaseOutranks ? highestPrerelease : stableVersion;
+  const laggingPackageCount = summary.packages.filter((pkg) => {
+    const effective = prereleaseOutranks ? pkg.latestPrerelease : pkg.latestStable;
+    return effective !== null && effective !== headline;
+  }).length;
+
+  return {
+    projectId: project.id,
+    projectName: project.name,
+    status: project.status,
+    packageCount: summary.packages.length,
+    stableVersion,
+    prereleaseVersion: prereleaseOutranks ? highestPrerelease : null,
+    suppressedPrerelease: prereleaseOutranks ? null : highestPrerelease,
+    laggingPackageCount,
+    latestRelease: summary.latestRelease,
+  };
 }
 
 export type { ProjectReleaseSummary };
