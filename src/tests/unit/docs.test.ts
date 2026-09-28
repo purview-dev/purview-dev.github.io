@@ -8,6 +8,7 @@ import { convertGithubAlerts, parseGithubAlerts } from '../../src/lib/docs/alert
 import {
   extractDescription,
   extractTitle,
+  normalizeDocumentHeadings,
   renderFrontmatter,
 } from '../../src/lib/docs/frontmatter';
 import {
@@ -63,6 +64,61 @@ describe('front matter', () => {
   test('extracts a clean description', () => {
     expect(extractDescription(markdown)).toBe(
       'How to install Purview.EventSourcing and run your first aggregate.',
+    );
+  });
+
+  test('keeps link labels without merging their destinations into prose', () => {
+    expect(
+      extractDescription(
+        '# Release flow\n\nReleases use the shared [Purview.Build](https://github.com/purview-dev/build) pipeline.',
+      ),
+    ).toBe('Releases use the shared Purview.Build pipeline.');
+  });
+
+  test('skips source front matter, thematic breaks, lists, and fenced code', () => {
+    const source = [
+      '---',
+      'title: POC-001',
+      '---',
+      '',
+      '# POC-001',
+      '',
+      '---',
+      '',
+      '- First acceptance criterion',
+      '- Second acceptance criterion',
+      '',
+      '```bash',
+      'dotnet add package Example',
+      '```',
+      '',
+      'This proof of concept validates the end-to-end workflow.',
+    ].join('\n');
+
+    expect(extractDescription(source)).toBe(
+      'This proof of concept validates the end-to-end workflow.',
+    );
+  });
+
+  test('uses readable alt text when an image is part of a prose paragraph', () => {
+    expect(
+      extractDescription('# Overview\n\nUse ![the dashboard](dashboard.png) to inspect runs.'),
+    ).toBe('Use the dashboard to inspect runs.');
+  });
+
+  test('uses an introductory quote but skips GitHub alert callouts', () => {
+    expect(extractDescription('# Guide\n\n> A practical guide to reliable generators.')).toBe(
+      'A practical guide to reliable generators.',
+    );
+    expect(
+      extractDescription('# Guide\n\n> [!NOTE]\n> Read this first.\n\nThe guide starts here.'),
+    ).toBe('The guide starts here.');
+  });
+
+  test('demotes additional top-level headings without touching fenced examples', () => {
+    const source = '# POC-001\n\n## Context\n\n# Outcome\n\n```md\n# Example\n```';
+    expect(normalizeDocumentHeadings(source)).toBe(
+      '# POC-001\n\n## Context\n\n## Outcome\n\n```md\n# Example\n```',
     );
   });
 

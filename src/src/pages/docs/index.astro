@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
+import { LLMS_LINK_ATTRS } from '~/lib/llms';
 import { loadProjects } from '~/lib/manifest/load';
 import { readDocsManifest } from '~/lib/docs/aggregate';
 import { projectRepoEnrichment } from '~/lib/releases/repo';
@@ -20,16 +21,15 @@ const pageCount = docsManifest?.projects.reduce(
 
 <SiteLayout
   title={`Documentation — ${SITE.fullName}`}
-  description="Unified documentation for every Purview-Dev project, aggregated from each repository and searchable in one place."
+  description="Searchable documentation for Purview's .NET projects, brought together from the repositories that own it."
 >
   <div class="pv-container py-12 md:py-16">
     <div class="max-w-3xl">
       <p class="pv-chip mb-4 border-brand/30 bg-brand/5 text-brand">Documentation</p>
       <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Documentation</h1>
       <p class="mt-4 text-lg text-muted">
-        One portal for the whole product family. Documentation is owned by each
-        project repository and aggregated here into a single, searchable site —
-        {pageCount ?? 0} pages across {projects.length} projects.
+        I keep documentation with the project it describes, then bring it together here so you can
+        search and explore it in one place — {pageCount ?? 0} pages across {projects.length} projects.
       </p>
     </div>
 
@@ -64,20 +64,47 @@ const pageCount = docsManifest?.projects.reduce(
     </div>
 
     <section class="mt-16 rounded-xl border border-border bg-surface p-6 md:p-8">
-      <h2 class="text-xl font-semibold">Documentation conventions</h2>
+      <h2 class="text-xl font-semibold">Kept close to the code</h2>
       <ul class="mt-4 list-disc space-y-2 pl-5 text-sm text-muted">
         <li>
-          Every page shows its owning project, lifecycle status, and last review
-          date at the bottom of the article.
+          Each page identifies its owning project, lifecycle status, and last review date.
         </li>
         <li>
-          Each page links back to its source repository so you can suggest an
-          edit in the project that owns the documentation.
+          Source links take you back to the repository where an issue or edit can be raised.
         </li>
         <li>
-          Search covers the entire site — projects, releases, and docs — powered
-          by Pagefind.
+          Search spans the full site, including projects, releases, and documentation.
         </li>
+      </ul>
+    </section>
+
+    <section class="mt-8 rounded-xl border border-border bg-surface p-6 md:p-8">
+      <h2 class="text-xl font-semibold">Machine-readable documentation</h2>
+      <p class="mt-3 max-w-2xl text-sm text-muted">
+        Each project's documentation is also published as a single <code>llms.txt</code> bundle for
+        language models and other tooling. The whole site is available as
+        <a href={withBase('/llms.txt')} {...LLMS_LINK_ATTRS} class="pv-link">llms.txt</a>,
+        <a href={withBase('/llms-small.txt')} {...LLMS_LINK_ATTRS} class="pv-link">
+          llms-small.txt
+        </a>, and
+        <a href={withBase('/llms-full.txt')} {...LLMS_LINK_ATTRS} class="pv-link">
+          llms-full.txt
+        </a>.
+      </p>
+      <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        {
+          projects.map((project) => (
+            <li>
+              <a
+                href={withBase(`/_llms-txt/${project.id}.txt`)}
+                {...LLMS_LINK_ATTRS}
+                class="pv-link"
+              >
+                {project.name}
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </section>
   </div>

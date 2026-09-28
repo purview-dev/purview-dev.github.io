@@ -2,6 +2,7 @@
 @import '@astrojs/starlight-tailwind';
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
+@import './mermaid.css';
 
 /* ---------------------------------------------------------------------------
  * Purview brand tokens (canonical values from ./assets/branding/README.md)
@@ -220,6 +221,9 @@
     }
   }
 
+  /* Chips are single-line labels: a squeezed flex row must shrink the content
+   * beside a chip, never wrap the chip's own label onto a second line (which
+   * made the status chip grow two lines tall next to a card title). */
   .pv-chip {
     display: inline-flex;
     align-items: center;
@@ -232,6 +236,7 @@
     font-weight: 500;
     line-height: 1.25rem;
     color: var(--color-muted);
+    white-space: nowrap;
   }
 
   .pv-status-stable {
@@ -459,4 +464,37 @@
 .sl-markdown-content p > a > img {
   display: inline-block !important;
   vertical-align: middle;
+}
+
+/* ---------------------------------------------------------------------------
+ * Lists in aggregated documentation
+ * -------------------------------------------------------------------------
+ * The base reset removes browser list markers so navigation, filters, and card
+ * lists stay neutral. Restore semantic markers only for plain Markdown lists
+ * inside Starlight content; component-owned lists carry classes and retain
+ * their own layout.
+ */
+.sl-markdown-content ul:not([class]) {
+  margin-block: 1rem;
+  padding-inline-start: 1.5rem;
+  list-style: disc outside;
+}
+
+.sl-markdown-content ol:not([class]) {
+  margin-block: 1rem;
+  padding-inline-start: 1.5rem;
+  list-style: decimal outside;
+}
+
+.sl-markdown-content :is(ul, ol):not([class]) :is(ul, ol):not([class]) {
+  margin-block: 0.5rem;
+}
+
+.sl-markdown-content :is(ul, ol):not([class]) > li + li {
+  margin-top: 0.5rem;
+}
+
+.sl-markdown-content :is(ul, ol):not([class]) > li::marker {
+  color: var(--color-brand-emphasis);
+  font-weight: 600;
 }

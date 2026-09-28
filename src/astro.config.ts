@@ -1,3 +1,4 @@
+import { unified } from '@astrojs/markdown-remark';
 import preact from '@astrojs/preact';
 import sitemap from '@astrojs/sitemap';
 import starlight from '@astrojs/starlight';
@@ -7,6 +8,7 @@ import starlightLinksValidator from 'starlight-links-validator';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import starlightSidebarTopics from 'starlight-sidebar-topics';
 
+import { remarkMermaid } from './config/remark-mermaid.mjs';
 import { readDocsManifest } from './src/lib/docs/aggregate';
 import { buildProjectItems } from './src/lib/docs/sidebar';
 import { loadProjects } from './src/lib/manifest/load';
@@ -17,6 +19,19 @@ const projects = loadProjects();
 const docsManifest = readDocsManifest();
 
 const docsProjects = projects.filter((project) => project.docs && project.status !== 'archived');
+/**
+ * Per-project LLM bundles. `starlight-llms-txt` emits one file per `customSets`
+ * entry at `/_llms-txt/<slug>.txt`, where the slug is `github-slugger`'s slug of
+ * the set label. Every documented project's display name slugifies to exactly
+ * its project id, so `docs/<project.id>/**` maps to `/_llms-txt/<project.id>.txt`
+ * and the UI links straight to that path. The build's link crawl (and the dist
+ * tests) fail if a future project name breaks that correspondence.
+ */
+const docsSets = docsProjects.map((project) => ({
+  label: project.name,
+  description: project.shortDescription,
+  paths: [`docs/${project.id}/**`],
+}));
 const previewBadge = { text: 'Preview', variant: 'caution' } as const;
 const sidebarTopics = [
   { label: 'Documentation home', link: '/docs/' },
@@ -84,6 +99,11 @@ export default defineConfig({
     format: 'directory',
   },
   compressHTML: true,
+  markdown: {
+    processor: unified({
+      remarkPlugins: [remarkMermaid],
+    }),
+  },
   integrations: [
     preact(),
     sitemap(),
@@ -126,6 +146,7 @@ export default defineConfig({
         },
       },
       components: {
+        Head: './src/components/starlight/Head.astro',
         Header: './src/components/starlight/Header.astro',
         PageFrame: './src/components/starlight/PageFrame.astro',
         EditLink: './src/components/starlight/EditLink.astro',
@@ -172,9 +193,10 @@ export default defineConfig({
               description: 'GitHub and NuGet release information.',
             },
           ],
-          promote: ['index*'],
+          promote: ['index*', 'docs/*/index'],
           demote: [],
           exclude: ['dotnet-logging-source-generators/**'],
+          customSets: docsSets,
           minify: {
             note: true,
             tip: true,

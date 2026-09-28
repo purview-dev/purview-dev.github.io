@@ -54,6 +54,9 @@ const projectSchema = z.object({
   name: z.string().min(1, 'must be a non-empty display name'),
   shortDescription: z.string().min(1, 'must be a non-empty short description'),
   description: z.string().min(1, 'must be a non-empty long description'),
+  origin: z.string().min(1, 'must explain why the project became reusable tooling'),
+  useWhen: z.string().min(1, 'must explain when the project is a good fit'),
+  avoidWhen: z.string().min(1, 'must explain when the project is not a good fit'),
   repository: z
     .string()
     .regex(/^[a-zA-Z0-9-]+\/[a-zA-Z0-9._-]+$/, 'must be in "owner/repository" form'),

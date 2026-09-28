@@ -2,6 +2,8 @@ import { describe, expect, test } from 'bun:test';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
+import { loadProjects } from '../../src/lib/manifest/load';
+
 const DIST = resolve('dist');
 
 function requireBuilt(file: string): string {
@@ -45,6 +47,66 @@ describe('built llms outputs', () => {
   });
 });
 
+describe('built per-project llms outputs', () => {
+  const docsProjects = loadProjects().filter(
+    (project) => project.docs && project.status !== 'archived',
+  );
+
+  // The plugin derives each bundle's slug from its `customSets` label
+  // (`github-slugger` of the project name). Asserting the file exists under the
+  // project id fails the build if a future display name stops slugifying to its
+  // id, which is the invariant the UI links rely on.
+  test('a scoped bundle is built for every documented project', () => {
+    expect(docsProjects.length).toBeGreaterThan(0);
+    for (const project of docsProjects) {
+      const content = requireBuilt(`_llms-txt/${project.id}.txt`);
+      expect(content.trim().length, `${project.id} bundle is empty`).toBeGreaterThan(0);
+      expect(content, `${project.id} bundle lacks aggregated content`).toContain('Purview');
+    }
+  });
+
+  test('the llms.txt entrypoint links every scoped bundle', () => {
+    const content = requireBuilt('llms.txt');
+    for (const project of docsProjects) {
+      expect(content, `llms.txt does not link ${project.id}`).toContain(
+        `https://purview.dev/_llms-txt/${project.id}.txt`,
+      );
+    }
+  });
+
+  test('scoped bundles exclude secrets and local build paths', () => {
+    for (const project of docsProjects) {
+      const content = requireBuilt(`_llms-txt/${project.id}.txt`);
+      expect(content).not.toMatch(/\bghp_[A-Za-z0-9]{36,}\b/);
+      expect(content).not.toMatch(/[A-Za-z]:\\/);
+      expect(content).not.toMatch(/node_modules[/\\]/);
+    }
+  });
+});
+describe('built llms links', () => {
+  // The LLM text bundles are plain files rather than site pages, so every link
+  // to one must opt into the external-link treatment.
+  test('every llms text link opens in a new tab like an external link', () => {
+    const { glob } = require('fast-glob');
+    const files = glob.sync('**/*.html', { cwd: DIST });
+    const anchor =
+      /<a\b[^>]*href="[^"]*(?:llms(?:-small|-full)?\.txt|_llms-txt\/[^"]+\.txt)"[^>]*>/g;
+
+    let checked = 0;
+    for (const file of files) {
+      const content = readFileSync(resolve(DIST, file), 'utf8');
+      for (const tag of content.match(anchor) ?? []) {
+        checked += 1;
+        expect(tag, `${file}: ${tag}`).toContain('target="_blank"');
+        expect(tag, `${file}: ${tag}`).toContain('rel="noopener noreferrer"');
+      }
+    }
+
+    // Guard against the assertions silently passing if the regex stops matching.
+    expect(checked).toBeGreaterThan(0);
+  });
+});
+
 describe('built SEO outputs', () => {
   test('sitemap index exists and references the canonical site', () => {
     const content = requireBuilt('sitemap-index.xml');
@@ -78,6 +140,18 @@ describe('built HTML safety', () => {
       expect(content).not.toMatch(/[A-Za-z]:\\/);
       expect(content).not.toMatch(/\bghp_[A-Za-z0-9]{36,}\b/);
     }
+  });
+});
+
+describe('built home-page version snapshot', () => {
+  test('renders one rolled-up version row per active project', () => {
+    const content = requireBuilt('index.html');
+    const rows = content.match(/data-project-id="[^"]+"/g) ?? [];
+    expect(rows.length).toBeGreaterThanOrEqual(8);
+    // The per-package table (and its legacy filter hook) moved to /releases/.
+    expect(content).not.toContain('data-package-project');
+    // The snapshot is server-rendered: no island ships for the home page.
+    expect(content).not.toContain('PackageVersions');
   });
 });
 

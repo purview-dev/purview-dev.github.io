@@ -1,8 +1,16 @@
 import { glob } from 'fast-glob';
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { parse } from 'yaml';
 
-import { DOCS_MANIFEST_SCHEMA, DOCS_CACHE_DIR } from '../src/lib/docs/aggregate';
+import {
+  DOCS_CACHE_DIR,
+  DOCS_MANIFEST_SCHEMA,
+  DOCS_OUTPUT_DIR,
+  readDocsManifest,
+} from '../src/lib/docs/aggregate';
+import { extractDescription } from '../src/lib/docs/frontmatter';
+import { loadProjects } from '../src/lib/manifest/load';
 import { isReleaseCache, readReleaseCache } from '../src/lib/releases/cache';
 
 const DIST = resolve('dist');
@@ -31,6 +39,24 @@ function fail(message: string): void {
   console.error(`  ✗ ${message}`);
 }
 
+function inspectMarkdownStructure(markdown: string): {
+  titleCount: number;
+  unclosedFence: boolean;
+} {
+  let titleCount = 0;
+  let fence: '```' | '~~~' | null = null;
+  for (const line of markdown.split(/\r?\n/)) {
+    const fenceMatch = /^\s*(```|~~~)/.exec(line);
+    if (fenceMatch?.[1]) {
+      const marker = fenceMatch[1] as '```' | '~~~';
+      fence = fence === marker ? null : (fence ?? marker);
+    } else if (!fence && /^#\s+\S/.test(line)) {
+      titleCount += 1;
+    }
+  }
+  return { titleCount, unclosedFence: fence !== null };
+}
+
 function validateDocsManifest(): void {
   const file = join(DOCS_CACHE_DIR, 'index.json');
   if (!existsSync(file)) {
@@ -46,6 +72,91 @@ function validateDocsManifest(): void {
   const projects = candidate.projects;
   if (!Array.isArray(projects)) {
     fail('Docs manifest is missing the projects array.');
+  }
+}
+
+/**
+ * The docs manifest drives the Starlight sidebar while the generated mirror
+ * under `src/content/docs/` provides the pages it links to. They are written by
+ * the same sync, so a mismatch means the sync was interrupted — Starlight would
+ * then fail with `The slug "docs/<project>/<page>" specified in the Starlight
+ * sidebar config does not exist`.
+ */
+function validateDocsMirror(): void {
+  const manifest = readDocsManifest();
+  if (!manifest) {
+    console.warn('  (no docs manifest present — skipping docs mirror validation)');
+    return;
+  }
+  const mirrorRoot = join(DOCS_OUTPUT_DIR, 'docs');
+  if (!existsSync(mirrorRoot)) {
+    console.warn('  (no docs mirror present — skipping docs mirror validation)');
+    return;
+  }
+
+  const expected = new Set<string>();
+  for (const project of manifest.projects) {
+    for (const page of project.pages) {
+      expected.add(`${project.projectId}/${page.slug}`);
+      if (!existsSync(join(mirrorRoot, project.projectId, `${page.slug}.md`))) {
+        fail(
+          `Docs manifest lists a page with no mirror file: docs/${project.projectId}/${page.slug}. ` +
+            'The Starlight sidebar would link to a missing page — re-run `just data-sync`.',
+        );
+      }
+    }
+  }
+
+  for (const entry of readdirSync(mirrorRoot, { withFileTypes: true })) {
+    if (!entry.isDirectory()) {
+      continue;
+    }
+    for (const page of readdirSync(join(mirrorRoot, entry.name))) {
+      if (page.endsWith('.md') && !expected.has(`${entry.name}/${page.slice(0, -3)}`)) {
+        fail(
+          `Docs mirror page is missing from the manifest: docs/${entry.name}/${page}. ` +
+            'Re-run `just data-sync` so the sidebar and content agree.',
+        );
+      }
+      if (!page.endsWith('.md')) {
+        continue;
+      }
+
+      const relativePath = `docs/${entry.name}/${page}`;
+      const markdown = readFileSync(join(mirrorRoot, entry.name, page), 'utf8');
+      const frontmatterMatch = /^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n([\s\S]*)$/.exec(markdown);
+      if (!frontmatterMatch?.[1] || frontmatterMatch[2] === undefined) {
+        fail(`Generated Markdown has invalid front matter: ${relativePath}.`);
+        continue;
+      }
+
+      let frontmatter: Record<string, unknown>;
+      try {
+        frontmatter = parse(frontmatterMatch[1]) as Record<string, unknown>;
+      } catch {
+        fail(`Generated Markdown front matter is not valid YAML: ${relativePath}.`);
+        continue;
+      }
+
+      const body = frontmatterMatch[2];
+      const description = String(frontmatter.description ?? '').trim();
+      if (!description || description === '---' || !/[A-Za-z0-9]/.test(description)) {
+        fail(`Generated Markdown has an unreadable description: ${relativePath}.`);
+      }
+      if (!extractDescription(body)) {
+        fail(`Generated Markdown has no readable prose: ${relativePath}.`);
+      }
+      const { titleCount, unclosedFence } = inspectMarkdownStructure(body);
+      if (titleCount !== 1) {
+        fail(`Generated Markdown must contain exactly one H1: ${relativePath} (${titleCount}).`);
+      }
+      if (unclosedFence) {
+        fail(`Generated Markdown has an unclosed fenced block: ${relativePath}.`);
+      }
+      if (body.includes('<doclink:')) {
+        fail(`Generated Markdown contains an unresolved documentation link: ${relativePath}.`);
+      }
+    }
   }
 }
 
@@ -69,6 +180,33 @@ function requireDistFile(file: string): void {
   const content = readFileSync(path, 'utf8');
   if (content.trim() === '') {
     fail(`Required build output is empty: ${file}`);
+  }
+}
+
+/**
+ * Per-project `llms.txt` bundles are emitted by `starlight-llms-txt`'s
+ * `customSets` option, one file per documented project at
+ * `/_llms-txt/<project-id>.txt`. The project pages, the project documentation
+ * overview, and the documentation portal all link to these paths, so a missing
+ * bundle is a broken link — and the link crawl only sees the pages that link it.
+ */
+function validateProjectLlmsBundles(): void {
+  const projects = loadProjects().filter(
+    (project) => project.docs && project.status !== 'archived',
+  );
+  for (const project of projects) {
+    requireDistFile(`_llms-txt/${project.id}.txt`);
+  }
+
+  const entrypointPath = resolve(DIST, 'llms.txt');
+  if (!existsSync(entrypointPath)) {
+    return;
+  }
+  const entrypoint = readFileSync(entrypointPath, 'utf8');
+  for (const project of projects) {
+    if (!entrypoint.includes(`/_llms-txt/${project.id}.txt`)) {
+      fail(`llms.txt does not link the per-project bundle for "${project.id}".`);
+    }
   }
 }
 
@@ -100,6 +238,7 @@ async function scanForSecrets(): Promise<void> {
 async function run(): Promise<number> {
   console.log('Checking generated data and build outputs...');
   validateDocsManifest();
+  validateDocsMirror();
   validateReleaseCache();
 
   if (!existsSync(DIST)) {
@@ -112,6 +251,8 @@ async function run(): Promise<number> {
   requireDistFile('llms-full.txt');
   requireDistFile('sitemap-index.xml');
   requireDistFile('robots.txt');
+
+  validateProjectLlmsBundles();
 
   const llmsFull = readFileSync(resolve(DIST, 'llms-full.txt'), 'utf8');
   const llms = readFileSync(resolve(DIST, 'llms.txt'), 'utf8');

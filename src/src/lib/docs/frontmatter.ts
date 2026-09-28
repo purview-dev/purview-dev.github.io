@@ -31,25 +31,71 @@ export function extractTitle(markdown: string, fileName: string): string {
     .join(' ');
 }
 
-const MARKDOWN_SOURCE_PATTERN = /^```.*$/gm;
+/** Keep one document title while preserving later source headings as sections. */
+export function normalizeDocumentHeadings(markdown: string): string {
+  let foundTitle = false;
+  let fence: '```' | '~~~' | null = null;
+
+  return markdown
+    .split(/\r?\n/)
+    .map((line) => {
+      const fenceMatch = /^(\s*)(```|~~~)/.exec(line);
+      if (fenceMatch?.[2]) {
+        const marker = fenceMatch[2] as '```' | '~~~';
+        fence = fence === marker ? null : (fence ?? marker);
+        return line;
+      }
+      if (fence || !/^#\s+\S/.test(line)) {
+        return line;
+      }
+      if (!foundTitle) {
+        foundTitle = true;
+        return line;
+      }
+      return `#${line}`;
+    })
+    .join('\n');
+}
+
+const FRONTMATTER_PATTERN = /^---\s*\r?\n[\s\S]*?\r?\n---\s*(?:\r?\n|$)/;
+const FENCED_CODE_PATTERN = /^(?:```|~~~)[^\r\n]*\r?\n[\s\S]*?^(?:```|~~~)\s*$/gm;
+
+function markdownParagraphToPlainText(block: string): string {
+  return block
+    .replace(/^>\s?/gm, '')
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/\[([^\]]+)\]\[[^\]]*\]/g, '$1')
+    .replace(/<https?:\/\/[^>]+>/g, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/[`*_~]/g, '')
+    .replace(/\\([\\`*_[\]{}()#+.!<>-])/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function isProseParagraph(block: string): boolean {
+  const firstLine = block.split(/\r?\n/, 1)[0]?.trim() ?? '';
+  return (
+    firstLine !== '' &&
+    !/^(?:#{1,6}\s|:::|---$|___$|\*\*\*$)/.test(firstLine) &&
+    !/^>\s*\[![A-Z]+\]/i.test(firstLine) &&
+    !/^(?:[-+*]|\d+[.)])\s+/.test(firstLine) &&
+    !firstLine.startsWith('|') &&
+    !/^\[[^\]]+\]:\s+/.test(firstLine) &&
+    !/^<(?:div|table|details|picture|figure|img|!--)\b/i.test(firstLine)
+  );
+}
 
 /** Extract a short description from the first non-heading paragraph. */
 export function extractDescription(markdown: string, maxLength = 160): string {
-  const withoutCodeBlocks = markdown.replace(MARKDOWN_SOURCE_PATTERN, '');
-  const paragraphs = withoutCodeBlocks
+  const prose = markdown.replace(FRONTMATTER_PATTERN, '').replace(FENCED_CODE_PATTERN, '');
+  const first = prose
     .split(/\n{2,}/)
     .map((block) => block.trim())
-    .filter(
-      (block) =>
-        block !== '' && !block.startsWith('#') && !block.startsWith('>') && !block.startsWith(':'),
-    )
-    .map((block) =>
-      block
-        .replace(/[`*_[\]()]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim(),
-    );
-  const first = paragraphs[0];
+    .filter(isProseParagraph)
+    .map(markdownParagraphToPlainText)
+    .find((block) => /[A-Za-z0-9]/.test(block));
   if (!first) {
     return '';
   }
