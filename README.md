@@ -282,8 +282,17 @@ changesets automation publishes `vX.Y.Z-prerelease.N` tags with the GitHub
 
 The build generates `/llms.txt`, `/llms-small.txt`, and `/llms-full.txt`
 (Starlight's `starlight-llms-txt` plugin) using canonical production URLs and
-the aggregated documentation. The built outputs are asserted by `tests/dist/`
-and `just check-generated`.
+the aggregated documentation.
+
+Each documented project is also emitted as its own scoped bundle at
+`/_llms-txt/<project-id>.txt` via the plugin's `customSets` option. The project
+page, the project's documentation overview page, and the documentation portal
+all link to that path, and `/llms.txt` lists every bundle under
+`Documentation Sets`. Because `rawContent` is enabled, each bundle is the raw
+aggregated Markdown for that project (the same content that feeds
+`llms-full.txt`, scoped down).
+
+The built outputs are asserted by `tests/dist/` and `just check-generated`.
 
 ## Site versioning and releases
 
