@@ -207,7 +207,7 @@ projects:
       schemas would add an unnecessary second validation model.
     repository: purview-dev/zodsharp
     category: validation
-    status: preview
+    status: stable
     featured: true
     order: 30
     docs:
@@ -458,7 +458,7 @@ projects:
       resource-kit abstraction.
     repository: purview-dev/aspire-resourcekit
     category: aspire
-    status: preview
+    status: stable
     order: 50
     docs:
       source: github-path
@@ -662,7 +662,7 @@ projects:
       settings the SDK intentionally standardises.
     repository: purview-dev/build-sdk
     category: build-tooling
-    status: preview
+    status: stable
     order: 70
     docs:
       source: github-path
