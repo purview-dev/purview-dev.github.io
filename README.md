@@ -57,6 +57,7 @@ See `docs/decisions/0001-architecture.md` for the architectural decision record.
 | Documentation theme       | Starlight                              | 0.42.1  |
 | Styling                   | Tailwind CSS                           | 4.3.3   |
 | Islands                   | Preact                                 | 10.29.8 |
+| Syntax highlighting       | Shiki (Astro built-in `<Code>`)        | 4.4.3   |
 | Linting                   | oxlint                                 | 1.83.0  |
 | Formatting                | oxfmt                                  | 0.68.0  |
 | TypeScript                | 5.9.3                                  |
@@ -207,13 +208,18 @@ the offending property, the expected shape, and a remediation hint.
    Use `rootPage` to name the page served at `/docs/<project>/` and `exclude`
    to drop files from the aggregation — see
    [Documentation landing pages](#documentation-landing-pages).
-4. Add relationships with `related`, or `supersededBy`/`supersedes` for
+4. Add concrete `useCases` (see [Use cases](#use-cases)) — at least one is
+   expected for every active project. Each entry needs an `audience`
+   (`developer`, `team-lead`, `architect`, or `contributor`), `title`,
+   `scenario`, and `outcome`; `code` + `language`, `evidence`, and `docsPage`
+   are optional.
+5. Add relationships with `related`, or `supersededBy`/`supersedes` for
    archived projects.
-5. Credit upstream work with `acknowledgments` (`name`, `url`, and an optional
+6. Credit upstream work with `acknowledgments` (`name`, `url`, and an optional
    `description`) when the project is based on, or forked from, another
    project — for example ZodSharp credits the original Zod and the
    `guinhx/ZodSharp` port it was forked from.
-6. Run `just validate` — the manifest schema, catalogue page, project page,
+7. Run `just validate` — the manifest schema, catalogue page, project page,
    docs aggregation, and release transforms are all regenerated from this one
    file.
 
@@ -223,6 +229,28 @@ Projects the organisation contributes to but does not own are listed under
 `externalProjects` in the same file. They are rendered in a "Collaborations"
 section on the catalogue page and link to their own site/repository (e.g.
 `https://likec4.dev` for LikeC4) rather than the Purview catalogue.
+
+## Use cases
+
+Each project's `useCases` entries are the site's "concrete evidence": an
+audience-tagged example of the tool solving a real problem, showing the code and
+stating the outcome. Prose explains intent; a use case is meant to prove it.
+
+- `audience` — `developer`, `team-lead`, `architect`, or `contributor`.
+- `title` / `scenario` / `outcome` — the headline, the situation, and what the
+  reader gets.
+- `code` + `language` — a short, accurate snippet. The schema requires
+  `language` whenever `code` is present.
+- `evidence` — a hard fact: a before/after, a count, a generated-output excerpt,
+  or a measured property (for example ZodSharp's zero-allocation valid path).
+- `docsPage` — an optional docs page slug; the card links to
+  `/docs/<project>/<docsPage>/`. The post-build link crawl fails the build if a
+  deep link does not resolve, so these cannot rot.
+
+Use cases surface in three places: the home page ("What it looks like in
+practice"), each project page ("Use cases"), and the filterable catalogue at
+`/use-cases/` (filter by audience, free-text search). Keep snippets short and
+point at the documentation for depth rather than duplicating long examples.
 
 ## Documentation aggregation
 

@@ -1,0 +1,39 @@
+---
+import { Code } from 'astro:components';
+import nightOwl from '@shikijs/themes/night-owl';
+import type { CodeLanguage } from 'astro';
+
+interface Props {
+  code: string;
+  /** Language label shown in the frame header (e.g. "csharp", "yaml"). */
+  language?: string;
+}
+
+const { code, language = 'plaintext' } = Astro.props;
+// The manifest stores a free-form language string; Astro's <Code> falls back to
+// `plaintext` for anything it does not recognise, so the narrowing is safe.
+const lang = language as CodeLanguage;
+// The theme is passed as an imported object rather than a Shiki theme name.
+// Astro's bundled Shiki theme registry resolves to an empty map in this build,
+// so a string name (even the default) throws "not included in this bundle"; an
+// object bypasses the registry lookup. Night Owl matches the documentation
+// pages, which use Starlight's Night Owl dark theme.
+const theme = nightOwl;
+// `wrap` is on so a long line soft-wraps inside the frame instead of producing a
+// horizontal scrollbar. The cards sit in multi-column grids, where a scrollbar
+// would hide content the reader is meant to see at a glance.
+---
+
+<div class="pv-code-frame">
+  <div class="pv-code-frame-header">
+    <span class="flex shrink-0 gap-1.5" aria-hidden="true">
+      <span class="h-2.5 w-2.5 rounded-full bg-[#ff5f56]"></span>
+      <span class="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]"></span>
+      <span class="h-2.5 w-2.5 rounded-full bg-[#27c93f]"></span>
+    </span>
+    <span class="min-w-0 flex-1 truncate text-center font-mono text-xs text-white/50">
+      {language}
+    </span>
+  </div>
+  <Code code={code} lang={lang} theme={theme} class="pv-code-frame-body" wrap={true} />
+</div>

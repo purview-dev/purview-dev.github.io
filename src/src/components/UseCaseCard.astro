@@ -1,0 +1,54 @@
+---
+import CodeSample from '~/components/CodeSample.astro';
+import { AUDIENCE_LABELS, type ProjectUseCase } from '~/lib/manifest/schema';
+
+interface Props {
+  useCase: ProjectUseCase;
+  projectName: string;
+  projectId: string;
+  /** Base docs URL for the owning project (`/docs/<id>/`), or null when the project has no docs. */
+  docsBase: string | null;
+  /** Hide the owning project chip when the card is already scoped to that project. */
+  showProject?: boolean;
+}
+
+const { useCase, projectName, projectId, docsBase, showProject = true } = Astro.props;
+const audienceLabel = AUDIENCE_LABELS[useCase.audience];
+const docsLink =
+  docsBase && useCase.docsPage ? `${docsBase}${useCase.docsPage}/` : (docsBase ?? null);
+---
+
+<article
+  class="pv-card flex h-full min-w-0 flex-col gap-4 p-5"
+  data-use-case
+  data-audience={useCase.audience}
+>
+  <div class="flex flex-wrap items-center gap-2">
+    <span class="pv-chip pv-audience-chip">{audienceLabel}</span>
+    {showProject && <span class="pv-chip">{projectName}</span>}
+  </div>
+
+  <h3 class="text-lg font-semibold leading-snug">{useCase.title}</h3>
+
+  <p class="text-sm leading-relaxed text-muted">{useCase.scenario}</p>
+
+  {useCase.code && <CodeSample code={useCase.code} language={useCase.language} />}
+
+  <p class="text-sm leading-relaxed text-muted">
+    <span class="font-medium text-default">What you get: </span>{useCase.outcome}
+  </p>
+
+  {
+    useCase.evidence && (
+      <p class="pv-evidence text-sm leading-relaxed">{useCase.evidence}</p>
+    )
+  }
+
+  {
+    docsLink && (
+      <a href={docsLink} class="pv-link mt-auto text-sm" data-use-case-project={projectId}>
+        Read the guide →
+      </a>
+    )
+  }
+</article>

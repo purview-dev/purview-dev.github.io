@@ -15,6 +15,46 @@ export const STATUSES = ['stable', 'preview', 'archived'] as const;
 /** How the primary NuGet package is consumed, which drives the Install options. */
 export const INSTALL_KINDS = ['nuget', 'msbuild-sdk', 'dotnet-tool'] as const;
 
+/**
+ * Who a concrete use case speaks to. The vocabulary is deliberately small so
+ * the same project can be framed for the person adopting a package, the person
+ * approving its adoption, and the person extending it.
+ */
+export const AUDIENCES = ['developer', 'team-lead', 'architect', 'contributor'] as const;
+
+/** Human-facing labels for the audience tags (used in the UI). */
+export const AUDIENCE_LABELS: Record<(typeof AUDIENCES)[number], string> = {
+  developer: 'Developer',
+  'team-lead': 'Team lead',
+  architect: 'Architect',
+  contributor: 'Contributor',
+};
+
+/**
+ * A concrete, ideally runnable example of the project solving a real problem.
+ * Screenshots of prose are not evidence: `code`/`evidence` carry the proof and
+ * `outcome` states what the reader gets. `docsPage` optionally deep-links into
+ * the project's aggregated documentation at `/docs/<project>/<docsPage>/`.
+ */
+const useCaseSchema = z
+  .object({
+    audience: z.enum(AUDIENCES),
+    title: z.string().min(1, 'must be a short, concrete scenario title'),
+    scenario: z.string().min(1, 'must describe the situation the reader is in'),
+    outcome: z.string().min(1, 'must describe what the reader gets from the project'),
+    code: z.string().min(1).optional(),
+    language: z.string().min(1).optional(),
+    evidence: z.string().min(1).optional(),
+    docsPage: z
+      .string()
+      .regex(/^[a-z0-9-]+$/, 'must be a lowercase docs page slug using [a-z0-9-] only')
+      .optional(),
+  })
+  .refine((value) => value.code === undefined || value.language !== undefined, {
+    message: 'is required when "code" is provided',
+    path: ['language'],
+  });
+
 const docsPathSchema = z.object({
   source: z.literal('github-path'),
   path: z.string().min(1, 'must be a non-empty repository path such as "docs"'),
@@ -79,6 +119,7 @@ const projectSchema = z.object({
   targetFrameworks: z.array(z.string()).optional(),
   packages: z.array(packageSchema).optional(),
   related: z.array(z.string()).optional(),
+  useCases: z.array(useCaseSchema).optional(),
   acknowledgments: z.array(acknowledgmentSchema).optional(),
   supersedes: z.string().optional(),
   supersededBy: z.string().optional(),
@@ -113,12 +154,14 @@ export type ExternalProjectRecord = z.infer<typeof externalProjectSchema>;
 export type ProjectDocsConfig = z.infer<typeof docsSchema>;
 export type ProjectPackage = z.infer<typeof packageSchema>;
 export type ProjectAcknowledgment = z.infer<typeof acknowledgmentSchema>;
+export type ProjectUseCase = z.infer<typeof useCaseSchema>;
 
 export const PROJECT_DEFAULTS = {
   featured: false,
   order: 1000,
   packages: [] as ProjectPackage[],
   related: [] as string[],
+  useCases: [] as ProjectUseCase[],
   acknowledgments: [] as ProjectAcknowledgment[],
   discussions: false,
   install: 'nuget',
@@ -127,6 +170,7 @@ export const PROJECT_DEFAULTS = {
   order: number;
   packages: ProjectPackage[];
   related: string[];
+  useCases: ProjectUseCase[];
   acknowledgments: ProjectAcknowledgment[];
   discussions: boolean;
   install: (typeof INSTALL_KINDS)[number];
