@@ -102,6 +102,41 @@ describe('built project pages', () => {
   });
 });
 
+describe('built use cases', () => {
+  test('project pages render a use-case section with concrete code', () => {
+    const content = requireBuilt('projects/telemetry-sourcegenerator/index.html');
+    expect(content).toContain('Use cases');
+    expect(content).toContain('IOrderServiceTelemetry');
+    expect(content).toContain('pv-code-frame');
+    expect(content).toContain('What you get:');
+    // Shiki (Astro's built-in <Code>) highlights the snippet at build time.
+    expect(content).toContain('astro-code');
+    expect(content).toContain('data-language="csharp"');
+    // Long lines wrap rather than producing a horizontal scrollbar.
+    expect(content).toContain('white-space: pre-wrap');
+  });
+
+  test('the home page shows what it looks like in practice', () => {
+    const content = requireBuilt('index.html');
+    expect(content).toContain('What it looks like in practice');
+    expect(content).toContain('/use-cases/');
+  });
+
+  test('the use-cases page lists filterable, audience-tagged examples', () => {
+    const content = requireBuilt('use-cases/index.html');
+    expect(content).toContain('All audiences');
+    expect(content).toContain('data-usecase-audience="developer"');
+    expect(content).toContain('data-usecase-search=');
+  });
+
+  test('deep-linked use cases resolve to real docs paths', () => {
+    // Existence of the target page is enforced by the post-build link crawl
+    // (`just check-links`); this guards the rendered link shape.
+    const content = requireBuilt('projects/event-sourcing/index.html');
+    expect(content).toContain('/docs/event-sourcing/sql-server-guide/');
+  });
+});
+
 describe('built llms links', () => {
   // The LLM text bundles are plain files rather than site pages, so every link
   // to one must opt into the external-link treatment.

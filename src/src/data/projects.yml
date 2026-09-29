@@ -41,6 +41,47 @@ projects:
         primary: true
         targetFrameworks:
           - netstandard2.0
+    useCases:
+      - audience: developer
+        title: Tracing, logging, and metrics from a single interface
+        scenario: >-
+          You want OpenTelemetry activities, structured logs, and metrics around an order service, but
+          you do not want to hand-write the ActivitySource, ILogger, and Meter wiring in every class.
+        code: |
+          [ActivitySource]
+          [Logger]
+          [Meter]
+          public interface IOrderServiceTelemetry
+          {
+              [Activity]
+              [Info]
+              [AutoCounter]
+              Activity? PlacingOrder(int orderId, [Baggage] string region);
+          }
+        language: csharp
+        outcome: >-
+          The generator emits the implementation and an AddOrderServiceTelemetry() DI extension; you
+          register it once and inject the interface wherever telemetry is needed.
+        evidence: >-
+          One interface replaces the ActivitySource, ILogger, and Meter boilerplate you would otherwise
+          repeat in every service.
+      - audience: architect
+        title: Standardise telemetry names across services
+        scenario: >-
+          You want consistent OpenTelemetry meter and activity-source names across many services instead
+          of ad-hoc string literals scattered through the codebase.
+        code: |
+          builder.AddServiceDefaults(
+              TelemetryNames.MeterNames,
+              TelemetryNames.ActivitySourceNames);
+        language: csharp
+        outcome: >-
+          A generated TelemetryNames static class holds the names, so registration happens once at
+          startup rather than in every service.
+        evidence: >-
+          Naming conventions are generated, so snake_case tags and hierarchical metrics stay consistent
+          without a review checklist.
+        docsPage: generation
     discussions: false
 
   - id: event-sourcing
@@ -98,6 +139,49 @@ projects:
         description: FluentValidation adapter for aggregate save-time validation.
       - id: Purview.EventSourcing.Validation.ZodSharp
         description: Purview.ZodSharp adapter for aggregate save-time validation.
+    useCases:
+      - audience: developer
+        title: An aggregate that persists as events
+        scenario: >-
+          You want aggregate-based event sourcing without hand-writing the event stream, snapshot, and
+          transaction plumbing.
+        code: |
+          [Aggregate]
+          public partial class OrderAggregate : AggregateBase
+          {
+              public string CustomerId { get; private set; } = default!;
+              public decimal Total { get; private set; }
+
+              [Event]
+              public partial void CreateOrder(string customerId);
+
+              [Event]
+              public partial void AddLineItem(string productId, string productName, int quantity, decimal unitPrice);
+          }
+        language: csharp
+        outcome: >-
+          The source generator produces the aggregate plumbing; provider packages add stores for SQL
+          Server, PostgreSQL, MongoDB, Azure Storage, Cosmos DB, or in-memory.
+        evidence: >-
+          One [Aggregate] declaration, and switching storage means swapping a provider package rather
+          than rewriting the domain.
+        docsPage: solution-design-guide
+      - audience: architect
+        title: Choose the store late, keep the domain stable
+        scenario: >-
+          You need to start on one database and move providers later, but you do not want persistence
+          choices to leak into the domain model.
+        code: |
+          builder.Services.AddSqlServerEventStore();
+          builder.Services.AddSqlServerSnapshotQueryableEventStore();
+        language: csharp
+        outcome: >-
+          Domain code depends on provider-agnostic facades, while concrete stores live behind separate
+          packages and registration extensions.
+        evidence: >-
+          SQL Server, PostgreSQL, MongoDB, Azure Storage, and Cosmos DB are interchangeable at the
+          registration level, so the domain never references a store.
+        docsPage: sql-server-guide
     related:
       - zodsharp
       - value-objects
@@ -157,6 +241,40 @@ projects:
       - name: ZodSharp (guinhx)
         url: https://github.com/guinhx/ZodSharp
         description: The C# port of Zod, and the fork this project is based on.
+    useCases:
+      - audience: developer
+        title: Validate input without exceptions or allocations
+        scenario: >-
+          You need to validate values at an application boundary and prefer a result you can inspect
+          over exception-driven control flow.
+        code: |
+          var nameSchema = Z.String().Min(3).Max(50);
+          var result = nameSchema.Validate("John");
+
+          if (result.IsSuccess)
+              Console.WriteLine($"Valid name: {result.Value}");
+        language: csharp
+        outcome: >-
+          Validate/SafeParse return a ValidationResult<T> with no exceptions, while Parse still throws
+          ZodException when you want that behaviour.
+        evidence: >-
+          Validation is zero-allocation on every valid input path, so the performance claim is a
+          property of the code rather than an aspiration.
+        docsPage: fluent-schema-api
+      - audience: team-lead
+        title: Return standard ProblemDetails for invalid requests
+        scenario: >-
+          You want failed validation in ASP.NET Core to surface as standard ProblemDetails payloads
+          rather than a bespoke error shape that clients must learn.
+        code: |
+          dotnet add package Purview.ZodSharp.AspNetCore
+        language: bash
+        outcome: >-
+          The AspNetCore adapter converts failed validation results into the standard ProblemDetails /
+          HttpValidationProblemDetails payloads.
+        evidence: >-
+          One adapter package, and API consumers keep the error contract they already expect.
+        docsPage: aspnetcore-integration
 
   - id: value-objects
     name: Value Objects
@@ -199,6 +317,48 @@ projects:
       - id: Purview.ValueObjects
         description: Runtime contracts, source generator, and analyzer for scalar and complex value objects.
         primary: true
+    useCases:
+      - audience: developer
+        title: A domain scalar without the boilerplate
+        scenario: >-
+          You want a strong EmailAddress type with normalisation and validation, without hand-writing
+          factories, equality, conversions, and a JSON converter.
+        code: |
+          [Scalar]
+          public readonly partial record struct EmailAddress
+          {
+              public string Value { get; }
+
+              static partial void OnNormalize(ref string value)
+                  => value = value?.Trim().ToLowerInvariant()!;
+          }
+        language: csharp
+        outcome: >-
+          The generator adds Create, Hydrate, TryCreate, and Empty, plus equality, comparison, implicit
+          conversions, and a JSON converter.
+        evidence: >-
+          One declaration replaces the factory, equality, comparison, conversion, and serialization code
+          you would otherwise maintain by hand.
+        docsPage: value-object-design
+      - audience: developer
+        title: Map a value object onto an Entity Framework column
+        scenario: >-
+          You use a value object in your domain and want it to persist transparently instead of writing
+          converters at every mapping site.
+        code: |
+          var email = EmailAddress.Create("  Demo@Example.COM  ");
+          // email.Value == "demo@example.com"
+
+          bool ok = EmailAddress.TryCreate("not-an-email", out _);
+          // ok == false
+        language: csharp
+        outcome: >-
+          Value objects serialize as their underlying value and map onto Entity Framework JSON columns,
+          with optional Purview.ZodSharp validation.
+        evidence: >-
+          Persistence and serialization come from the generated type, so mapping code is not duplicated
+          per entity.
+        docsPage: entity-framework
     related:
       - zodsharp
       - event-sourcing
@@ -245,6 +405,39 @@ projects:
         description: Framework-agnostic test runner and assertions for generator tests.
       - id: Purview.SourceGeneratorFramework.Testing.TUnit
         description: TUnit-specific test base classes and assertions.
+    useCases:
+      - audience: contributor
+        title: Build an incremental generator on typed foundations
+        scenario: >-
+          You are writing a non-trivial incremental C# source generator and need typed attribute
+          models, structured code output, and packaging that Roslyn will actually load.
+        code: |
+          <ProjectReference
+            Include="..\MyGenerator\MyGenerator.csproj"
+            PrivateAssets="all"
+            OutputItemType="Analyzer"
+            ReferenceOutputAssembly="false"
+          />
+        language: xml
+        outcome: >-
+          The framework supplies attribute-data models, a structured code writer, a type library, and
+          packaging helpers so the generator stays focused on its own logic.
+        evidence: >-
+          The Purview generators themselves are built on the framework, so it is exercised by real
+          generators rather than being an untested abstraction.
+        docsPage: guide
+      - audience: contributor
+        title: Verify incremental behaviour in tests
+        scenario: >-
+          You need to prove a generator is incremental and produces the code you expect, without
+          assembling a Roslyn driver by hand in every test.
+        outcome: >-
+          The testing package provides SourceGeneratorTestRunner<TGenerator>, a framework-agnostic test
+          base, and assertions such as AssertSingleGeneratedSource and AssertNoCompilationErrors.
+        evidence: >-
+          Step-cache tests and a TUnit integration ship alongside the runner, so incremental regressions
+          surface in CI.
+        docsPage: testing
 
   - id: aspire-resourcekit
     name: Aspire ResourceKit
@@ -281,6 +474,42 @@ projects:
       - id: Purview.Aspire.ResourceKit
         description: Runtime and source generator for resource kits.
         primary: true
+    useCases:
+      - audience: architect
+        title: Typed, testable resource groups in a large AppHost
+        scenario: >-
+          A large Aspire AppHost accumulates procedural resource wiring and configuration that is hard
+          to test and easy to misconfigure.
+        code: |
+          [HostKit]
+          partial class ShopHostKit;
+
+          [ResourceDefinition<Projects.Example_Service>("api")]
+          partial class ApiResourceKit
+          {
+              protected override IResourceBuilder<ProjectResource> BuildResource(
+                  IDistributedApplicationBuilder builder)
+                  => builder.AddProject<Projects.Example_Service>(Name);
+          }
+        language: csharp
+        outcome: >-
+          Resource definitions become strongly typed, source-generated classes with generated host
+          wiring and typed options.
+        evidence: >-
+          One [HostKit] plus one [ResourceDefinition] per resource replaces procedural AppHost code, and
+          the analyzer validates the wiring at compile time.
+        docsPage: examples
+      - audience: team-lead
+        title: Configure and toggle resources without editing the AppHost
+        scenario: >-
+          You want enablement rules and configuration to be declarative and discoverable instead of
+          buried in the AppHost entry point.
+        outcome: >-
+          Typed options and enablement toggles are generated for each resource kit, so behaviour is
+          configured rather than coded.
+        evidence: >-
+          Resource kits can be unit tested with the testing helpers, independent of a running AppHost.
+        docsPage: configuration-and-options
 
   - id: aspirec4
     name: AspireC4
@@ -314,6 +543,36 @@ projects:
       - id: AspireC4.Hosting
         description: Aspire hosting extension for the AspireC4 plugin, generating a dynamic LikeC4 architecture diagram for your Aspire application.
         primary: true
+    useCases:
+      - audience: developer
+        title: A live architecture diagram with three lines of code
+        scenario: >-
+          You already describe your distributed application in Aspire and do not want to maintain a
+          separate architecture diagram that drifts from reality.
+        code: |
+          var builder = DistributedApplication.CreateBuilder(args);
+
+          builder.AddAspireC4();
+
+          builder.Build().Run();
+        language: csharp
+        outcome: >-
+          AspireC4 writes the generated LikeC4 model, starts the LikeC4 sidecar, and refreshes the
+          diagram whenever the Aspire application changes.
+        evidence: >-
+          The diagram is derived from the running resource graph, so it cannot silently fall out of date
+          the way a hand-drawn one can.
+        docsPage: dashboard-integration
+      - audience: architect
+        title: Validate architectural metadata at compile time
+        scenario: >-
+          You want tags, kinds, groups, and metadata in your architecture model checked before the
+          application even runs.
+        outcome: >-
+          A Roslyn source generator validates the architectural metadata while the AppHost compiles.
+        evidence: >-
+          Architectural metadata mistakes fail the build instead of surfacing in a diagram nobody reads.
+        docsPage: generated-output
 
   - id: build
     name: Build
@@ -351,6 +610,38 @@ projects:
       - id: Purview.Build
         description: Pinned dotnet tool implementing the shared pipeline.
         primary: true
+    useCases:
+      - audience: team-lead
+        title: One reusable pipeline for every repository
+        scenario: >-
+          You maintain several repositories that each repeat the same build, test, pack, and release
+          logic, and the copies drift apart.
+        code: |
+          # .github/workflows/pr.yml
+          jobs:
+            build:
+              uses: purview-dev/build/.github/workflows/purview-build.yml@main
+              secrets: inherit
+        language: yaml
+        outcome: >-
+          Consumers reference the reusable workflow or composite action and configure behaviour with
+          purview-build.json instead of owning pipeline source.
+        evidence: >-
+          Pipeline code lives in one repository; a consuming repository is a short workflow file plus
+          configuration.
+        docsPage: repository-ci-cd
+      - audience: contributor
+        title: Dogfood the same pipeline the organisation uses
+        scenario: >-
+          You want local commands, pull-request CI, and releases to run the exact same tool and
+          conventions, rather than three approximations.
+        outcome: >-
+          The pipeline is a Modular Pipelines .NET tool packaged as a pinned dotnet tool, callable from
+          a composite action, reusable workflows, or the local command line.
+        evidence: >-
+          Purview's own repositories use the published pipeline, so the tool is exercised on every
+          build.
+        docsPage: pipeline-modules
 
   - id: build-sdk
     name: Build SDK
@@ -388,6 +679,38 @@ projects:
       - id: Purview.BuildSdk
         description: MSBuild SDK for standardised project defaults.
         primary: true
+    useCases:
+      - audience: team-lead
+        title: Apply repository-wide defaults from one declaration
+        scenario: >-
+          You want standard .NET project defaults, code-style enforcement, test wiring, and central
+          package management without repeating the same properties in every project.
+        code: |
+          {
+            "msbuild-sdks": {
+              "Purview.BuildSdk": "1.0.0"
+            }
+          }
+        language: json
+        outcome: >-
+          Install the SDK once via global.json and Directory.Build.props; every project beneath the
+          repository root inherits everything automatically.
+        evidence: >-
+          One versioned SDK declaration replaces per-project property groups, so conventions are
+          upgraded in one place.
+        docsPage: configuration-reference
+      - audience: contributor
+        title: Bootstrap a new repository
+        scenario: >-
+          You are starting a repository and want the organisation's conventions in place before the
+          first project exists.
+        outcome: >-
+          The SDK can bootstrap a global.json at the repository root when one is missing, then applies
+          project-type detection, analyzers, and test wiring.
+        evidence: >-
+          Repository bootstrap, analyzers, and testing wiring are documented and generated, not copied
+          between repos by hand.
+        docsPage: repository-bootstrap
 
   - id: dotnet-logging-source-generators
     name: Logging Source Generators
@@ -414,6 +737,18 @@ projects:
       - net6.0
       - net7.0
     packages: []
+    useCases:
+      - audience: developer
+        title: Move to the supported successor
+        scenario: >-
+          You depend on the original interface-based logging generator and want logging, activities, and
+          metrics generated together.
+        outcome: >-
+          Telemetry SourceGenerator generates logging alongside Activities and Metrics from the same
+          interfaces, with DI registration and multi-targeting.
+        evidence: >-
+          This project is archived and no longer developed; the successor covers a superset of its
+          behaviour from one interface.
 
 externalProjects:
   - id: likec4

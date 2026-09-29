@@ -248,6 +248,22 @@
     color: var(--color-muted);
   }
 
+  /* Audience tag on a use-case card. Branded like the affirmative "Where it
+   * fits" panel, mixing against --color-surface so it stays visible in dark
+   * mode. */
+  .pv-audience-chip {
+    border-color: color-mix(in oklab, var(--color-brand) 40%, var(--color-border));
+    background-color: color-mix(in oklab, var(--color-brand) 10%, var(--color-surface));
+    color: var(--color-brand-emphasis);
+  }
+
+  /* Concrete-evidence note on a use-case card: a branded rule rather than a
+   * full panel, so it reads as supporting detail next to the outcome. */
+  .pv-evidence {
+    border-left: 2px solid color-mix(in oklab, var(--color-brand) 45%, var(--color-border));
+    padding-left: 0.75rem;
+  }
+
   /* Chips are single-line labels: a squeezed flex row must shrink the content
    * beside a chip, never wrap the chip's own label onto a second line (which
    * made the status chip grow two lines tall next to a card title). */
@@ -342,6 +358,11 @@
     font-size: 0.8125rem;
     line-height: 1.6;
     color: #e7e3f5;
+    /* Shiki (Astro's built-in <Code>) sets the theme background inline on the
+     * same element. Transparent keeps the frame's brand-tinted dark surface
+     * consistent with the un-highlighted install panel; token colours are
+     * emitted per span and are unaffected. */
+    background-color: transparent !important;
   }
 
   .pv-install-tab {

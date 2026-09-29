@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 
 import { loadExternalProjects, loadProjects, parseManifest } from '../../src/lib/manifest/load';
 import { ManifestValidationError } from '../../src/lib/manifest/load';
+import { AUDIENCES } from '../../src/lib/manifest/schema';
 
 describe('project manifest', () => {
   test('loads and validates the real manifest', () => {
@@ -138,6 +139,94 @@ describe('project manifest', () => {
     expect(() =>
       parseManifest({ projects: [makeProject('a'), makeProject('b')] }, 'fixture.yml'),
     ).toThrow(ManifestValidationError);
+  });
+});
+
+describe('project use cases', () => {
+  test('loads concrete use cases from the real manifest', () => {
+    const projects = loadProjects();
+    const withUseCases = projects.filter((project) => project.useCases.length > 0);
+    expect(withUseCases.length).toBeGreaterThanOrEqual(8);
+
+    const telemetry = projects.find((project) => project.id === 'telemetry-sourcegenerator');
+    const first = telemetry?.useCases[0];
+    expect(first?.audience).toBe('developer');
+    expect(first?.title.length).toBeGreaterThan(0);
+    expect(first?.scenario.length).toBeGreaterThan(0);
+    expect(first?.outcome.length).toBeGreaterThan(0);
+    expect(first?.code).toContain('interface IOrderServiceTelemetry');
+    expect(first?.language).toBe('csharp');
+  });
+
+  test('every use case carries a known audience and an outcome', () => {
+    for (const project of loadProjects()) {
+      for (const useCase of project.useCases) {
+        expect(AUDIENCES).toContain(useCase.audience);
+        expect(useCase.outcome.trim().length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  test('deep links only appear on projects that publish documentation', () => {
+    for (const project of loadProjects()) {
+      for (const useCase of project.useCases) {
+        if (useCase.docsPage !== undefined) {
+          expect(project.docs, `${project.id} links to docs without a docs config`).toBeDefined();
+        }
+      }
+    }
+  });
+
+  test('projects without use cases resolve to an empty list', () => {
+    const projects = parseManifest({ projects: [makeProject('a')] }, 'fixture.yml');
+    expect(projects[0]?.useCases).toEqual([]);
+  });
+
+  test('rejects an unknown audience', () => {
+    expect(() =>
+      parseManifest(
+        {
+          projects: [
+            {
+              ...makeProject('a'),
+              useCases: [
+                {
+                  audience: 'executive',
+                  title: 'x',
+                  scenario: 'x',
+                  outcome: 'x',
+                },
+              ],
+            },
+          ],
+        },
+        'fixture.yml',
+      ),
+    ).toThrow(ManifestValidationError);
+  });
+
+  test('requires a language when code is provided', () => {
+    expect(() =>
+      parseManifest(
+        {
+          projects: [
+            {
+              ...makeProject('a'),
+              useCases: [
+                {
+                  audience: 'developer',
+                  title: 'x',
+                  scenario: 'x',
+                  outcome: 'x',
+                  code: 'Console.WriteLine("hi");',
+                },
+              ],
+            },
+          ],
+        },
+        'fixture.yml',
+      ),
+    ).toThrow(/language/);
   });
 });
 

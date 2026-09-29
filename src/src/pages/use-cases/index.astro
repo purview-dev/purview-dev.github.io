@@ -1,0 +1,79 @@
+---
+import SiteLayout from '~/layouts/SiteLayout.astro';
+import UseCaseCard from '~/components/UseCaseCard.astro';
+import UseCaseFilter from '~/components/islands/UseCaseFilter.tsx';
+import { loadProjects } from '~/lib/manifest/load';
+import { AUDIENCES, AUDIENCE_LABELS } from '~/lib/manifest/schema';
+import { SITE } from '~/lib/site';
+import { withBase } from '~/lib/urls';
+
+const projects = loadProjects().filter((project) => project.useCases.length > 0);
+const entries = projects.flatMap((project) =>
+  project.useCases.map((useCase) => ({
+    useCase,
+    project,
+    docsBase: project.docs ? withBase(`/docs/${project.id}/`) : null,
+    search: [
+      project.name,
+      useCase.title,
+      useCase.scenario,
+      useCase.outcome,
+      useCase.evidence ?? '',
+      useCase.audience,
+    ]
+      .join(' ')
+      .toLowerCase(),
+  })),
+);
+const audiences = AUDIENCES.map((value) => ({ value, label: AUDIENCE_LABELS[value] }));
+---
+
+<SiteLayout
+  title={`Use cases — ${SITE.fullName}`}
+  description="Concrete, audience-specific examples of what Purview's .NET tools do — the code you write and what the tooling gives you back."
+>
+  <div class="pv-container py-12 md:py-16">
+    <div class="max-w-3xl">
+      <p class="pv-chip mb-4 border-brand/30 bg-brand/5 text-brand">Use cases</p>
+      <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Use cases</h1>
+      <p class="mt-4 text-lg text-muted">
+        {entries.length} concrete examples of what the projects do, tagged by who each one speaks to.
+        Every example shows the code involved and what you get back; follow the guide link for the
+        full detail.
+      </p>
+    </div>
+
+    <div class="mt-8">
+      <UseCaseFilter client:visible audiences={audiences} />
+    </div>
+
+    <div class="mt-8 grid gap-5 lg:grid-cols-2">
+      {
+        entries.map(({ useCase, project, docsBase, search }, index) => (
+          <div
+            class="h-full min-w-0"
+            data-usecase-id={String(index)}
+            data-usecase-audience={useCase.audience}
+            data-usecase-search={search}
+          >
+            <UseCaseCard
+              useCase={useCase}
+              projectName={project.name}
+              projectId={project.id}
+              docsBase={docsBase}
+            />
+          </div>
+        ))
+      }
+    </div>
+
+    <section class="mt-16 rounded-xl border border-border bg-surface p-6 md:p-8">
+      <h2 class="text-xl font-semibold">Looking for the tools themselves?</h2>
+      <p class="mt-3 max-w-2xl text-sm text-muted">
+        Browse the <a href={withBase('/projects/')} class="pv-link">project catalogue</a> for the full
+        family, or the <a href={withBase('/docs/')} class="pv-link">documentation portal</a> for the
+        complete guides behind each example.
+      </p>
+    </section>
+  </div>
+</SiteLayout>

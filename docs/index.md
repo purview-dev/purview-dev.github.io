@@ -5,3 +5,4 @@ Shared engineering documentation and architecture decisions for Purview Developm
 ## Architecture decisions
 
 - [ADR 0001: Architecture](decisions/0001-architecture.md)
+- [ADR 0002: Concrete use cases](decisions/0002-concrete-use-cases.md)

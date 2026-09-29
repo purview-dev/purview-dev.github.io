@@ -2,6 +2,7 @@
 import SiteLayout from '~/layouts/SiteLayout.astro';
 import ProjectCard from '~/components/ProjectCard.astro';
 import ProjectVersionSnapshot from '~/components/ProjectVersionSnapshot.astro';
+import UseCaseCard from '~/components/UseCaseCard.astro';
 import { loadProjects } from '~/lib/manifest/load';
 import { projectReleaseSummary, projectVersionRollup } from '~/lib/releases/transform';
 import { getReleaseIndex } from '~/lib/releases/runtime';
@@ -12,6 +13,16 @@ const projects = loadProjects();
 const featured = projects.filter((project) => project.featured);
 const active = projects.filter((project) => project.status !== 'archived');
 const featuredGridClass = `featured-projects-grid${featured.length === 5 ? ' featured-projects-grid-five' : ''}`;
+
+// A short, concrete taste of the catalogue: the first use case from the first
+// few featured projects that carry one. The full, filterable list lives at
+// /use-cases/.
+const examples = featured
+  .flatMap((project) => {
+    const useCase = project.useCases[0];
+    return useCase ? [{ project, useCase }] : [];
+  })
+  .slice(0, 3);
 
 const releaseIndex = getReleaseIndex();
 const versionRows = active.map((project) =>
@@ -118,6 +129,44 @@ const organizationStructuredData = {
       </div>
     </div>
   </section>
+
+  {
+    examples.length > 0 && (
+      <section class="pv-container pb-10 md:pb-12" aria-labelledby="in-practice-heading">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 id="in-practice-heading" class="text-2xl font-bold tracking-tight md:text-3xl">
+              What it looks like in practice
+            </h2>
+            <p class="mt-2 max-w-2xl text-muted">
+              Concrete examples drawn from the projects — the code you write, and what the tooling
+              gives you back.
+            </p>
+          </div>
+          <a href={withBase('/use-cases/')} class="pv-link hidden shrink-0 sm:inline">
+            All use cases →
+          </a>
+        </div>
+        <div class="mt-8 grid gap-5 lg:grid-cols-2">
+          {examples.map(({ project, useCase }, index) => (
+            <div
+              class:list={[
+                'min-w-0',
+                examples.length % 2 === 1 && index === examples.length - 1 && 'lg:col-span-2',
+              ]}
+            >
+              <UseCaseCard
+                useCase={useCase}
+                projectName={project.name}
+                projectId={project.id}
+                docsBase={project.docs ? withBase(`/docs/${project.id}/`) : null}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   <section class="pv-container pb-10 md:pb-12">
     <div class="rounded-xl border border-brand/20 bg-brand/5 px-6 py-6 md:flex md:items-center md:justify-between md:gap-8 md:px-8">
