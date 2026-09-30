@@ -66,7 +66,8 @@ The wikis of several product repositories are mirrored into `docs/wiki`, so the 
 ## Injected front matter (per page)
 
 `title` (first `# H1`, else the slug), `description` (first prose paragraph, ≤160 chars),
-`owners: [purview-dev]`, `status` (the project's status), `lastReviewed`, `sourceProject`,
+`owners: [purview-dev]`, `status` (the project's status), `experimental: true` (written only when
+the catalogue flags the project, ADR 0004), `lastReviewed`, `sourceProject`,
 `sourceRepo`, `projectName`, `sourcePath`, `editUrl`, `tags` (the repository's GitHub **topics**,
 absent when there are none), and `sidebar.label`/`sidebar.order`.
 

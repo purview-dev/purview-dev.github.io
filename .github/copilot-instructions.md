@@ -16,7 +16,7 @@ package is `src/`.
 - Treat `just validate` as the definition of done. It chains format-check, lint, typecheck, unit
   tests, asset checks, build, link crawl, generated-output checks, built-output tests, and the
   catalogue guard (`just check-projects`).
-- Edit the catalogue in `src/src/data/projects.yml` only, and keep every invariant listed in
+- Edit the catalogue under `src/src/data/` only (one file per project, plus `external-projects.yml`), and keep every invariant listed in
   `AGENTS.md` (unique ids/orders/packages, `name` slugifying to `id` for documented projects, at
   least one use case per non-archived project, `code` paired with `language`, resolvable `docsPage`).
 - Keep documentation where it lives (the product repository). This site aggregates it at build time.
@@ -33,12 +33,15 @@ package is `src/`.
   `src/src/lib/manifest/schema.ts`.
 - Never claim a project is `stable` without a stable NuGet release, or leave a project `stable`
   while its repository is archived.
+- Never derive a project's displayed status outside `displayStatus()` (`src/src/lib/status.ts`):
+  `experimental: true` is an intent flag orthogonal to `status` (ADR 0004) and is invalid with
+  `status: archived`.
 
 ## Task routing
 
 - Adding a project → `.agents/agents/catalogue-onboarder.agent.md` and
   `.agents/skills/add-catalogue-project/SKILL.md`.
-- Auditing/fixing `projects.yml` → `.agents/agents/catalogue-auditor.agent.md` and
+- Auditing/fixing the catalogue → `.agents/agents/catalogue-auditor.agent.md` and
   `.agents/skills/audit-catalogue-projects/SKILL.md`.
 - Any other change → `.agents/` holds the manifest reference, docs-aggregation rules, use-case
   authoring rules, repo-metadata guidance, and the validation loop.

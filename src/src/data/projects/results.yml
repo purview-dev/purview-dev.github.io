@@ -1,0 +1,133 @@
+$schema: ../../lib/manifest/schema.ts
+
+id: results
+name: Results
+shortDescription: Result for .NET — expected failures as values the caller must handle.
+description: >-
+  A small, dependency-free Result<TValue, TError> for .NET that makes
+  expected failures part of a method's contract: not found, invalid, and
+  conflict are values rather than exceptions. A Roslyn source generator adds
+  C# 15 union ergonomics for the error cases, and companion packages carry
+  the result into ASP.NET Core responses and ZodSharp validation problems.
+origin: >-
+  Services kept re-declaring their own error types and hand-writing the same
+  failure helpers and HTTP mapping, so the result type, the generated
+  helpers, and the adapter packages became one shared package family.
+useWhen: >-
+  Expected failures are part of your domain model and you want them returned
+  as values the caller must handle, with a strongly typed error case that
+  still reaches the client as a standard HTTP problem response.
+avoidWhen: >-
+  You target a runtime below .NET 11 with C# 15 preview, or the failures you
+  are modelling are exceptional circumstances that belong in exceptions.
+repository: purview-dev/results
+category: application-framework
+status: preview
+order: 45
+docs:
+  source: github-path
+  path: docs/wiki
+  rootPage: Getting-Started.md
+  exclude:
+    - _Sidebar.md
+    - Home.md
+    - index.md
+targetFrameworks:
+  - net11.0
+packages:
+  - id: Purview.Results
+    description: The result type, its factories, and IResultValue. No dependencies.
+    primary: true
+  - id: Purview.Results.SourceGenerator
+    description: Incremental generator that emits AsFailure helpers for annotated unions, with a code fix and diagnostic suppression.
+    targetFrameworks:
+      - netstandard2.0
+  - id: Purview.Results.AspNetCore
+    description: Result-to-response mapping, endpoint filter, and dependency-injection registration.
+  - id: Purview.Results.ZodSharp
+    description: Bridges ZodSharp validation results into results.
+  - id: Purview.Results.ZodSharp.AspNetCore
+    description: Renders validation-carrying failures as HttpValidationProblemDetails.
+related:
+  - zodsharp
+  - sourcegenerator-framework
+useCases:
+  - audience: developer
+    title: Return expected failures as values
+    scenario: >-
+      You call a store that can fail in ways you expect — not found, disabled,
+      already exists — and you do not want a thrown exception or a generic error
+      string to be the only way the caller learns what happened.
+    code: |
+      Result<Tenant, TenantError> GetTenant(TenantId tenantId) =>
+          _tenants.TryGet(tenantId, out var tenant)
+              ? Result<Tenant, TenantError>.Success(tenant)
+              : new TenantNotFound(tenantId).AsFailure<Tenant>();
+    language: csharp
+    outcome: >-
+      The caller branches on the error value itself, so TenantNotFound keeps carrying
+      its TenantId instead of being flattened into a message.
+    evidence: >-
+      The core package has no dependencies: it ships the result type, its factories,
+      and IResultValue without pulling anything else in.
+    docsPage: core-concepts
+  - audience: developer
+    title: Generate the failure helper for every union case
+    scenario: >-
+      You model errors as a C# 15 union and need each case to become the failure side
+      of a result without writing one conversion helper per case by hand.
+    code: |
+      [GenerateResult]
+      public readonly union TenantError(TenantNotFound, TenantDisabled, TenantAlreadyExists);
+    language: csharp
+    outcome: >-
+      The generator emits AsFailure<TValue>() for every case of an annotated union,
+      plus a code fix and a CA1815 suppression, so the declaration needs no pragma.
+    evidence: >-
+      C# forbids the implicit conversion a bare case value would need — no operators
+      in static classes, no conversion operators in extension members, one
+      user-defined conversion per sequence — which is why the helper is per case.
+    docsPage: union-errors
+  - audience: architect
+    title: Map one error union onto HTTP responses
+    scenario: >-
+      The same domain error union surfaces from many minimal-API endpoints, and you do
+      not want a hand-written switch deciding the status code at each one.
+    code: |
+      builder.Services.AddResultsHttp(options => options
+          .Map<TenantNotFound>(error => TypedResults.NotFound())
+          .Map<TenantError>(error => TypedResults.Problem(statusCode: StatusCodes.Status409Conflict))
+      );
+
+      app.MapGet("/tenants/{id:int}", (int id) => GetTenant(id)).WithResultsHttp();
+    language: csharp
+    outcome: >-
+      The mapping is declared once at startup, WithResultsHttp() applies it to the
+      endpoints, and a host can replace IResultsHttpMapper when it needs different
+      behaviour.
+    evidence: >-
+      Mappings resolve in declaration order — any mapping or failure mapper the host
+      declared earlier always wins — so the most specific rule is registered first.
+    docsPage: aspnetcore-integration
+  - audience: team-lead
+    title: Let ZodSharp validation failures become validation problems
+    scenario: >-
+      Endpoints validate input with ZodSharp, and a failed validation should reach the
+      client as the standard ASP.NET Core validation-problem payload rather than an
+      error shape the API has to document separately.
+    code: |
+      {
+        "title": "One or more validation errors occurred.",
+        "status": 400,
+        "errors": { "TenantId": ["Required field 'TenantId' is null"] },
+        "issues": [{ "code": "missing_field", "path": ["TenantId"], "message": "Required field 'TenantId' is null" }]
+      }
+    language: json
+    outcome: >-
+      A failure that implements IValidationErrorCarrier becomes
+      HttpValidationProblemDetails without the host mapping it, unless a per-code or
+      per-category rule answers that failure first.
+    evidence: >-
+      The response is ASP.NET Core's own HttpValidationProblemDetails contract, so API
+      clients keep the error shape they already parse.
+    docsPage: zodsharp-problemdetails

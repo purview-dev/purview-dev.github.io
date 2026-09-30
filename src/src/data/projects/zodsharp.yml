@@ -1,0 +1,90 @@
+$schema: ../../lib/manifest/schema.ts
+
+id: zodsharp
+name: ZodSharp
+shortDescription: Zero-allocation schema validation for C# — a Zod port.
+description: >-
+  A high-performance schema validation library for C#, ported from
+  TypeScript Zod by way of the guinhx/ZodSharp C# port. Struct-based rules,
+  a fluent API, JSON Schema export and import, source-generated validators,
+  and zero-allocation validation on every valid input path. Integrates with
+  System.Text.Json, Newtonsoft.Json, and ASP.NET Core ProblemDetails.
+origin: >-
+  Schema validation was repeatedly needed at application boundaries, but existing approaches
+  did not combine a fluent Zod-style model with predictable, allocation-conscious execution.
+useWhen: >-
+  You want composable C# schemas, compile-time validator generation, or JSON Schema interop with
+  tight control over validation behaviour and allocations.
+avoidWhen: >-
+  Data annotations or an existing validation library already cover your requirements, or Zod-style
+  schemas would add an unnecessary second validation model.
+repository: purview-dev/zodsharp
+category: validation
+status: stable
+featured: true
+order: 30
+docs:
+  source: github-path
+  path: docs/wiki
+  rootPage: Getting-Started.md
+  exclude:
+    - _Sidebar.md
+    - Home.md
+    - index.md
+targetFrameworks:
+  - net8.0
+  - net9.0
+  - net10.0
+packages:
+  - id: Purview.ZodSharp
+    description: Core validation library and source generator.
+    primary: true
+  - id: Purview.ZodSharp.SystemTextJson
+    description: System.Text.Json integration and JSON Schema import.
+  - id: Purview.ZodSharp.NewtonsoftJson
+    description: Newtonsoft.Json integration and JSON Schema import.
+  - id: Purview.ZodSharp.AspNetCore
+    description: ASP.NET Core ProblemDetails integration.
+related:
+  - value-objects
+acknowledgments:
+  - name: Zod
+    url: https://github.com/colinhacks/zod
+    description: The original JavaScript/TypeScript schema validation library.
+  - name: ZodSharp (guinhx)
+    url: https://github.com/guinhx/ZodSharp
+    description: The C# port of Zod, and the fork this project is based on.
+useCases:
+  - audience: developer
+    title: Validate input without exceptions or allocations
+    scenario: >-
+      You need to validate values at an application boundary and prefer a result you can inspect
+      over exception-driven control flow.
+    code: |
+      var nameSchema = Z.String().Min(3).Max(50);
+      var result = nameSchema.Validate("John");
+
+      if (result.IsSuccess)
+          Console.WriteLine($"Valid name: {result.Value}");
+    language: csharp
+    outcome: >-
+      Validate/SafeParse return a ValidationResult<T> with no exceptions, while Parse still throws
+      ZodException when you want that behaviour.
+    evidence: >-
+      Validation is zero-allocation on every valid input path, so the performance claim is a
+      property of the code rather than an aspiration.
+    docsPage: fluent-schema-api
+  - audience: team-lead
+    title: Return standard ProblemDetails for invalid requests
+    scenario: >-
+      You want failed validation in ASP.NET Core to surface as standard ProblemDetails payloads
+      rather than a bespoke error shape that clients must learn.
+    code: |
+      dotnet add package Purview.ZodSharp.AspNetCore
+    language: bash
+    outcome: >-
+      The AspNetCore adapter converts failed validation results into the standard ProblemDetails /
+      HttpValidationProblemDetails payloads.
+    evidence: >-
+      One adapter package, and API consumers keep the error contract they already expect.
+    docsPage: aspnetcore-integration

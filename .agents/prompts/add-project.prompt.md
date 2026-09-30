@@ -11,6 +11,7 @@ Inputs (fill in before running):
 - Owned by purview-dev? `yes` (catalogue project) / `no` (collaboration)
 - Category (optional — let the recon decide): `<category>`
 - Status (optional — let the release channel decide): `stable | preview | archived`
+- Experimental? `yes` / `no` — `yes` sets the `experimental` flag (ADR 0004); it does not replace `status`
 - Notes: anything known about docs location, package ids, or the story to tell
 
 ## Instructions
@@ -30,7 +31,7 @@ Use the `catalogue-onboarder` agent if it is available.
 
 1. Recon evidence: repository metadata, docs tree/landing page, package ids and channels, release
    channel. Show the commands and their output.
-2. The `projects.yml` record (or `externalProjects` record) added at an unused `order`, with `docs`,
+2. The catalogue record (or `externalProjects` record) added at an unused `order`, with `docs`,
    `packages`, `targetFrameworks`, `install` (only when not plain NuGet), relationships and
    acknowledgments where they genuinely apply.
 3. At least one concrete use case with `code` + `language`, an `evidence` fact, and a `docsPage` that

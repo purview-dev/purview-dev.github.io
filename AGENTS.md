@@ -10,7 +10,8 @@ Two agent tasks recur here, and both have a dedicated agent plus skills under `.
 
 1. **Add a project** — given a `purview-dev/<repo>` (or a collaboration repository), build its
    documentation, use cases, tags and metadata so it is fully integrated into the site.
-2. **Audit the catalogue** — prove that every project defined in `src/src/data/projects.yml` is
+2. **Audit the catalogue** — prove that every project defined in `src/src/data/projects/` (one file per project, plus
+   `external-projects.yml` for collaborations) is
    correct: documentation configuration, lifecycle stability, metadata and relationships.
 
 ## Technology and tooling context
@@ -50,7 +51,7 @@ merge". `just check-projects` is part of that chain and fails the build on catal
 
 ## Ecosystem model — what "a project" means here
 
-- `projects:` in `src/src/data/projects.yml` are Purview-owned catalogue entries. Their `repository`
+- `projects:` entries — one file per project under `src/src/data/projects/` — are Purview-owned catalogue entries. Their `repository`
   **must** be `purview-dev/<repo>` (enforced by the loader).
 - `externalProjects:` are collaborations the organisation contributes to but does not own (for
   example `likec4/likec4`). They link out to their own site/repository: no documentation
@@ -64,7 +65,7 @@ merge". `just check-projects` is part of that chain and fails the build on catal
 
 1. **Never weaken a check to make a change pass.** Fix the data or the implementation. (ADR 0001.)
 2. **Never hand-edit generated content** (`src/src/content/docs/**`, `src/.cache/**`, `src/dist/**`).
-3. **Any edit to `projects.yml` must keep the catalogue invariants.** These are enforced by
+3. **Any edit to a project record under `src/src/data/` must keep the catalogue invariants.** These are enforced by
    `loadProjects()` (schema, ownership, relationships, package uniqueness) and by
    `just check-projects`:
    - `id` is a lowercase `[a-z0-9-]` slug; `repository` is `owner/repository` and must be
@@ -80,6 +81,10 @@ merge". `just check-projects` is part of that chain and fails the build on catal
    - `related`, `supersedes`, `supersededBy` must reference known ids.
    - `status` must match reality: an archived repository is `archived`; prerelease-only tooling is
      `preview`; a project with a stable release is `stable`.
+   - `experimental: true` marks a project whose API and packaging may change without notice
+     (ADR 0004). It is orthogonal to `status` — which stays the release channel — it is invalid on an
+     `archived` project, and it never hides a project: it adds a warning badge and a notice to the
+     catalogue and to every aggregated documentation page.
 4. **Run the validation loop before finishing** — at minimum `just check-projects`,
    `bun run typecheck`, `bun run test`; run the full `just validate` for anything that touches the
    build, data aggregation, or rendering.
@@ -111,7 +116,7 @@ Do not assume this file contains everything; consult `.agents/` while planning.
 
 | Concern | Location |
 | --- | --- |
-| Catalogue manifest | `src/src/data/projects.yml` |
+| Catalogue manifest | `src/src/data/projects/<id>.yml` (one per project) + `src/src/data/external-projects.yml` |
 | Manifest schema / loader | `src/src/lib/manifest/{schema,load}.ts` |
 | Docs aggregation | `src/src/lib/docs/aggregate.ts` (+ `frontmatter`, `links`, `sidebar`, `staleness`) |
 | Release data | `src/src/lib/releases/*`, `src/scripts/fetch-releases.ts` |

@@ -1,6 +1,6 @@
 ---
 name: project-manifest-reference
-description: Field-by-field reference for src/src/data/projects.yml (schema vocabulary, defaults, loader-enforced rules, and the invariants the site build depends on). Use whenever authoring or reviewing a catalogue record.
+description: Field-by-field reference for the catalogue records under src/src/data/projects/ (schema vocabulary, defaults, loader-enforced rules, and the invariants the site build depends on). Use whenever authoring or reviewing a catalogue record.
 category: purview-dev-website
 roles:
     - catalogue
@@ -13,7 +13,8 @@ tags:
 
 # project-manifest-reference Skill
 
-The catalogue is `src/src/data/projects.yml`, typed by `src/src/lib/manifest/schema.ts` and validated
+The catalogue is one file per project under `src/src/data/projects/` (plus
+`src/src/data/external-projects.yml` for collaborations), typed by `src/src/lib/manifest/schema.ts` and validated
 by `src/src/lib/manifest/load.ts`. `$schema: ../lib/manifest/schema.ts` is the first line of the file.
 
 ## Vocabularies (do not invent values)
@@ -22,10 +23,12 @@ by `src/src/lib/manifest/load.ts`. `$schema: ../lib/manifest/schema.ts` is the f
 | --- | --- |
 | `category` | `application-framework`, `validation`, `observability`, `source-generation`, `aspire`, `build-tooling`, `developer-tooling` |
 | `status` | `stable`, `preview`, `archived` |
+| `experimental` | boolean flag, default `false` — orthogonal to `status` (ADR 0004); invalid with `status: archived` |
 | `install` | `nuget` (default), `msbuild-sdk`, `dotnet-tool` |
 | `useCases[].audience` | `developer`, `team-lead`, `architect`, `contributor` (labels: Developer, Team lead, Architect, Contributor) |
 
-Adding a value to any of these lists is a schema change and requires an ADR.
+Adding a value to any of these lists is a schema change and requires an ADR. `experimental` is a
+**flag, not a status value**: it never replaces `status`, which stays the project's release channel.
 
 ## `projects[]` fields
 
@@ -41,6 +44,7 @@ Adding a value to any of these lists is a schema change and requires an ADR.
 | `repository` | yes | `owner/repository`; **`owner` must be `purview-dev`** for `projects[]` |
 | `category` | yes | See vocabulary |
 | `status` | yes | See vocabulary |
+| `experimental` | no | Default `false`; marks an exploratory project (unstable API, no support promise). Orthogonal to `status`; invalid with `status: archived`. Displayed as its own status via `displayStatus()` |
 | `featured` | no | Default `false`; shown prominently on the home page |
 | `order` | no | Default `1000`; projects are sorted ascending; keep values unique |
 | `docs` | no | See below |
@@ -76,12 +80,13 @@ Adding a value to any of these lists is a schema change and requires an ADR.
 2. `projects[].repository.split('/')[0]` must equal `purview-dev`.
 3. `related`, `supersedes`, and `supersededBy` must all reference existing project ids.
 4. A NuGet package id may be declared by **exactly one** project.
-5. The returned list is sorted by `order` ascending.
+5. `experimental: true` is rejected when `status` is `archived` (schema refinement).
+6. The returned list is sorted by `order` ascending.
 
 ## Defaults applied by the loader
 
 `featured: false`, `order: 1000`, `packages: []`, `related: []`, `useCases: []`,
-`acknowledgments: []`, `discussions: false`, `install: 'nuget'`. Derived values (`repoOwner`,
+`acknowledgments: []`, `discussions: false`, `install: 'nuget'`, `experimental: false`. Derived values (`repoOwner`,
 `repoName`, `sourceUrl`, `issuesUrl`, `discussionsUrl`, `changelogUrl`, `releasesUrl`) are computed,
 never authored.
 

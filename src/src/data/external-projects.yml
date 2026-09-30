@@ -1,0 +1,18 @@
+$schema: ../lib/manifest/schema.ts
+
+externalProjects:
+  - id: likec4
+    name: LikeC4
+    shortDescription: Visualize, collaborate, and evolve software architecture with live C4 diagrams from your code.
+    description: >-
+      LikeC4 keeps software architecture always actual and live by modelling it
+      with the C4 model in code (TypeScript/React) and rendering interactive
+      diagrams. Purview maintains the AspireC4 integration that links .NET
+      Aspire applications to LikeC4, and contributes to the LikeC4 project
+      itself.
+    url: https://likec4.dev
+    repository: likec4/likec4
+    category: developer-tooling
+    status: stable
+    featured: true
+    order: 10

@@ -7,12 +7,14 @@ import { loadExternalProjects, loadProjects } from '~/lib/manifest/load';
 import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { getReleaseIndex } from '~/lib/releases/runtime';
 import { SITE } from '~/lib/site';
+import { displayStatus } from '~/lib/status';
+
 
 const projects = loadProjects();
 const externalProjects = loadExternalProjects();
 const releaseIndex = getReleaseIndex();
 const categories = [...new Set(projects.map((project) => project.category))].toSorted();
-const statuses = ['stable', 'preview'];
+const statuses = ['stable', 'preview', 'experimental'];
 ---
 
 <SiteLayout
@@ -41,8 +43,8 @@ const statuses = ['stable', 'preview'];
             <div
               data-project-id={project.id}
               data-category={project.category}
-              data-status={project.status}
-              data-search={`${project.name} ${project.shortDescription} ${tags.join(' ')} ${project.category} ${project.status}`.toLowerCase()}
+              data-status={displayStatus(project)}
+              data-search={`${project.name} ${project.shortDescription} ${tags.join(' ')} ${project.category} ${displayStatus(project)}`.toLowerCase()}
             >
               <ProjectCard project={project} />
             </div>

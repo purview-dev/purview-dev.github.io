@@ -1,6 +1,6 @@
 ---
 name: use-case-authoring
-description: Use when writing or reviewing useCases in projects.yml — the ADR 0002 rules for audience-tagged, concrete, evidence-backed examples with short code snippets and resolvable documentation deep links.
+description: Use when writing or reviewing useCases in the catalogue records — the ADR 0002 rules for audience-tagged, concrete, evidence-backed examples with short code snippets and resolvable documentation deep links.
 category: purview-dev-website
 roles:
     - catalogue
@@ -14,7 +14,7 @@ tags:
 # use-case-authoring Skill
 
 Use cases are the "what does it actually do for me" evidence on the home page, on each project page,
-and on `/use-cases/`. They are authored in `src/src/data/projects.yml` and validated by the manifest
+and on `/use-cases/`. They are authored in the catalogue records (`src/src/data/projects/<id>.yml`) and validated by the manifest
 schema. The governing decision is `docs/decisions/0002-concrete-use-cases.md`.
 
 ## Shape

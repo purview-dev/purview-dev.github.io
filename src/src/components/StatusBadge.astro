@@ -1,12 +1,14 @@
 ---
+import { DISPLAY_STATUS_LABELS, type DisplayStatus } from '~/lib/status';
+
 interface Props {
-  status: 'stable' | 'preview' | 'archived';
+  status: DisplayStatus;
   /** Extra classes, e.g. `shrink-0` when the badge shares a row with a title. */
   class?: string;
 }
 
 const { status, class: className } = Astro.props;
-const label = { stable: 'Stable', preview: 'Preview', archived: 'Archived' }[status];
+const label = DISPLAY_STATUS_LABELS[status];
 ---
 
 <span class:list={['pv-chip', `pv-status-${status}`, className]}>{label}</span>

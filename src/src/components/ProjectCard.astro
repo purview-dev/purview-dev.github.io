@@ -4,6 +4,7 @@ import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '
 import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { getReleaseIndex } from '~/lib/releases/runtime';
 import type { ResolvedProject } from '~/lib/manifest/load';
+import { displayStatus } from '~/lib/status';
 import { nugetPackageUrl, withBase } from '~/lib/urls';
 
 interface Props {
@@ -13,10 +14,11 @@ interface Props {
 }
 
 const { project, showBadges = true } = Astro.props;
+const status = displayStatus(project);
 const { tags } = projectRepoEnrichment(project, getReleaseIndex().data);
 const primaryPackage = project.packages.find((pkg) => pkg.primary) ?? project.packages[0];
 const badges =
-  project.status === 'archived' ?
+  status === 'archived' ?
     []
   : [
       ...(primaryPackage ?
@@ -45,7 +47,7 @@ const badges =
   <a href={withBase(`/projects/${project.id}/`)} class="flex flex-1 flex-col gap-3 no-underline">
     <div class="flex items-center justify-between gap-3">
       <h3 class="min-w-0 text-lg font-semibold leading-snug">{project.name}</h3>
-      <StatusBadge status={project.status} class="shrink-0" />
+      <StatusBadge status={status} class="shrink-0" />
     </div>
     <p class="text-sm text-muted">{project.shortDescription}</p>
     <div class="mt-auto flex flex-wrap items-center gap-2 pt-2">

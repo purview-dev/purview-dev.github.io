@@ -38,7 +38,8 @@ purview-dev/                  # workspace root
     ├── src/
     │   ├── content.config.ts # Starlight docs collection schema
     │   ├── content/docs/     # GENERATED documentation mirror (gitignored)
-    │   ├── data/projects.yml # Typed, validated project catalogue manifest
+    │   ├── data/projects/    # Typed, validated catalogue: one file per project
+    │   ├── data/external-projects.yml # Collaborations the organisation does not own
     │   ├── lib/              # manifest, releases, docs, urls, site constants
     │   ├── components/       # shared chrome, Starlight overrides, islands
     │   ├── layouts/          # SiteLayout.astro (marketing pages)
@@ -165,7 +166,7 @@ just dev
 ```
 
 The dev server starts after a data sync. Edit `src/src/pages/` for marketing
-pages and `src/src/data/projects.yml` for catalogue content. Documentation pages
+pages and `src/src/data/projects/<id>.yml` for catalogue content. Documentation pages
 are generated under `src/src/content/docs/` and should not be edited by hand —
 change the source repository instead and re-run `just data-sync`.
 
@@ -190,16 +191,18 @@ generated copies.
 
 ## Project catalogue
 
-`src/src/data/projects.yml` is the single source of truth for the catalogue. It
+`src/src/data/projects/<id>.yml` (one file per project, plus
+`src/src/data/external-projects.yml` for collaborations) is the single source of truth for the catalogue. It
 is validated at build time by a typed Zod schema
 (`src/src/lib/manifest/schema.ts`). Validation failures report the source file,
 the offending property, the expected shape, and a remediation hint.
 
 ### Adding a new Purview-Dev project
 
-1. Add a record to `src/src/data/projects.yml` with a unique `id`, `name`,
+1. Add a record at `src/src/data/projects/<id>.yml` with a unique `id`, `name`,
    `shortDescription`, `description`, `repository` (a purview-dev repo),
-   `category`, `status`, and optional `order`.
+   `category`, `status`, and optional `order`. Set `experimental: true` for an
+   exploratory project — it is a flag orthogonal to `status` (ADR 0004).
 2. Declare its NuGet packages under `packages` — every package id must belong to
    exactly one project.
 3. Declare documentation under `docs`:
@@ -261,8 +264,8 @@ Documentation is owned by each product repository and presented through this
 portal. The aggregation (`src/lib/docs/aggregate.ts`) fetches each project's
 docs (in-repo `docs/`, GitHub wikis via a shallow clone, or the README), then:
 
-- injects front matter (title, description, owners, status, last review date,
-  source repository, edit URL),
+- injects front matter (title, description, owners, status, the experimental flag,
+  last review date, source repository, edit URL),
 - selects the page served at `/docs/<project>/` from `docs.rootPage`, otherwise
   the conventional `index.md`/`Home.md`/`readme.md`, otherwise the repository
   README when `readmeAsIndex: true`,
@@ -337,7 +340,7 @@ auditing the ones already published (ADR 0003):
 | Task | Agent | Skills |
 | ---- | ----- | ------ |
 | Add and integrate a repository | `.agents/agents/catalogue-onboarder.agent.md` | `add-catalogue-project`, `project-manifest-reference`, `docs-aggregation-rules`, `use-case-authoring`, `github-repo-metadata` |
-| Audit and repair `projects.yml` | `.agents/agents/catalogue-auditor.agent.md` | `audit-catalogue-projects`, plus the reference skills |
+| Audit and repair the catalogue | `.agents/agents/catalogue-auditor.agent.md` | `audit-catalogue-projects`, plus the reference skills |
 
 `AGENTS.md` holds the repository context and the mandatory rules, `.github/copilot-instructions.md`
 the always-on subset, and `.agents/prompts/` provides `add-project.prompt.md` and
@@ -347,8 +350,10 @@ The deterministic half of the guarantee is `just check-projects`
 (`src/scripts/check-projects.ts`), which runs inside `just validate` and fails on catalogue drift:
 schema failures, documentation that does not resolve, missing or malformed use cases, unpublished or
 duplicated packages, a `status` that contradicts the repository's archived flag or the NuGet release
-channel, missing repository topics (the site's tags), and a documented project whose default branch
-is not `main`. Quality observations that cannot be decided mechanically are printed as warnings.
+channel, an `experimental` flag on an archived project, missing repository topics (the site's tags),
+and a documented project whose default branch is not `main`. Quality observations that cannot be
+decided mechanically are printed as warnings — including `experimental` paired with a stable release
+channel.
 
 ## Site versioning and releases
 
