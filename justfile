@@ -83,6 +83,10 @@ check-links:
 check-generated:
     bun run check:generated
 
+# Validate the project catalogue: docs resolution, stability, metadata, packages, use cases.
+check-projects:
+    bun run check:projects
+
 # Refresh release data from live GitHub/NuGet sources.
 fetch-releases:
     bun run fetch:releases
@@ -96,5 +100,5 @@ clean:
     bun run clean
 
 # Authoritative validation: run everything needed to prove the site is safe to merge.
-validate: format-check lint typecheck test check-assets build check-links check-generated test-dist
+validate: format-check lint typecheck test check-assets check-projects build check-links check-generated test-dist
     @echo "Validation passed."
