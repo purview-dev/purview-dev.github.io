@@ -10,6 +10,7 @@
     "check:assets": "bun run scripts/check-assets.ts",
     "check:generated": "bun run scripts/check-generated.ts",
     "check:links": "bun run scripts/check-links.ts",
+    "check:projects": "bun run scripts/check-projects.ts",
     "clean": "bun run scripts/clean.ts",
     "data:sync": "bun run scripts/data-sync.ts",
     "dev": "astro dev",

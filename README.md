@@ -27,6 +27,8 @@ repo root and delegated to the package:
 purview-dev/                  # workspace root
 ├── package.json              # workspace root; delegates scripts to src/
 ├── justfile                  # task runner (runs in the src/ package)
+├── AGENTS.md                 # repository context and agent rules (ADR 0003)
+├── .agents/                  # agents, skills, and prompts for catalogue/docs work
 ├── docs/decisions/           # architectural decision records
 └── src/                      # the Astro site package (@purview-dev/website)
     ├── assets/branding/      # approved branding sources (never modified)
@@ -46,7 +48,7 @@ purview-dev/                  # workspace root
     └── fixtures/             # committed offline data fixtures
 ```
 
-See `docs/decisions/0001-architecture.md` for the architectural decision record.
+See `docs/decisions/` for the architectural decision records.
 
 ## Technology choices
 
@@ -104,8 +106,8 @@ just validate
 ```
 
 It runs, in order: formatting check → lint → typecheck → unit tests → branding
-asset checks → production build → link crawl → generated-output checks → built
-output tests.
+asset checks → catalogue checks → production build → link crawl →
+generated-output checks → built output tests.
 
 | Recipe             | Purpose                                             |
 | ------------------ | --------------------------------------------------- |
@@ -125,6 +127,7 @@ output tests.
 | `check-assets`     | Validate branding sources and generated assets      |
 | `check-links`      | Validate internal links across `dist/`              |
 | `check-generated`  | Validate caches and built outputs                   |
+| `check-projects`   | Validate the project catalogue invariants           |
 | `fetch-releases`   | Refresh release data from live sources              |
 | `refresh-fixtures` | Rebuild committed test fixtures from live sources   |
 | `clean`            | Remove build output, caches, and generated mirrors  |
@@ -325,6 +328,27 @@ aggregated Markdown for that project (the same content that feeds
 `llms-full.txt`, scoped down).
 
 The built outputs are asserted by `tests/dist/` and `just check-generated`.
+
+## Adding a project and working with agents
+
+The repository ships agent tooling for its two recurring catalogue tasks — adding a project and
+auditing the ones already published (ADR 0003):
+
+| Task | Agent | Skills |
+| ---- | ----- | ------ |
+| Add and integrate a repository | `.agents/agents/catalogue-onboarder.agent.md` | `add-catalogue-project`, `project-manifest-reference`, `docs-aggregation-rules`, `use-case-authoring`, `github-repo-metadata` |
+| Audit and repair `projects.yml` | `.agents/agents/catalogue-auditor.agent.md` | `audit-catalogue-projects`, plus the reference skills |
+
+`AGENTS.md` holds the repository context and the mandatory rules, `.github/copilot-instructions.md`
+the always-on subset, and `.agents/prompts/` provides `add-project.prompt.md` and
+`audit-projects.prompt.md`.
+
+The deterministic half of the guarantee is `just check-projects`
+(`src/scripts/check-projects.ts`), which runs inside `just validate` and fails on catalogue drift:
+schema failures, documentation that does not resolve, missing or malformed use cases, unpublished or
+duplicated packages, a `status` that contradicts the repository's archived flag or the NuGet release
+channel, missing repository topics (the site's tags), and a documented project whose default branch
+is not `main`. Quality observations that cannot be decided mechanically are printed as warnings.
 
 ## Site versioning and releases
 
