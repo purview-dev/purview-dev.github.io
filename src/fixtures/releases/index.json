@@ -284,6 +284,34 @@
       "defaultBranch": "main",
       "updatedAt": "2024-04-28T11:21:49Z",
       "hasDiscussions": false
+    },
+    "purview-dev/results": {
+      "name": "results",
+      "fullName": "purview-dev/results",
+      "description": "Result types for .NET - a small, dependency-light Result<TValue, TError> where expected failures are values instead of exceptions, C# 15 union error cases with generated AsFailure<TValue>() helpers, and ASP.NET Core and ZodSharp integrations that map failures to HTTP responses.",
+      "archived": false,
+      "homepage": "https://purview.dev/projects/results/",
+      "topics": [
+        "aspnetcore",
+        "c-sharp",
+        "csharp",
+        "discriminated-unions",
+        "dotnet",
+        "error-handling",
+        "minimal-apis",
+        "nuget",
+        "problem-details",
+        "result-type",
+        "roslyn",
+        "source-generator",
+        "union-types",
+        "zodsharp"
+      ],
+      "stargazersCount": 0,
+      "openIssuesCount": 0,
+      "defaultBranch": "main",
+      "updatedAt": "2026-09-30T14:05:36Z",
+      "hasDiscussions": false
     }
   },
   "releases": {
@@ -1394,7 +1422,27 @@
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.43"
       }
     ],
-    "purview-dev/dotnet-logging-source-generators": []
+    "purview-dev/dotnet-logging-source-generators": [],
+    "purview-dev/results": [
+      {
+        "tagName": "v1.0.0-prerelease.2",
+        "name": "v1.0.0-prerelease.2",
+        "body": "## What's Changed\n* docs: added docs by @kieronlanning in https://github.com/purview-dev/results/pull/2\n\n\n**Full Changelog**: https://github.com/purview-dev/results/compare/v1.0.0-prerelease.1...v1.0.0-prerelease.2",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-30T14:05:29Z",
+        "htmlUrl": "https://github.com/purview-dev/results/releases/tag/v1.0.0-prerelease.2"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.1",
+        "name": "v1.0.0-prerelease.1",
+        "body": "## What's Changed\n* Docs update by @kieronlanning in https://github.com/purview-dev/results/pull/1\n\n## New Contributors\n* @kieronlanning made their first contribution in https://github.com/purview-dev/results/pull/1\n\n**Full Changelog**: https://github.com/purview-dev/results/commits/v1.0.0-prerelease.1",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-30T12:35:07Z",
+        "htmlUrl": "https://github.com/purview-dev/results/releases/tag/v1.0.0-prerelease.1"
+      }
+    ]
   },
   "packages": {
     "Purview.Telemetry.SourceGenerator": {
@@ -1947,6 +1995,41 @@
         "1.0.0-prerelease.56",
         "1.0.0-prerelease.57"
       ]
+    },
+    "Purview.Results": {
+      "id": "Purview.Results",
+      "versions": [
+        "1.0.0-prerelease.1",
+        "1.0.0-prerelease.2"
+      ]
+    },
+    "Purview.Results.SourceGenerator": {
+      "id": "Purview.Results.SourceGenerator",
+      "versions": [
+        "1.0.0-prerelease.1",
+        "1.0.0-prerelease.2"
+      ]
+    },
+    "Purview.Results.AspNetCore": {
+      "id": "Purview.Results.AspNetCore",
+      "versions": [
+        "1.0.0-prerelease.1",
+        "1.0.0-prerelease.2"
+      ]
+    },
+    "Purview.Results.ZodSharp": {
+      "id": "Purview.Results.ZodSharp",
+      "versions": [
+        "1.0.0-prerelease.1",
+        "1.0.0-prerelease.2"
+      ]
+    },
+    "Purview.Results.ZodSharp.AspNetCore": {
+      "id": "Purview.Results.ZodSharp.AspNetCore",
+      "versions": [
+        "1.0.0-prerelease.1",
+        "1.0.0-prerelease.2"
+      ]
     }
   },
   "packageSearch": {
@@ -2033,6 +2116,11 @@
       "deprecated": false,
       "listed": true
     },
-    "Purview.BuildSdk": null
+    "Purview.BuildSdk": null,
+    "Purview.Results": null,
+    "Purview.Results.SourceGenerator": null,
+    "Purview.Results.AspNetCore": null,
+    "Purview.Results.ZodSharp": null,
+    "Purview.Results.ZodSharp.AspNetCore": null
   }
 }
