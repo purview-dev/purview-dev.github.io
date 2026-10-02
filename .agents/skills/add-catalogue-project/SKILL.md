@@ -1,6 +1,6 @@
 ---
 name: add-catalogue-project
-description: Use when adding a repository to the Purview-Dev website catalogue — recon the repo, author the projects.yml record (docs, packages, tags, use cases), integrate it across the catalogue/docs/releases surfaces, and prove it with the validation pipeline.
+description: Use when adding a repository to the Purview-Dev website catalogue — recon the repo, author the catalogue record (docs, packages, tags, use cases), integrate it across the catalogue/docs/releases surfaces, and prove it with the validation pipeline.
 category: purview-dev-website
 roles:
     - catalogue
@@ -61,8 +61,12 @@ description/topics.
   `source-generation`, `aspire`, `build-tooling`, `developer-tooling`.
 - `status`:
   - `archived` when the repository is archived (GitHub `archived: true`).
-  - `preview` when there is no stable NuGet release, or the tooling is explicitly experimental.
+  - `preview` when there is no stable NuGet release.
   - `stable` only when a stable (non-prerelease) release exists and is recommended for use.
+- `experimental: true` (a flag, not a status value) when the tooling is explicitly an experiment:
+  no compatibility promise, no production support guarantee. Keep `status` as the honest release
+  channel alongside it (`preview` for prerelease-only tooling). See ADR 0004; the project page and
+  every aggregated documentation page then carry an Experimental warning.
 - `id`: lowercase `[a-z0-9-]` slug, normally the repository name.
 - `name`: display name. **It must slugify to `id` when the project has `docs`** (the LLM bundle is
   emitted at `/_llms-txt/<slug(name)>.txt` while the UI links `/_llms-txt/<id>.txt`).
@@ -70,7 +74,7 @@ description/topics.
 
 ## Step 3 — author the record
 
-Add the entry to `src/src/data/projects.yml` (see `project-manifest-reference` for every field):
+Add the entry as `src/src/data/projects/<id>.yml` (see `project-manifest-reference` for every field):
 
 ```yaml
   - id: <slug>

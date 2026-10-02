@@ -1,6 +1,6 @@
 ---
 mode: agent
-description: Audit every project in projects.yml for correctness (documentation, stability, metadata) and repair the clear drift.
+description: Audit every project in the catalogue for correctness (documentation, stability, metadata) and repair the clear drift.
 ---
 
 # Audit the project catalogue

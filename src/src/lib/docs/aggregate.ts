@@ -321,6 +321,7 @@ async function buildPage(
     description,
     owners: [OWNER],
     status: project.status,
+    experimental: project.experimental,
     lastReviewed: raw.lastModified,
     sourceProject: project.id,
     sourceRepo: project.repository,

@@ -1,4 +1,5 @@
 import type { ResolvedProject } from '../manifest/load';
+import type { DisplayStatus } from '../status';
 import type {
   GitHubReleaseInfo,
   PackageReleaseSummary,
@@ -7,6 +8,7 @@ import type {
 } from './types';
 
 import { compareNuGetVersions, formatNuGetVersion } from '../nuget-version';
+import { displayStatus } from '../status';
 import { nugetPackageUrl } from '../urls';
 import {
   isPrereleaseRelease,
@@ -156,7 +158,7 @@ export function flattenReleases(summaries: ProjectReleaseSummary[]): ReleaseEntr
 export interface ProjectVersionRollup {
   projectId: string;
   projectName: string;
-  status: ResolvedProject['status'];
+  status: DisplayStatus;
   /** Number of NuGet packages the project publishes. */
   packageCount: number;
   /** Highest stable version across the project's packages, when one exists. */
@@ -215,7 +217,7 @@ export function projectVersionRollup(
   return {
     projectId: project.id,
     projectName: project.name,
-    status: project.status,
+    status: displayStatus(project),
     packageCount: summary.packages.length,
     stableVersion,
     prereleaseVersion: prereleaseOutranks ? highestPrerelease : null,

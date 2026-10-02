@@ -1,10 +1,18 @@
+import type { ProjectStatus } from '../manifest/schema';
+
 import { slugifyDocFile } from './links';
 
 export interface DocFrontmatter {
   title: string;
   description: string;
   owners: string[];
-  status: 'stable' | 'preview' | 'archived';
+  status: ProjectStatus;
+  /**
+   * True when the catalogue flags the owning project as experimental
+   * (ADR 0004). The manifest keeps `status` and the flag on separate axes, so
+   * the front matter carries both and the site collapses them for display.
+   */
+  experimental?: boolean;
   lastReviewed: string;
   sourceProject: string;
   sourceRepo: string;
@@ -117,6 +125,9 @@ export function renderFrontmatter(frontmatter: DocFrontmatter): string {
   }
   lines.push(`owners: [${frontmatter.owners.join(', ')}]`);
   lines.push(`status: ${frontmatter.status}`);
+  if (frontmatter.experimental) {
+    lines.push('experimental: true');
+  }
   lines.push(`lastReviewed: ${JSON.stringify(frontmatter.lastReviewed)}`);
   lines.push(`sourceProject: ${quote(frontmatter.sourceProject)}`);
   lines.push(`sourceRepo: ${quote(frontmatter.sourceRepo)}`);

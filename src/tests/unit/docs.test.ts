@@ -141,6 +141,28 @@ describe('front matter', () => {
     expect(rendered.startsWith('---')).toBe(true);
   });
 
+  test('marks experimental documentation with the injected flag only', () => {
+    const frontmatter: DocFrontmatter = {
+      title: 'Getting Started',
+      description: 'Intro',
+      owners: ['purview-dev'],
+      status: 'preview',
+      experimental: true,
+      lastReviewed: '2026-09-15',
+      sourceProject: 'containers',
+      sourceRepo: 'purview-dev/containers',
+      sourcePath: 'docs/wiki/Getting-Started.md',
+      editUrl: 'https://github.com/purview-dev/containers/edit/main/docs/wiki/Getting-Started.md',
+    };
+    const rendered = renderFrontmatter(frontmatter);
+    expect(rendered).toContain('status: preview');
+    expect(rendered).toContain('experimental: true');
+
+    // Ordinary projects keep the three-value status vocabulary untouched.
+    const plain = renderFrontmatter({ ...frontmatter, experimental: undefined });
+    expect(plain).not.toContain('experimental:');
+  });
+
   test('renders repository tags when present', () => {
     const frontmatter: DocFrontmatter = {
       title: 'Getting Started',

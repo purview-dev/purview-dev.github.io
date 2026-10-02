@@ -1,0 +1,70 @@
+$schema: ../../lib/manifest/schema.ts
+
+id: build
+name: Build
+shortDescription: The shared build, test, and release system for purview-dev.
+description: >-
+  The shared build/test/release system for the purview-dev organisation. A
+  Modular Pipelines based .NET tool packaged as a pinned dotnet tool, exposed
+  through a GitHub composite action and thin reusable workflows. Consuming
+  repositories own configuration; they do not own pipeline source code.
+origin: >-
+  Maintaining near-identical build, test, pack, and release logic across repositories turned
+  the pipeline itself into reusable tooling.
+useWhen: >-
+  You maintain a Purview repository and want the shared, centrally versioned build and release
+  conventions used across the organisation.
+avoidWhen: >-
+  Your repository is outside that convention set or needs a substantially different pipeline
+  whose lifecycle should remain independent.
+repository: purview-dev/build
+category: build-tooling
+status: stable
+order: 60
+docs:
+  source: github-path
+  path: docs/wiki
+  rootPage: Getting-Started.md
+  exclude:
+    - _Sidebar.md
+    - Home.md
+    - index.md
+targetFrameworks:
+  - net10.0
+install: dotnet-tool
+packages:
+  - id: Purview.Build
+    description: Pinned dotnet tool implementing the shared pipeline.
+    primary: true
+useCases:
+  - audience: team-lead
+    title: One reusable pipeline for every repository
+    scenario: >-
+      You maintain several repositories that each repeat the same build, test, pack, and release
+      logic, and the copies drift apart.
+    code: |
+      # .github/workflows/pr.yml
+      jobs:
+        build:
+          uses: purview-dev/build/.github/workflows/purview-build.yml@main
+          secrets: inherit
+    language: yaml
+    outcome: >-
+      Consumers reference the reusable workflow or composite action and configure behaviour with
+      purview-build.json instead of owning pipeline source.
+    evidence: >-
+      Pipeline code lives in one repository; a consuming repository is a short workflow file plus
+      configuration.
+    docsPage: repository-ci-cd
+  - audience: contributor
+    title: Dogfood the same pipeline the organisation uses
+    scenario: >-
+      You want local commands, pull-request CI, and releases to run the exact same tool and
+      conventions, rather than three approximations.
+    outcome: >-
+      The pipeline is a Modular Pipelines .NET tool packaged as a pinned dotnet tool, callable from
+      a composite action, reusable workflows, or the local command line.
+    evidence: >-
+      Purview's own repositories use the published pipeline, so the tool is exercised on every
+      build.
+    docsPage: pipeline-modules

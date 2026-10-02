@@ -16,7 +16,8 @@ import { OWNER } from '../src/lib/site';
 /**
  * Deterministic catalogue guard (ADR 0003).
  *
- * Proves the invariants of `src/src/data/projects.yml` against the generated
+ * Proves the invariants of the catalogue (`src/src/data/projects/*.yml` plus
+ * `src/src/data/external-projects.yml`) against the generated
  * docs mirror/cache and the release cache/fixtures. Offline only: it never
  * performs network I/O, so it can run inside `just validate` and CI.
  *
@@ -149,6 +150,28 @@ function checkDocs(
   return pages;
 }
 
+/**
+ * The `experimental` flag is an intent marker, so it stays orthogonal to the
+ * release channel (ADR 0004). The one combination that is legal but worth a
+ * second look is a stable release: the flag says "exploratory" while the
+ * channel says "recommended for use". The contradictory pairing
+ * (`experimental` with `status: archived`) is rejected by the manifest schema
+ * before this runs, so it needs no rule here.
+ */
+function checkExperimental(project: ResolvedProject): void {
+  if (!project.experimental || project.status !== 'stable') {
+    return;
+  }
+  warn({
+    project: project.id,
+    field: 'experimental',
+    observed: 'true with status: stable',
+    expected: 'an experimental project normally publishes prereleases only',
+    remediation:
+      'confirm the intent; if the project is still an experiment, `status: preview` is the honest release channel.',
+  });
+}
+
 /** Package declarations must resolve to published NuGet versions. */
 function checkPackages(project: ResolvedProject, data: ReleaseCacheData): void {
   if (project.packages.length > 1) {
@@ -183,7 +206,7 @@ function checkPackages(project: ResolvedProject, data: ReleaseCacheData): void {
         observed: describeVersions(0),
         expected: 'at least one published version on NuGet',
         remediation:
-          'publish the package before declaring it, or correct the package id in projects.yml.',
+          'publish the package before declaring it, or correct the package id in the project file.',
       });
     }
   }
@@ -225,7 +248,7 @@ function checkRepoMetadata(project: ResolvedProject, data: ReleaseCacheData): vo
       observed: project.status,
       expected: 'archived',
       remediation:
-        'the GitHub repository is archived; set `status: archived` (and `supersededBy`).',
+        'the GitHub repository is archived; set `status: archived`, remove `experimental: true` if present, and add `supersededBy` when a successor exists.',
     });
   }
   if (!repo.archived && project.status === 'archived') {
@@ -233,7 +256,7 @@ function checkRepoMetadata(project: ResolvedProject, data: ReleaseCacheData): vo
       project: project.id,
       field: 'status',
       observed: 'archived',
-      expected: 'stable or preview',
+      expected: 'stable, preview or experimental',
       remediation: 'the GitHub repository is active; correct `status`.',
     });
   }
@@ -293,7 +316,7 @@ export function checkProjects(): { errors: Finding[]; warnings: Finding[] } {
         project: '(manifest)',
         field: 'schema',
         observed: 'invalid manifest',
-        expected: 'a schema-valid projects.yml',
+        expected: 'a schema-valid project record',
         remediation: error.message,
       });
       return { errors, warnings };
@@ -346,6 +369,7 @@ export function checkProjects(): { errors: Finding[]; warnings: Finding[] } {
   for (const project of projects) {
     const docsPages = checkDocs(project, docsManifest);
     checkUseCases(project, docsPages);
+    checkExperimental(project);
     if (data) {
       checkPackages(project, data);
       checkRepoMetadata(project, data);

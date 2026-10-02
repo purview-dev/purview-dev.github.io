@@ -67,7 +67,7 @@ Discussions on an organisation repository requires organisation permission; repo
   four chips are meaningful (cards render `tags.slice(0, 4)`).
 - Prefer ecosystem-standard names (`dotnet`, `csharp`, `nuget`, `opentelemetry`) so cross-repo
   searches behave predictably.
-- Topics are the **only** way tags reach the site. There is no `tags` field in `projects.yml` — do
+- Topics are the **only** way tags reach the site. There is no `tags` field in a catalogue record — do
   not add one.
 
 ## Stability signals to check against `status`
@@ -77,6 +77,7 @@ Discussions on an organisation repository requires organisation permission; repo
 | `archived: true` | `status` must be `archived` (and `supersededBy` when a successor exists) |
 | No stable release, only `-prerelease.N` tags | `preview` at most |
 | Latest NuGet version is stable and listed | `stable` is allowed |
+| The README/repository presents the project as an experiment | Set `experimental: true` (it does not replace `status`, which stays the release channel) |
 | NuGet `deprecated: true` | Report as `drift`/`upstream`; a deprecated package should not front a `stable` project without explanation |
 | `default_branch` is not `main` | Docs aggregation produces nothing — a blocker for any project with `docs` |
 

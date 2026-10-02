@@ -1,0 +1,88 @@
+$schema: ../../lib/manifest/schema.ts
+
+id: value-objects
+name: Value Objects
+shortDescription: Source-generated scalar and complex value objects for .NET.
+description: >-
+  F#-style single-case types for C#. Mark a partial struct or class with
+  [Scalar] or [ValueObject] and an incremental source generator produces
+  Create/Hydrate factories with normalization and validation, equality,
+  comparison, implicit conversions, JSON converters, and contextual
+  creation. Value objects serialize as their underlying value, map cleanly
+  onto Entity Framework JSON columns, and can be validated with
+  Purview.ZodSharp schemas.
+origin: >-
+  Hand-writing the same factories, equality rules, conversions, serializers, and persistence
+  integration for domain values made the pattern an obvious source-generation target.
+useWhen: >-
+  Your domain uses meaningful scalar or complex value types and you want their repetitive
+  implementation generated from a small, explicit declaration.
+avoidWhen: >-
+  A primitive or record already expresses the concept clearly, or generated conversion and
+  serialization behaviour would be more machinery than the domain needs.
+repository: purview-dev/value-objects
+category: source-generation
+status: preview
+featured: true
+order: 35
+docs:
+  source: github-path
+  path: docs
+  rootPage: Getting-Started.md
+  exclude:
+    - _Sidebar.md
+    - Home.md
+    - index.md
+targetFrameworks:
+  - net8.0
+  - net9.0
+  - net10.0
+packages:
+  - id: Purview.ValueObjects
+    description: Runtime contracts, source generator, and analyzer for scalar and complex value objects.
+    primary: true
+useCases:
+  - audience: developer
+    title: A domain scalar without the boilerplate
+    scenario: >-
+      You want a strong EmailAddress type with normalisation and validation, without hand-writing
+      factories, equality, conversions, and a JSON converter.
+    code: |
+      [Scalar]
+      public readonly partial record struct EmailAddress
+      {
+          public string Value { get; }
+
+          static partial void OnNormalize(ref string value)
+              => value = value?.Trim().ToLowerInvariant()!;
+      }
+    language: csharp
+    outcome: >-
+      The generator adds Create, Hydrate, TryCreate, and Empty, plus equality, comparison, implicit
+      conversions, and a JSON converter.
+    evidence: >-
+      One declaration replaces the factory, equality, comparison, conversion, and serialization code
+      you would otherwise maintain by hand.
+    docsPage: value-object-design
+  - audience: developer
+    title: Map a value object onto an Entity Framework column
+    scenario: >-
+      You use a value object in your domain and want it to persist transparently instead of writing
+      converters at every mapping site.
+    code: |
+      var email = EmailAddress.Create("  Demo@Example.COM  ");
+      // email.Value == "demo@example.com"
+
+      bool ok = EmailAddress.TryCreate("not-an-email", out _);
+      // ok == false
+    language: csharp
+    outcome: >-
+      Value objects serialize as their underlying value and map onto Entity Framework JSON columns,
+      with optional Purview.ZodSharp validation.
+    evidence: >-
+      Persistence and serialization come from the generated type, so mapping code is not duplicated
+      per entity.
+    docsPage: entity-framework
+related:
+  - zodsharp
+  - event-sourcing

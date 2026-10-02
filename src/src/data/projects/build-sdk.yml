@@ -1,0 +1,70 @@
+$schema: ../../lib/manifest/schema.ts
+
+id: build-sdk
+name: Build SDK
+shortDescription: Convention-driven MSBuild SDK for .NET project defaults.
+description: >-
+  A reusable MSBuild SDK NuGet package that delivers standardised .NET
+  project defaults, code-style enforcement, test-framework wiring, and
+  Central Package Management integration. Install it once per repo; every
+  project beneath the repo root inherits everything automatically.
+origin: >-
+  Repeating project properties, analyzers, test wiring, and package-management conventions in
+  every repository made a centrally maintained MSBuild SDK the simpler option.
+useWhen: >-
+  You want Purview's standard .NET project defaults applied consistently across an entire
+  repository from one versioned SDK declaration.
+avoidWhen: >-
+  Your repository follows different conventions or needs project-by-project control over the
+  settings the SDK intentionally standardises.
+repository: purview-dev/build-sdk
+category: build-tooling
+status: stable
+order: 70
+docs:
+  source: github-path
+  path: docs/wiki
+  rootPage: Getting-Started.md
+  exclude:
+    - _Sidebar.md
+    - Home.md
+    - index.md
+targetFrameworks:
+  - msbuild
+install: msbuild-sdk
+packages:
+  - id: Purview.BuildSdk
+    description: MSBuild SDK for standardised project defaults.
+    primary: true
+useCases:
+  - audience: team-lead
+    title: Apply repository-wide defaults from one declaration
+    scenario: >-
+      You want standard .NET project defaults, code-style enforcement, test wiring, and central
+      package management without repeating the same properties in every project.
+    code: |
+      {
+        "msbuild-sdks": {
+          "Purview.BuildSdk": "1.0.0"
+        }
+      }
+    language: json
+    outcome: >-
+      Install the SDK once via global.json and Directory.Build.props; every project beneath the
+      repository root inherits everything automatically.
+    evidence: >-
+      One versioned SDK declaration replaces per-project property groups, so conventions are
+      upgraded in one place.
+    docsPage: configuration-reference
+  - audience: contributor
+    title: Bootstrap a new repository
+    scenario: >-
+      You are starting a repository and want the organisation's conventions in place before the
+      first project exists.
+    outcome: >-
+      The SDK can bootstrap a global.json at the repository root when one is missing, then applies
+      project-type detection, analyzers, and test wiring.
+    evidence: >-
+      Repository bootstrap, analyzers, and testing wiring are documented and generated, not copied
+      between repos by hand.
+    docsPage: repository-bootstrap

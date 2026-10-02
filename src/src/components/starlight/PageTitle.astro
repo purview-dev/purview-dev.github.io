@@ -2,6 +2,8 @@
 import StatusBadge from '~/components/StatusBadge.astro';
 import { isStale, STALE_AFTER_DAYS } from '~/lib/docs/staleness';
 import { LLMS_LINK_ATTRS } from '~/lib/llms';
+import { displayStatus } from '~/lib/status';
+
 import { withBase } from '~/lib/urls';
 
 const { entry } = Astro.locals.starlightRoute;
@@ -9,6 +11,9 @@ const data = entry?.data;
 const lastReviewed = typeof data?.lastReviewed === 'string' ? data.lastReviewed : undefined;
 const stale = lastReviewed ? isStale(lastReviewed) : false;
 const tags = Array.isArray(data?.tags) ? data.tags : [];
+const experimental = data?.experimental === true;
+const status = data?.status ? displayStatus({ status: data.status, experimental }) : undefined;
+
 // Project overview pages surface the per-project `llms.txt` bundle emitted by
 // the `customSets` option in `astro.config.ts`. Starlight resolves an index
 // page to its directory id (`docs/<project>`), while the content collection —
@@ -28,9 +33,9 @@ const llmsHref =
   data && (
     <div class="doc-meta">
       {
-        data.status && (
+        status && (
           <span class="doc-meta-item">
-            <StatusBadge status={data.status} />
+            <StatusBadge status={status} />
           </span>
         )
       }
@@ -96,6 +101,15 @@ const llmsHref =
   )
 }
 
+{
+  experimental && (
+    <p class="doc-experimental">
+      <strong>Experimental.</strong> This project is an experiment: the public API, defaults and
+      packaging can change between prereleases, and there is no production support guarantee.
+    </p>
+  )
+}
+
 <style>
   .doc-meta {
     display: flex;
@@ -111,6 +125,19 @@ const llmsHref =
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
+  }
+
+  /* Standalone warning for an experimental project's documentation (ADR 0004).
+   * The badge alone is too easy to miss on a page someone scrolled straight
+   * into, so the flag is also stated in prose on every aggregated page. */
+  .doc-experimental {
+    margin-top: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid color-mix(in oklab, var(--color-error) 40%, transparent);
+    background-color: color-mix(in oklab, var(--color-error) 10%, transparent);
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
   }
 
   .stale-badge {

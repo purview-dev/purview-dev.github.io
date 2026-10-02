@@ -1,14 +1,22 @@
 import type { ExternalProjectRecord, ProjectManifest, ProjectRecord } from './schema';
 
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { parse } from 'yaml';
 import { z } from 'zod';
 
 import { OWNER } from '../site';
 import { PROJECT_DEFAULTS, manifestSchema } from './schema';
 
-export const DEFAULT_MANIFEST_PATH = resolve('src/data/projects.yml');
+/**
+ * The catalogue is one file per project (ADR 0005): `src/data/projects/<id>.yml`,
+ * plus `src/data/external-projects.yml` for the collaborations the organisation
+ * does not own. One file per project keeps a project's history and review
+ * self-contained, and stops concurrent catalogue pull requests from conflicting
+ * on one growing list.
+ */
+export const DEFAULT_PROJECTS_DIR = resolve('src/data/projects');
+export const DEFAULT_EXTERNAL_PROJECTS_PATH = resolve('src/data/external-projects.yml');
 
 export interface ResolvedProject extends ProjectRecord {
   repoOwner: string;
@@ -19,6 +27,7 @@ export interface ResolvedProject extends ProjectRecord {
   changelogUrl: string;
   releasesUrl: string;
   featured: boolean;
+  experimental: boolean;
   order: number;
   packages: NonNullable<ProjectRecord['packages']>;
   related: NonNullable<ProjectRecord['related']>;
@@ -53,6 +62,7 @@ function withDefaults(record: ProjectRecord): ResolvedProject {
   return {
     ...record,
     featured: record.featured ?? PROJECT_DEFAULTS.featured,
+    experimental: record.experimental ?? PROJECT_DEFAULTS.experimental,
     order: record.order ?? PROJECT_DEFAULTS.order,
     packages: record.packages ?? PROJECT_DEFAULTS.packages,
     related: record.related ?? PROJECT_DEFAULTS.related,
@@ -71,6 +81,24 @@ function withDefaults(record: ProjectRecord): ResolvedProject {
 }
 
 /**
+ * Label an issue with the project id rather than its array index, so a schema
+ * failure names the project whose file is wrong (`projects[containers].name`)
+ * instead of a position the author has to map back to a file.
+ */
+function issuePath(raw: unknown, path: readonly PropertyKey[]): string {
+  const [head, index, ...rest] = path;
+  if (head !== 'projects' || typeof index !== 'number') {
+    return path.join('.');
+  }
+  const entries = (raw as { projects?: unknown[] } | null)?.projects;
+  const entry = Array.isArray(entries) ? entries[index] : undefined;
+  const id =
+    typeof entry === 'object' && entry !== null ? (entry as { id?: unknown }).id : undefined;
+  const label = `projects[${typeof id === 'string' ? id : index}]`;
+  return rest.length > 0 ? `${label}.${rest.join('.')}` : label;
+}
+
+/**
  * Validate a raw manifest object against the typed schema.
  * Throws a ManifestValidationError describing the source file, the invalid
  * property, the expected shape, and how to remediate the record.
@@ -82,10 +110,7 @@ export function parseManifest(raw: unknown, source: string): ResolvedProject[] {
   } catch (error) {
     if (error instanceof z.ZodError) {
       const issues = error.issues
-        .map((issue) => {
-          const path = issue.path.join('.');
-          return `  ${path}: ${issue.message}`;
-        })
+        .map((issue) => `  ${issuePath(raw, issue.path)}: ${issue.message}`)
         .join('\n');
       throw new ManifestValidationError(
         [
@@ -150,10 +175,64 @@ export function parseManifest(raw: unknown, source: string): ResolvedProject[] {
   return projects.toSorted((a, b) => a.order - b.order);
 }
 
-/** Load, parse and validate the project manifest from disk. */
-export function loadProjects(path = DEFAULT_MANIFEST_PATH): ResolvedProject[] {
-  const sourceText = readFileSync(path, 'utf8');
-  return parseManifest(parse(sourceText), path);
+/**
+ * Files may open with a `$schema` hint for editors. It is a file-level concern
+ * rather than part of the record, so it is dropped before validation and
+ * resolution: `ResolvedProject` stays the domain type it always was.
+ */
+function stripSchemaHint(value: unknown): unknown {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return value;
+  }
+  const record: Record<string, unknown> = {};
+  for (const [key, entry] of Object.entries(value)) {
+    if (key !== '$schema') {
+      record[key] = entry;
+    }
+  }
+  return record;
+}
+
+/**
+ * Read the catalogue from disk into the raw shape `manifestSchema` validates:
+ * one record per `*.yml` file in the projects directory, sorted by file name so
+ * the result is deterministic whatever order the filesystem reports, plus the
+ * collaborations file. Validation (including every cross-record invariant)
+ * stays in `parseManifest`.
+ */
+export function readRawManifest(
+  projectsDir = DEFAULT_PROJECTS_DIR,
+  externalProjectsPath = DEFAULT_EXTERNAL_PROJECTS_PATH,
+): { projects: unknown[]; externalProjects: unknown[] } {
+  const files = readdirSync(projectsDir)
+    .filter((file) => file.endsWith('.yml') || file.endsWith('.yaml'))
+    .toSorted();
+
+  const projects = files.map((file) => {
+    const text = readFileSync(join(projectsDir, file), 'utf8');
+    try {
+      return stripSchemaHint(parse(text));
+    } catch (error) {
+      throw new ManifestValidationError(
+        `Invalid YAML in ${file}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  });
+
+  const externalProjects: unknown[] = [];
+  if (existsSync(externalProjectsPath)) {
+    const parsed = (parse(readFileSync(externalProjectsPath, 'utf8')) ?? {}) as {
+      externalProjects?: unknown[];
+    };
+    externalProjects.push(...(parsed.externalProjects ?? []));
+  }
+
+  return { projects, externalProjects };
+}
+
+/** Load, parse and validate the catalogue (one file per project) from disk. */
+export function loadProjects(): ResolvedProject[] {
+  return parseManifest(readRawManifest(), DEFAULT_PROJECTS_DIR);
 }
 
 function withExternalDefaults(record: ExternalProjectRecord): ResolvedExternalProject {
@@ -172,11 +251,10 @@ function withExternalDefaults(record: ExternalProjectRecord): ResolvedExternalPr
  * projects the organisation collaborates on but does not own; they link to
  * their own site/repository rather than the Purview-Dev catalogue.
  */
-export function loadExternalProjects(path = DEFAULT_MANIFEST_PATH): ResolvedExternalProject[] {
-  const sourceText = readFileSync(path, 'utf8');
+export function loadExternalProjects(): ResolvedExternalProject[] {
   let parsed: ProjectManifest;
   try {
-    parsed = manifestSchema.parse(parse(sourceText));
+    parsed = manifestSchema.parse(readRawManifest());
   } catch (error) {
     if (error instanceof z.ZodError) {
       const issues = error.issues
@@ -187,7 +265,7 @@ export function loadExternalProjects(path = DEFAULT_MANIFEST_PATH): ResolvedExte
         .join('\n');
       throw new ManifestValidationError(
         [
-          `Invalid project manifest: ${path}`,
+          `Invalid project manifest: ${DEFAULT_EXTERNAL_PROJECTS_PATH}`,
           issues,
           '',
           'Remediation: fix the reported property on the external project record.',

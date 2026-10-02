@@ -1,6 +1,6 @@
 ---
 name: audit-catalogue-projects
-description: Use when auditing or repairing src/src/data/projects.yml — the invariant checklist for documentation, stability, metadata, tags, packages, relationships, use cases and ordering, plus the findings report format.
+description: Use when auditing or repairing the catalogue records under src/src/data/ — the invariant checklist for documentation, stability, metadata, tags, packages, relationships, use cases and ordering, plus the findings report format.
 category: purview-dev-website
 roles:
     - catalogue
@@ -58,6 +58,9 @@ Related: `project-manifest-reference` (fields and vocabularies), `docs-aggregati
 
 - `archived` repository ⇒ `status: archived`.
 - No stable NuGet release ⇒ not `stable` (`preview`).
+- `experimental: true` is orthogonal to `status`: report `experimental` with `status: stable` as
+  `drift` (the flag says "no support promise" while the channel says "recommended for use"), and
+  `experimental` on an archived project as a `blocker` (the schema rejects it outright).
 - `stable` ⇒ a stable, listed NuGet release exists and the repository is not archived.
 - Deprecated NuGet packages are reported, not silently accepted.
 - A project with `packages: []` is intentional: build tooling consumed as a tool/SDK still declares
@@ -132,5 +135,5 @@ evidence and the guards agree.
   the gap instead.
 - Do not change the schema vocabulary; adding a `status`/`category` value needs an ADR.
 - Do not hand-edit the docs mirror or caches to make the audit pass.
-- If an audit fix changes `projects.yml`, re-run `just check-projects`, `bun run test`, and
+- If an audit fix changes a catalogue record, re-run `just check-projects`, `bun run test`, and
   `just validate` before reporting completion.

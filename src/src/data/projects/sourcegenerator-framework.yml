@@ -1,0 +1,77 @@
+$schema: ../../lib/manifest/schema.ts
+
+id: sourcegenerator-framework
+name: SourceGenerator Framework
+shortDescription: A typed framework for building incremental C# source generators.
+description: >-
+  A strongly typed framework for building, testing, and maintaining
+  incremental C# source generators with Roslyn. Includes structured code
+  generation, attribute data models, type libraries, and a step-cache test
+  runner for verifying incremental behaviour.
+origin: >-
+  Building several incremental generators exposed the same needs for typed models, structured
+  output, testing, and cache verification, so those foundations became a shared framework.
+useWhen: >-
+  You are building a non-trivial incremental C# source generator and want reusable modelling,
+  code-writing, packaging, and testing infrastructure.
+avoidWhen: >-
+  Your generator is small enough for the Roslyn APIs directly, or adopting a framework would
+  hide behaviour your implementation needs to control precisely.
+repository: purview-dev/sourcegenerator-framework
+category: source-generation
+status: preview
+featured: true
+order: 40
+docs:
+  source: github-path
+  path: docs/wiki
+  rootPage: Getting-Started.md
+  exclude:
+    - _Sidebar.md
+    - Home.md
+    - index.md
+targetFrameworks:
+  - net8.0
+  - net9.0
+  - net10.0
+packages:
+  - id: Purview.SourceGeneratorFramework
+    description: Core helpers, models, and MSBuild integration for incremental generators.
+    primary: true
+  - id: Purview.SourceGeneratorFramework.Testing
+    description: Framework-agnostic test runner and assertions for generator tests.
+  - id: Purview.SourceGeneratorFramework.Testing.TUnit
+    description: TUnit-specific test base classes and assertions.
+useCases:
+  - audience: contributor
+    title: Build an incremental generator on typed foundations
+    scenario: >-
+      You are writing a non-trivial incremental C# source generator and need typed attribute
+      models, structured code output, and packaging that Roslyn will actually load.
+    code: |
+      <ProjectReference
+        Include="..\MyGenerator\MyGenerator.csproj"
+        PrivateAssets="all"
+        OutputItemType="Analyzer"
+        ReferenceOutputAssembly="false"
+      />
+    language: xml
+    outcome: >-
+      The framework supplies attribute-data models, a structured code writer, a type library, and
+      packaging helpers so the generator stays focused on its own logic.
+    evidence: >-
+      The Purview generators themselves are built on the framework, so it is exercised by real
+      generators rather than being an untested abstraction.
+    docsPage: guide
+  - audience: contributor
+    title: Verify incremental behaviour in tests
+    scenario: >-
+      You need to prove a generator is incremental and produces the code you expect, without
+      assembling a Roslyn driver by hand in every test.
+    outcome: >-
+      The testing package provides SourceGeneratorTestRunner<TGenerator>, a framework-agnostic test
+      base, and assertions such as AssertSingleGeneratedSource and AssertNoCompilationErrors.
+    evidence: >-
+      Step-cache tests and a TUnit integration ship alongside the runner, so incremental regressions
+      surface in CI.
+    docsPage: testing

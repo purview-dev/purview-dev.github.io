@@ -13,6 +13,7 @@ import { readDocsManifest } from './src/lib/docs/aggregate';
 import { buildProjectItems } from './src/lib/docs/sidebar';
 import { loadProjects } from './src/lib/manifest/load';
 import { SITE, BRAND } from './src/lib/site';
+import { displayStatus, type DisplayStatus } from './src/lib/status';
 import { absoluteUrl } from './src/lib/urls';
 
 const projects = loadProjects();
@@ -32,13 +33,22 @@ const docsSets = docsProjects.map((project) => ({
   description: project.shortDescription,
   paths: [`docs/${project.id}/**`],
 }));
-const previewBadge = { text: 'Preview', variant: 'caution' } as const;
+/**
+ * Sidebar badges for the two "not for production" states. The value comes from
+ * the shared display status (ADR 0004), so the docs sidebar, the project page
+ * and the catalogue filter cannot disagree about how a project is flagged.
+ */
+const topicBadges: Partial<Record<DisplayStatus, { text: string; variant: 'caution' | 'danger' }>> =
+  {
+    preview: { text: 'Preview', variant: 'caution' },
+    experimental: { text: 'Experimental', variant: 'danger' },
+  };
 const sidebarTopics = [
   { label: 'Documentation home', link: '/docs/' },
   ...docsProjects.map((project) => ({
     label: project.name,
     link: `/docs/${project.id}/`,
-    badge: project.status === 'preview' ? previewBadge : undefined,
+    badge: topicBadges[displayStatus(project)],
     items: buildProjectItems(project, docsManifest),
   })),
 ];

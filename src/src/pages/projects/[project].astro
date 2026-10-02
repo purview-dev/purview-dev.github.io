@@ -12,6 +12,8 @@ import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { projectReleaseSummary } from '~/lib/releases/transform';
 import { getReleaseIndex } from '~/lib/releases/runtime';
 import { SITE } from '~/lib/site';
+import { displayStatus } from '~/lib/status';
+
 import { nugetPackageUrl, withBase } from '~/lib/urls';
 
 export function getStaticPaths() {
@@ -26,6 +28,8 @@ interface Props {
 }
 
 const { project } = Astro.props;
+const status = displayStatus(project);
+
 const releaseIndex = getReleaseIndex();
 const releases = projectReleaseSummary(project, releaseIndex.data, releaseIndex.source);
 const { tags, repoDescription } = projectRepoEnrichment(project, releaseIndex.data);
@@ -51,7 +55,7 @@ const docsPath = project.docs ? withBase(`/docs/${project.id}/`) : null;
 const llmsPath = project.docs ? withBase(`/_llms-txt/${project.id}.txt`) : null;
 const targetFrameworks = project.targetFrameworks ?? [];
 const installSections =
-  project.status !== 'archived' ?
+  status !== 'archived' ?
     project.packages.map((pkg) => {
       const release = releases.packages.find((candidate) => candidate.packageId === pkg.id);
       return {
@@ -92,7 +96,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
     <div class="max-w-3xl">
       <div class="flex flex-wrap items-center gap-3">
         <h1 class="text-3xl font-bold tracking-tight md:text-4xl">{project.name}</h1>
-        <StatusBadge status={project.status} />
+        <StatusBadge status={status} />
       </div>
       <p class="mt-4 text-lg text-muted">{project.shortDescription}</p>
 
@@ -109,7 +113,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
       }
 
       {
-        project.status === 'archived' && (
+        status === 'archived' && (
           <div class="mt-6 rounded-lg border border-error/40 bg-error/10 p-4 text-sm">
             <strong>Archived.</strong> This project is no longer actively developed.
             {supersededBy && (
@@ -122,6 +126,16 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
                 .
               </>
             )}
+          </div>
+        )
+      }
+
+      {
+        status === 'experimental' && (
+          <div class="mt-6 rounded-lg border border-error/40 bg-error/10 p-4 text-sm">
+            <strong>Experimental.</strong> This project is an experiment: the public API, defaults and
+            packaging can change between prereleases, and there is no production support guarantee.
+            Read the documentation before adopting it.
           </div>
         )
       }
@@ -370,7 +384,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
           <dl class="mt-4 space-y-3 text-sm">
             <div class="flex justify-between gap-3">
               <dt class="text-muted">Status</dt>
-              <dd><StatusBadge status={project.status} /></dd>
+              <dd><StatusBadge status={status} /></dd>
             </div>
             <div class="flex justify-between gap-3">
               <dt class="text-muted">Category</dt>

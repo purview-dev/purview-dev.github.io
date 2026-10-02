@@ -1,8 +1,30 @@
 import { describe, expect, test } from 'bun:test';
 
 import { loadExternalProjects, loadProjects, parseManifest } from '../../src/lib/manifest/load';
-import { ManifestValidationError } from '../../src/lib/manifest/load';
+import { ManifestValidationError, readRawManifest } from '../../src/lib/manifest/load';
 import { AUDIENCES } from '../../src/lib/manifest/schema';
+
+describe('catalogue records', () => {
+  test('reads one file per project, sorted and free of the editor hint', () => {
+    const raw = readRawManifest();
+    expect(raw.projects.length).toBe(loadProjects().length);
+    expect(raw.projects.length).toBeGreaterThanOrEqual(8);
+    expect(raw.externalProjects.length).toBeGreaterThan(0);
+
+    for (const record of raw.projects) {
+      // Each file holds the record itself, so the id is always present...
+      expect(typeof (record as { id?: unknown }).id).toBe('string');
+      // ...and the `$schema` hint is a file-level concern, not part of the record.
+      expect(Object.hasOwn(record as object, '$schema')).toBe(false);
+    }
+  });
+
+  test('names the project, rather than its position, in a schema failure', () => {
+    expect(() =>
+      parseManifest({ projects: [{ ...makeProject('broken'), name: '' }] }, 'fixture.yml'),
+    ).toThrow(/projects\[broken\]\.name/);
+  });
+});
 
 describe('project manifest', () => {
   test('loads and validates the real manifest', () => {
@@ -133,6 +155,28 @@ describe('project manifest', () => {
         'fixture.yml',
       ),
     ).toThrow(/does-not-exist/);
+  });
+
+  test('defaults the experimental flag to false', () => {
+    const projects = parseManifest({ projects: [makeProject('a')] }, 'fixture.yml');
+    expect(projects[0]?.experimental).toBe(false);
+  });
+
+  test('accepts a project flagged experimental', () => {
+    const projects = parseManifest(
+      { projects: [{ ...makeProject('a'), experimental: true }] },
+      'fixture.yml',
+    );
+    expect(projects[0]?.experimental).toBe(true);
+  });
+
+  test('rejects an experimental project whose status is archived', () => {
+    expect(() =>
+      parseManifest(
+        { projects: [{ ...makeProject('a'), status: 'archived', experimental: true }] },
+        'fixture.yml',
+      ),
+    ).toThrow(/not an experiment/);
   });
 
   test('rejects duplicate package ids across projects', () => {

@@ -12,6 +12,7 @@ export const collections = {
       extend: z.object({
         owners: z.array(z.string()).default([OWNER]),
         status: z.enum(['stable', 'preview', 'archived']),
+        experimental: z.boolean().default(false),
         lastReviewed: z.string(),
         sourceProject: z.string(),
         sourceRepo: z.string(),

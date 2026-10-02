@@ -35,7 +35,7 @@ tags:
 
 ## The catalogue guard (`just check-projects`)
 
-`src/scripts/check-projects.ts` validates `projects.yml` against the generated data (offline,
+`src/scripts/check-projects.ts` validates the catalogue records (`src/src/data/`) against the generated data (offline,
 deterministic). It fails the build on:
 
 - ids/orders duplicated, `order` not a unique integer, `name` not slugifying to `id` for documented

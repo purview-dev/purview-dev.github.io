@@ -294,6 +294,12 @@
     background-color: color-mix(in oklab, var(--color-warning) 8%, var(--color-surface));
   }
 
+  .pv-status-experimental {
+    color: var(--color-error);
+    border-color: color-mix(in oklab, var(--color-error) 40%, var(--color-border));
+    background-color: color-mix(in oklab, var(--color-error) 8%, var(--color-surface));
+  }
+
   .pv-status-archived {
     color: var(--color-muted);
     border-color: var(--color-border);

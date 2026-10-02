@@ -12,6 +12,9 @@ export const CATEGORIES = [
 
 export const STATUSES = ['stable', 'preview', 'archived'] as const;
 
+/** The lifecycle/release channel a project publishes on. */
+export type ProjectStatus = (typeof STATUSES)[number];
+
 /** How the primary NuGet package is consumed, which drives the Install options. */
 export const INSTALL_KINDS = ['nuget', 'msbuild-sdk', 'dotnet-tool'] as const;
 
@@ -99,32 +102,46 @@ const acknowledgmentSchema = z.object({
   description: z.string().optional(),
 });
 
-const projectSchema = z.object({
-  id: z.string().regex(/^[a-z0-9-]+$/, 'must be a lowercase slug using [a-z0-9-] only'),
-  name: z.string().min(1, 'must be a non-empty display name'),
-  shortDescription: z.string().min(1, 'must be a non-empty short description'),
-  description: z.string().min(1, 'must be a non-empty long description'),
-  origin: z.string().min(1, 'must explain why the project became reusable tooling'),
-  useWhen: z.string().min(1, 'must explain when the project is a good fit'),
-  avoidWhen: z.string().min(1, 'must explain when the project is not a good fit'),
-  repository: z
-    .string()
-    .regex(/^[a-zA-Z0-9-]+\/[a-zA-Z0-9._-]+$/, 'must be in "owner/repository" form'),
-  category: z.enum(CATEGORIES),
-  status: z.enum(STATUSES),
-  featured: z.boolean().optional(),
-  order: z.number().int().nonnegative().optional(),
-  docs: docsSchema.optional(),
-  install: z.enum(INSTALL_KINDS).optional(),
-  targetFrameworks: z.array(z.string()).optional(),
-  packages: z.array(packageSchema).optional(),
-  related: z.array(z.string()).optional(),
-  useCases: z.array(useCaseSchema).optional(),
-  acknowledgments: z.array(acknowledgmentSchema).optional(),
-  supersedes: z.string().optional(),
-  supersededBy: z.string().optional(),
-  discussions: z.boolean().optional(),
-});
+const projectSchema = z
+  .object({
+    /** Editor hint; stripped by the loader and never part of a resolved record. */
+    $schema: z.string().optional(),
+    id: z.string().regex(/^[a-z0-9-]+$/, 'must be a lowercase slug using [a-z0-9-] only'),
+    name: z.string().min(1, 'must be a non-empty display name'),
+    shortDescription: z.string().min(1, 'must be a non-empty short description'),
+    description: z.string().min(1, 'must be a non-empty long description'),
+    origin: z.string().min(1, 'must explain why the project became reusable tooling'),
+    useWhen: z.string().min(1, 'must explain when the project is a good fit'),
+    avoidWhen: z.string().min(1, 'must explain when the project is not a good fit'),
+    repository: z
+      .string()
+      .regex(/^[a-zA-Z0-9-]+\/[a-zA-Z0-9._-]+$/, 'must be in "owner/repository" form'),
+    category: z.enum(CATEGORIES),
+    status: z.enum(STATUSES),
+    /**
+     * Marks an exploratory project: the API, defaults and packaging may change
+     * between prereleases and there is no production support guarantee. This is
+     * deliberately orthogonal to `status`, which stays the project's release
+     * channel (ADR 0004). Only valid on `projects[]`.
+     */
+    experimental: z.boolean().optional(),
+    featured: z.boolean().optional(),
+    order: z.number().int().nonnegative().optional(),
+    docs: docsSchema.optional(),
+    install: z.enum(INSTALL_KINDS).optional(),
+    targetFrameworks: z.array(z.string()).optional(),
+    packages: z.array(packageSchema).optional(),
+    related: z.array(z.string()).optional(),
+    useCases: z.array(useCaseSchema).optional(),
+    acknowledgments: z.array(acknowledgmentSchema).optional(),
+    supersedes: z.string().optional(),
+    supersededBy: z.string().optional(),
+    discussions: z.boolean().optional(),
+  })
+  .refine((value) => !(value.experimental === true && value.status === 'archived'), {
+    message: 'cannot be true when `status` is archived: an archived project is not an experiment',
+    path: ['experimental'],
+  });
 
 const externalProjectSchema = z.object({
   id: z.string().regex(/^[a-z0-9-]+$/, 'must be a lowercase slug using [a-z0-9-] only'),
@@ -144,7 +161,9 @@ const externalProjectSchema = z.object({
 
 export const manifestSchema = z.object({
   $schema: z.string().optional(),
-  projects: z.array(projectSchema),
+  // Defaulted so the collaborations file, which legitimately declares no
+  // `projects`, is valid on its own (ADR 0005).
+  projects: z.array(projectSchema).default([]),
   externalProjects: z.array(externalProjectSchema).default([]),
 });
 
@@ -157,6 +176,7 @@ export type ProjectAcknowledgment = z.infer<typeof acknowledgmentSchema>;
 export type ProjectUseCase = z.infer<typeof useCaseSchema>;
 
 export const PROJECT_DEFAULTS = {
+  experimental: false,
   featured: false,
   order: 1000,
   packages: [] as ProjectPackage[],
@@ -166,6 +186,7 @@ export const PROJECT_DEFAULTS = {
   discussions: false,
   install: 'nuget',
 } satisfies {
+  experimental: boolean;
   featured: boolean;
   order: number;
   packages: ProjectPackage[];
