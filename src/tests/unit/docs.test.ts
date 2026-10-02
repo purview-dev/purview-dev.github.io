@@ -149,11 +149,10 @@ describe('front matter', () => {
       status: 'preview',
       experimental: true,
       lastReviewed: '2026-09-15',
-      sourceProject: 'wsl-containers',
-      sourceRepo: 'purview-dev/wsl-containers',
+      sourceProject: 'containers',
+      sourceRepo: 'purview-dev/containers',
       sourcePath: 'docs/wiki/Getting-Started.md',
-      editUrl:
-        'https://github.com/purview-dev/wsl-containers/edit/main/docs/wiki/Getting-Started.md',
+      editUrl: 'https://github.com/purview-dev/containers/edit/main/docs/wiki/Getting-Started.md',
     };
     const rendered = renderFrontmatter(frontmatter);
     expect(rendered).toContain('status: preview');

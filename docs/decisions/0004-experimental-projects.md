@@ -15,7 +15,7 @@ There is a second, independent thing a reader needs to know: **intent**. A proje
 exploratory — "the API, defaults and packaging will change between prereleases, and there is no
 production support guarantee" — while being honestly described by `preview`: it is actively
 developed, publishes prereleases, and has documentation. The first project in this situation
-(`wsl-containers`, whose README opens with an explicit *Experimental* caveat) would be *described*
+(`containers`, whose README opens with an explicit *Experimental* caveat) would be *described*
 accurately by `preview` but not *warned about* at all.
 
 Adding a fourth `status` value (`experimental`) was considered and rejected. It would force one

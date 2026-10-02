@@ -82,7 +82,7 @@ function withDefaults(record: ProjectRecord): ResolvedProject {
 
 /**
  * Label an issue with the project id rather than its array index, so a schema
- * failure names the project whose file is wrong (`projects[wsl-containers].name`)
+ * failure names the project whose file is wrong (`projects[containers].name`)
  * instead of a position the author has to map back to a file.
  */
 function issuePath(raw: unknown, path: readonly PropertyKey[]): string {

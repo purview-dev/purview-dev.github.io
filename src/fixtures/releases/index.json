@@ -312,6 +312,39 @@
       "defaultBranch": "main",
       "updatedAt": "2026-09-30T14:05:36Z",
       "hasDiscussions": false
+    },
+    "purview-dev/containers": {
+      "name": "containers",
+      "fullName": "purview-dev/containers",
+      "description": "Testcontainers-style library for .NET (net10.0): run throwaway Linux containers in integration tests on Microsoft WSL Containers (WSLC) with no Docker install, or on Docker. Add one package, write your test code once: zero configuration between Windows dev (WSLC) and Linux CI (Docker). Seven service modules.",
+      "archived": false,
+      "homepage": "https://purview.dev/projects/containers/",
+      "topics": [
+        "azurite",
+        "containers",
+        "csharp",
+        "docker",
+        "dotnet",
+        "integration-testing",
+        "mysql",
+        "nats",
+        "nuget",
+        "postgresql",
+        "rabbitmq",
+        "redis",
+        "sql-server",
+        "testcontainers",
+        "testing",
+        "windows",
+        "wsl",
+        "wsl-containers",
+        "wslc"
+      ],
+      "stargazersCount": 1,
+      "openIssuesCount": 0,
+      "defaultBranch": "main",
+      "updatedAt": "2026-10-02T07:36:57Z",
+      "hasDiscussions": false
     }
   },
   "releases": {
@@ -1442,6 +1475,35 @@
         "publishedAt": "2026-09-30T12:35:07Z",
         "htmlUrl": "https://github.com/purview-dev/results/releases/tag/v1.0.0-prerelease.1"
       }
+    ],
+    "purview-dev/containers": [
+      {
+        "tagName": "v1.0.0-prerelease.3",
+        "name": "v1.0.0-prerelease.3",
+        "body": "## What's Changed\n* chore: add MIT license file by @kieronlanning in https://github.com/purview-dev/containers/pull/4\n* docs: updated docs by @kieronlanning in https://github.com/purview-dev/containers/pull/5\n* docs: updated docs by @kieronlanning in https://github.com/purview-dev/containers/pull/6\n\n\n**Full Changelog**: https://github.com/purview-dev/containers/compare/v1.0.0-prerelease.2...v1.0.0-prerelease.3",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-10-02T07:38:44Z",
+        "htmlUrl": "https://github.com/purview-dev/containers/releases/tag/v1.0.0-prerelease.3"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.2",
+        "name": "v1.0.0-prerelease.2",
+        "body": "## What's Changed\n* Docs update by @kieronlanning in https://github.com/purview-dev/containers/pull/2\n* Portable WSLC backend for net10.0, Testcontainers-parity connection strings, repo renamed to containers by @kieronlanning in https://github.com/purview-dev/containers/pull/3\n\n\n**Full Changelog**: https://github.com/purview-dev/containers/compare/v1.0.0-prerelease.1...v1.0.0-prerelease.2",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-10-01T22:17:22Z",
+        "htmlUrl": "https://github.com/purview-dev/containers/releases/tag/v1.0.0-prerelease.2"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.1",
+        "name": "v1.0.0-prerelease.1",
+        "body": "## What's Changed\n* Develop by @kieronlanning in https://github.com/purview-dev/wsl-testcontainers/pull/1\n\n## New Contributors\n* @kieronlanning made their first contribution in https://github.com/purview-dev/wsl-testcontainers/pull/1\n\n**Full Changelog**: https://github.com/purview-dev/wsl-testcontainers/commits/v1.0.0-prerelease.1",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-30T16:41:23Z",
+        "htmlUrl": "https://github.com/purview-dev/containers/releases/tag/v1.0.0-prerelease.1"
+      }
     ]
   },
   "packages": {
@@ -2030,6 +2092,83 @@
         "1.0.0-prerelease.1",
         "1.0.0-prerelease.2"
       ]
+    },
+    "Purview.Containers": {
+      "id": "Purview.Containers",
+      "versions": [
+        "1.0.0-prerelease.2",
+        "1.0.0-prerelease.3"
+      ]
+    },
+    "Purview.Containers.Core": {
+      "id": "Purview.Containers.Core",
+      "versions": [
+        "1.0.0-prerelease.2",
+        "1.0.0-prerelease.3"
+      ]
+    },
+    "Purview.Containers.Wsl": {
+      "id": "Purview.Containers.Wsl",
+      "versions": [
+        "1.0.0-prerelease.2",
+        "1.0.0-prerelease.3"
+      ]
+    },
+    "Purview.Containers.Docker": {
+      "id": "Purview.Containers.Docker",
+      "versions": [
+        "1.0.0-prerelease.2",
+        "1.0.0-prerelease.3"
+      ]
+    },
+    "Purview.Containers.PostgreSql": {
+      "id": "Purview.Containers.PostgreSql",
+      "versions": [
+        "1.0.0-prerelease.2",
+        "1.0.0-prerelease.3"
+      ]
+    },
+    "Purview.Containers.Redis": {
+      "id": "Purview.Containers.Redis",
+      "versions": [
+        "1.0.0-prerelease.2",
+        "1.0.0-prerelease.3"
+      ]
+    },
+    "Purview.Containers.MsSql": {
+      "id": "Purview.Containers.MsSql",
+      "versions": [
+        "1.0.0-prerelease.2",
+        "1.0.0-prerelease.3"
+      ]
+    },
+    "Purview.Containers.MySql": {
+      "id": "Purview.Containers.MySql",
+      "versions": [
+        "1.0.0-prerelease.2",
+        "1.0.0-prerelease.3"
+      ]
+    },
+    "Purview.Containers.RabbitMq": {
+      "id": "Purview.Containers.RabbitMq",
+      "versions": [
+        "1.0.0-prerelease.2",
+        "1.0.0-prerelease.3"
+      ]
+    },
+    "Purview.Containers.Azurite": {
+      "id": "Purview.Containers.Azurite",
+      "versions": [
+        "1.0.0-prerelease.2",
+        "1.0.0-prerelease.3"
+      ]
+    },
+    "Purview.Containers.Nats": {
+      "id": "Purview.Containers.Nats",
+      "versions": [
+        "1.0.0-prerelease.2",
+        "1.0.0-prerelease.3"
+      ]
     }
   },
   "packageSearch": {
@@ -2121,6 +2260,17 @@
     "Purview.Results.SourceGenerator": null,
     "Purview.Results.AspNetCore": null,
     "Purview.Results.ZodSharp": null,
-    "Purview.Results.ZodSharp.AspNetCore": null
+    "Purview.Results.ZodSharp.AspNetCore": null,
+    "Purview.Containers": null,
+    "Purview.Containers.Core": null,
+    "Purview.Containers.Wsl": null,
+    "Purview.Containers.Docker": null,
+    "Purview.Containers.PostgreSql": null,
+    "Purview.Containers.Redis": null,
+    "Purview.Containers.MsSql": null,
+    "Purview.Containers.MySql": null,
+    "Purview.Containers.RabbitMq": null,
+    "Purview.Containers.Azurite": null,
+    "Purview.Containers.Nats": null
   }
 }

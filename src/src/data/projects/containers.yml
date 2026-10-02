@@ -1,0 +1,177 @@
+$schema: ../../lib/manifest/schema.ts
+
+id: containers
+name: Containers
+shortDescription: Throwaway Linux containers for .NET integration tests — on WSL Containers with no Docker installation, or on Docker.
+description: >-
+  A Testcontainers-style library for .NET with one API and two interchangeable backends: Microsoft
+  WSL Containers (WSLC) with no Docker installation, or Docker through Testcontainers. Containers are
+  created through backend-neutral abstractions (Purview.Containers.Core) and the backend is resolved at
+  run time, so the same test code runs on WSLC (Purview.Containers.Wsl) or Docker
+  (Purview.Containers.Docker) unchanged. The WSLC backend talks to the WSLC managed C# API directly —
+  no wslc.exe, no docker CLI, no Docker.DotNet.
+  Typed service modules add PostgreSQL, Redis, SQL Server, MySQL, RabbitMQ, Azurite, and NATS, each
+  with its own defaults, configuration, readiness wait strategy, and connection-string helper. The
+  umbrella package Purview.Containers brings the abstractions plus both backends in a single reference.
+origin: >-
+  Integration tests that use real infrastructure on Windows needed a Docker daemon installed and
+  running first. WSL Containers makes the container runtime a Windows feature, so the same
+  throwaway-container workflow could be built straight on its managed API — and the same abstractions
+  could fall back to Docker wherever WSLC is not available, which is why the library grew a portable
+  net10.0 facade and a Docker backend rather than staying Windows-only.
+useWhen: >-
+  You want real PostgreSQL, Redis, SQL Server, MySQL, RabbitMQ, Azurite, or NATS instances in
+  integration tests, and you want the same suite to run on WSL Containers on a Windows developer
+  machine and on Docker in CI without changing a line of test code.
+avoidWhen: >-
+  You need a container runtime other than WSL Containers or Docker, or you require API stability: the
+  public API, defaults, and packaging rules can change between prereleases and there is no production
+  support guarantee.
+repository: purview-dev/containers
+category: developer-tooling
+status: preview
+experimental: true
+order: 90
+docs:
+  source: github-path
+  path: docs/wiki
+  exclude:
+    - _Sidebar.md
+    - Home.md
+targetFrameworks:
+  - net10.0
+packages:
+  - id: Purview.Containers
+    description: The umbrella — references the abstractions and both backends, so one reference runs the same tests on WSLC on Windows and Docker elsewhere.
+    primary: true
+  - id: Purview.Containers.Core
+    description: Backend-neutral abstractions — the container contract, builders, wait strategies, images, mounts, networking, diagnostics, and backend selection.
+  - id: Purview.Containers.Wsl
+    description: WSL Containers backend — sessions, images, ports, mounts, exec, logs, and diagnostics for WSLC; a portable facade plus the Windows implementation.
+    targetFrameworks:
+      - net10.0
+      - net10.0-windows10.0.19041.0
+  - id: Purview.Containers.Docker
+    description: Docker backend — the same containers on any reachable Docker daemon, driven by Testcontainers.
+  - id: Purview.Containers.PostgreSql
+    description: PostgreSQL module — defaults, configuration, pg_isready readiness, and Npgsql connection string.
+  - id: Purview.Containers.Redis
+    description: Redis module — defaults, configuration, redis-cli ping readiness, and connection string.
+  - id: Purview.Containers.MsSql
+    description: SQL Server module — defaults, licence acceptance, configuration, and connection string.
+  - id: Purview.Containers.MySql
+    description: MySQL module — defaults, configuration, readiness wait strategy, and connection string.
+  - id: Purview.Containers.RabbitMq
+    description: RabbitMQ module — defaults, credentials, configuration, and AMQP connection string.
+  - id: Purview.Containers.Azurite
+    description: Azurite module — defaults, account key, and Azure Storage connection string.
+  - id: Purview.Containers.Nats
+    description: NATS module — defaults, configuration, and client endpoint.
+acknowledgments:
+  - name: Testcontainers for .NET
+    url: https://github.com/testcontainers/testcontainers-dotnet
+    description: The Docker backend is driven by Testcontainers and the module connection-string shapes follow it; Purview.Containers is not affiliated with or endorsed by the Testcontainers project.
+  - name: Microsoft WSL Containers
+    url: https://www.nuget.org/packages/Microsoft.WSL.Containers
+    description: The managed C# API behind WSLC that the WSL Containers backend is built against directly, with no wslc.exe or docker CLI.
+useCases:
+  - audience: developer
+    title: The same test on WSL Containers or Docker
+    scenario: >-
+      Your integration suite needs real infrastructure, but the machines it runs on differ: a Windows
+      developer laptop with WSL Containers and a Linux CI runner with a Docker daemon.
+    code: |
+      await using var container = new ContainerBuilder()
+          .WithImage("docker.io/library/redis:latest")
+          .WithPortBinding(6379, assignRandomHostPort: true)
+          .WithWaitStrategy(Wait.ForTcpPort(6379))
+          .Build();
+
+      await container.StartAsync();
+      ushort port = container.GetMappedPublicPort(6379);
+    language: csharp
+    outcome: >-
+      The test never names a backend. Automatic selection prefers WSLC where it is usable and falls
+      through to Docker everywhere else; PURVIEW_CONTAINERS_BACKEND pins one (wsl or docker) when a job
+      should fail loudly instead of falling back.
+    evidence: >-
+      One API, two backends: the same builder, wait strategies, and connection-string helpers run on both
+      Purview.Containers.Wsl and Purview.Containers.Docker with no code change.
+    docsPage: backends
+  - audience: developer
+    title: Zero-config tests that pick a backend themselves
+    scenario: >-
+      You want real PostgreSQL and Redis in your tests and would rather not choose a container runtime,
+      add a backend package explicitly, or write any registration or environment configuration.
+    code: |
+      await using var postgres = new PostgreSqlBuilder().WithDatabase("app").Build();
+      await postgres.StartAsync();                         // waits for pg_isready
+
+      await using var connection = new NpgsqlConnection(postgres.GetConnectionString());
+      await connection.OpenAsync();
+    language: csharp
+    outcome: >-
+      Add the umbrella Purview.Containers to a plain net10.0 project: each backend package's
+      buildTransitive assets generate the registration in your assembly, so WSLC is used on a Windows
+      machine and Docker everywhere else with no code or configuration.
+    evidence: >-
+      Each backend package ships buildTransitive assets that generate a module initializer in the
+      consumer's assembly, so no registration line and no environment variable are required; those
+      assets flow transitively through the umbrella.
+    docsPage: using-in-your-tests
+  - audience: developer
+    title: A typed service module instead of a bare image
+    scenario: >-
+      You need a throwaway PostgreSQL (or Redis, SQL Server, MySQL, RabbitMQ, Azurite, NATS) and do not
+      want to look up its image, port, environment, and readiness probe every time.
+    code: |
+      await using var postgres = new PostgreSqlBuilder()
+          .WithDatabase("tests")
+          .WithPassword("postgres")
+          .Build();
+
+      await postgres.StartAsync();   // returns once pg_isready succeeds
+    language: csharp
+    outcome: >-
+      The module supplies the default image, port mapping, and readiness wait strategy, so StartAsync()
+      returns once the instance is genuinely ready, and GetConnectionString() points at the mapped host
+      port — the same shape Testcontainers modules use.
+    evidence: >-
+      Seven service modules ship (PostgreSQL, Redis, SQL Server, MySQL, RabbitMQ, Azurite, NATS), and a
+      module contributes only its image, ports, environment, wait strategy, and connection string —
+      never the shared runtime.
+    docsPage: modules
+  - audience: architect
+    title: One Windows prerequisite, Docker in CI
+    scenario: >-
+      You want integration tests that use real infrastructure on Windows developer machines and CI
+      agents, without making Docker Desktop a requirement of the minimum Windows toolchain.
+    code: |
+      foreach (var backend in await ContainerBackends.ProbeAllAsync())
+      {
+          Console.WriteLine($"{backend.Name}: usable={backend.IsUsable} version={backend.Version}");
+      }
+    language: csharp
+    outcome: >-
+      The abstractions and modules are portable net10.0, so a platform-neutral project binds the WSLC
+      facade on Windows and behaves as Docker-only everywhere else; ProbeAllAsync() reports exactly
+      which runtime a machine has before a test runs.
+    evidence: >-
+      Purview.Containers.Wsl ships a portable net10.0 facade and a net10.0-windows10.0.19041.0
+      implementation, and the repository builds twenty-one throwaway consumer projects to prove the
+      target-framework contract and the PCC0001/PCC0002 guards.
+    docsPage: consumer-requirements
+  - audience: contributor
+    title: Add a service module
+    scenario: >-
+      You want to add a module for another service, or fix one of the existing seven, and need to know
+      exactly what a module is allowed to contribute.
+    outcome: >-
+      A module supplies only the default image, ports, environment, its own WithXxx configuration, a
+      wait strategy, and connection-string helpers; the generic builder snapshots the accumulated state
+      into an immutable configuration, so modules never duplicate container runtime infrastructure.
+    evidence: >-
+      Every module references Purview.Containers.Core only — never a backend package — which is what lets
+      one module package run on WSLC or Docker, and each module has its own unit and integration test
+      project to prove itself.
+    docsPage: contributing-modules
