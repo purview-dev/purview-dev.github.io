@@ -1,0 +1,46 @@
+---
+/**
+ * "Star on GitHub" call to action.
+ *
+ * Every project page and every aggregated documentation page links back to the
+ * repository that owns it; this is the shared control that invites a star. It
+ * is deliberately small (an icon, a label, and the live count when the release
+ * cache knows it) so it sits in an action row or a documentation meta line
+ * without dominating either.
+ */
+interface Props {
+  /** Repository in `owner/name` form. */
+  repository: string;
+  /** Live star count from the release cache, when known. */
+  stars?: number | null;
+  /** `button` matches the page action row; `inline` sits in a meta line. */
+  variant?: 'button' | 'inline';
+  class?: string;
+}
+
+const { repository, stars = null, variant = 'button', class: className } = Astro.props;
+const href = `https://github.com/${repository}`;
+const showStars = typeof stars === 'number' && stars > 0;
+---
+
+<a
+  href={href}
+  rel="noopener noreferrer"
+  target="_blank"
+  aria-label={`Star ${repository} on GitHub`}
+  title={`Star ${repository} on GitHub`}
+  class:list={[
+    variant === 'button'
+      ? 'pv-btn pv-btn-secondary pv-btn-sm'
+      : 'pv-link inline-flex items-center gap-1.5',
+    className,
+  ]}
+>
+  <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">
+    <path
+      d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"
+    ></path>
+  </svg>
+  <span>Star on GitHub</span>
+  {showStars && <span class="tabular-nums opacity-80">{stars}</span>}
+</a>

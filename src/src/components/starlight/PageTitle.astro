@@ -1,7 +1,10 @@
 ---
+import GitHubIcon from '~/components/GitHubIcon.astro';
+import StarOnGitHub from '~/components/StarOnGitHub.astro';
 import StatusBadge from '~/components/StatusBadge.astro';
 import { isStale, STALE_AFTER_DAYS } from '~/lib/docs/staleness';
 import { LLMS_LINK_ATTRS } from '~/lib/llms';
+import { getReleaseIndex } from '~/lib/releases/runtime';
 import { displayStatus } from '~/lib/status';
 
 import { withBase } from '~/lib/urls';
@@ -23,6 +26,12 @@ const status = data?.status ? displayStatus({ status: data.status, experimental 
 const entryId = typeof entry?.id === 'string' ? entry.id : undefined;
 const isProjectOverview = entryId !== undefined && /^docs\/[^/]+(\/index)?$/.test(entryId);
 const sourceProject = typeof data?.sourceProject === 'string' ? data.sourceProject : undefined;
+const sourceRepo = typeof data?.sourceRepo === 'string' ? data.sourceRepo : undefined;
+// Live star count for the owning repository, when the release cache knows it.
+const starCount =
+  sourceRepo === undefined ?
+    null
+  : (getReleaseIndex().data.repos[sourceRepo]?.stargazersCount ?? null);
 const llmsHref =
   isProjectOverview && sourceProject ? withBase(`/_llms-txt/${sourceProject}.txt`) : null;
 ---
@@ -59,16 +68,24 @@ const llmsHref =
         </span>
       )}
       {
-        data.sourceRepo && (
+        sourceRepo && (
           <span class="doc-meta-item">
             <a
-              href={`https://github.com/${data.sourceRepo}`}
+              href={`https://github.com/${sourceRepo}`}
               rel="noopener noreferrer"
               target="_blank"
-              class="pv-link"
+              class="pv-link inline-flex items-center gap-1.5"
             >
-              {data.sourceRepo}
+              <GitHubIcon size={14} />
+              {sourceRepo}
             </a>
+          </span>
+        )
+      }
+      {
+        sourceRepo && (
+          <span class="doc-meta-item">
+            <StarOnGitHub repository={sourceRepo} stars={starCount} variant="inline" />
           </span>
         )
       }

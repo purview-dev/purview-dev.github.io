@@ -1,7 +1,9 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
+import GitHubIcon from '~/components/GitHubIcon.astro';
 import InstallPanel from '~/components/islands/InstallPanel.tsx';
 import PackageVersions, { type PackageRow } from '~/components/islands/PackageVersions.tsx';
+import StarOnGitHub from '~/components/StarOnGitHub.astro';
 import StatusBadge from '~/components/StatusBadge.astro';
 import UseCaseCard from '~/components/UseCaseCard.astro';
 import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '~/lib/badges';
@@ -33,6 +35,8 @@ const status = displayStatus(project);
 const releaseIndex = getReleaseIndex();
 const releases = projectReleaseSummary(project, releaseIndex.data, releaseIndex.source);
 const { tags, repoDescription } = projectRepoEnrichment(project, releaseIndex.data);
+/** Live star count for the repository, when the release cache knows it. */
+const starCount = releaseIndex.data.repos[project.repository]?.stargazersCount ?? null;
 const supplementalRepoDescription =
   (
     repoDescription &&
@@ -147,8 +151,10 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
           target="_blank"
           class="pv-btn pv-btn-primary pv-btn-sm"
         >
+          <GitHubIcon size={15} />
           Source code
         </a>
+        <StarOnGitHub repository={project.repository} stars={starCount} />
         {
           docsPath && (
             <a href={docsPath} class="pv-btn pv-btn-secondary pv-btn-sm">
@@ -417,7 +423,17 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
             }
             <div class="flex justify-between gap-3">
               <dt class="text-muted">Repository</dt>
-              <dd class="text-right font-mono text-xs">{project.repository}</dd>
+              <dd class="text-right">
+                <a
+                  href={project.sourceUrl}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  class="pv-link inline-flex items-center gap-1.5 font-mono text-xs"
+                >
+                  <GitHubIcon size={14} />
+                  {project.repository}
+                </a>
+              </dd>
             </div>
           </dl>
         </div>

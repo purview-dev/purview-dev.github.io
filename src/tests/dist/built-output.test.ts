@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
+import { LOCAL_PATH_PATTERNS, SECRET_PATTERNS } from '../../src/lib/build-paths';
 import { loadProjects } from '../../src/lib/manifest/load';
 
 const DIST = resolve('dist');
@@ -40,10 +41,12 @@ describe('built llms outputs', () => {
       requireBuilt('llms-small.txt'),
       requireBuilt('llms-full.txt'),
     ].join('\n');
-    expect(content).not.toMatch(/\bghp_[A-Za-z0-9]{36,}\b/);
-    expect(content).not.toMatch(/\.cache[/\\]/);
-    expect(content).not.toMatch(/[A-Za-z]:\\/);
-    expect(content).not.toMatch(/node_modules[/\\]/);
+    for (const pattern of SECRET_PATTERNS) {
+      expect(content, `llms outputs match secret pattern ${pattern}`).not.toMatch(pattern);
+    }
+    for (const pattern of LOCAL_PATH_PATTERNS) {
+      expect(content, `llms outputs match local path pattern ${pattern}`).not.toMatch(pattern);
+    }
   });
 });
 
@@ -77,9 +80,16 @@ describe('built per-project llms outputs', () => {
   test('scoped bundles exclude secrets and local build paths', () => {
     for (const project of docsProjects) {
       const content = requireBuilt(`_llms-txt/${project.id}.txt`);
-      expect(content).not.toMatch(/\bghp_[A-Za-z0-9]{36,}\b/);
-      expect(content).not.toMatch(/[A-Za-z]:\\/);
-      expect(content).not.toMatch(/node_modules[/\\]/);
+      for (const pattern of SECRET_PATTERNS) {
+        expect(content, `${project.id} bundle matches secret pattern ${pattern}`).not.toMatch(
+          pattern,
+        );
+      }
+      for (const pattern of LOCAL_PATH_PATTERNS) {
+        expect(content, `${project.id} bundle matches local path pattern ${pattern}`).not.toMatch(
+          pattern,
+        );
+      }
     }
   });
 });
@@ -99,6 +109,31 @@ describe('built project pages', () => {
     // --color-surface, so the tint vanished in dark mode and the two panels
     // became indistinguishable.
     expect(content).not.toContain('border-brand/20 bg-brand/5 p-5');
+  });
+});
+
+describe('built GitHub links and star calls to action', () => {
+  test('project pages link to the repository and invite a star', () => {
+    const content = requireBuilt('projects/event-sourcing/index.html');
+    expect(content).toContain('https://github.com/purview-dev/event-sourcing');
+    expect(content).toContain('Star on GitHub');
+  });
+
+  test('documentation pages link to the repository and invite a star', () => {
+    const content = requireBuilt('docs/event-sourcing/index.html');
+    expect(content).toContain('https://github.com/purview-dev/event-sourcing');
+    expect(content).toContain('Star on GitHub');
+  });
+});
+
+describe('built docs strip mkdocs markup', () => {
+  // `containers` still publishes a mkdocs Material site, whose attr_list
+  // buttons (`[x](y){ .md-button }`) rendered as literal text through the
+  // portal. `src/lib/docs/mkdocs.ts` strips them during aggregation.
+  test('aggregated pages render no mkdocs-only markup', () => {
+    const content = requireBuilt('docs/containers/index.html');
+    expect(content).not.toContain('md-button');
+    expect(content).toContain('/docs/containers/getting-started/');
   });
 });
 
@@ -191,8 +226,12 @@ describe('built HTML safety', () => {
     const files = glob.sync('**/*.html', { cwd: DIST });
     for (const file of files) {
       const content = readFileSync(resolve(DIST, file), 'utf8');
-      expect(content).not.toMatch(/[A-Za-z]:\\/);
-      expect(content).not.toMatch(/\bghp_[A-Za-z0-9]{36,}\b/);
+      for (const pattern of LOCAL_PATH_PATTERNS) {
+        expect(content, `${file} matches local path pattern ${pattern}`).not.toMatch(pattern);
+      }
+      for (const pattern of SECRET_PATTERNS) {
+        expect(content, `${file} matches secret pattern ${pattern}`).not.toMatch(pattern);
+      }
     }
   });
 });
