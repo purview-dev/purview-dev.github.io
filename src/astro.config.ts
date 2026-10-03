@@ -1,6 +1,7 @@
+import type { AstroIntegration } from 'astro';
+
 import { unified } from '@astrojs/markdown-remark';
 import preact from '@astrojs/preact';
-import sitemap from '@astrojs/sitemap';
 import starlight from '@astrojs/starlight';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
@@ -8,7 +9,9 @@ import starlightLinksValidator from 'starlight-links-validator';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import starlightSidebarTopics from 'starlight-sidebar-topics';
 
+import discoveryIntegration from './config/discovery-integration';
 import { remarkMermaid } from './config/remark-mermaid.mjs';
+import { projectLlmsUrl } from './src/lib/discovery/urls';
 import { readDocsManifest } from './src/lib/docs/aggregate';
 import { buildProjectItems } from './src/lib/docs/sidebar';
 import { loadProjects } from './src/lib/manifest/load';
@@ -16,23 +19,26 @@ import { SITE, BRAND } from './src/lib/site';
 import { displayStatus, type DisplayStatus } from './src/lib/status';
 import { absoluteUrl } from './src/lib/urls';
 
+/**
+ * Starlight injects `@astrojs/sitemap` unless an integration with that exact
+ * name is already registered (see `@astrojs/starlight/dist/index.js`). We
+ * generate the sitemap ourselves — partitioned, with content-derived `lastmod`
+ * — so this no-op claims the name to stop Starlight's single-file sitemap from
+ * overwriting `/sitemap-index.xml`. `discoveryIntegration()` does the work.
+ */
+const suppressStarlightSitemap: AstroIntegration = { name: '@astrojs/sitemap', hooks: {} };
+
 const projects = loadProjects();
 const docsManifest = readDocsManifest();
 
 const docsProjects = projects.filter((project) => project.docs && project.status !== 'archived');
 /**
- * Per-project LLM bundles. `starlight-llms-txt` emits one file per `customSets`
- * entry at `/_llms-txt/<slug>.txt`, where the slug is `github-slugger`'s slug of
- * the set label. Every documented project's display name slugifies to exactly
- * its project id, so `docs/<project.id>/**` maps to `/_llms-txt/<project.id>.txt`
- * and the UI links straight to that path. The build's link crawl (and the dist
- * tests) fail if a future project name breaks that correspondence.
+ * Per-project machine-readable bundles are emitted by the discovery integration
+ * (see `config/discovery-integration.ts`) at `/projects/<id>/llms.txt` and
+ * `/projects/<id>/llms-full.txt`, following the llms.txt convention at the
+ * per-project scope. The `starlight-llms-txt` plugin below only produces the
+ * site-wide `/llms*.txt` files.
  */
-const docsSets = docsProjects.map((project) => ({
-  label: project.name,
-  description: project.shortDescription,
-  paths: [`docs/${project.id}/**`],
-}));
 /**
  * Sidebar badges for the two "not for production" states. The value comes from
  * the shared display status (ADR 0004), so the docs sidebar, the project page
@@ -116,7 +122,8 @@ export default defineConfig({
   },
   integrations: [
     preact(),
-    sitemap(),
+    suppressStarlightSitemap,
+    discoveryIntegration(),
     starlight({
       title: SITE.fullName,
       description: SITE.description,
@@ -202,11 +209,17 @@ export default defineConfig({
               url: absoluteUrl('/releases/'),
               description: 'GitHub and NuGet release information.',
             },
+            // Per-project machine-readable bundles, emitted by the discovery
+            // integration at /projects/<id>/llms.txt.
+            ...docsProjects.map((project) => ({
+              label: project.name,
+              url: projectLlmsUrl(project.id),
+              description: project.shortDescription,
+            })),
           ],
           promote: ['index*', 'docs/*/index'],
           demote: [],
           exclude: ['dotnet-logging-source-generators/**'],
-          customSets: docsSets,
           minify: {
             note: true,
             tip: true,

@@ -96,7 +96,7 @@ const pageCount = docsManifest?.projects.reduce(
           projects.map((project) => (
             <li>
               <a
-                href={withBase(`/_llms-txt/${project.id}.txt`)}
+                href={withBase(`/projects/${project.id}/llms.txt`)}
                 {...LLMS_LINK_ATTRS}
                 class="pv-link"
               >

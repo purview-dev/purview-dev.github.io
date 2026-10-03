@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
+import { LOCAL_PATH_PATTERNS, SECRET_PATTERNS } from '../../src/lib/build-paths';
 import { loadProjects } from '../../src/lib/manifest/load';
 
 const DIST = resolve('dist');
@@ -40,10 +41,12 @@ describe('built llms outputs', () => {
       requireBuilt('llms-small.txt'),
       requireBuilt('llms-full.txt'),
     ].join('\n');
-    expect(content).not.toMatch(/\bghp_[A-Za-z0-9]{36,}\b/);
-    expect(content).not.toMatch(/\.cache[/\\]/);
-    expect(content).not.toMatch(/[A-Za-z]:\\/);
-    expect(content).not.toMatch(/node_modules[/\\]/);
+    for (const pattern of SECRET_PATTERNS) {
+      expect(content, `llms outputs match secret pattern ${pattern}`).not.toMatch(pattern);
+    }
+    for (const pattern of LOCAL_PATH_PATTERNS) {
+      expect(content, `llms outputs match local path pattern ${pattern}`).not.toMatch(pattern);
+    }
   });
 });
 
@@ -52,34 +55,46 @@ describe('built per-project llms outputs', () => {
     (project) => project.docs && project.status !== 'archived',
   );
 
-  // The plugin derives each bundle's slug from its `customSets` label
-  // (`github-slugger` of the project name). Asserting the file exists under the
-  // project id fails the build if a future display name stops slugifying to its
-  // id, which is the invariant the UI links rely on.
-  test('a scoped bundle is built for every documented project', () => {
+  // The discovery integration emits a concise and a full machine-readable bundle
+  // for every documented, non-archived project at the llms.txt convention path
+  // under /projects/<id>/. The UI links to those exact paths.
+  test('both bundles are built for every documented project', () => {
     expect(docsProjects.length).toBeGreaterThan(0);
     for (const project of docsProjects) {
-      const content = requireBuilt(`_llms-txt/${project.id}.txt`);
-      expect(content.trim().length, `${project.id} bundle is empty`).toBeGreaterThan(0);
-      expect(content, `${project.id} bundle lacks aggregated content`).toContain('Purview');
+      const summary = requireBuilt(`projects/${project.id}/llms.txt`);
+      expect(summary.trim().length, `${project.id} llms.txt is empty`).toBeGreaterThan(0);
+      expect(summary, `${project.id} llms.txt lacks the project name`).toContain(project.name);
+      const full = requireBuilt(`projects/${project.id}/llms-full.txt`);
+      expect(full.trim().length, `${project.id} llms-full.txt is empty`).toBeGreaterThan(0);
+      expect(full, `${project.id} llms-full.txt lacks aggregated content`).toContain('Purview');
     }
   });
 
-  test('the llms.txt entrypoint links every scoped bundle', () => {
+  test('the llms.txt entrypoint links every project bundle', () => {
     const content = requireBuilt('llms.txt');
     for (const project of docsProjects) {
       expect(content, `llms.txt does not link ${project.id}`).toContain(
-        `https://purview.dev/_llms-txt/${project.id}.txt`,
+        `https://purview.dev/projects/${project.id}/llms.txt`,
       );
     }
   });
 
   test('scoped bundles exclude secrets and local build paths', () => {
     for (const project of docsProjects) {
-      const content = requireBuilt(`_llms-txt/${project.id}.txt`);
-      expect(content).not.toMatch(/\bghp_[A-Za-z0-9]{36,}\b/);
-      expect(content).not.toMatch(/[A-Za-z]:\\/);
-      expect(content).not.toMatch(/node_modules[/\\]/);
+      const content = [
+        requireBuilt(`projects/${project.id}/llms.txt`),
+        requireBuilt(`projects/${project.id}/llms-full.txt`),
+      ].join('\n');
+      for (const pattern of SECRET_PATTERNS) {
+        expect(content, `${project.id} bundle matches secret pattern ${pattern}`).not.toMatch(
+          pattern,
+        );
+      }
+      for (const pattern of LOCAL_PATH_PATTERNS) {
+        expect(content, `${project.id} bundle matches local path pattern ${pattern}`).not.toMatch(
+          pattern,
+        );
+      }
     }
   });
 });
@@ -99,6 +114,31 @@ describe('built project pages', () => {
     // --color-surface, so the tint vanished in dark mode and the two panels
     // became indistinguishable.
     expect(content).not.toContain('border-brand/20 bg-brand/5 p-5');
+  });
+});
+
+describe('built GitHub links and star calls to action', () => {
+  test('project pages link to the repository and invite a star', () => {
+    const content = requireBuilt('projects/event-sourcing/index.html');
+    expect(content).toContain('https://github.com/purview-dev/event-sourcing');
+    expect(content).toContain('Star on GitHub');
+  });
+
+  test('documentation pages link to the repository and invite a star', () => {
+    const content = requireBuilt('docs/event-sourcing/index.html');
+    expect(content).toContain('https://github.com/purview-dev/event-sourcing');
+    expect(content).toContain('Star on GitHub');
+  });
+});
+
+describe('built docs strip mkdocs markup', () => {
+  // `containers` still publishes a mkdocs Material site, whose attr_list
+  // buttons (`[x](y){ .md-button }`) rendered as literal text through the
+  // portal. `src/lib/docs/mkdocs.ts` strips them during aggregation.
+  test('aggregated pages render no mkdocs-only markup', () => {
+    const content = requireBuilt('docs/containers/index.html');
+    expect(content).not.toContain('md-button');
+    expect(content).toContain('/docs/containers/getting-started/');
   });
 });
 
@@ -143,8 +183,7 @@ describe('built llms links', () => {
   test('every llms text link opens in a new tab like an external link', () => {
     const { glob } = require('fast-glob');
     const files = glob.sync('**/*.html', { cwd: DIST });
-    const anchor =
-      /<a\b[^>]*href="[^"]*(?:llms(?:-small|-full)?\.txt|_llms-txt\/[^"]+\.txt)"[^>]*>/g;
+    const anchor = /<a\b[^>]*href="[^"]*llms(?:-small|-full)?\.txt"[^>]*>/g;
 
     let checked = 0;
     for (const file of files) {
@@ -162,14 +201,39 @@ describe('built llms links', () => {
 });
 
 describe('built SEO outputs', () => {
-  test('sitemap index exists and references the canonical site', () => {
+  test('sitemap index references the partitioned child sitemaps', () => {
     const content = requireBuilt('sitemap-index.xml');
-    expect(content).toContain('https://purview.dev/sitemap-0.xml');
+    expect(content).toContain('https://purview.dev/sitemaps/pages.xml');
+    expect(content).toContain('https://purview.dev/sitemaps/projects.xml');
+    expect(content).toContain('https://purview.dev/sitemaps/llms.xml');
   });
 
-  test('robots.txt references the sitemap', () => {
+  test('robots.txt references the sitemap index', () => {
     const content = requireBuilt('robots.txt');
-    expect(content).toContain('https://purview.dev/sitemap-index.xml');
+    expect(content).toContain('Sitemap: https://purview.dev/sitemap-index.xml');
+  });
+
+  test('discover.json is generated and references the canonical site', () => {
+    const manifest = JSON.parse(requireBuilt('discover.json')) as {
+      schemaVersion: number;
+      url: string;
+      sitemaps: { index: string };
+      resources: unknown[];
+      projects: { slug: string }[];
+    };
+    expect(manifest.schemaVersion).toBe(1);
+    expect(manifest.url).toBe('https://purview.dev/');
+    expect(manifest.sitemaps.index).toBe('https://purview.dev/sitemap-index.xml');
+    expect(manifest.resources.length).toBeGreaterThan(0);
+    expect(manifest.projects.length).toBeGreaterThan(0);
+  });
+
+  test('project pages expose their machine-readable representation', () => {
+    const content = requireBuilt('projects/zodsharp/index.html');
+    expect(content).toContain('rel="alternate"');
+    expect(content).toContain('https://purview.dev/projects/zodsharp/llms-full.txt');
+    expect(content).toContain('/projects/zodsharp/llms.txt');
+    expect(content).toContain('"@type":"SoftwareSourceCode"');
   });
 
   test('key brand assets are present in the build', () => {
@@ -191,8 +255,12 @@ describe('built HTML safety', () => {
     const files = glob.sync('**/*.html', { cwd: DIST });
     for (const file of files) {
       const content = readFileSync(resolve(DIST, file), 'utf8');
-      expect(content).not.toMatch(/[A-Za-z]:\\/);
-      expect(content).not.toMatch(/\bghp_[A-Za-z0-9]{36,}\b/);
+      for (const pattern of LOCAL_PATH_PATTERNS) {
+        expect(content, `${file} matches local path pattern ${pattern}`).not.toMatch(pattern);
+      }
+      for (const pattern of SECRET_PATTERNS) {
+        expect(content, `${file} matches secret pattern ${pattern}`).not.toMatch(pattern);
+      }
     }
   });
 });

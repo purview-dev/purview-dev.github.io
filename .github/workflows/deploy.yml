@@ -36,6 +36,10 @@ jobs:
       - name: Checkout
         # actions/checkout v7.0.1
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          # Full history so sitemap `lastmod` can use each source file's real
+          # last-commit date (see src/src/lib/discovery/last-modified.ts).
+          fetch-depth: 0
 
       - name: Install Bun
         # oven-sh/setup-bun v2.2.0
@@ -54,6 +58,22 @@ jobs:
       # / `just` recipe delegates to `src/` (see `package.json` scripts).
       - name: Install dependencies
         run: bun install --frozen-lockfile
+
+      - name: Capture the currently deployed discovery manifest
+        # Captured before the new site is deployed so the post-deploy IndexNow
+        # step can diff "what changed". Published as /_discovery/previous.json
+        # (public, non-sensitive) so no cross-job artifact is needed.
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          ORIGIN="${SITE_URL:-https://purview.dev}"
+          mkdir -p .discovery-capture
+          if curl -fsSL "$ORIGIN/discover.json" -o .discovery-capture/previous.json; then
+            echo "Captured the previous discovery manifest."
+          else
+            echo '{"schemaVersion":0,"resources":[]}' > .discovery-capture/previous.json
+            echo "No previous discovery manifest (first deployment)."
+          fi
 
       - name: Run validation
         # `just validate` runs a live data sync on fresh checkouts (no cache /
@@ -92,10 +112,30 @@ jobs:
           echo "site-url=$SITE" >> "$GITHUB_OUTPUT"
 
       - name: Build site with live data
+        # The build never receives the IndexNow key: the key verification file is
+        # written from the secret by a separate step below (see docs/discovery.md).
         env:
           PAGES_BASE: ${{ steps.pages-config.outputs.pages-base }}
           SITE_URL: ${{ steps.pages-config.outputs.site-url }}
         run: bun run build
+
+      - name: Write the IndexNow key verification file
+        # The key is supplied only by the INDEXNOW_KEY repository secret and is
+        # never part of the build or its logs. This writes /<key>.txt, the file
+        # IndexNow fetches to prove ownership of the domain.
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: |
+          if [ -z "${INDEXNOW_KEY}" ]; then
+            echo "::warning::INDEXNOW_KEY is not configured; skipping the key verification file."
+            exit 0
+          fi
+          bun run discovery:key
+
+      - name: Publish the previous discovery manifest for change detection
+        run: |
+          mkdir -p src/dist/_discovery
+          cp .discovery-capture/previous.json src/dist/_discovery/previous.json
 
       - name: Configure Pages
         # actions/configure-pages v6.0.0
@@ -119,3 +159,39 @@ jobs:
         id: deployment
         # actions/deploy-pages v5.0.1
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
+
+  indexnow:
+    # Runs only after a successful production deployment. A failed deploy must
+    # never tell search engines that new URLs are live. The site deployment
+    # stands on its own; a notification failure is reported here, not by
+    # rolling the deployment back.
+    needs: deploy
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        # actions/checkout v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Install Bun
+        # oven-sh/setup-bun v2.2.0
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+        with:
+          bun-version: 1.4.2
+
+      - name: Notify IndexNow about changed URLs
+        # Submits only URLs added or modified since the previous deployment.
+        # `discovery:indexnow` has no external dependencies, so no `bun install`
+        # is needed. The IndexNow key is never printed.
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: |
+          if [ -z "${INDEXNOW_KEY}" ]; then
+            echo "::warning::INDEXNOW_KEY is not configured; skipping the IndexNow notification."
+            exit 0
+          fi
+          ORIGIN="${SITE_URL:-https://purview.dev}"
+          bun run discovery:indexnow \
+            --current "$ORIGIN/discover.json" \
+            --previous "$ORIGIN/_discovery/previous.json"

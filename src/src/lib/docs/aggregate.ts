@@ -17,6 +17,7 @@ import {
   renderFrontmatter,
 } from './frontmatter';
 import { extractHeadingSlugs, rewriteDocMarkdown, resolveDoclinks, slugifyDocFile } from './links';
+import { stripMkdocsMarkup } from './mkdocs';
 
 export const DOCS_OUTPUT_DIR = resolve('src/content/docs');
 export const DOCS_CACHE_DIR = resolve('.cache/docs');
@@ -301,17 +302,21 @@ async function buildPage(
     slugAliases,
   };
 
-  const converted = convertGithubAlerts(raw.content);
+  // Strip mkdocs-only markup (Material attr_list buttons, TechDocs/Jinja
+  // macros, admonitions) before anything else reads the source, so the title,
+  // description, and rendered body all agree.
+  const cleaned = stripMkdocsMarkup(raw.content);
+  const converted = convertGithubAlerts(cleaned);
   const rewritten = rewriteDocMarkdown(converted, linkContext);
   const content = normalizeDocumentHeadings(resolveDoclinks(rewritten, slug));
   // The project's landing page uses the catalogue display name, not the source
   // README's first heading (which can repeat a "Purview.*" package name).
-  const title = slug === 'index' ? project.name : extractTitle(raw.content, sourceName(slug, raw));
+  const title = slug === 'index' ? project.name : extractTitle(cleaned, sourceName(slug, raw));
   const repo = getReleaseIndex().data.repos[project.repository];
   const repoTags = repo?.topics ?? [];
   const repoDescription = repo?.description?.trim() || null;
   const description =
-    (slug === 'index' ? project.shortDescription : extractDescription(raw.content)) ||
+    (slug === 'index' ? project.shortDescription : extractDescription(cleaned)) ||
     repoDescription ||
     project.shortDescription;
   const editSourcePath = raw.path.replace(/^\/+/, '');
@@ -422,7 +427,7 @@ async function collectGithubPathDocs(
   for (const raw of [...selectedRoot.regular, selectedRoot.index]) {
     const slug =
       raw === selectedRoot.index ? 'index' : slugifyDocFile(relativeToDocRoot(raw.path, docRoot));
-    headingSlugs.set(slug, extractHeadingSlugs(raw.content));
+    headingSlugs.set(slug, extractHeadingSlugs(stripMkdocsMarkup(raw.content)));
   }
 
   const pages: AggregatedPage[] = [];
@@ -503,7 +508,7 @@ async function collectWikiDocs(project: ResolvedProject): Promise<AggregatedProj
   const headingSlugs = new Map<string, Set<string>>();
   for (const raw of [...selectedRoot.regular, selectedRoot.index]) {
     const slug = raw === selectedRoot.index ? 'index' : slugifyDocFile(raw.path);
-    headingSlugs.set(slug, extractHeadingSlugs(raw.content));
+    headingSlugs.set(slug, extractHeadingSlugs(stripMkdocsMarkup(raw.content)));
   }
 
   const pages: AggregatedPage[] = [];
@@ -558,7 +563,7 @@ async function collectReadmeDocs(project: ResolvedProject): Promise<AggregatedPr
         readme,
         -1,
         new Set(['index']),
-        new Map([['index', extractHeadingSlugs(readme.content)]]),
+        new Map([['index', extractHeadingSlugs(stripMkdocsMarkup(readme.content))]]),
       ),
     ],
   };

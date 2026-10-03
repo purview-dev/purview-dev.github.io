@@ -34,12 +34,23 @@ const versionRows = active.map((project) =>
 
 const organizationStructuredData = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: SITE.orgName,
-  url: SITE.url,
-  logo: absoluteUrl('/branding/icon-light-512.png'),
-  description: SITE.description,
-  sameAs: [SITE.githubUrl, `${SITE.nugetUrl}/search?q=purview`],
+  '@graph': [
+    {
+      '@type': 'Organization',
+      name: SITE.orgName,
+      url: SITE.url,
+      logo: absoluteUrl('/branding/icon-light-512.png'),
+      description: SITE.description,
+      sameAs: [SITE.githubUrl, `${SITE.nugetUrl}/search?q=purview`],
+    },
+    {
+      '@type': 'WebSite',
+      name: SITE.fullName,
+      url: SITE.url,
+      description: SITE.description,
+      publisher: { '@type': 'Organization', name: SITE.orgName, url: SITE.url },
+    },
+  ],
 };
 ---
 

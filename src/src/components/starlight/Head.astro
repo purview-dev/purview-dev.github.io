@@ -1,8 +1,55 @@
 ---
 import DefaultHead from '@astrojs/starlight/components/Head.astro';
+import { projectLlmsFullUrl } from '~/lib/discovery/urls';
+import { SITE } from '~/lib/site';
+import { absoluteUrl } from '~/lib/urls';
+
+// Documentation pages are aggregated from the product repositories. Expose the
+// per-project machine-readable bundle as an alternate representation and a
+// `TechArticle` JSON-LD block. Only accurate values are emitted; the canonical
+// HTML page remains the primary content.
+const data = Astro.locals.starlightRoute?.entry?.data;
+const sourceProject = typeof data?.sourceProject === 'string' ? data.sourceProject : undefined;
+const hasMachineReadable = sourceProject !== undefined && data?.status !== 'archived';
+const alternateLinks =
+  hasMachineReadable && sourceProject ?
+    [
+      {
+        href: projectLlmsFullUrl(sourceProject),
+        type: 'text/markdown',
+        title: `${data?.title ?? sourceProject} — machine-readable documentation`,
+      },
+    ]
+  : [];
+
+const canonical = absoluteUrl(Astro.url.pathname === '' ? '/' : Astro.url.pathname);
+const structuredData =
+  data ?
+    {
+      '@context': 'https://schema.org',
+      '@type': 'TechArticle',
+      headline: data.title,
+      ...(typeof data.description === 'string' ? { description: data.description } : {}),
+      url: canonical,
+      ...(typeof data.lastReviewed === 'string' ? { dateModified: data.lastReviewed } : {}),
+      inLanguage: 'en',
+      isPartOf: { '@type': 'WebSite', name: SITE.fullName, url: SITE.url },
+      publisher: { '@type': 'Organization', name: SITE.orgName, url: SITE.url },
+    }
+  : null;
 ---
 
 <DefaultHead {...Astro.props} />
+{
+  alternateLinks.map((link) => (
+    <link rel="alternate" type={link.type} href={link.href} title={link.title} />
+  ))
+}
+{
+  structuredData && (
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  )
+}
 <script>
   import '~/scripts/mermaid';
 </script>

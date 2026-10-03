@@ -87,6 +87,22 @@ check-generated:
 check-projects:
     bun run check:projects
 
+# Validate the generated discovery artifacts (sitemaps, robots, llms, discover.json).
+discovery-validate:
+    bun run discovery:validate
+
+# Regenerate discovery artifacts in dist/ from the current caches (no full build).
+discovery-manifest:
+    bun run discovery:manifest
+
+# Notify IndexNow about changed URLs after a production deploy (pass --dry-run locally).
+discovery-indexnow *ARGS:
+    bun run discovery:indexnow {{ARGS}}
+
+# Write the IndexNow key verification file from the INDEXNOW_KEY secret/config.
+discovery-key:
+    bun run discovery:key
+
 # Refresh release data from live GitHub/NuGet sources.
 fetch-releases:
     bun run fetch:releases
@@ -100,5 +116,5 @@ clean:
     bun run clean
 
 # Authoritative validation: run everything needed to prove the site is safe to merge.
-validate: format-check lint typecheck test check-assets check-projects build check-links check-generated test-dist
+validate: format-check lint typecheck test check-assets check-projects build discovery-validate check-links check-generated test-dist
     @echo "Validation passed."

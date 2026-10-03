@@ -3,6 +3,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { parse } from 'yaml';
 
+import { LOCAL_PATH_PATTERNS, SECRET_PATTERNS } from '../src/lib/build-paths';
 import {
   DOCS_CACHE_DIR,
   DOCS_MANIFEST_SCHEMA,
@@ -14,23 +15,6 @@ import { loadProjects } from '../src/lib/manifest/load';
 import { isReleaseCache, readReleaseCache } from '../src/lib/releases/cache';
 
 const DIST = resolve('dist');
-
-const SECRET_PATTERNS = [
-  /\bghp_[A-Za-z0-9]{36,}\b/,
-  /\bgho_[A-Za-z0-9]{36,}\b/,
-  /\bgithub_pat_[A-Za-z0-9_]{22,}\b/,
-  /\bAKIA[0-9A-Z]{16}\b/,
-  /-----BEGIN [A-Z ]*PRIVATE KEY-----/,
-  /\bNUGET__APIKEY\s*[:=]\s*\S+/i,
-];
-
-const LOCAL_PATH_PATTERNS = [
-  /[A-Za-z]:\\[^\s"']+/, // Windows absolute paths
-  /\/Users\/[^\s"']+/, // macOS home paths (case-sensitive)
-  /\/home\/[A-Za-z0-9._-]+\//, // Linux home paths
-  /\.cache[/\\]/,
-  /node_modules[/\\]/,
-];
 
 const errors: string[] = [];
 
@@ -184,18 +168,19 @@ function requireDistFile(file: string): void {
 }
 
 /**
- * Per-project `llms.txt` bundles are emitted by `starlight-llms-txt`'s
- * `customSets` option, one file per documented project at
- * `/_llms-txt/<project-id>.txt`. The project pages, the project documentation
- * overview, and the documentation portal all link to these paths, so a missing
- * bundle is a broken link — and the link crawl only sees the pages that link it.
+ * Per-project `llms.txt` bundles are emitted by the discovery integration at
+ * `/projects/<project-id>/llms.txt` and `/projects/<project-id>/llms-full.txt`.
+ * The project pages, the project documentation overview, and the documentation
+ * portal all link to these paths, so a missing bundle is a broken link — and the
+ * link crawl only sees the pages that link it.
  */
 function validateProjectLlmsBundles(): void {
   const projects = loadProjects().filter(
     (project) => project.docs && project.status !== 'archived',
   );
   for (const project of projects) {
-    requireDistFile(`_llms-txt/${project.id}.txt`);
+    requireDistFile(`projects/${project.id}/llms.txt`);
+    requireDistFile(`projects/${project.id}/llms-full.txt`);
   }
 
   const entrypointPath = resolve(DIST, 'llms.txt');
@@ -204,7 +189,7 @@ function validateProjectLlmsBundles(): void {
   }
   const entrypoint = readFileSync(entrypointPath, 'utf8');
   for (const project of projects) {
-    if (!entrypoint.includes(`/_llms-txt/${project.id}.txt`)) {
+    if (!entrypoint.includes(`/projects/${project.id}/llms.txt`)) {
       fail(`llms.txt does not link the per-project bundle for "${project.id}".`);
     }
   }
@@ -250,6 +235,10 @@ async function run(): Promise<number> {
   requireDistFile('llms-small.txt');
   requireDistFile('llms-full.txt');
   requireDistFile('sitemap-index.xml');
+  requireDistFile('sitemaps/pages.xml');
+  requireDistFile('sitemaps/projects.xml');
+  requireDistFile('sitemaps/llms.xml');
+  requireDistFile('discover.json');
   requireDistFile('robots.txt');
 
   validateProjectLlmsBundles();
