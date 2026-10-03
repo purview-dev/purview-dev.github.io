@@ -425,6 +425,28 @@ The release workflow is intentionally scoped to root `package.json` changes so
 content refreshes do not get blocked by an unchanged version or an existing
 `v{version}` tag.
 
+## Search & AI discovery
+
+The site is discoverable by search engines and AI tooling through a single,
+generated discovery layer: a partitioned sitemap (`/sitemap-index.xml` →
+`/sitemaps/{pages,projects,llms}.xml`), `robots.txt`, root and per-project
+`llms.txt` / `llms-full.txt`, and a Purview-specific `/discover.json`. Everything
+is derived from the project catalogue, the docs manifest and the release cache —
+there is no hand-maintained URL list. After a successful deployment, IndexNow
+notifies participating engines about changed URLs only.
+
+```shell
+bun run discovery:validate            # validate the built discovery artifacts
+bun run discovery:manifest            # regenerate artifacts from the current caches
+bun run discovery:key                 # write /<INDEXNOW_KEY>.txt from the secret
+bun run discovery:indexnow --dry-run  # show what would be submitted (no network, no key)
+```
+
+One-time operator setup (Google Search Console domain property, Bing Webmaster
+Tools, and the `INDEXNOW_KEY` secret) plus the full operational checklist live in
+[docs/discovery.md](docs/discovery.md); see also
+[docs/decisions/0007-search-and-discovery.md](docs/decisions/0007-search-and-discovery.md).
+
 ## Dependency maintenance
 
 Dependabot (`.github/dependabot.yml`) keeps Bun dependencies and GitHub Actions

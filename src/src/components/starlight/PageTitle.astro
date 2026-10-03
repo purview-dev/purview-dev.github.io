@@ -18,11 +18,8 @@ const experimental = data?.experimental === true;
 const status = data?.status ? displayStatus({ status: data.status, experimental }) : undefined;
 
 // Project overview pages surface the per-project `llms.txt` bundle emitted by
-// the `customSets` option in `astro.config.ts`. Starlight resolves an index
-// page to its directory id (`docs/<project>`), while the content collection —
-// and therefore the plugin's bundle paths — use `docs/<project>/index`, so both
-// forms are accepted here. Other aggregated pages keep the heading lean and only
-// link the global files from the site footer.
+// the discovery integration at /projects/<id>/llms.txt. Other aggregated pages
+// keep the heading lean and only link the global files from the site footer.
 const entryId = typeof entry?.id === 'string' ? entry.id : undefined;
 const isProjectOverview = entryId !== undefined && /^docs\/[^/]+(\/index)?$/.test(entryId);
 const sourceProject = typeof data?.sourceProject === 'string' ? data.sourceProject : undefined;
@@ -33,7 +30,7 @@ const starCount =
     null
   : (getReleaseIndex().data.repos[sourceRepo]?.stargazersCount ?? null);
 const llmsHref =
-  isProjectOverview && sourceProject ? withBase(`/_llms-txt/${sourceProject}.txt`) : null;
+  isProjectOverview && sourceProject ? withBase(`/projects/${sourceProject}/llms.txt`) : null;
 ---
 
 <h1 id="_top">{data?.title}</h1>

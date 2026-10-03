@@ -168,18 +168,19 @@ function requireDistFile(file: string): void {
 }
 
 /**
- * Per-project `llms.txt` bundles are emitted by `starlight-llms-txt`'s
- * `customSets` option, one file per documented project at
- * `/_llms-txt/<project-id>.txt`. The project pages, the project documentation
- * overview, and the documentation portal all link to these paths, so a missing
- * bundle is a broken link — and the link crawl only sees the pages that link it.
+ * Per-project `llms.txt` bundles are emitted by the discovery integration at
+ * `/projects/<project-id>/llms.txt` and `/projects/<project-id>/llms-full.txt`.
+ * The project pages, the project documentation overview, and the documentation
+ * portal all link to these paths, so a missing bundle is a broken link — and the
+ * link crawl only sees the pages that link it.
  */
 function validateProjectLlmsBundles(): void {
   const projects = loadProjects().filter(
     (project) => project.docs && project.status !== 'archived',
   );
   for (const project of projects) {
-    requireDistFile(`_llms-txt/${project.id}.txt`);
+    requireDistFile(`projects/${project.id}/llms.txt`);
+    requireDistFile(`projects/${project.id}/llms-full.txt`);
   }
 
   const entrypointPath = resolve(DIST, 'llms.txt');
@@ -188,7 +189,7 @@ function validateProjectLlmsBundles(): void {
   }
   const entrypoint = readFileSync(entrypointPath, 'utf8');
   for (const project of projects) {
-    if (!entrypoint.includes(`/_llms-txt/${project.id}.txt`)) {
+    if (!entrypoint.includes(`/projects/${project.id}/llms.txt`)) {
       fail(`llms.txt does not link the per-project bundle for "${project.id}".`);
     }
   }
@@ -234,6 +235,10 @@ async function run(): Promise<number> {
   requireDistFile('llms-small.txt');
   requireDistFile('llms-full.txt');
   requireDistFile('sitemap-index.xml');
+  requireDistFile('sitemaps/pages.xml');
+  requireDistFile('sitemaps/projects.xml');
+  requireDistFile('sitemaps/llms.xml');
+  requireDistFile('discover.json');
   requireDistFile('robots.txt');
 
   validateProjectLlmsBundles();

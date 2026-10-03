@@ -13,6 +13,12 @@ interface Props {
   image?: string;
   /** Optional JSON-LD structured data object. */
   structuredData?: Record<string, unknown>;
+  /**
+   * Machine-readable representations of this page (e.g. the per-project
+   * `llms-full.txt` bundle), rendered as `<link rel="alternate">`. These are a
+   * hint for tooling; every page also exposes a normal crawlable `<a href>`.
+   */
+  alternateLinks?: { href: string; type: string; title?: string }[];
 }
 
 const {
@@ -20,6 +26,7 @@ const {
   description = SITE.description,
   image,
   structuredData,
+  alternateLinks = [],
 } = Astro.props;
 const canonical = absoluteUrl(Astro.url.pathname === '' ? '/' : Astro.url.pathname);
 const ogImage = absoluteUrl(image ?? '/og/default.png');
@@ -48,6 +55,11 @@ const ogImage = absoluteUrl(image ?? '/og/default.png');
     <link rel="icon" href={withBase('/favicon-16.png')} sizes="16x16" type="image/png" />
     <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
     <link rel="manifest" href={withBase('/site.webmanifest')} />
+    {
+      alternateLinks.map((alternate) => (
+        <link rel="alternate" type={alternate.type} href={alternate.href} title={alternate.title} />
+      ))
+    }
     <meta name="theme-color" content={BRAND.purple} media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content={BRAND.inkLight} media="(prefers-color-scheme: dark)" />
     <ThemeProvider />

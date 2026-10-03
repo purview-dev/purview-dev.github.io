@@ -16,7 +16,7 @@ import { getReleaseIndex } from '~/lib/releases/runtime';
 import { SITE } from '~/lib/site';
 import { displayStatus } from '~/lib/status';
 
-import { nugetPackageUrl, withBase } from '~/lib/urls';
+import { absoluteUrl, nugetPackageUrl, withBase } from '~/lib/urls';
 
 export function getStaticPaths() {
   return loadProjects().map((project) => ({
@@ -54,9 +54,60 @@ const supersededBy =
   : undefined;
 const primaryPackage = project.packages.find((pkg) => pkg.primary) ?? project.packages[0];
 const docsPath = project.docs ? withBase(`/docs/${project.id}/`) : null;
-// Per-project machine-readable bundle emitted by `starlight-llms-txt`'s
-// `customSets` option (one file per documented project at /_llms-txt/<id>.txt).
-const llmsPath = project.docs ? withBase(`/_llms-txt/${project.id}.txt`) : null;
+// Per-project machine-readable bundles, emitted by the discovery integration at
+// /projects/<id>/llms.txt and /projects/<id>/llms-full.txt (the llms.txt
+// convention applied at the per-project scope).
+const hasMachineReadable = project.docs !== undefined && status !== 'archived';
+const llmsPath = hasMachineReadable ? withBase(`/projects/${project.id}/llms.txt`) : null;
+const alternateLinks =
+  hasMachineReadable ?
+    [
+      {
+        href: absoluteUrl(`/projects/${project.id}/llms-full.txt`),
+        type: 'text/markdown',
+        title: `${project.name} — machine-readable documentation`,
+      },
+    ]
+  : [];
+// Structured data for an open-source library: name, description, repository,
+// language, licence, package and current version. A BreadcrumbList mirrors the
+// visible breadcrumb (Projects › <name>). Only accurate values are set.
+const structuredData: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'SoftwareSourceCode',
+      name: project.name,
+      description: project.shortDescription,
+      url: absoluteUrl(`/projects/${project.id}/`),
+      codeRepository: project.sourceUrl,
+      programmingLanguage: 'C#',
+      license: 'https://opensource.org/licenses/MIT',
+      ...(tags.length > 0 ? { keywords: tags.join(', ') } : {}),
+      ...(primaryPackage ?
+        { sameAs: nugetPackageUrl(primaryPackage.id), identifier: primaryPackage.id }
+      : {}),
+      ...(releases.latestRelease?.tagName ? { softwareVersion: releases.latestRelease.tagName } : {}),
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Projects',
+          item: absoluteUrl('/projects/'),
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: project.name,
+          item: absoluteUrl(`/projects/${project.id}/`),
+        },
+      ],
+    },
+  ],
+};
 const targetFrameworks = project.targetFrameworks ?? [];
 const installSections =
   status !== 'archived' ?
@@ -89,7 +140,12 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
 }));
 ---
 
-<SiteLayout title={`${project.name} — ${SITE.fullName}`} description={project.shortDescription}>
+<SiteLayout
+  title={`${project.name} — ${SITE.fullName}`}
+  description={project.shortDescription}
+  structuredData={structuredData}
+  alternateLinks={alternateLinks}
+>
   <div class="pv-container py-12 md:py-16">
     <nav aria-label="Breadcrumb" class="mb-6 text-sm text-muted">
       <a href={withBase('/projects/')} class="pv-link">Projects</a>
