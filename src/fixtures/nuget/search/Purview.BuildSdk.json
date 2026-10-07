@@ -3,6 +3,78 @@
     "@vocab": "http://schema.nuget.org/schema#",
     "@base": "https://api.nuget.org/v3/registration5-semver1/"
   },
-  "totalHits": 0,
-  "data": []
+  "totalHits": 1,
+  "data": [
+    {
+      "@id": "https://api.nuget.org/v3/registration5-semver1/purview.buildsdk/index.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration5-semver1/purview.buildsdk/index.json",
+      "id": "Purview.BuildSdk",
+      "version": "1.0.3",
+      "description": "A reusable MSBuild SDK that provides standardised .NET project defaults, code style enforcement, configurable testing framework wiring (TUnit, Xunit, or None), mocking provider wiring (TUnitMocks, NSubstitute, or None), and Central Package Management integration. Drop in via Directory.Build.props to apply uniformly across every project in a repo.",
+      "summary": "",
+      "title": "Purview.BuildSdk",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.buildsdk/1.0.3/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.BuildSdk/1.0.3/license",
+      "projectUrl": "https://purview.dev/projects/build-sdk/",
+      "tags": [
+        "msbuild",
+        "sdk",
+        "build",
+        "tunit",
+        "xunit",
+        "tunitmock",
+        "nsubstitute",
+        "bogus",
+        "csharp",
+        "dotnet"
+      ],
+      "authors": [
+        "Purview.BuildSdk"
+      ],
+      "owners": [
+        "kieronlanning"
+      ],
+      "totalDownloads": 455,
+      "verified": false,
+      "packageTypes": [
+        {
+          "name": "MSBuildSdk"
+        }
+      ],
+      "versions": [
+        {
+          "version": "1.0.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.buildsdk/1.0.0.json"
+        },
+        {
+          "version": "1.0.1",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.buildsdk/1.0.1.json"
+        },
+        {
+          "version": "1.0.2",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.buildsdk/1.0.2.json"
+        },
+        {
+          "version": "1.0.2.1",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.buildsdk/1.0.2.1.json"
+        },
+        {
+          "version": "1.0.2.2",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.buildsdk/1.0.2.2.json"
+        },
+        {
+          "version": "1.0.3",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.buildsdk/1.0.3.json"
+        }
+      ],
+      "vulnerabilities": []
+    }
+  ]
 }

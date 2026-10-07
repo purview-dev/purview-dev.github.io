@@ -1,0 +1,492 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://raw.githubusercontent.com/purview-dev/build/main/purview-build.schema.json",
+	"title": "Purview.Build configuration",
+	"description": "Configuration for the Purview.Build shared pipeline (purview-build.json). Every section is optional; unset keys fall back to the tool\u0027s defaults.",
+	"type": "object",
+	"properties": {
+		"Build": {
+			"type": "object",
+			"properties": {
+				"LogLevel": {
+					"type": "string",
+					"enum": [
+						"Trace",
+						"Debug",
+						"Information",
+						"Warning",
+						"Error",
+						"Critical",
+						"None"
+					],
+					"default": "Information"
+				},
+				"ProjectType": {
+					"type": "string",
+					"enum": [
+						"DotNet",
+						"Web"
+					],
+					"description": "The kind of repository the pipeline operates on. DotNet runs the dotnet-based modules (restore/build/test/pack/lint); Web runs the corresponding Bun-based commands from the repository\u0027s root package.json scripts.",
+					"default": "DotNet"
+				},
+				"Solution": {
+					"type": "string",
+					"default": "src/Product.slnx"
+				},
+				"Configuration": {
+					"type": "string",
+					"default": "Release"
+				},
+				"ArtifactsFolder": {
+					"type": "string",
+					"default": "artifacts"
+				},
+				"CleanArtifacts": {
+					"type": "boolean",
+					"description": "When true, CleanArtifactsModule deletes and recreates ArtifactsFolder before the pipeline produces any output, so validation, publishing, and release uploads only ever see the artifacts from the current run. Ignored when RunPack is false (nothing will be packed, so existing artifacts, such as a folder being inspected ahead of a publish, are left untouched).",
+					"default": true
+				},
+				"RunTests": {
+					"type": "boolean",
+					"default": true
+				},
+				"TestRoot": {
+					"type": "string",
+					"description": "Root directory (relative to the repository root) under which test projects are discovered.",
+					"default": "src/tests"
+				},
+				"TestPatterns": {
+					"type": "string",
+					"description": "Comma-separated project search patterns, recursively applied under TestRoot.",
+					"default": "*Tests.csproj"
+				},
+				"TestProjects": {
+					"type": "string",
+					"description": "Comma-separated list of test project file names (or glob patterns) to run. Empty or \u0022*\u0022 runs every discovered test project.",
+					"default": "*"
+				},
+				"TestFramework": {
+					"type": "string",
+					"enum": [
+						"TUnit",
+						"xUnit"
+					],
+					"default": "TUnit"
+				},
+				"TestFilter": {
+					"type": "string",
+					"description": "Test filter. For TUnit this is a Microsoft.Testing.Platform tree-node filter (e.g. \u0022/*/*/*/*[Category=Unit]\u0022); for xUnit it is a VSTest filter (e.g. \u0022Category=Unit\u0022). Empty disables the filter.",
+					"default": "/*/*/*/*/"
+				},
+				"RunLint": {
+					"type": "boolean",
+					"default": true
+				},
+				"RunPack": {
+					"type": "boolean",
+					"default": true
+				},
+				"ValidatePack": {
+					"type": "boolean",
+					"default": true
+				},
+				"WebInstallCommand": {
+					"type": "string",
+					"description": "Install command used by RestoreModule for Web projects.",
+					"default": "bun install"
+				},
+				"WebBuildCommand": {
+					"type": "string",
+					"description": "Build command used by BuildModule for Web projects. When left at the default, the module first runs a data:sync script if one is declared. Override to take full control of the build (for example a chain of validation scripts).",
+					"default": "bun run build"
+				},
+				"WebLintCommand": {
+					"type": "string",
+					"description": "Lint command used by LintModule for Web projects.",
+					"default": "bun run lint"
+				},
+				"WebFormatCheckCommand": {
+					"type": "string",
+					"description": "Format-check command used by LintModule for Web projects.",
+					"default": "bun run format:check"
+				},
+				"WebTestCommand": {
+					"type": "string",
+					"description": "Test command used by RunTestsModule for Web projects.",
+					"default": "bun run test"
+				},
+				"WebBuildOutput": {
+					"type": "string",
+					"description": "Directory (relative to the repository root) whose contents PackModule zips into Build:ArtifactsFolder for Web projects.",
+					"default": "src/dist"
+				}
+			},
+			"additionalProperties": false,
+			"patternProperties": {
+				"^\\$": true
+			}
+		},
+		"PackValidation": {
+			"type": "object",
+			"properties": {
+				"RequireSymbolPackage": {
+					"type": "boolean",
+					"description": "Every .nupkg must have a matching .snupkg (same id/version) and vice versa.",
+					"default": true
+				},
+				"RequireSymbolFiles": {
+					"type": "boolean",
+					"description": "Every .snupkg must contain at least one .pdb file.",
+					"default": true
+				},
+				"RequireSourceLink": {
+					"type": "boolean",
+					"description": "Every .dll/.exe in the .nupkg must have a matching portable PDB (in the .snupkg) that contains a Source Link record.",
+					"default": false
+				},
+				"RequireDeterministic": {
+					"type": "boolean",
+					"description": "Every .dll/.exe in the .nupkg must be built deterministically (the PE must carry the Reproducible debug directory entry emitted by deterministic compiler builds).",
+					"default": false
+				},
+				"RequiredCompilerFlags": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"description": "Compiler-flag key=value entries that must appear in each assembly\u0027s PDB compiler-flags record (case-insensitive), e.g. \u0022optimization=release\u0022.",
+					"default": []
+				},
+				"RequiredContent": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"description": "Package id (glob, case-insensitive; \u0022*\u0022 matches every package) to entry path globs that MUST be present in the .nupkg. Paths use forward slashes, e.g. \u0022tools/**/Foo.dll\u0022 or \u0022lib/netstandard2.0/Foo.dll\u0022.",
+					"default": {}
+				},
+				"ForbiddenContent": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"description": "Package id (glob, case-insensitive; \u0022*\u0022 matches every package) to entry path globs that MUST NOT be present in the .nupkg. Paths use forward slashes, e.g. \u0022**/*.pdb\u0022.",
+					"default": {}
+				},
+				"RequireExplicitContent": {
+					"type": "boolean",
+					"description": "When true, RequiredContent becomes the exhaustive, exact definition of every package\u0027s contents: Every produced .nupkg\u0027s id must match a RequiredContent key; a package with no matching rule is an error. Every entry in the .nupkg (excluding standard NuGet/OPC metadata such as the .nuspec, \u0022[Content_Types].xml\u0022, \u0022_rels/\u0022, \u0022package/services/metadata/\u0022, and \u0022.signature.p7s\u0022) must match one of that package\u0027s (TFM-expanded) RequiredContent globs; any undeclared entry is an error.",
+					"default": true
+				}
+			},
+			"additionalProperties": false,
+			"patternProperties": {
+				"^\\$": true
+			}
+		},
+		"NuGet": {
+			"type": "object",
+			"properties": {
+				"APIKey": {
+					"type": "string",
+					"description": "Secret: the NuGet API key used to push packages. Prefer the NUGET_APIKEY environment variable over committing it here."
+				},
+				"EnvAPIKey": {
+					"type": "string",
+					"description": "Secret: binds NuGet__NUGET_APIKEY. Prefer the plain NUGET_APIKEY environment variable."
+				},
+				"FeedUrl": {
+					"type": "string",
+					"default": "https://api.nuget.org/v3/index.json"
+				},
+				"TrustedPublishing": {
+					"type": "boolean",
+					"description": "When true, packages are pushed without an API key using NuGet Trusted Publishing (OIDC federation, e.g. via the NuGet/login GitHub Action). No API key is required.",
+					"default": false
+				}
+			},
+			"additionalProperties": false,
+			"patternProperties": {
+				"^\\$": true
+			}
+		},
+		"PublishLocalNuGet": {
+			"type": "object",
+			"properties": {
+				"LocalFeedPath": {
+					"type": "string",
+					"default": ""
+				},
+				"EnvLocalFeedPath": {
+					"type": "string",
+					"description": "Env-var bound alias for LocalFeedPath via PublishLocalNuGet__LOCAL_NUGET_FEED_PATH."
+				},
+				"OverwriteExistingPackages": {
+					"type": "boolean",
+					"default": true
+				},
+				"ShutdownDotnetBuilderServer": {
+					"type": "boolean",
+					"default": true
+				},
+				"ClearPackageCache": {
+					"type": "boolean",
+					"default": true
+				}
+			},
+			"additionalProperties": false,
+			"patternProperties": {
+				"^\\$": true
+			}
+		},
+		"GitHub": {
+			"type": "object",
+			"properties": {
+				"AccessToken": {
+					"type": "string",
+					"description": "Secret: the GitHub token used to create releases. Prefer the GITHUB_TOKEN environment variable over committing it here."
+				},
+				"EnvAccessToken": {
+					"type": "string",
+					"description": "Secret: binds GitHub__GITHUB_TOKEN. Prefer the plain GITHUB_TOKEN environment variable."
+				},
+				"ProductHeader": {
+					"type": "string",
+					"default": "Purview.Build.Pipeline"
+				}
+			},
+			"additionalProperties": false,
+			"patternProperties": {
+				"^\\$": true
+			}
+		},
+		"Version": {
+			"type": "object",
+			"properties": {
+				"Source": {
+					"type": "string",
+					"enum": [
+						"PackageJson"
+					],
+					"default": "PackageJson"
+				},
+				"Strictness": {
+					"type": "string",
+					"enum": [
+						"NuGet",
+						"SemVer2"
+					],
+					"default": "NuGet"
+				}
+			},
+			"additionalProperties": false,
+			"patternProperties": {
+				"^\\$": true
+			}
+		},
+		"Release": {
+			"type": "object",
+			"properties": {
+				"Mode": {
+					"type": "string",
+					"enum": [
+						"None",
+						"NuGet",
+						"GitHubRelease",
+						"LocalNuGet"
+					],
+					"description": "Preset that derives Publish and GitHubRelease. Retained as the primary switch; an explicitly set Publish/GitHubRelease wins over whatever the preset implies.",
+					"default": "None"
+				},
+				"Publish": {
+					"type": [
+						"boolean",
+						"null"
+					],
+					"description": "Whether packages are pushed. Null means \u0022derive from Mode\u0022."
+				},
+				"GitHubRelease": {
+					"type": [
+						"boolean",
+						"null"
+					],
+					"description": "Whether the tag and GitHub release are created. Null means \u0022derive from the channel, then from Mode\u0022."
+				},
+				"Channel": {
+					"type": "string",
+					"description": "Named channel, selecting the feed and the label policy.",
+					"default": "stable"
+				},
+				"Channels": {
+					"type": "object",
+					"additionalProperties": {
+						"type": "object",
+						"properties": {
+							"FeedUrl": {
+								"type": "string",
+								"description": "Feed this channel publishes to. Falls back to NuGet:FeedUrl."
+							},
+							"GitHubRelease": {
+								"type": [
+									"boolean",
+									"null"
+								],
+								"description": "Whether a GitHub release is created for this channel. Falls back to the resolved Release:GitHubRelease."
+							},
+							"MarkPrerelease": {
+								"type": [
+									"boolean",
+									"null"
+								],
+								"description": "Whether a prerelease version is marked as a GitHub prerelease. Falls back to Release:MarkPrerelease."
+							},
+							"LabelPattern": {
+								"type": "string",
+								"description": "Pattern the prerelease label must match (REL007), for example prerelease or preview. A trailing * is a prefix match. Null disables the check even when REL007 is enabled."
+							}
+						},
+						"additionalProperties": false,
+						"patternProperties": {
+							"^\\$": true
+						},
+						"description": "A named release channel: where packages go, whether a GitHub release is cut, and which prerelease labels are allowed."
+					},
+					"default": {}
+				},
+				"DryRun": {
+					"type": "boolean",
+					"description": "Runs the full pipeline but skips publishing and the GitHub release, logging what each would have done.",
+					"default": false
+				},
+				"UploadArtifacts": {
+					"type": "boolean",
+					"description": "When true, the GitHub release module uploads every file in Build:ArtifactsFolder (for example .nupkg/.snupkg or .vsix) as release assets.",
+					"default": false
+				},
+				"MarkPrerelease": {
+					"type": "boolean",
+					"description": "When true (the default), a GitHub release whose version is a prerelease (for example 2.0.0-prerelease.25) is created as a prerelease, so it is not presented as the latest stable release. Set to false to publish prerelease versions as stable releases.",
+					"default": true
+				},
+				"Eligibility": {
+					"type": "object",
+					"properties": {
+						"Policy": {
+							"type": "string",
+							"description": "Name of the selected policy. Defaults to the policy that reproduces the pipeline\u0027s pre-eligibility behaviour, so a repository with no Release:Eligibility section is unaffected.",
+							"default": "ReleaseOnMain"
+						},
+						"Policies": {
+							"type": "object",
+							"additionalProperties": {
+								"type": "object",
+								"properties": {
+									"Inherits": {
+										"type": "string",
+										"description": "Name of the policy this one is expressed as a diff from. A missing parent is an error naming the unresolved policy."
+									},
+									"Rules": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										},
+										"default": []
+									},
+									"StableRefs": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										},
+										"description": "Refs a stable (non-prerelease) version may be released from (REL003). Entries may use a trailing *, for example refs/heads/release/*.",
+										"default": []
+									},
+									"ServicingRefs": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										},
+										"description": "Refs a version with a non-zero PATCH component may be released from (REL004).",
+										"default": []
+									},
+									"TrunkRefs": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										},
+										"description": "Refs that represent the trunk, where a release is not cut. Recorded so a policy can describe the branch model it belongs to; no rule reads it directly today.",
+										"default": []
+									},
+									"FourPartRefs": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										},
+										"description": "Refs a four-part version may be released from (REL006).",
+										"default": []
+									},
+									"AllowFourPart": {
+										"type": "boolean",
+										"description": "Whether four-part versions are permitted at all (REL006).",
+										"default": false
+									}
+								},
+								"additionalProperties": false,
+								"patternProperties": {
+									"^\\$": true
+								},
+								"description": "One named release-eligibility policy: which REL0nn rules apply, and the refs they judge against."
+							},
+							"description": "Policies by name. Merged over the built-in policies, so a repository can select TrunkReservesMinor without redeclaring it, and can override a built-in by name.",
+							"default": {}
+						}
+					},
+					"additionalProperties": false,
+					"patternProperties": {
+						"^\\$": true
+					},
+					"default": {
+						"Policy": "ReleaseOnMain",
+						"Policies": {}
+					}
+				},
+				"Context": {
+					"type": "object",
+					"properties": {
+						"Ref": {
+							"type": "string",
+							"description": "Overrides the evaluated ref. Defaults to GITHUB_REF, then the current git branch."
+						},
+						"ExistingTags": {
+							"type": "string",
+							"description": "Path to a newline- or JSON-delimited tag list, used instead of querying git."
+						},
+						"PublishedVersions": {
+							"type": "string",
+							"description": "Path to a newline- or JSON-delimited version list treated as already on the feed, used instead of querying it."
+						}
+					},
+					"additionalProperties": false,
+					"patternProperties": {
+						"^\\$": true
+					},
+					"description": "Simulated release context, so eligibility can be evaluated on a developer machine without being on the branch or having the tags and feed state the rules judge against."
+				}
+			},
+			"additionalProperties": false,
+			"patternProperties": {
+				"^\\$": true
+			}
+		}
+	},
+	"additionalProperties": false,
+	"patternProperties": {
+		"^\\$": true
+	}
+}

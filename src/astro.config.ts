@@ -196,7 +196,7 @@ export default defineConfig({
             },
             {
               label: 'NuGet packages',
-              url: `${SITE.nugetUrl}/search?q=purview`,
+              url: `${SITE.nugetUrl}/packages?q=purview+kieronlanning`,
               description: 'Published packages on nuget.org.',
             },
             {

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Purview.Containers.Nats</id>
+    <version>1.0.0-prerelease.6</version>
+    <authors>Purview</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>purview-logo-light.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://github.com/purview-dev/containers</projectUrl>
+    <description>NATS module for Purview.Containers: throwaway NATS message brokers on WSL Containers or Docker.</description>
+    <tags>wsl containers docker nats messaging testing integration</tags>
+    <repository type="git" url="https://github.com/purview-dev/containers" branch="refs/heads/main" commit="49a9746e8465558f46ebe8aa54ac2a9a22c9ee50" />
+    <dependencies>
+      <group targetFramework="net10.0">
+        <dependency id="Purview.Containers.Core" version="1.0.0-prerelease.6" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Telemetry.Abstractions" version="10.10.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

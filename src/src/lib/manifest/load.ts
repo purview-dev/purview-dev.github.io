@@ -30,6 +30,7 @@ export interface ResolvedProject extends ProjectRecord {
   experimental: boolean;
   order: number;
   packages: NonNullable<ProjectRecord['packages']>;
+  assets: NonNullable<ProjectRecord['assets']>;
   related: NonNullable<ProjectRecord['related']>;
   useCases: NonNullable<ProjectRecord['useCases']>;
   acknowledgments: NonNullable<ProjectRecord['acknowledgments']>;
@@ -65,6 +66,7 @@ function withDefaults(record: ProjectRecord): ResolvedProject {
     experimental: record.experimental ?? PROJECT_DEFAULTS.experimental,
     order: record.order ?? PROJECT_DEFAULTS.order,
     packages: record.packages ?? PROJECT_DEFAULTS.packages,
+    assets: record.assets ?? PROJECT_DEFAULTS.assets,
     related: record.related ?? PROJECT_DEFAULTS.related,
     useCases: record.useCases ?? PROJECT_DEFAULTS.useCases,
     acknowledgments: record.acknowledgments ?? PROJECT_DEFAULTS.acknowledgments,
@@ -127,6 +129,7 @@ export function parseManifest(raw: unknown, source: string): ResolvedProject[] {
   const projects = parsed.projects.map(withDefaults);
   const ids = new Set(projects.map((p) => p.id));
   const packageOwners = new Map<string, string>();
+  const assetOutputs = new Map<string, string>();
 
   for (const project of projects) {
     if (project.repository.split('/')[0] !== OWNER) {
@@ -169,6 +172,20 @@ export function parseManifest(raw: unknown, source: string): ResolvedProject[] {
         );
       }
       packageOwners.set(pkg.id, project.id);
+    }
+    for (const asset of project.assets) {
+      const existing = assetOutputs.get(asset.output);
+      if (existing !== undefined) {
+        throw new ManifestValidationError(
+          [
+            `Invalid project manifest: ${source}`,
+            `  projects[${project.id}].assets: output "${asset.output}" is also declared by "${existing}".`,
+            '',
+            `Remediation: give each mirrored asset a distinct output path.`,
+          ].join('\n'),
+        );
+      }
+      assetOutputs.set(asset.output, project.id);
     }
   }
 

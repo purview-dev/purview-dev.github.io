@@ -19,6 +19,7 @@
     "discovery:manifest": "bun run scripts/discovery/manifest.ts",
     "discovery:validate": "bun run scripts/discovery/validate.ts",
     "fetch:releases": "bun run scripts/fetch-releases.ts",
+    "fix:projects": "bun run scripts/fix-projects.ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint",

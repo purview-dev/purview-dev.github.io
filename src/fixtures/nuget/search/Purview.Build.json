@@ -10,12 +10,12 @@
       "@type": "Package",
       "registration": "https://api.nuget.org/v3/registration5-semver1/purview.build/index.json",
       "id": "Purview.Build",
-      "version": "0.3.2",
+      "version": "0.4.0",
       "description": "Shared build/test/release pipeline for purview-dev. A Modular Pipelines based .NET tool (Purview.Build) with a GitHub composite action and reusable workflows; consumers configure, the pipeline runs.",
       "summary": "",
       "title": "Purview.Build",
-      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.build/0.3.2/icon",
-      "licenseUrl": "https://www.nuget.org/packages/Purview.Build/0.3.2/license",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.build/0.4.0/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.Build/0.4.0/license",
       "projectUrl": "https://purview.dev/projects/build/",
       "tags": [],
       "authors": [
@@ -24,7 +24,7 @@
       "owners": [
         "kieronlanning"
       ],
-      "totalDownloads": 595,
+      "totalDownloads": 1361,
       "verified": false,
       "packageTypes": [
         {
@@ -34,43 +34,68 @@
       "versions": [
         {
           "version": "0.2.1",
-          "downloads": 141,
+          "downloads": 147,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.1.json"
         },
         {
           "version": "0.2.2",
-          "downloads": 90,
+          "downloads": 97,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.2.json"
         },
         {
           "version": "0.2.3",
-          "downloads": 216,
+          "downloads": 223,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.3.json"
         },
         {
           "version": "0.2.4",
-          "downloads": 148,
+          "downloads": 175,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.4.json"
         },
         {
           "version": "0.2.6",
-          "downloads": 0,
+          "downloads": 80,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.2.6.json"
         },
         {
           "version": "0.3.0",
-          "downloads": 0,
+          "downloads": 80,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.3.0.json"
         },
         {
           "version": "0.3.1",
-          "downloads": 0,
+          "downloads": 88,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.3.1.json"
         },
         {
           "version": "0.3.2",
-          "downloads": 0,
+          "downloads": 168,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.3.2.json"
+        },
+        {
+          "version": "0.3.3",
+          "downloads": 159,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.3.3.json"
+        },
+        {
+          "version": "0.3.4",
+          "downloads": 53,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.3.4.json"
+        },
+        {
+          "version": "0.3.5",
+          "downloads": 91,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.3.5.json"
+        },
+        {
+          "version": "0.3.6",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.3.6.json"
+        },
+        {
+          "version": "0.4.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.build/0.4.0.json"
         }
       ],
       "vulnerabilities": []

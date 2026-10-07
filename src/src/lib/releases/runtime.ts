@@ -2,6 +2,7 @@ import type { DataSource } from './transform';
 import type { ReleaseCacheData } from './types';
 
 import { readReleaseCache, readReleaseFixture } from './cache';
+import { RELEASE_CACHE_SCHEMA_VERSION } from './types';
 
 export interface ReleaseIndex {
   data: ReleaseCacheData;
@@ -34,7 +35,7 @@ export function getReleaseIndex(): ReleaseIndex {
   );
   cached = {
     data: {
-      schema: 1,
+      schema: RELEASE_CACHE_SCHEMA_VERSION,
       retrievedAt: '',
       repos: {},
       releases: {},

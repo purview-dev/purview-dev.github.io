@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Purview.ZodSharp.AspNetCore</id>
+    <version>2.0.1</version>
+    <authors>ZodSharp Contributors,Purview-Dev Contributors</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>purview-logo-light.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://purview.dev/projects/zodsharp/</projectUrl>
+    <description>ASP.NET Core ProblemDetails integration for ZodSharp validation results.</description>
+    <tags>zod validation aspnetcore problemdetails</tags>
+    <repository type="git" url="https://github.com/purview-dev/zodsharp" branch="refs/heads/main" commit="a530d6b67362e48109f637aa47e9769bad1bb8b1" />
+    <dependencies>
+      <group targetFramework="net10.0">
+        <dependency id="Purview.ZodSharp" version="2.0.1" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net11.0">
+        <dependency id="Purview.ZodSharp" version="2.0.1" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net8.0">
+        <dependency id="Purview.ZodSharp" version="2.0.1" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net9.0">
+        <dependency id="Purview.ZodSharp" version="2.0.1" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework="net10.0">
+        <frameworkReference name="Microsoft.AspNetCore.App" />
+      </group>
+      <group targetFramework="net11.0">
+        <frameworkReference name="Microsoft.AspNetCore.App" />
+      </group>
+      <group targetFramework="net8.0">
+        <frameworkReference name="Microsoft.AspNetCore.App" />
+      </group>
+      <group targetFramework="net9.0">
+        <frameworkReference name="Microsoft.AspNetCore.App" />
+      </group>
+    </frameworkReferences>
+  </metadata>
+</package>

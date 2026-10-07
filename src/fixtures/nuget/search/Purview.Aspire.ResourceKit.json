@@ -3,6 +3,52 @@
     "@vocab": "http://schema.nuget.org/schema#",
     "@base": "https://api.nuget.org/v3/registration5-semver1/"
   },
-  "totalHits": 0,
-  "data": []
+  "totalHits": 1,
+  "data": [
+    {
+      "@id": "https://api.nuget.org/v3/registration5-semver1/purview.aspire.resourcekit/index.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration5-semver1/purview.aspire.resourcekit/index.json",
+      "id": "Purview.Aspire.ResourceKit",
+      "version": "1.0.0.1",
+      "description": "Composable and test-friendly Aspire resource isolation model for local, running, and publishing modes.",
+      "summary": "",
+      "title": "Purview Aspire ResourceKit",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.aspire.resourcekit/1.0.0.1/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.Aspire.ResourceKit/1.0.0.1/license",
+      "projectUrl": "https://purview.dev/projects/aspire-resourcekit/",
+      "tags": [
+        "aspire",
+        "resource-kit",
+        "apphost",
+        "testing"
+      ],
+      "authors": [
+        "Purview Contributors"
+      ],
+      "owners": [
+        "kieronlanning"
+      ],
+      "totalDownloads": 2695,
+      "verified": false,
+      "packageTypes": [
+        {
+          "name": "Dependency"
+        }
+      ],
+      "versions": [
+        {
+          "version": "1.0.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.aspire.resourcekit/1.0.0.json"
+        },
+        {
+          "version": "1.0.0.1",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.aspire.resourcekit/1.0.0.1.json"
+        }
+      ],
+      "vulnerabilities": []
+    }
+  ]
 }

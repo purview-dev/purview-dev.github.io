@@ -30,7 +30,7 @@ tags:
 | Catalogue | `just check-projects` | Catalogue invariants (see below) |
 | Build | `just build` (runs live data sync first) | Astro/Starlight build, sidebar/llms plugin wiring |
 | Links | `just check-links` | Broken internal links **and missing anchors** across `dist/**/*.html` |
-| Generated output | `just check-generated` | Docs cache/mirror agreement, release cache shape, `llms*.txt`, sitemap, robots, no secrets/local paths |
+| Generated output | `just check-generated` | Docs cache/mirror agreement, release cache shape, mirrored project assets exist and are valid JSON, `llms*.txt`, sitemap, robots, no secrets/local paths |
 | Dist tests | `just test:dist` | Per-project LLM bundles, rendered project/use-case surfaces, footer version, SEO outputs |
 
 ## The catalogue guard (`just check-projects`)
@@ -49,7 +49,25 @@ deterministic). It fails the build on:
   `discussions: true` without repository discussions;
 - `externalProjects` pointing at a `purview-dev` repository.
 
+Beyond those blockers, the guard prints **advisory observations** (they never fail the build) when a
+project disagrees with the versions and frameworks its packages have published:
+
+- a `preview` project whose packages already publish a stable NuGet version (unless `experimental`);
+- a NuGet package that is deprecated or unlisted;
+- packages that trail the project's headline version;
+- `targetFrameworks` that do not match the packages' NuGet nuspec metadata. Project-level frameworks
+  are compared with the union of the **runtime** packages' frameworks; package-level frameworks are
+  compared with that package's own. `netstandard*` is treated as an analyzer/generator build target
+  (never a consumer framework), and `install: msbuild-sdk`/`dotnet-tool` projects and the `msbuild`
+  sentinel are skipped.
+
 Run it alone while iterating: `just check-projects`.
+
+Apply the machine-applicable observations (missing/mismatched `targetFrameworks`, `preview` →
+`stable` when a stable package exists) with `just fix-projects`; it is a dry run by default and only
+edits the records with `--write`. It rewrites the affected `targetFrameworks` lists to exactly the
+expected set (so it also removes frameworks a package no longer targets), but never touches blockers
+or judgement calls such as replacing a deprecated package.
 
 ## Data-sync modes
 
@@ -59,6 +77,11 @@ Run it alone while iterating: `just check-projects`.
 - `live` — always fetch from GitHub/NuGet (`just live-data-sync`).
 - `cache` — only use the existing cache (fails if missing).
 - `fixture` — only use `src/fixtures/**` (fully offline, deterministic).
+
+The same mode governs mirrored **project assets** (`assets:` in a record): `just data-sync` fetches
+each declared repository file with the docs aggregator's `fetchRawFile`, writes it to `public/`, and
+caches it under `.cache/assets/`. A declared asset that cannot be resolved fails the sync, so a
+missing schema never silently ships a broken URL.
 
 `DATA_FALLBACK_TO_FIXTURES=false` makes `auto` fail loudly instead of silently using fixtures. Set
 `GITHUB_TOKEN` (or `gh auth token`) to avoid unauthenticated rate limits.

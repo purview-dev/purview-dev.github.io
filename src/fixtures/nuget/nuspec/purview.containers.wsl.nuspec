@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Purview.Containers.Wsl</id>
+    <version>1.0.0-prerelease.6</version>
+    <authors>Purview</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>purview-logo-light.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://github.com/purview-dev/containers</projectUrl>
+    <description>WSL Containers (WSLC) backend for Purview.Containers: run WSLC-native throwaway Linux containers from any .NET 10 project, with automatic Docker fallback.</description>
+    <tags>wsl wslc containers linux windows testing integration testcontainers</tags>
+    <repository type="git" url="https://github.com/purview-dev/containers" branch="refs/heads/main" commit="49a9746e8465558f46ebe8aa54ac2a9a22c9ee50" />
+    <dependencies>
+      <group targetFramework="net10.0">
+        <dependency id="Purview.Containers.Core" version="1.0.0-prerelease.6" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Telemetry.Abstractions" version="10.10.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net10.0-windows10.0.19041">
+        <dependency id="Purview.Containers.Core" version="1.0.0-prerelease.6" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Telemetry.Abstractions" version="10.10.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.WSL.Containers" version="3.0.1" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

@@ -3,6 +3,7 @@ import '~/styles/global.css';
 import ThemeProvider from '@astrojs/starlight/components/ThemeProvider.astro';
 import SiteFooter from '~/components/SiteFooter.astro';
 import SiteHeader from '~/components/SiteHeader.astro';
+import { metaDescription } from '~/lib/seo';
 import { BRAND, SITE } from '~/lib/site';
 import { absoluteUrl, withBase } from '~/lib/urls';
 
@@ -29,12 +30,13 @@ interface Props {
 
 const {
   title,
-  description = SITE.description,
+  description: rawDescription = SITE.description,
   image,
   structuredData,
   alternateLinks = [],
   noindex = false,
 } = Astro.props;
+const description = metaDescription(rawDescription);
 const canonical = absoluteUrl(Astro.url.pathname === '' ? '/' : Astro.url.pathname);
 const ogImage = absoluteUrl(image ?? '/og/default.png');
 ---
@@ -46,13 +48,7 @@ const ogImage = absoluteUrl(image ?? '/og/default.png');
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {
-      noindex ? (
-        <meta name="robots" content="noindex" />
-      ) : (
-        <link rel="canonical" href={canonical} />
-      )
-    }
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE.fullName} />
     <meta property="og:title" content={title} />
@@ -92,7 +88,9 @@ const ogImage = absoluteUrl(image ?? '/og/default.png');
     >
       Skip to content
     </a>
-    <header class="fixed inset-x-0 top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
+    <header
+      class="fixed inset-x-0 top-0 z-40 border-b border-border bg-background/90 backdrop-blur"
+    >
       <div class="pv-container flex h-16 items-center justify-between">
         <SiteHeader hasSidebar={false} />
       </div>

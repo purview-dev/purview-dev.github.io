@@ -22,7 +22,7 @@ avoidWhen: >-
   are modelling are exceptional circumstances that belong in exceptions.
 repository: purview-dev/results
 category: application-framework
-status: preview
+status: stable
 order: 45
 docs:
   source: github-path
@@ -33,6 +33,7 @@ docs:
     - Home.md
     - index.md
 targetFrameworks:
+  - net10.0
   - net11.0
 packages:
   - id: Purview.Results

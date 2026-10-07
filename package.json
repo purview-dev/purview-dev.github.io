@@ -1,6 +1,6 @@
 {
   "name": "purview-dev",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "Purview-Dev public website and unified documentation portal (workspace root).",
   "license": "MIT",
@@ -23,6 +23,7 @@
     "discovery:manifest": "bun run --cwd src discovery:manifest",
     "discovery:validate": "bun run --cwd src discovery:validate",
     "fetch:releases": "bun run --cwd src fetch:releases",
+    "fix:projects": "bun run --cwd src fix:projects",
     "format": "bun run --cwd src format",
     "format:check": "bun run --cwd src format:check",
     "lint": "bun run --cwd src lint",

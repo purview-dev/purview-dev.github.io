@@ -41,7 +41,7 @@ const organizationStructuredData = {
       url: SITE.url,
       logo: absoluteUrl('/branding/icon-light-512.png'),
       description: SITE.description,
-      sameAs: [SITE.githubUrl, `${SITE.nugetUrl}/search?q=purview`],
+      sameAs: [SITE.githubUrl, `${SITE.nugetUrl}/packages?q=purview+kieronlanning`],
     },
     {
       '@type': 'WebSite',
@@ -63,7 +63,7 @@ const organizationStructuredData = {
     <div class="absolute inset-0 -z-10" aria-hidden="true">
       <img
         src={withBase('/branding/banner.svg')}
-        alt=""
+        alt="Purview Dev banner"
         class="h-full w-full object-cover opacity-40"
         width="1280"
         height="320"
@@ -90,8 +90,8 @@ const organizationStructuredData = {
         </h1>
         <p class="mt-6 max-w-2xl text-lg text-muted">
           Purview is where I turn repeated engineering problems into open-source tools — removing
-          boilerplate, catching mistakes earlier, and automating the work developers shouldn't
-          have to keep doing by hand.
+          boilerplate, catching mistakes earlier, and automating the work developers shouldn't have
+          to keep doing by hand.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={withBase('/projects/')} class="pv-btn pv-btn-primary"> Browse projects </a>
@@ -180,14 +180,16 @@ const organizationStructuredData = {
   }
 
   <section class="pv-container pb-10 md:pb-12">
-    <div class="rounded-xl border border-brand/20 bg-brand/5 px-6 py-6 md:flex md:items-center md:justify-between md:gap-8 md:px-8">
+    <div
+      class="rounded-xl border border-brand/20 bg-brand/5 px-6 py-6 md:flex md:items-center md:justify-between md:gap-8 md:px-8"
+    >
       <div class="max-w-2xl">
         <p class="text-sm font-medium uppercase tracking-wider text-muted">The principle</p>
         <h2 class="mt-2 text-2xl font-bold tracking-tight">Automation, not operation.</h2>
         <p class="mt-3 text-muted">
-          Purview grew from solving the same real-world engineering problems repeatedly. If the
-          work is predictable, I want the tooling to handle it—not another checklist for developers
-          to operate by hand.
+          Purview grew from solving the same real-world engineering problems repeatedly. If the work
+          is predictable, I want the tooling to handle it—not another checklist for developers to
+          operate by hand.
         </p>
       </div>
       <a href={withBase('/about/')} class="pv-link mt-5 inline-block shrink-0 md:mt-0">
@@ -247,8 +249,8 @@ const organizationStructuredData = {
         <div class="rounded-xl border border-border p-6">
           <p class="text-sm font-semibold text-brand">1 · Start with the problem</p>
           <p class="mt-2 text-muted">
-            Explore {active.length} active projects covering generation, validation, telemetry,
-            event sourcing, Aspire, and build automation.
+            Explore {active.length} active projects covering generation, validation, telemetry, event
+            sourcing, Aspire, and build automation.
           </p>
         </div>
         <div class="rounded-xl border border-border p-6">

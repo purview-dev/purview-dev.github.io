@@ -8,17 +8,26 @@ import {
   fetchGitHubReleasesRaw,
   fetchGitHubRepoRaw,
   fetchNuGetIndexRaw,
+  fetchNuGetNuspecRaw,
   fetchNuGetSearchRaw,
+  parseNuGetNuspec,
 } from '../src/lib/releases/github';
+import { selectVersionForTargetFrameworks } from '../src/lib/releases/target-frameworks';
 import { RELEASE_CACHE_SCHEMA_VERSION } from '../src/lib/releases/types';
 
 const GITHUB_FIXTURES = resolve('fixtures', 'github');
 const NUGET_FIXTURES = resolve('fixtures', 'nuget');
+const NUGET_NUSPEC_FIXTURES = resolve(NUGET_FIXTURES, 'nuspec');
 const RELEASE_FIXTURES = resolve('fixtures', 'releases');
 
 function writeJson(file: string, data: unknown): void {
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
+}
+
+function writeText(file: string, data: string): void {
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, data, 'utf8');
 }
 
 /**
@@ -79,16 +88,32 @@ async function main(): Promise<void> {
       try {
         const indexRaw = await fetchNuGetIndexRaw(pkg.id);
         writeJson(resolve(NUGET_FIXTURES, `${pkg.id.toLowerCase()}.json`), indexRaw);
-        data.packages[pkg.id] = {
+        const index: ReleaseCacheData['packages'][string] = {
           id: pkg.id,
           versions: Array.isArray(indexRaw.versions) ? indexRaw.versions.map(String) : [],
         };
+        data.packages[pkg.id] = index;
         const searchRaw = await fetchNuGetSearchRaw(pkg.id);
         writeJson(resolve(NUGET_FIXTURES, 'search', `${pkg.id}.json`), searchRaw);
         const dataList = Array.isArray(searchRaw.data) ? searchRaw.data : [];
         const first = dataList[0] as Record<string, unknown> | undefined;
         data.packageSearch[pkg.id] = first ? parseSearchEntry(first, pkg.id) : null;
-        console.log(`  nuget ${pkg.id}: ${data.packages[pkg.id]?.versions.length ?? 0} versions`);
+        console.log(`  nuget ${pkg.id}: ${index.versions.length} versions`);
+
+        const version = selectVersionForTargetFrameworks(index.versions);
+        if (version) {
+          try {
+            const nuspec = await fetchNuGetNuspecRaw(pkg.id, version);
+            writeText(resolve(NUGET_NUSPEC_FIXTURES, `${pkg.id.toLowerCase()}.nuspec`), nuspec);
+            index.targetFrameworks = parseNuGetNuspec(nuspec);
+            index.targetFrameworksVersion = version;
+            console.log(
+              `  nuget ${pkg.id}: ${index.targetFrameworks.length} target framework(s) @ ${version}`,
+            );
+          } catch (error) {
+            console.warn(`  nuget ${pkg.id}: nuspec ${(error as Error).message}`);
+          }
+        }
       } catch (error) {
         console.warn(`  nuget ${pkg.id}: ${(error as Error).message}`);
         data.packages[pkg.id] = { id: pkg.id, versions: [] };

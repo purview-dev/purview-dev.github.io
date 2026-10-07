@@ -10,9 +10,10 @@ import {
   partitionResources,
 } from '../../../src/lib/discovery/resources';
 import { loadProjects } from '../../../src/lib/manifest/load';
+import { RELEASE_CACHE_SCHEMA_VERSION } from '../../../src/lib/releases/types';
 
 const emptyReleaseData: ReleaseCacheData = {
-  schema: 1,
+  schema: RELEASE_CACHE_SCHEMA_VERSION,
   retrievedAt: '2026-01-01T00:00:00.000Z',
   repos: {},
   releases: {},

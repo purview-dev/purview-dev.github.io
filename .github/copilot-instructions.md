@@ -19,6 +19,9 @@ package is `src/`.
 - Edit the catalogue under `src/src/data/` only (one file per project, plus `external-projects.yml`), and keep every invariant listed in
   `AGENTS.md` (unique ids/orders/packages, `name` slugifying to `id` for documented projects, at
   least one use case per non-archived project, `code` paired with `language`, resolvable `docsPage`).
+- Keep declared `status` and `targetFrameworks` honest: `just check-projects` prints advisory
+  observations when they disagree with the packages' published NuGet versions and frameworks. Apply
+  the machine-applicable ones with `just fix-projects` (dry run; pass `--write` to edit).
 - Keep documentation where it lives (the product repository). This site aggregates it at build time.
 - Use Conventional Commits and keep changes small and reviewable.
 

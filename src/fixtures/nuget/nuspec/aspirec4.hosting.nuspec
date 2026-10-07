@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>AspireC4.Hosting</id>
+    <version>13.5.3.11</version>
+    <title>AspireC4.Hosting - Aspire LikeC4 Visualisation</title>
+    <authors>Purview Contributors</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>likec4-logo.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://purview.dev/projects/aspirec4/</projectUrl>
+    <description>Aspire hosting extension for the AspireC4 plugin, generating a dynamic LikeC4 architecture diagram for your Aspire application.</description>
+    <copyright>Purview-Dev., 2026 | All rights reserved.</copyright>
+    <tags>aspire;dotnet;aspnetcore;c4;likec4;architecture;diagram;visualisation;visualization; polyglot</tags>
+    <repository type="git" url="https://github.com/purview-dev/aspirec4" branch="refs/heads/main" commit="e40eec96ef9d6d10aeeb0156540bb80f5983c3c5" />
+    <dependencies>
+      <group targetFramework="net8.0">
+        <dependency id="Aspire.Hosting" version="13.5.3" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

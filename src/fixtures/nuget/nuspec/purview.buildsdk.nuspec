@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Purview.BuildSdk</id>
+    <version>1.0.3</version>
+    <authors>Purview.BuildSdk</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>purview-logo-light.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://purview.dev/projects/build-sdk/</projectUrl>
+    <description>A reusable MSBuild SDK that provides standardised .NET project defaults, code style enforcement, configurable testing framework wiring (TUnit, Xunit, or None), mocking provider wiring (TUnitMocks, NSubstitute, or None), and Central Package Management integration. Drop in via Directory.Build.props to apply uniformly across every project in a repo.</description>
+    <tags>msbuild sdk build tunit xunit tunitmock nsubstitute bogus csharp dotnet</tags>
+    <packageTypes>
+      <packageType name="MSBuildSdk" />
+    </packageTypes>
+    <repository type="git" url="https://github.com/purview-dev/build-sdk.git" branch="refs/heads/main" commit="d59336431e7f284513eba2daf12c2a1a2b568d99" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.0" />
+    </dependencies>
+  </metadata>
+</package>

@@ -12,6 +12,7 @@ import {
   parseGitHubRelease,
   parseGitHubRepo,
   parseNuGetIndex,
+  parseNuGetNuspec,
   parseNuGetSearchEntry,
 } from '../../src/lib/releases/github';
 import {
@@ -106,7 +107,7 @@ describe('GitHub normalisation (real fixtures)', () => {
     expect(repo.hasDiscussions).toBe(false);
   });
 
-  test('parses release fixtures including the prerelease-flag quirk', () => {
+  test('parses release fixtures and classifies by the semver tag', () => {
     const raw = fixture('github/releases/telemetry-sourcegenerator.json') as Array<{
       tag_name: string;
     }>;
@@ -120,10 +121,16 @@ describe('GitHub normalisation (real fixtures)', () => {
     // The expectation follows the fixture head instead of a pinned tag, so a
     // fixture refresh never invalidates this test.
     expect(latest.tagName).toBe(raw[0]?.tag_name ?? '');
-    // The org publishes prerelease tags with the GitHub prerelease flag set to
-    // false; classification must follow the semver tag, not the flag.
-    expect(latest.prerelease).toBe(false);
-    expect(isPrereleaseRelease(latest)).toBe(true);
+    // Classification follows the semver tag rather than GitHub's prerelease
+    // flag, which the org's changesets pipeline has reported inconsistently.
+    const prerelease = releases.find((release) => isPrereleaseVersion(release.tagName));
+    expect(prerelease).toBeDefined();
+    expect(prerelease && isPrereleaseRelease(prerelease)).toBe(true);
+    const stable = releases.find(
+      (release) => isValidVersion(release.tagName) && !isPrereleaseVersion(release.tagName),
+    );
+    expect(stable).toBeDefined();
+    expect(stable && isPrereleaseRelease(stable)).toBe(false);
   });
 });
 
@@ -153,6 +160,20 @@ describe('NuGet normalisation (real fixtures)', () => {
     expect(
       parseNuGetSearchEntry({ id: 'Purview.Build', version: '0.2.4' }, 'purview.build'),
     ).not.toBeNull();
+  });
+
+  test('parses target frameworks from a nuspec fixture', () => {
+    const nuspec = readFileSync(
+      resolve('fixtures', 'nuget', 'nuspec', 'purview.results.nuspec'),
+      'utf8',
+    );
+    expect(parseNuGetNuspec(nuspec)).toEqual(['net10.0', 'net11.0']);
+  });
+
+  test('reports no target frameworks for a package whose nuspec declares none', () => {
+    expect(parseNuGetNuspec('<package><metadata><dependencies /></metadata></package>')).toEqual(
+      [],
+    );
   });
 });
 
@@ -184,7 +205,7 @@ describe('version selection (NuGet precedence)', () => {
     expect(selectPrereleaseVersion(versions)).toBe('1.0.0-prerelease.55');
   });
 
-  test('selects the latest prerelease for the BuildSdk fixture', () => {
+  test('selects the stable and prerelease channels for the BuildSdk fixture', () => {
     const index = parseNuGetIndex(
       fixture('nuget/purview.buildsdk.json') as Record<string, unknown>,
       'Purview.BuildSdk',
@@ -192,10 +213,10 @@ describe('version selection (NuGet precedence)', () => {
     expect(index.versions.length).toBeGreaterThan(0);
     expect(index.versions.some((version) => isPrereleaseVersion(version))).toBe(true);
     const selection = selectVersions(index.versions);
-    expect(selection.stable).toBeNull();
-    // The package only publishes prereleases, so the latest prerelease must be
-    // the highest semver version in the fixture's flat-container index.
-    expect(selection.prerelease).toBe(sortVersionsDescending(index.versions)[0] ?? null);
+    expect(selection.stable).not.toBeNull();
+    expect(isPrereleaseVersion(selection.stable ?? '')).toBe(false);
+    expect(selection.prerelease).not.toBeNull();
+    expect(isPrereleaseVersion(selection.prerelease ?? '')).toBe(true);
   });
 
   test('handles a package with no releases at all', () => {

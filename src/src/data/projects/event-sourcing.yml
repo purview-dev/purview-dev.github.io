@@ -32,8 +32,6 @@ docs:
     - Home.md
     - index.md
 targetFrameworks:
-  - net8.0
-  - net9.0
   - net10.0
 packages:
   - id: Purview.EventSourcing

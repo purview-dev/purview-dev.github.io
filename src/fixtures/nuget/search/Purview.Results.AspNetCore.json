@@ -3,6 +3,49 @@
     "@vocab": "http://schema.nuget.org/schema#",
     "@base": "https://api.nuget.org/v3/registration5-semver1/"
   },
-  "totalHits": 0,
-  "data": []
+  "totalHits": 1,
+  "data": [
+    {
+      "@id": "https://api.nuget.org/v3/registration5-semver1/purview.results.aspnetcore/index.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration5-semver1/purview.results.aspnetcore/index.json",
+      "id": "Purview.Results.AspNetCore",
+      "version": "1.0.0",
+      "description": "Maps Purview.Results results onto ASP.NET Core responses, including ProblemDetails for expected failures.",
+      "summary": "",
+      "title": "Purview Results ASP.NET Core",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.results.aspnetcore/1.0.0/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.Results.AspNetCore/1.0.0/license",
+      "projectUrl": "https://purview.dev/projects/results/",
+      "tags": [
+        "results",
+        "result",
+        "aspnetcore",
+        "problemdetails",
+        "minimal-api",
+        "purview"
+      ],
+      "authors": [
+        "Kieron Lanning"
+      ],
+      "owners": [
+        "kieronlanning"
+      ],
+      "totalDownloads": 0,
+      "verified": false,
+      "packageTypes": [
+        {
+          "name": "Dependency"
+        }
+      ],
+      "versions": [
+        {
+          "version": "1.0.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.results.aspnetcore/1.0.0.json"
+        }
+      ],
+      "vulnerabilities": []
+    }
+  ]
 }

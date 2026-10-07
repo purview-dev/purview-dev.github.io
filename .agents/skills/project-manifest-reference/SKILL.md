@@ -49,8 +49,9 @@ Adding a value to any of these lists is a schema change and requires an ADR. `ex
 | `order` | no | Default `1000`; projects are sorted ascending; keep values unique |
 | `docs` | no | See below |
 | `install` | no | Default `nuget` |
-| `targetFrameworks` | no | e.g. `net8.0`, `net9.0`, `net10.0`, `netstandard2.0` |
+| `targetFrameworks` | no | e.g. `net8.0`, `net9.0`, `net10.0`, `netstandard2.0`; `just check-projects` reports (advisory) when it does not match the union of the runtime packages' published NuGet TFMs |
 | `packages` | no | `{ id, description?, primary?, targetFrameworks? }[]`; defaults to `[]` |
+| `assets` | no | `{ path, output, description? }[]`; repository files mirrored into `public/` at build time (`path` is repo-relative, `output` is site-relative); defaults to `[]` |
 | `related` | no | Known project ids; rendered in the project page aside |
 | `useCases` | no | Default `[]`; at least one required for non-archived projects |
 | `acknowledgments` | no | `{ name, url, description? }[]`; upstream work the project credits |
@@ -81,7 +82,9 @@ Adding a value to any of these lists is a schema change and requires an ADR. `ex
 3. `related`, `supersedes`, and `supersededBy` must all reference existing project ids.
 4. A NuGet package id may be declared by **exactly one** project.
 5. `experimental: true` is rejected when `status` is `archived` (schema refinement).
-6. The returned list is sorted by `order` ascending.
+6. An asset `output` path may be declared by **exactly one** project, must be relative, and must
+   not contain a `..` segment.
+7. The returned list is sorted by `order` ascending.
 
 ## Defaults applied by the loader
 

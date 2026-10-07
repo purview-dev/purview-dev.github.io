@@ -22,7 +22,7 @@ avoidWhen: >-
   serialization behaviour would be more machinery than the domain needs.
 repository: purview-dev/value-objects
 category: source-generation
-status: preview
+status: stable
 featured: true
 order: 35
 docs:
@@ -37,6 +37,7 @@ targetFrameworks:
   - net8.0
   - net9.0
   - net10.0
+  - net11.0
 packages:
   - id: Purview.ValueObjects
     description: Runtime contracts, source generator, and analyzer for scalar and complex value objects.

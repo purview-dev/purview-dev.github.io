@@ -3,6 +3,49 @@
     "@vocab": "http://schema.nuget.org/schema#",
     "@base": "https://api.nuget.org/v3/registration5-semver1/"
   },
-  "totalHits": 0,
-  "data": []
+  "totalHits": 1,
+  "data": [
+    {
+      "@id": "https://api.nuget.org/v3/registration5-semver1/purview.results.zodsharp/index.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration5-semver1/purview.results.zodsharp/index.json",
+      "id": "Purview.Results.ZodSharp",
+      "version": "1.0.0",
+      "description": "Bridges ZodSharp ValidationResult<T> values into Purview.Results, so validation outcomes flow through the result pipeline as ordinary error values instead of exceptions.",
+      "summary": "",
+      "title": "Purview Results ZodSharp",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.results.zodsharp/1.0.0/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.Results.ZodSharp/1.0.0/license",
+      "projectUrl": "https://purview.dev/projects/results/",
+      "tags": [
+        "results",
+        "result",
+        "validation",
+        "zod",
+        "zodsharp",
+        "purview"
+      ],
+      "authors": [
+        "Kieron Lanning"
+      ],
+      "owners": [
+        "kieronlanning"
+      ],
+      "totalDownloads": 0,
+      "verified": false,
+      "packageTypes": [
+        {
+          "name": "Dependency"
+        }
+      ],
+      "versions": [
+        {
+          "version": "1.0.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.results.zodsharp/1.0.0.json"
+        }
+      ],
+      "vulnerabilities": []
+    }
+  ]
 }
