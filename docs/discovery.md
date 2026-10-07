@@ -62,6 +62,7 @@ accurate in CI.
 
 ```shell
 bun run discovery:validate                     # validate the built artifacts in dist/
+bun run discovery:validate --require-indexnow-key  # also require /<INDEXNOW_KEY>.txt
 bun run discovery:manifest                     # regenerate artifacts in dist/ from current caches
 bun run discovery:key                          # write /<INDEXNOW_KEY>.txt from the secret
 bun run discovery:indexnow --dry-run           # show what would be submitted (no network, no key)
@@ -75,8 +76,15 @@ bun run discovery:indexnow --dry-run --verbose # include the URL lists
 fails the build on: missing/malformed sitemaps, non-absolute or off-origin URLs,
 duplicate canonicals, a `robots.txt` that does not advertise the sitemap, a
 `discover.json` that references unknown projects, missing per-project LLM
-resources, development URLs in production output, and a missing IndexNow key file
-when the key is configured.
+resources, and development URLs in production output.
+
+The IndexNow key file is a **deploy-time** artifact: the build never sees the
+key, so the build pipeline does not require it. The deploy workflow runs
+`bun run discovery:key` and then
+`bun run discovery:validate --require-indexnow-key`, which additionally fails
+when `INDEXNOW_KEY` is configured but the key file is missing, or when the file
+does not contain the configured key. Run `bun run discovery:validate` locally
+without the flag and a configured key is simply ignored.
 
 ## IndexNow
 
