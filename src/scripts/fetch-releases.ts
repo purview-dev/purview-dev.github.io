@@ -6,9 +6,48 @@ import {
   fetchGitHubReleases,
   fetchGitHubRepo,
   fetchNuGetIndex,
+  fetchNuGetNuspec,
   fetchNuGetSearch,
 } from '../src/lib/releases/github';
+import { selectVersionForTargetFrameworks } from '../src/lib/releases/target-frameworks';
 import { RELEASE_CACHE_SCHEMA_VERSION } from '../src/lib/releases/types';
+
+/**
+ * Read the target frameworks a package publishes from its NuGet nuspec and
+ * record them on the version index. Kept separate from the version-index fetch
+ * so a nuspec failure never discards the versions themselves; a previously
+ * fetched framework list is preserved on failure.
+ */
+async function attachTargetFrameworks(
+  data: ReleaseCacheData,
+  packageId: string,
+  existing: ReleaseCacheData | null,
+): Promise<void> {
+  const index = data.packages[packageId];
+  if (!index) {
+    return;
+  }
+  const previous = existing?.packages[packageId];
+  const version = selectVersionForTargetFrameworks(index.versions);
+  if (!version) {
+    if (previous?.targetFrameworks) {
+      index.targetFrameworks = previous.targetFrameworks;
+      index.targetFrameworksVersion = previous.targetFrameworksVersion ?? null;
+    }
+    return;
+  }
+  try {
+    index.targetFrameworks = await fetchNuGetNuspec(packageId, version);
+    index.targetFrameworksVersion = version;
+    console.log(`  nuget ${packageId}: ${index.targetFrameworks.length} target framework(s)`);
+  } catch (error) {
+    console.warn(`  nuget ${packageId}: nuspec unavailable (${(error as Error).message})`);
+    if (previous?.targetFrameworks) {
+      index.targetFrameworks = previous.targetFrameworks;
+      index.targetFrameworksVersion = previous.targetFrameworksVersion ?? null;
+    }
+  }
+}
 
 export async function fetchReleaseData(): Promise<ReleaseCacheData> {
   const projects = loadProjects();
@@ -67,6 +106,8 @@ export async function fetchReleaseData(): Promise<ReleaseCacheData> {
         data.packages[pkg.id] = previous ?? { id: pkg.id, versions: [] };
         data.packageSearch[pkg.id] = existing?.packageSearch[pkg.id] ?? null;
       }
+
+      await attachTargetFrameworks(data, pkg.id, existing);
     }
   }
 

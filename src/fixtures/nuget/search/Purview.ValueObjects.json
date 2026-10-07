@@ -3,6 +3,54 @@
     "@vocab": "http://schema.nuget.org/schema#",
     "@base": "https://api.nuget.org/v3/registration5-semver1/"
   },
-  "totalHits": 0,
-  "data": []
+  "totalHits": 1,
+  "data": [
+    {
+      "@id": "https://api.nuget.org/v3/registration5-semver1/purview.valueobjects/index.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration5-semver1/purview.valueobjects/index.json",
+      "id": "Purview.ValueObjects",
+      "version": "1.0.0",
+      "description": "Source-generated scalar and complex value objects for .NET. Brings F#-style single-case types to C# with Create/Hydrate factories, normalization, validation, equality, comparison, implicit conversions, and JSON serialization for DTOs, Entity Framework, and domain models.",
+      "summary": "",
+      "title": "Purview Value Objects",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.valueobjects/1.0.0/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.ValueObjects/1.0.0/license",
+      "projectUrl": "https://purview.dev/projects/value-objects/",
+      "tags": [
+        "purview",
+        "dotnet",
+        "value-objects",
+        "value-object",
+        "scalar",
+        "source-generator",
+        "domain-driven-design",
+        "dto",
+        "serialization",
+        "json",
+        "entity-framework"
+      ],
+      "authors": [
+        "Kieron Lanning"
+      ],
+      "owners": [
+        "kieronlanning"
+      ],
+      "totalDownloads": 662,
+      "verified": false,
+      "packageTypes": [
+        {
+          "name": "Dependency"
+        }
+      ],
+      "versions": [
+        {
+          "version": "1.0.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.valueobjects/1.0.0.json"
+        }
+      ],
+      "vulnerabilities": []
+    }
+  ]
 }

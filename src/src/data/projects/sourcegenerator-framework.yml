@@ -19,7 +19,7 @@ avoidWhen: >-
   hide behaviour your implementation needs to control precisely.
 repository: purview-dev/sourcegenerator-framework
 category: source-generation
-status: preview
+status: stable
 featured: true
 order: 40
 docs:
@@ -38,6 +38,8 @@ packages:
   - id: Purview.SourceGeneratorFramework
     description: Core helpers, models, and MSBuild integration for incremental generators.
     primary: true
+    targetFrameworks:
+      - netstandard2.0
   - id: Purview.SourceGeneratorFramework.Testing
     description: Framework-agnostic test runner and assertions for generator tests.
   - id: Purview.SourceGeneratorFramework.Testing.TUnit

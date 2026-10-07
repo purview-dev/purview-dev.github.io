@@ -3,6 +3,52 @@
     "@vocab": "http://schema.nuget.org/schema#",
     "@base": "https://api.nuget.org/v3/registration5-semver1/"
   },
-  "totalHits": 0,
-  "data": []
+  "totalHits": 1,
+  "data": [
+    {
+      "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.aspnetcore/index.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.aspnetcore/index.json",
+      "id": "Purview.ZodSharp.AspNetCore",
+      "version": "2.0.1",
+      "description": "ASP.NET Core ProblemDetails integration for ZodSharp validation results.",
+      "summary": "",
+      "title": "Purview.ZodSharp.AspNetCore",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.zodsharp.aspnetcore/2.0.1/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.ZodSharp.AspNetCore/2.0.1/license",
+      "projectUrl": "https://purview.dev/projects/zodsharp/",
+      "tags": [
+        "zod",
+        "validation",
+        "aspnetcore",
+        "problemdetails"
+      ],
+      "authors": [
+        "ZodSharp Contributors,Purview-Dev Contributors"
+      ],
+      "owners": [
+        "kieronlanning"
+      ],
+      "totalDownloads": 1537,
+      "verified": false,
+      "packageTypes": [
+        {
+          "name": "Dependency"
+        }
+      ],
+      "versions": [
+        {
+          "version": "2.0.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.aspnetcore/2.0.0.json"
+        },
+        {
+          "version": "2.0.1",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.aspnetcore/2.0.1.json"
+        }
+      ],
+      "vulnerabilities": []
+    }
+  ]
 }

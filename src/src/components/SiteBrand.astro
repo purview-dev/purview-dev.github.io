@@ -19,14 +19,14 @@ const { iconOnly = false } = Astro.props;
     iconOnly ?
       <img
         src={withBase('/branding/icon.svg')}
-        alt=""
+        alt={SITE.fullName}
         width="28"
         height="28"
         class="h-7 w-7 shrink-0"
       />
     : <img
         src={withBase('/branding/logo-horizontal.svg')}
-        alt=""
+        alt={`${SITE.fullName} logo`}
         width="120"
         height="41"
         class="h-9 w-auto"

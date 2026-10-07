@@ -3,6 +3,51 @@
     "@vocab": "http://schema.nuget.org/schema#",
     "@base": "https://api.nuget.org/v3/registration5-semver1/"
   },
-  "totalHits": 0,
-  "data": []
+  "totalHits": 1,
+  "data": [
+    {
+      "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp/index.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp/index.json",
+      "id": "Purview.ZodSharp",
+      "version": "2.0.1",
+      "description": "A high-performance C# port of Zod schema validation library.\n\t\t\tFeatures zero-allocation validation, struct-based rules, fluent API,\n\t\t\tand source generator support for maximum performance.",
+      "summary": "",
+      "title": "Purview.ZodSharp",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.zodsharp/2.0.1/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.ZodSharp/2.0.1/license",
+      "projectUrl": "https://purview.dev/projects/zodsharp/",
+      "tags": [
+        "zod",
+        "validation",
+        "schema"
+      ],
+      "authors": [
+        "ZodSharp Contributors,Purview-Dev Contributors"
+      ],
+      "owners": [
+        "kieronlanning"
+      ],
+      "totalDownloads": 1898,
+      "verified": false,
+      "packageTypes": [
+        {
+          "name": "Dependency"
+        }
+      ],
+      "versions": [
+        {
+          "version": "2.0.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp/2.0.0.json"
+        },
+        {
+          "version": "2.0.1",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp/2.0.1.json"
+        }
+      ],
+      "vulnerabilities": []
+    }
+  ]
 }

@@ -3,6 +3,52 @@
     "@vocab": "http://schema.nuget.org/schema#",
     "@base": "https://api.nuget.org/v3/registration5-semver1/"
   },
-  "totalHits": 0,
-  "data": []
+  "totalHits": 1,
+  "data": [
+    {
+      "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/index.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/index.json",
+      "id": "Purview.ZodSharp.SystemTextJson",
+      "version": "2.0.1",
+      "description": "A high-performance C# port of Zod schema validation library. Features zero-allocation validation, struct-based rules, fluent API, and source generator support for maximum performance.",
+      "summary": "",
+      "title": "Purview.ZodSharp.SystemTextJson",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.zodsharp.systemtextjson/2.0.1/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.ZodSharp.SystemTextJson/2.0.1/license",
+      "projectUrl": "https://purview.dev/projects/zodsharp/",
+      "tags": [
+        "zod",
+        "validation",
+        "schema",
+        "json"
+      ],
+      "authors": [
+        "ZodSharp Contributors,Purview-Dev Contributors"
+      ],
+      "owners": [
+        "kieronlanning"
+      ],
+      "totalDownloads": 1512,
+      "verified": false,
+      "packageTypes": [
+        {
+          "name": "Dependency"
+        }
+      ],
+      "versions": [
+        {
+          "version": "2.0.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/2.0.0.json"
+        },
+        {
+          "version": "2.0.1",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/2.0.1.json"
+        }
+      ],
+      "vulnerabilities": []
+    }
+  ]
 }

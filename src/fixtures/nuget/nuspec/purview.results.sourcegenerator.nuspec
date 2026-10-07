@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Purview.Results.SourceGenerator</id>
+    <version>1.0.0-prerelease.2</version>
+    <title>Purview Results Source Generator</title>
+    <authors>Kieron Lanning</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>purview-logo-light.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://purview.dev/projects/results/</projectUrl>
+    <description>.NET source generator that makes C# 15 union error cases ergonomic to use with the Purview.Results Result&lt;TValue, TError&gt; type.</description>
+    <copyright>Copyright © 2026 Purview-Dev</copyright>
+    <tags>source-generator results result union unions csharp-15 net11 purview</tags>
+    <repository type="git" url="https://github.com/purview-dev/results" branch="refs/heads/main" commit="a0fb6fd53aca854417ee83f1144743707404c1a0" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.0" />
+    </dependencies>
+  </metadata>
+</package>

@@ -132,6 +132,13 @@ function usableHash(hash: string, slug: string, context: DocLinkContext): string
  * - relative images are rewritten to the configured absolute `imageBase`.
  */
 export function rewriteDocMarkdown(markdown: string, context: DocLinkContext): string {
+  markdown = markdown.replace(/!\[\s*\]\(([^)\s]+)/g, (_match, target: string) => {
+    const file = stripUrlSuffix(target).path.split('/').pop() ?? '';
+    const alt = decodeURIComponent(file.replace(/\.[a-z0-9]+$/i, ''))
+      .replace(/[-_.]+/g, ' ')
+      .trim();
+    return `![${alt || 'Image'}](${target}`;
+  });
   const linkPattern = /!?\[([^\][]*(?:\[[^\][]*\][^\][]*)*)\]\(([^)\s]+)(?:\s+["'][^"']*["'])?\)/g;
   return markdown.replace(linkPattern, (match, label: string, target: string) => {
     const isImage = match.startsWith('!');

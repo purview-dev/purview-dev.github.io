@@ -27,8 +27,8 @@ from the repository root and delegated to the package.
   on `astro check` + oxlint.
 - **Task runner:** Just (`justfile`; switches to pwsh on Windows).
 - **All external data is fetched at build time**, never by the visitor's browser: GitHub/NuGet
-  release data and the documentation mirror, cached under `src/.cache/` with committed fixtures as
-  the offline fallback.
+  release data, the documentation mirror, and any `assets:` a project mirrors into `public/`, cached
+  under `src/.cache/` with committed fixtures as the offline fallback.
 
 ### Generated outputs — never edit by hand
 
@@ -36,6 +36,7 @@ from the repository root and delegated to the package.
 | --- | --- | --- |
 | `src/src/content/docs/**` | Aggregated documentation mirror (gitignored) | `just data-sync` |
 | `src/.cache/docs`, `src/.cache/releases` | Typed docs/release caches (gitignored) | `just data-sync` / `just fetch-releases` |
+| `src/public/schemas/**` | Mirrored project assets declared in `assets:` (gitignored) | `just data-sync` |
 | `src/dist/**` | Production build output (gitignored) | `just build` |
 
 ### Authoritative validation
@@ -47,7 +48,9 @@ just validate
 runs format-check → lint → typecheck → unit tests → asset checks → catalogue checks → build →
 link crawl → generated-output checks → built-output tests. It is the same pipeline CI uses
 (`purview-build.json` → `bun run ci:build`), so a green `just validate` is the definition of "safe to
-merge". `just check-projects` is part of that chain and fails the build on catalogue drift.
+merge". `just check-projects` is part of that chain and fails the build on catalogue drift. It also
+prints advisory observations (which never fail the build) when a project's declared `status` or
+`targetFrameworks` disagree with the versions and frameworks its packages have actually published.
 
 ## Ecosystem model — what "a project" means here
 
@@ -81,6 +84,13 @@ merge". `just check-projects` is part of that chain and fails the build on catal
    - `related`, `supersedes`, `supersededBy` must reference known ids.
    - `status` must match reality: an archived repository is `archived`; prerelease-only tooling is
      `preview`; a project with a stable release is `stable`.
+   - Declared versions and frameworks must agree with what the packages publish: a stable NuGet
+     version on a `preview` project, a deprecated or unlisted package, packages that trail the family
+     version, and a `targetFrameworks` set (project- or package-level) that does not match the
+     packages' NuGet metadata are reported as advisory observations by `just check-projects`. They
+     never fail the build, but they are catalogue drift and should be fixed or explicitly accepted.
+     Run `just fix-projects` to apply the guard's machine-applicable fixes (a dry run by default;
+     pass `--write` to edit the records).
    - `experimental: true` marks a project whose API and packaging may change without notice
      (ADR 0004). It is orthogonal to `status` — which stays the release channel — it is invalid on an
      `archived` project, and it never hides a project: it adds a warning badge and a notice to the
@@ -120,6 +130,7 @@ Do not assume this file contains everything; consult `.agents/` while planning.
 | Manifest schema / loader | `src/src/lib/manifest/{schema,load}.ts` |
 | Docs aggregation | `src/src/lib/docs/aggregate.ts` (+ `frontmatter`, `links`, `sidebar`, `staleness`) |
 | Release data | `src/src/lib/releases/*`, `src/scripts/fetch-releases.ts` |
+| Mirrored project assets | `src/scripts/sync-assets.ts` (`assets:` in the manifest) |
 | Pages | `src/src/pages/{index,about,use-cases,docs,projects,releases}/` |
 | Validation | `justfile`, `src/scripts/{check-links,check-generated,check-assets,check-projects}.ts` |
 | Architecture decisions | `docs/decisions/*.md` |

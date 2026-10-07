@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Purview.ZodSharp.SystemTextJson</id>
+    <version>2.0.1</version>
+    <authors>ZodSharp Contributors,Purview-Dev Contributors</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>purview-logo-light.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://purview.dev/projects/zodsharp/</projectUrl>
+    <description>A high-performance C# port of Zod schema validation library. Features zero-allocation validation, struct-based rules, fluent API, and source generator support for maximum performance.</description>
+    <tags>zod validation schema json</tags>
+    <repository type="git" url="https://github.com/purview-dev/zodsharp" branch="refs/heads/main" commit="a530d6b67362e48109f637aa47e9769bad1bb8b1" />
+    <dependencies>
+      <group targetFramework="net10.0">
+        <dependency id="Purview.ZodSharp" version="2.0.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Options" version="10.0.12" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net11.0">
+        <dependency id="Purview.ZodSharp" version="2.0.1" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net8.0">
+        <dependency id="Purview.ZodSharp" version="2.0.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="8.0.2" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Options" version="8.0.2" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net9.0">
+        <dependency id="Purview.ZodSharp" version="2.0.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="9.0.20" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Options" version="9.0.20" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

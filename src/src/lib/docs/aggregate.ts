@@ -8,6 +8,7 @@ import { dirname, join, resolve } from 'node:path';
 
 import { resolveGitHubToken } from '../github/token';
 import { getReleaseIndex } from '../releases/runtime';
+import { metaDescription } from '../seo';
 import { OWNER } from '../site';
 import { convertGithubAlerts } from './alerts';
 import {
@@ -110,7 +111,7 @@ async function lastCommitDate(repository: string, branch: string, path: string):
   return 'unknown';
 }
 
-async function fetchRawFile(
+export async function fetchRawFile(
   repository: string,
   branch: string,
   path: string,
@@ -315,10 +316,12 @@ async function buildPage(
   const repo = getReleaseIndex().data.repos[project.repository];
   const repoTags = repo?.topics ?? [];
   const repoDescription = repo?.description?.trim() || null;
-  const description =
+  const description = metaDescription(
     (slug === 'index' ? project.shortDescription : extractDescription(cleaned)) ||
-    repoDescription ||
-    project.shortDescription;
+      repoDescription ||
+      project.shortDescription,
+    `${project.name} documentation — open-source .NET tooling from Purview Dev.`,
+  );
   const editSourcePath = raw.path.replace(/^\/+/, '');
 
   const frontmatter: DocFrontmatter = {

@@ -195,6 +195,31 @@ function validateProjectLlmsBundles(): void {
   }
 }
 
+/**
+ * Every asset declared on a project is mirrored into `public/` and copied into
+ * the built site, so a missing or malformed mirror would serve a broken URL.
+ */
+function validateProjectAssets(): void {
+  for (const project of loadProjects()) {
+    for (const asset of project.assets) {
+      const path = resolve(DIST, asset.output);
+      if (!existsSync(path)) {
+        fail(`Missing mirrored project asset: ${asset.output} (declared by "${project.id}")`);
+        continue;
+      }
+      if (asset.output.toLowerCase().endsWith('.json')) {
+        try {
+          JSON.parse(readFileSync(path, 'utf8'));
+        } catch {
+          fail(
+            `Mirrored project asset is not valid JSON: ${asset.output} (declared by "${project.id}")`,
+          );
+        }
+      }
+    }
+  }
+}
+
 async function scanForSecrets(): Promise<void> {
   const files = await glob('**/*', { cwd: DIST, onlyFiles: true });
   for (const file of files) {
@@ -242,6 +267,7 @@ async function run(): Promise<number> {
   requireDistFile('robots.txt');
 
   validateProjectLlmsBundles();
+  validateProjectAssets();
 
   const llmsFull = readFileSync(resolve(DIST, 'llms-full.txt'), 'utf8');
   const llms = readFileSync(resolve(DIST, 'llms.txt'), 'utf8');

@@ -186,6 +186,59 @@ describe('project manifest', () => {
   });
 });
 
+describe('project assets', () => {
+  test('the real catalogue mirrors the purview-build schema', () => {
+    const build = loadProjects().find((project) => project.id === 'build');
+    expect(build?.assets).toHaveLength(1);
+    expect(build?.assets[0]).toMatchObject({
+      path: 'purview-build.schema.json',
+      output: 'schemas/purview-build.json',
+    });
+  });
+
+  test('projects without assets resolve to an empty list', () => {
+    const projects = parseManifest({ projects: [makeProject('a')] }, 'fixture.yml');
+    expect(projects[0]?.assets).toEqual([]);
+  });
+
+  test('accepts a declared asset', () => {
+    const projects = parseManifest(
+      {
+        projects: [{ ...makeProject('a'), assets: [{ path: 'x.json', output: 'schemas/x.json' }] }],
+      },
+      'fixture.yml',
+    );
+    expect(projects[0]?.assets).toEqual([{ path: 'x.json', output: 'schemas/x.json' }]);
+  });
+
+  test('rejects an absolute or escaping output path', () => {
+    for (const output of ['/schemas/x.json', '../x.json', 'schemas/../../x.json']) {
+      expect(() =>
+        parseManifest(
+          { projects: [{ ...makeProject('a'), assets: [{ path: 'x.json', output }] }] },
+          'fixture.yml',
+        ),
+      ).toThrow(ManifestValidationError);
+    }
+  });
+
+  test('rejects duplicate asset output paths across projects', () => {
+    const first = {
+      ...makeProject('a'),
+      packages: [{ id: 'Purview.A' }],
+      assets: [{ path: 'x.json', output: 'schemas/x.json' }],
+    };
+    const second = {
+      ...makeProject('b'),
+      packages: [{ id: 'Purview.B' }],
+      assets: [{ path: 'y.json', output: 'schemas/x.json' }],
+    };
+    expect(() => parseManifest({ projects: [first, second] }, 'fixture.yml')).toThrow(
+      /schemas\/x\.json/,
+    );
+  });
+});
+
 describe('project use cases', () => {
   test('loads concrete use cases from the real manifest', () => {
     const projects = loadProjects();

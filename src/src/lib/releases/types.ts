@@ -1,4 +1,4 @@
-export const RELEASE_CACHE_SCHEMA_VERSION = 1;
+export const RELEASE_CACHE_SCHEMA_VERSION = 2;
 
 export interface GitHubRepoInfo {
   name: string;
@@ -27,6 +27,15 @@ export interface GitHubReleaseInfo {
 export interface NuGetVersionIndex {
   id: string;
   versions: string[];
+  /**
+   * Target frameworks of the package's newest stable version (falling back to
+   * the newest prerelease when no stable version exists), read from the NuGet
+   * flat-container `.nuspec`. Absent when the package has no published versions
+   * or the nuspec could not be read.
+   */
+  targetFrameworks?: string[];
+  /** The published version `targetFrameworks` was read from. */
+  targetFrameworksVersion?: string | null;
 }
 
 export interface NuGetSearchEntry {

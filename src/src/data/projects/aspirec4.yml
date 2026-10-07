@@ -28,6 +28,8 @@ docs:
     - _Sidebar.md
     - Home.md
     - index.md
+targetFrameworks:
+  - net8.0
 packages:
   - id: AspireC4.Hosting
     description: Aspire hosting extension for the AspireC4 plugin, generating a dynamic LikeC4 architecture diagram for your Aspire application.

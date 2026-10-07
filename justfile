@@ -87,6 +87,10 @@ check-generated:
 check-projects:
     bun run check:projects
 
+# Apply the guard's auto-fixes to the project records (dry run; pass --write to apply).
+fix-projects *ARGS:
+    bun run fix:projects {{ARGS}}
+
 # Validate the generated discovery artifacts (sitemaps, robots, llms, discover.json).
 discovery-validate:
     bun run discovery:validate

@@ -81,7 +81,10 @@ Related: `project-manifest-reference` (fields and vocabularies), `docs-aggregati
   cache).
 - Exactly one `primary` when a project has multiple packages.
 - `targetFrameworks` match the package's actual TFMs (`netstandard2.0` for generators/analyzers is
-  normal).
+  normal). `just check-projects` reports a mismatch as an advisory observation: project-level
+  frameworks against the union of the runtime packages' published TFMs, package-level frameworks
+  against that package's own. `netstandard*` is treated as an analyzer/generator target, not a
+  consumer framework.
 - `install` is set only when the package is not a plain NuGet reference: `msbuild-sdk` for
   `Purview.BuildSdk`, `dotnet-tool` for `Purview.Build`.
 

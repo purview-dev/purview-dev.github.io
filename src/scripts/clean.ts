@@ -15,6 +15,7 @@ const TARGETS = [
   'public/icon-192.png',
   'public/icon-512.png',
   'public/og',
+  'public/schemas',
 ];
 
 if (import.meta.main) {

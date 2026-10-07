@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Purview.EventSourcing.Postgres</id>
+    <version>2.0.0-prerelease.39</version>
+    <title>Purview Event Store for PostgreSQL</title>
+    <authors>Kieron Lanning</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>purview-logo-light.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://purview.dev/projects/event-sourcing/</projectUrl>
+    <description>PostgreSQL event stream and queryable snapshot storage provider for Purview EventSourcing.</description>
+    <copyright>Copyright © 2026 Purview-Dev</copyright>
+    <tags>purview dotnet event-sourcing event-store postgres postgresql events</tags>
+    <repository type="git" url="https://github.com/purview-dev/event-sourcing.git" branch="refs/heads/main" commit="0874dd9da43ac54f9e1c45a2ac07c2165660e2e4" />
+    <dependencies>
+      <group targetFramework="net10.0">
+        <dependency id="Purview.EventSourcing" version="2.0.0-prerelease.39" exclude="Build,Analyzers" />
+        <dependency id="Aspire.Npgsql" version="13.5.4" exclude="Build,Analyzers" />
+        <dependency id="LinqKit" version="1.3.11" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.Binder" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Options" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Telemetry.Abstractions" version="10.10.0" exclude="Build,Analyzers" />
+        <dependency id="Npgsql" version="10.0.3" exclude="Build,Analyzers" />
+        <dependency id="Npgsql.EntityFrameworkCore.PostgreSQL" version="10.0.3" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.EntityFrameworkCore" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.EntityFrameworkCore.Relational" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Caching.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.DependencyInjection" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Logging" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Logging.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="OpenTelemetry.Extensions.Hosting" version="1.19.0" exclude="Build,Analyzers" />
+        <dependency id="Purview.ValueObjects" version="1.0.0-prerelease.9" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

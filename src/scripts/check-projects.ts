@@ -1,5 +1,6 @@
 import type { DocsManifest } from '../src/lib/docs/aggregate';
 import type { ResolvedProject } from '../src/lib/manifest/load';
+import type { ProjectStatus } from '../src/lib/manifest/schema';
 import type { ReleaseCacheData } from '../src/lib/releases/types';
 
 import { readDocsManifest } from '../src/lib/docs/aggregate';
@@ -11,6 +12,16 @@ import {
 } from '../src/lib/manifest/load';
 import { readReleaseCache, readReleaseFixture } from '../src/lib/releases/cache';
 import { selectStableVersion } from '../src/lib/releases/normalize';
+import {
+  diffTargetFrameworks,
+  isAnalyzerTargetFramework,
+  isRecognizedTargetFramework,
+  normalizeTargetFramework,
+  runtimeTargetFrameworks,
+  sortTargetFrameworks,
+  TARGET_FRAMEWORK_SENTINELS,
+} from '../src/lib/releases/target-frameworks';
+import { projectReleaseSummary, projectVersionRollup } from '../src/lib/releases/transform';
 import { OWNER } from '../src/lib/site';
 
 /**
@@ -25,12 +36,24 @@ import { OWNER } from '../src/lib/site';
  * warnings so they do not break the build.
  */
 
-interface Finding {
+/**
+ * A machine-applicable correction for an advisory observation. Only the
+ * manifest-editable findings carry one; blockers and judgement calls (for
+ * example replacing a deprecated package) do not.
+ */
+export type Autofix =
+  | { kind: 'set-project-target-frameworks'; value: string[] }
+  | { kind: 'set-package-target-frameworks'; packageId: string; value: string[] }
+  | { kind: 'set-status'; value: ProjectStatus };
+
+export interface Finding {
   project: string;
   field: string;
   observed: string;
   expected: string;
   remediation: string;
+  /** A fix `just fix-projects` can apply, when the observation is unambiguous. */
+  autofix?: Autofix;
 }
 
 const errors: Finding[] = [];
@@ -227,6 +250,225 @@ function checkPackages(project: ResolvedProject, data: ReleaseCacheData): void {
   }
 }
 
+function joinDiff(diff: { missing: string[]; extra: string[] }): string {
+  return [
+    diff.missing.length > 0 ? `missing ${diff.missing.join(', ')}` : null,
+    diff.extra.length > 0 ? `extra ${diff.extra.join(', ')}` : null,
+  ]
+    .filter((value): value is string => value !== null)
+    .join('; ');
+}
+
+/**
+ * A project's declared release channel and package health should agree with what
+ * it has actually published. These are recommendations rather than blockers: a
+ * project may deliberately stay `preview`, but the mismatch is worth surfacing.
+ * Exported so the rules can be unit-tested against synthetic release data.
+ */
+export function versionConsistencyFindings(
+  project: ResolvedProject,
+  data: ReleaseCacheData,
+): Finding[] {
+  const findings: Finding[] = [];
+  if (project.status === 'archived') {
+    return findings;
+  }
+
+  if (project.status === 'preview' && !project.experimental) {
+    const stablePackage = project.packages.find(
+      (pkg) => selectStableVersion(data.packages[pkg.id]?.versions ?? []) !== null,
+    );
+    if (stablePackage) {
+      findings.push({
+        project: project.id,
+        field: 'status',
+        observed: `preview while a stable NuGet version of ${stablePackage.id} exists`,
+        expected: 'status: stable once a stable release ships',
+        remediation:
+          'confirm the channel: set `status: stable` if the release is supported, or keep `preview` and record why.',
+        autofix: { kind: 'set-status', value: 'stable' },
+      });
+    }
+  }
+
+  for (const pkg of project.packages) {
+    const search = data.packageSearch[pkg.id];
+    if (search?.deprecated) {
+      findings.push({
+        project: project.id,
+        field: `packages["${pkg.id}"]`,
+        observed: 'deprecated on NuGet',
+        expected: 'a package that is still recommended',
+        remediation: 'replace the deprecated package or mark the project archived/superseded.',
+      });
+    }
+    if (search && search.listed === false) {
+      findings.push({
+        project: project.id,
+        field: `packages["${pkg.id}"]`,
+        observed: 'unlisted on NuGet',
+        expected: 'a listed package',
+        remediation: 'list the package on NuGet or remove it from the catalogue.',
+      });
+    }
+  }
+
+  const rollup = projectVersionRollup(project, projectReleaseSummary(project, data, 'cache'));
+  if (rollup.laggingPackageCount > 0) {
+    findings.push({
+      project: project.id,
+      field: 'packages',
+      observed: `${rollup.laggingPackageCount} package(s) trail the headline version`,
+      expected: 'packages published together at the project version',
+      remediation:
+        'publish the lagging packages at the current version, or confirm the split is intentional.',
+    });
+  }
+
+  return findings;
+}
+
+/**
+ * Target frameworks should describe what the published packages actually
+ * support. Analyzer/source-generator packages (`netstandard*`) are treated
+ * separately: their framework is a build-time target, not a consumer framework,
+ * so a project whose packages are all analyzers is not compared against them.
+ * Exported so the rules can be unit-tested against synthetic release data.
+ */
+export function targetFrameworkFindings(
+  project: ResolvedProject,
+  data: ReleaseCacheData,
+): Finding[] {
+  const findings: Finding[] = [];
+  const declaredProject = project.targetFrameworks ?? [];
+
+  for (const { field, values } of [
+    { field: 'targetFrameworks', values: declaredProject },
+    ...project.packages.map((pkg) => ({
+      field: `packages["${pkg.id}"].targetFrameworks`,
+      values: pkg.targetFrameworks ?? [],
+    })),
+  ]) {
+    for (const value of values) {
+      if (!isRecognizedTargetFramework(value)) {
+        findings.push({
+          project: project.id,
+          field,
+          observed: value,
+          expected: 'a valid TFM such as net8.0, net10.0, netstandard2.0, or the msbuild sentinel',
+          remediation: 'correct the framework moniker or remove it.',
+        });
+      }
+    }
+  }
+
+  const published = new Map<string, string[]>();
+  for (const pkg of project.packages) {
+    const frameworks = data.packages[pkg.id]?.targetFrameworks;
+    if (frameworks && frameworks.length > 0) {
+      published.set(pkg.id, frameworks);
+    }
+  }
+  if (published.size === 0) {
+    return findings;
+  }
+
+  const sentinels = new Set<string>(TARGET_FRAMEWORK_SENTINELS);
+  const sentinelOnly =
+    declaredProject.length > 0 &&
+    declaredProject.every((value) => sentinels.has(normalizeTargetFramework(value)));
+  const skipEquality =
+    project.install === 'msbuild-sdk' || project.install === 'dotnet-tool' || sentinelOnly;
+
+  const expectedRuntime = new Set(
+    [...published].flatMap(([, frameworks]) =>
+      frameworks.filter((tfm) => !isAnalyzerTargetFramework(tfm)).map(normalizeTargetFramework),
+    ),
+  );
+
+  if (!skipEquality) {
+    const declaredRuntime = runtimeTargetFrameworks(declaredProject, { excludeAnalyzer: true });
+    if (declaredProject.length === 0) {
+      if (expectedRuntime.size > 0) {
+        findings.push({
+          project: project.id,
+          field: 'targetFrameworks',
+          observed: 'none',
+          expected: `the frameworks the packages target (${sortTargetFrameworks(expectedRuntime).join(', ')})`,
+          remediation: 'declare the project targetFrameworks shown on the project page.',
+          autofix: {
+            kind: 'set-project-target-frameworks',
+            value: sortTargetFrameworks(expectedRuntime),
+          },
+        });
+      }
+    } else if (expectedRuntime.size > 0) {
+      const diff = diffTargetFrameworks(declaredRuntime, [...expectedRuntime]);
+      if (diff.missing.length > 0 || diff.extra.length > 0) {
+        findings.push({
+          project: project.id,
+          field: 'targetFrameworks',
+          observed: `${sortTargetFrameworks(declaredRuntime).join(', ') || 'none'} (${joinDiff(diff)})`,
+          expected: `the union of the runtime packages' frameworks (${sortTargetFrameworks(expectedRuntime).join(', ')})`,
+          remediation:
+            'align the project targetFrameworks with the packages, or add a package-level override.',
+          autofix: {
+            kind: 'set-project-target-frameworks',
+            value: sortTargetFrameworks(expectedRuntime),
+          },
+        });
+      }
+    }
+
+    for (const [packageId, frameworks] of published) {
+      const declared = project.packages.find((pkg) => pkg.id === packageId)?.targetFrameworks ?? [];
+      if (declared.length > 0) {
+        const diff = diffTargetFrameworks(runtimeTargetFrameworks(declared), frameworks);
+        if (diff.missing.length > 0 || diff.extra.length > 0) {
+          findings.push({
+            project: project.id,
+            field: `packages["${packageId}"].targetFrameworks`,
+            observed: `${sortTargetFrameworks(declared).join(', ')} (${joinDiff(diff)})`,
+            expected: `the published frameworks (${sortTargetFrameworks(frameworks).join(', ')})`,
+            remediation:
+              'correct the package targetFrameworks, or remove them to inherit the project list.',
+            autofix: {
+              kind: 'set-package-target-frameworks',
+              packageId,
+              value: sortTargetFrameworks(frameworks),
+            },
+          });
+        }
+        continue;
+      }
+      const packageRuntime = frameworks.filter((tfm) => !isAnalyzerTargetFramework(tfm));
+      const runtimeDiverges = packageRuntime.some(
+        (tfm) => !expectedRuntime.has(normalizeTargetFramework(tfm)),
+      );
+      const analyzerOnly = packageRuntime.length === 0 && expectedRuntime.size > 0;
+      if (runtimeDiverges || analyzerOnly) {
+        findings.push({
+          project: project.id,
+          field: `packages["${packageId}"]`,
+          observed: `targets ${sortTargetFrameworks(frameworks).join(', ')} without a package-level targetFrameworks`,
+          expected:
+            expectedRuntime.size > 0
+              ? `the project frameworks (${sortTargetFrameworks(expectedRuntime).join(', ')})`
+              : 'the project targetFrameworks',
+          remediation: 'add `targetFrameworks` to the package, or align it with the project.',
+          autofix: {
+            kind: 'set-package-target-frameworks',
+            packageId,
+            value: sortTargetFrameworks(frameworks),
+          },
+        });
+      }
+    }
+  }
+
+  return findings;
+}
+
 /** Repository metadata is the site's tag source and a stability signal. */
 function checkRepoMetadata(project: ResolvedProject, data: ReleaseCacheData): void {
   const repo = data.repos[project.repository];
@@ -373,6 +615,12 @@ export function checkProjects(): { errors: Finding[]; warnings: Finding[] } {
     if (data) {
       checkPackages(project, data);
       checkRepoMetadata(project, data);
+      for (const finding of versionConsistencyFindings(project, data)) {
+        warn(finding);
+      }
+      for (const finding of targetFrameworkFindings(project, data)) {
+        warn(finding);
+      }
     }
   }
 

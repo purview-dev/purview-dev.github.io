@@ -72,6 +72,25 @@ async function nugetRequest(url: string): Promise<unknown> {
   return response.json() as Promise<unknown>;
 }
 
+async function nugetText(url: string): Promise<string> {
+  const response = await fetch(url, {
+    headers: { Accept: 'application/xml', 'User-Agent': 'purview-dev-website' },
+  });
+  if (!response.ok) {
+    throw new ApiError(
+      `NuGet request failed (${response.status}): ${url}`,
+      response.status,
+      'nuget',
+    );
+  }
+  return response.text();
+}
+
+function nugetNuspecUrl(packageId: string, version: string): string {
+  const id = packageId.toLowerCase();
+  return `${NUGET_FLAT}/${id}/${version.toLowerCase()}/${id}.nuspec`;
+}
+
 export function parseGitHubRepo(raw: Record<string, unknown>): GitHubRepoInfo {
   return {
     name: String(raw.name ?? ''),
@@ -103,6 +122,24 @@ export function parseGitHubRelease(raw: Record<string, unknown>): GitHubReleaseI
 export function parseNuGetIndex(raw: Record<string, unknown>, id: string): NuGetVersionIndex {
   const versions = Array.isArray(raw.versions) ? raw.versions.map(String) : [];
   return { id, versions };
+}
+
+/**
+ * Extract the target frameworks a package declares in its `.nuspec`. The
+ * frameworks appear as `targetFramework` attributes on `<group>` (dependency
+ * groups) and `<frameworkAssembly>` elements; a package with no dependency
+ * groups and no framework assemblies reports none.
+ */
+export function parseNuGetNuspec(xml: string): string[] {
+  const frameworks = new Set<string>();
+  const pattern = /targetFramework="([^"]+)"/g;
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(xml)) !== null) {
+    if (match[1]) {
+      frameworks.add(match[1]);
+    }
+  }
+  return [...frameworks].toSorted();
 }
 
 export function parseNuGetSearchEntry(
@@ -187,6 +224,11 @@ export async function fetchNuGetSearch(packageId: string): Promise<NuGetSearchEn
   return entry ? entry : null;
 }
 
+/** Fetch and parse the target frameworks declared by a specific published version. */
+export async function fetchNuGetNuspec(packageId: string, version: string): Promise<string[]> {
+  return parseNuGetNuspec(await nugetText(nugetNuspecUrl(packageId, version)));
+}
+
 /** Raw (unparsed) GitHub repository response, used for fixture generation and tests. */
 export async function fetchGitHubRepoRaw(repository: string): Promise<Record<string, unknown>> {
   return (await githubRequest(`/repos/${repository}`, githubToken())) as Record<string, unknown>;
@@ -231,6 +273,11 @@ export async function fetchNuGetIndexRaw(packageId: string): Promise<Record<stri
 export async function fetchNuGetSearchRaw(packageId: string): Promise<Record<string, unknown>> {
   const query = encodeURIComponent(`packageid:${packageId}`);
   return (await nugetRequest(`${NUGET_SEARCH}?q=${query}&take=1`)) as Record<string, unknown>;
+}
+
+/** Raw NuGet flat-container nuspec XML, used for fixture generation and tests. */
+export async function fetchNuGetNuspecRaw(packageId: string, version: string): Promise<string> {
+  return nugetText(nugetNuspecUrl(packageId, version));
 }
 
 export const githubOrgUrl = `https://github.com/${OWNER}`;

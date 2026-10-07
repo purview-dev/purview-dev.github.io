@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Purview.EventSourcing</id>
+    <version>2.0.0-prerelease.39</version>
+    <title>Purview Event Sourcing</title>
+    <authors>Kieron Lanning</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>purview-logo-light.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://purview.dev/projects/event-sourcing/</projectUrl>
+    <description>Core abstractions, aggregate types, facades, transactions, and dependency injection extensions for building event-sourced .NET applications.</description>
+    <copyright>Copyright © 2026 Purview-Dev</copyright>
+    <tags>purview dotnet event-sourcing eventstore event-store aggregate domain-driven-design</tags>
+    <repository type="git" url="https://github.com/purview-dev/event-sourcing.git" branch="refs/heads/main" commit="0874dd9da43ac54f9e1c45a2ac07c2165660e2e4" />
+    <dependencies>
+      <group targetFramework="net10.0">
+        <dependency id="Microsoft.Extensions.Caching.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Logging.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Options" version="10.0.12" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Telemetry.Abstractions" version="10.10.0" exclude="Build,Analyzers" />
+        <dependency id="Purview.ValueObjects" version="1.0.0-prerelease.9" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

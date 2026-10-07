@@ -1,6 +1,6 @@
 {
-  "schema": 1,
-  "retrievedAt": "2026-09-18T17:28:23.132Z",
+  "schema": 2,
+  "retrievedAt": "2026-10-07T09:23:19.376Z",
   "repos": {
     "purview-dev/telemetry-sourcegenerator": {
       "name": "telemetry-sourcegenerator",
@@ -33,7 +33,7 @@
       "stargazersCount": 35,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-18T08:19:16Z",
+      "updatedAt": "2026-10-07T07:00:07Z",
       "hasDiscussions": false
     },
     "purview-dev/event-sourcing": {
@@ -64,7 +64,7 @@
       "stargazersCount": 4,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-18T17:17:37Z",
+      "updatedAt": "2026-10-02T06:19:49Z",
       "hasDiscussions": false
     },
     "purview-dev/zodsharp": {
@@ -90,7 +90,7 @@
       "stargazersCount": 1,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-18T08:18:43Z",
+      "updatedAt": "2026-10-07T06:24:39Z",
       "hasDiscussions": false
     },
     "purview-dev/value-objects": {
@@ -122,7 +122,7 @@
       "stargazersCount": 1,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-18T17:05:08Z",
+      "updatedAt": "2026-10-07T06:54:13Z",
       "hasDiscussions": false
     },
     "purview-dev/sourcegenerator-framework": {
@@ -152,7 +152,35 @@
       "stargazersCount": 2,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-18T08:18:57Z",
+      "updatedAt": "2026-10-06T22:47:00Z",
+      "hasDiscussions": false
+    },
+    "purview-dev/results": {
+      "name": "results",
+      "fullName": "purview-dev/results",
+      "description": "Result types for .NET - a small, dependency-light Result<TValue, TError> where expected failures are values instead of exceptions, C# 15 union error cases with generated AsFailure<TValue>() helpers, and ASP.NET Core and ZodSharp integrations that map failures to HTTP responses.",
+      "archived": false,
+      "homepage": "https://purview.dev/projects/results/",
+      "topics": [
+        "aspnetcore",
+        "c-sharp",
+        "csharp",
+        "discriminated-unions",
+        "dotnet",
+        "error-handling",
+        "minimal-apis",
+        "nuget",
+        "problem-details",
+        "result-type",
+        "roslyn",
+        "source-generator",
+        "union-types",
+        "zodsharp"
+      ],
+      "stargazersCount": 1,
+      "openIssuesCount": 0,
+      "defaultBranch": "main",
+      "updatedAt": "2026-10-07T07:13:09Z",
       "hasDiscussions": false
     },
     "purview-dev/aspire-resourcekit": {
@@ -180,7 +208,7 @@
       "stargazersCount": 2,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-18T08:16:53Z",
+      "updatedAt": "2026-10-07T07:28:16Z",
       "hasDiscussions": false
     },
     "purview-dev/aspirec4": {
@@ -211,9 +239,9 @@
         "visualization"
       ],
       "stargazersCount": 9,
-      "openIssuesCount": 1,
+      "openIssuesCount": 2,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-17T17:47:24Z",
+      "updatedAt": "2026-10-07T07:28:42Z",
       "hasDiscussions": false
     },
     "purview-dev/build": {
@@ -236,10 +264,10 @@
         "nuget",
         "reusable-workflow"
       ],
-      "stargazersCount": 0,
-      "openIssuesCount": 1,
+      "stargazersCount": 1,
+      "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-18T11:35:40Z",
+      "updatedAt": "2026-10-06T22:37:09Z",
       "hasDiscussions": false
     },
     "purview-dev/build-sdk": {
@@ -269,7 +297,7 @@
       "stargazersCount": 1,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-09-18T08:15:42Z",
+      "updatedAt": "2026-10-06T22:32:50Z",
       "hasDiscussions": false
     },
     "purview-dev/dotnet-logging-source-generators": {
@@ -283,34 +311,6 @@
       "openIssuesCount": 0,
       "defaultBranch": "main",
       "updatedAt": "2024-04-28T11:21:49Z",
-      "hasDiscussions": false
-    },
-    "purview-dev/results": {
-      "name": "results",
-      "fullName": "purview-dev/results",
-      "description": "Result types for .NET - a small, dependency-light Result<TValue, TError> where expected failures are values instead of exceptions, C# 15 union error cases with generated AsFailure<TValue>() helpers, and ASP.NET Core and ZodSharp integrations that map failures to HTTP responses.",
-      "archived": false,
-      "homepage": "https://purview.dev/projects/results/",
-      "topics": [
-        "aspnetcore",
-        "c-sharp",
-        "csharp",
-        "discriminated-unions",
-        "dotnet",
-        "error-handling",
-        "minimal-apis",
-        "nuget",
-        "problem-details",
-        "result-type",
-        "roslyn",
-        "source-generator",
-        "union-types",
-        "zodsharp"
-      ],
-      "stargazersCount": 0,
-      "openIssuesCount": 0,
-      "defaultBranch": "main",
-      "updatedAt": "2026-09-30T14:05:36Z",
       "hasDiscussions": false
     },
     "purview-dev/containers": {
@@ -340,20 +340,110 @@
         "wsl-containers",
         "wslc"
       ],
-      "stargazersCount": 1,
+      "stargazersCount": 3,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-10-02T07:36:57Z",
+      "updatedAt": "2026-10-07T08:30:54Z",
       "hasDiscussions": false
     }
   },
   "releases": {
     "purview-dev/telemetry-sourcegenerator": [
       {
+        "tagName": "v5.0.1",
+        "name": "v5.0.1",
+        "body": "## What's Changed\n* chore: add MIT license file by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/141\n* Adopting Source Generator Framework (GA) by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/142\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0...v5.0.1",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-07T07:04:39Z",
+        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.1"
+      },
+      {
+        "tagName": "v5.0.0",
+        "name": "v5.0.0",
+        "body": "## What's Changed\n* chore: update GitHub Actions workflows by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/93\n* fix: trigger CD for merged code changes by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/95\n* chore(release): 4.1.0 by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/94\n* Bump the nuget group with 1 update by @dependabot[bot] in https://github.com/purview-dev/telemetry-sourcegenerator/pull/96\n* Bump the nuget group with 1 update by @dependabot[bot] in https://github.com/purview-dev/telemetry-sourcegenerator/pull/98\n* expanding refactorings by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/99\n* feat: use AddEmbeddedAttributeDefinition + changeset release flow by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/100\n* refactor(ci): use reusable workflows from kjldev/.github by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/101\n* chore: remove husky by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/103\n* fix(release): skip wiki push in CI, add post-release wiki update to CD by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/104\n* Version Packages in https://github.com/purview-dev/telemetry-sourcegenerator/pull/105\n* Project structure + agent skills by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/110\n* build: trying to fix the pipeline by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/111\n* build: trying to fix the pipeline by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/112\n* Fix build by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/114\n* build: fix the sample build by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/115\n* build: fix Pipeline pack by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/116\n* Refactoring defaults by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/117\n* build: fixed sample build by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/118\n* fix: di summary had double global:: by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/119\n* Fixing attrib gen by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/120\n* chore: updating to latest source gen by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/121\n* docs: updated docs and bumped sdk by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/122\n* docs: updated urls in documentation by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/123\n* docs: add documentation wiki by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/124\n* docs: refresh performance benchmarks by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/127\n* fix: make benchmark host builds resolve the generator correctly by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/125\n* docs: refresh performance benchmarks by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/126\n* perf: fixed logger v2 benchmarks and added agressive inlining by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/128\n* chore: bumped version by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/129\n* chore: update to Purview.BuildSdk and bump to 5.0.0-prerelease.10 by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/130\n* chore: update branding assets, bump version, and use human-readable name by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/131\n* chore: bumped package version by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/132\n* refactor: source gen update by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/133\n* chore: source gen update by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/134\n* chore: bumped source gen by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/135\n* fix: sg leaking types by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/136\n* fix: regression on file copy by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/137\n* fix: misrepresentation of the naming error by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/138\n* refactor: source gen update by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/139\n* docs(release): updated shipped/ release docs by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/140\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v4.1.0...v5.0.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-29T12:12:57Z",
+        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0"
+      },
+      {
+        "tagName": "v5.0.0-prerelease.19",
+        "name": "v5.0.0-prerelease.19",
+        "body": "## What's Changed\n* refactor: source gen update by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/139\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.18...v5.0.0-prerelease.19",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-28T20:23:04Z",
+        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.19"
+      },
+      {
+        "tagName": "v5.0.0-prerelease.18",
+        "name": "v5.0.0-prerelease.18",
+        "body": "## What's Changed\n* fix: misrepresentation of the naming error by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/138\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.17...v5.0.0-prerelease.18",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-27T14:15:15Z",
+        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.18"
+      },
+      {
+        "tagName": "v5.0.0-prerelease.17",
+        "name": "v5.0.0-prerelease.17",
+        "body": "## What's Changed\n* fix: regression on file copy by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/137\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.16...v5.0.0-prerelease.17",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-25T14:12:36Z",
+        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.17"
+      },
+      {
+        "tagName": "v5.0.0-prerelease.16",
+        "name": "v5.0.0-prerelease.16",
+        "body": "## What's Changed\n* fix: sg leaking types by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/136\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.15...v5.0.0-prerelease.16",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-24T21:55:40Z",
+        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.16"
+      },
+      {
+        "tagName": "v5.0.0-prerelease.15",
+        "name": "v5.0.0-prerelease.15",
+        "body": "## What's Changed\n* chore: bumped source gen by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/135\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.14...v5.0.0-prerelease.15",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-24T16:09:30Z",
+        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.15"
+      },
+      {
+        "tagName": "v5.0.0-prerelease.14",
+        "name": "v5.0.0-prerelease.14",
+        "body": "## What's Changed\n* chore: source gen update by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/134\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.13...v5.0.0-prerelease.14",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-23T16:18:55Z",
+        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.14"
+      },
+      {
+        "tagName": "v5.0.0-prerelease.13",
+        "name": "v5.0.0-prerelease.13",
+        "body": "## What's Changed\n* refactor: source gen update by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/133\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.12...v5.0.0-prerelease.13",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-23T10:22:24Z",
+        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.13"
+      },
+      {
+        "tagName": "v5.0.0-prerelease.12",
+        "name": "v5.0.0-prerelease.12",
+        "body": "## What's Changed\n* chore: bumped package version by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/132\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.11...v5.0.0-prerelease.12",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-22T15:41:57Z",
+        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.12"
+      },
+      {
         "tagName": "v5.0.0-prerelease.11",
         "name": "v5.0.0-prerelease.11",
         "body": "## What's Changed\n* chore: update branding assets, bump version, and use human-readable name by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/131\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.10...v5.0.0-prerelease.11",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-18T08:22:49Z",
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.11"
@@ -362,7 +452,7 @@
         "tagName": "v5.0.0-prerelease.10",
         "name": "v5.0.0-prerelease.10",
         "body": "## What's Changed\n* chore: update to Purview.BuildSdk and bump to 5.0.0-prerelease.10 by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/130\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.9...v5.0.0-prerelease.10",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-17T17:52:12Z",
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.10"
@@ -371,7 +461,7 @@
         "tagName": "v5.0.0-prerelease.9",
         "name": "v5.0.0-prerelease.9",
         "body": "## What's Changed\n* docs: updated urls in documentation by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/123\n* docs: add documentation wiki by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/124\n* docs: refresh performance benchmarks by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/127\n* fix: make benchmark host builds resolve the generator correctly by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/125\n* docs: refresh performance benchmarks by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/126\n* perf: fixed logger v2 benchmarks and added agressive inlining by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/128\n* chore: bumped version by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/129\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.8...v5.0.0-prerelease.9",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-16T22:05:51Z",
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.9"
@@ -380,7 +470,7 @@
         "tagName": "v5.0.0-prerelease.8",
         "name": "v5.0.0-prerelease.8",
         "body": "## What's Changed\n* docs: updated docs and bumped sdk by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/122\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.7...v5.0.0-prerelease.8",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-14T13:32:19Z",
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.8"
@@ -389,7 +479,7 @@
         "tagName": "v5.0.0-prerelease.7",
         "name": "v5.0.0-prerelease.7",
         "body": "## What's Changed\n* chore: updating to latest source gen by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/121\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.6...v5.0.0-prerelease.7",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-12T13:57:45Z",
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.7"
@@ -398,7 +488,7 @@
         "tagName": "v5.0.0-prerelease.6",
         "name": "v5.0.0-prerelease.6",
         "body": "## What's Changed\n* Fixing attrib gen by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/120\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.5...v5.0.0-prerelease.6",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-08T15:33:14Z",
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.6"
@@ -407,7 +497,7 @@
         "tagName": "v5.0.0-prerelease.5",
         "name": "v5.0.0-prerelease.5",
         "body": "## What's Changed\n* fix: di summary had double global:: by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/119\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.4...v5.0.0-prerelease.5",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-06T08:44:27Z",
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.5"
@@ -416,7 +506,7 @@
         "tagName": "v5.0.0-prerelease.4",
         "name": "v5.0.0-prerelease.4",
         "body": "## What's Changed\n* build: fixed sample build by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/118\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.3...v5.0.0-prerelease.4",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-04T12:38:54Z",
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.4"
@@ -425,7 +515,7 @@
         "tagName": "v5.0.0-prerelease.3",
         "name": "v5.0.0-prerelease.3",
         "body": "## What's Changed\n* Refactoring defaults by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/117\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.2...v5.0.0-prerelease.3",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-03T16:06:08Z",
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.3"
@@ -434,7 +524,7 @@
         "tagName": "v5.0.0-prerelease.2",
         "name": "v5.0.0-prerelease.2",
         "body": "## What's Changed\n* Fix build by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/114\n* build: fix the sample build by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/115\n* build: fix Pipeline pack by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/116\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.0-prerelease.1...v5.0.0-prerelease.2",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-03T10:27:03Z",
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.2"
@@ -443,7 +533,7 @@
         "tagName": "v5.0.0-prerelease.1",
         "name": "v5.0.0-prerelease.1",
         "body": "## What's Changed\n* chore: update GitHub Actions workflows by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/93\n* fix: trigger CD for merged code changes by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/95\n* chore(release): 4.1.0 by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/94\n* Bump the nuget group with 1 update by @dependabot[bot] in https://github.com/purview-dev/telemetry-sourcegenerator/pull/96\n* Bump the nuget group with 1 update by @dependabot[bot] in https://github.com/purview-dev/telemetry-sourcegenerator/pull/98\n* expanding refactorings by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/99\n* feat: use AddEmbeddedAttributeDefinition + changeset release flow by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/100\n* refactor(ci): use reusable workflows from kjldev/.github by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/101\n* chore: remove husky by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/103\n* fix(release): skip wiki push in CI, add post-release wiki update to CD by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/104\n* Version Packages by @kjldev-release-bot[bot] in https://github.com/purview-dev/telemetry-sourcegenerator/pull/105\n* Project structure + agent skills by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/110\n* build: trying to fix the pipeline by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/111\n* build: trying to fix the pipeline by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/112\n\n## New Contributors\n* @kjldev-release-bot[bot] made their first contribution in https://github.com/purview-dev/telemetry-sourcegenerator/pull/105\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v4.1.0...v5.0.0-prerelease.1",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-01T22:16:46Z",
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.0-prerelease.1"
@@ -618,41 +708,41 @@
         "draft": false,
         "publishedAt": "2024-04-30T17:35:41Z",
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v1.0.3"
-      },
-      {
-        "tagName": "v1.0.2",
-        "name": "v1.0.2",
-        "body": "## What's Changed\r\n* feat: used the assembly name as the default activity source name by @kieronlanning in https://github.com/purview-dev/purview-telemetry-sourcegenerator/pull/17\r\n\r\n\r\n**Full Changelog**: https://github.com/purview-dev/purview-telemetry-sourcegenerator/compare/v1.0.1...v1.0.2",
-        "prerelease": false,
-        "draft": false,
-        "publishedAt": "2024-04-26T07:15:18Z",
-        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v1.0.2"
-      },
-      {
-        "tagName": "v1.0.1",
-        "name": "v1.0.1",
-        "body": "This does include a **breaking change**, where dependency generated method names no-longer contain the first `I` from the interface name. E.g. `AddICacheServiceTelemetry` is now `AddCacheServiceTelemetry`.",
-        "prerelease": false,
-        "draft": false,
-        "publishedAt": "2024-04-25T17:35:44Z",
-        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v1.0.1"
-      },
-      {
-        "tagName": "v1.0.0",
-        "name": "v1.0.0",
-        "body": "",
-        "prerelease": false,
-        "draft": false,
-        "publishedAt": "2024-04-15T14:13:12Z",
-        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v1.0.0"
       }
     ],
     "purview-dev/event-sourcing": [
       {
+        "tagName": "v2.0.0-prerelease.39",
+        "name": "v2.0.0-prerelease.39",
+        "body": "## What's Changed\n* fix: broken tests after sgf updates by @kieronlanning in https://github.com/purview-dev/event-sourcing/pull/58\n\n\n**Full Changelog**: https://github.com/purview-dev/event-sourcing/compare/v2.0.0-prerelease.38...v2.0.0-prerelease.39",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-29T10:32:10Z",
+        "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.39"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.38",
+        "name": "v2.0.0-prerelease.38",
+        "body": "## What's Changed\n* chore: bumped version by @kieronlanning in https://github.com/purview-dev/event-sourcing/pull/57\n\n\n**Full Changelog**: https://github.com/purview-dev/event-sourcing/compare/v2.0.0-prerelease.36...v2.0.0-prerelease.38",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-25T14:43:24Z",
+        "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.38"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.36",
+        "name": "v2.0.0-prerelease.36",
+        "body": "## What's Changed\n* chore: bumped package version by @kieronlanning in https://github.com/purview-dev/event-sourcing/pull/56\n\n\n**Full Changelog**: https://github.com/purview-dev/event-sourcing/compare/v2.0.0-prerelease.35...v2.0.0-prerelease.36",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-24T08:21:57Z",
+        "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.36"
+      },
+      {
         "tagName": "v2.0.0-prerelease.35",
         "name": "v2.0.0-prerelease.35",
         "body": "## What's Changed\n* Migrate to valueobjects by @kieronlanning in https://github.com/purview-dev/event-sourcing/pull/55\n\n\n**Full Changelog**: https://github.com/purview-dev/event-sourcing/compare/v2.0.0-prerelease.34...v2.0.0-prerelease.35",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-18T17:21:36Z",
         "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.35"
@@ -661,7 +751,7 @@
         "tagName": "v2.0.0-prerelease.34",
         "name": "v2.0.0-prerelease.34",
         "body": "## What's Changed\n* docs: reference framework as Purview.ZodSharp and fix stale package IDs by @kieronlanning in https://github.com/purview-dev/event-sourcing/pull/53\n* chore: update branding assets, bump version, and use human-readable name by @kieronlanning in https://github.com/purview-dev/event-sourcing/pull/54\n\n\n**Full Changelog**: https://github.com/purview-dev/event-sourcing/compare/v2.0.0-prerelease.33...v2.0.0-prerelease.34",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-18T08:24:00Z",
         "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.34"
@@ -670,7 +760,7 @@
         "tagName": "v2.0.0-prerelease.33",
         "name": "v2.0.0-prerelease.33",
         "body": "## What's Changed\n* chore: bumped sdk - no core version bump by @kieronlanning in https://github.com/purview-dev/event-sourcing/pull/50\n* Docs update by @kieronlanning in https://github.com/purview-dev/event-sourcing/pull/51\n* chore: rename to event-sourcing and bump to 2.0.0-prerelease.33 by @kieronlanning in https://github.com/purview-dev/event-sourcing/pull/52\n\n\n**Full Changelog**: https://github.com/purview-dev/event-sourcing/compare/v2.0.0-prerelease.32...v2.0.0-prerelease.33",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-17T17:54:44Z",
         "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.33"
@@ -679,7 +769,7 @@
         "tagName": "v2.0.0-prerelease.32",
         "name": "v2.0.0-prerelease.32",
         "body": "## What's Changed\n* Package update by @kieronlanning in https://github.com/purview-dev/eventsourcing/pull/49\n\n\n**Full Changelog**: https://github.com/purview-dev/eventsourcing/compare/v2.0.0-prerelease.31...v2.0.0-prerelease.32",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-15T08:12:56Z",
         "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.32"
@@ -688,7 +778,7 @@
         "tagName": "v2.0.0-prerelease.31",
         "name": "v2.0.0-prerelease.31",
         "body": "## What's Changed\n* chore: removed old ZodSharp packages by @kieronlanning in https://github.com/purview-dev/eventsourcing/pull/47\n* Sg update by @kieronlanning in https://github.com/purview-dev/eventsourcing/pull/48\n\n\n**Full Changelog**: https://github.com/purview-dev/eventsourcing/compare/v2.0.0-prerelease.30...v2.0.0-prerelease.31",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-12T18:30:10Z",
         "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.31"
@@ -697,7 +787,7 @@
         "tagName": "v2.0.0-prerelease.30",
         "name": "v2.0.0-prerelease.30",
         "body": "## What's Changed\n* Productionsation by @kieronlanning in https://github.com/purview-dev/eventsourcing/pull/46\n\n\n**Full Changelog**: https://github.com/purview-dev/eventsourcing/compare/v2.0.0-prerelease.29...v2.0.0-prerelease.30",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-08T17:49:03Z",
         "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.30"
@@ -706,7 +796,7 @@
         "tagName": "v2.0.0-prerelease.29",
         "name": "v2.0.0-prerelease.29",
         "body": "## What's Changed\n* fix(ci): checkout before release publish by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/26\n* chore(release): prepare prerelease.6 by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/27\n* fix(ci): configure NuGet login user by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/28\n* fix(ci): allow release reruns with existing tag by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/29\n* build: updated CI/CD + release by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/30\n* build: updated CI/CD + release by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/31\n* Scope release GitHub App tokens to the invoking repository by @kieronlanning with @Copilot in https://github.com/purview-dev/purview-eventsourcing/pull/32\n* Merge pull request #32 from kjldev/copilot/configure-github-app by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/33\n* Copilot/configure GitHub app by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/34\n* Inconsistencies by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/35\n* feat: added snapshot strategy to all snapshot stores + azure table store by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/36\n* Snapshot strategies by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/37\n* Cleaning by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/41\n* Sample app repair by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/42\n* Code writer by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/44\n* build: using shared build by @kieronlanning in https://github.com/purview-dev/purview-eventsourcing/pull/45\n\n\n**Full Changelog**: https://github.com/purview-dev/purview-eventsourcing/compare/v2.0.0-prerelease.5...v2.0.0-prerelease.29",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-04T15:11:28Z",
         "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v2.0.0-prerelease.29"
@@ -750,10 +840,199 @@
     ],
     "purview-dev/zodsharp": [
       {
+        "tagName": "v2.0.1",
+        "name": "v2.0.1",
+        "body": "## What's Changed\n* chore: add MIT license file by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/50\n* Zodrules update by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/51\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0...v2.0.1",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-07T06:29:49Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.1"
+      },
+      {
+        "tagName": "v2.0.0",
+        "name": "v2.0.0",
+        "body": "## What's Changed\n* chore(release): prepare the first stable release (2.0.0) by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/49\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.28...v2.0.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-29T14:20:50Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.28",
+        "name": "v2.0.0-prerelease.28",
+        "body": "## What's Changed\n* docs: updated readme by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/47\n* refactor: source gen update by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/48\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.27...v2.0.0-prerelease.28",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-28T20:18:13Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.28"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.27",
+        "name": "v2.0.0-prerelease.27",
+        "body": "## What's Changed\n* refactor: merged VO-introducted refine/ validate pipeline by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/46\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.26...v2.0.0-prerelease.27",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-27T23:06:05Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.27"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.26",
+        "name": "v2.0.0-prerelease.26",
+        "body": "## What's Changed\n* ci: mark prerelease versions as GitHub prereleases by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/42\n* ci: restore minimal release workflow by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/43\n* chore: source gen update by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/44\n* Source gen update by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/45\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.25...v2.0.0-prerelease.26",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-27T14:29:39Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.26"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.25",
+        "name": "v2.0.0-prerelease.25",
+        "body": "## What's Changed\n* Custom rules by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/41\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.24...v2.0.0-prerelease.25",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-27T11:21:01Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.25"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.24",
+        "name": "v2.0.0-prerelease.24",
+        "body": "## What's Changed\n* fix: schemas are only generated in the containing type now by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/40\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.23...v2.0.0-prerelease.24",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-25T15:23:59Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.24"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.23",
+        "name": "v2.0.0-prerelease.23",
+        "body": "## What's Changed\n* fix: regression on file copy by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/39\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.22...v2.0.0-prerelease.23",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-25T14:08:35Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.23"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.22",
+        "name": "v2.0.0-prerelease.22",
+        "body": "## What's Changed\n* fix: sg leaking types by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/38\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.21...v2.0.0-prerelease.22",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-24T21:33:13Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.22"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.21",
+        "name": "v2.0.0-prerelease.21",
+        "body": "## What's Changed\n* chore: bumped source gen by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/37\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.20...v2.0.0-prerelease.21",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-24T16:14:20Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.21"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.20",
+        "name": "v2.0.0-prerelease.20",
+        "body": "## What's Changed\n* chore: fixed source gen il-merge by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/36\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.19...v2.0.0-prerelease.20",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-23T16:01:32Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.20"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.19",
+        "name": "v2.0.0-prerelease.19",
+        "body": "## What's Changed\n* build: new build updates by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/35\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.18...v2.0.0-prerelease.19",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-23T10:07:12Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.19"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.18",
+        "name": "v2.0.0-prerelease.18",
+        "body": "## What's Changed\n* refactor: source gen update by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/34\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.17...v2.0.0-prerelease.18",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-22T23:37:07Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.18"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.17",
+        "name": "v2.0.0-prerelease.17",
+        "body": "## What's Changed\n* chore: bumped package version by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/33\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.16...v2.0.0-prerelease.17",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-22T15:04:50Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.17"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.16",
+        "name": "v2.0.0-prerelease.16",
+        "body": "## What's Changed\n* feat: added assembly scanning by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/32\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.15...v2.0.0-prerelease.16",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-21T15:10:27Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.16"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.15",
+        "name": "v2.0.0-prerelease.15",
+        "body": "## What's Changed\n* feat: added assembly scanning for ioc by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/31\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.14...v2.0.0-prerelease.15",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-21T14:13:09Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.15"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.14",
+        "name": "v2.0.0-prerelease.14",
+        "body": "## What's Changed\n* refactor: error factory moved to Core by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/30\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.13...v2.0.0-prerelease.14",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-21T07:01:48Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.14"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.13",
+        "name": "v2.0.0-prerelease.13",
+        "body": "## What's Changed\n* refactor: updated namespace by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/29\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.12...v2.0.0-prerelease.13",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-20T15:07:53Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.13"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.12",
+        "name": "v2.0.0-prerelease.12",
+        "body": "## What's Changed\n* Typed params by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/28\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.11...v2.0.0-prerelease.12",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-20T08:57:49Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.12"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.11",
+        "name": "v2.0.0-prerelease.11",
+        "body": "## What's Changed\n* refactor(sg): to use correct framework by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/27\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.10...v2.0.0-prerelease.11",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-19T15:30:01Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.11"
+      },
+      {
+        "tagName": "v2.0.0-prerelease.10",
+        "name": "v2.0.0-prerelease.10",
+        "body": "## What's Changed\n* feat: added error registry by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/26\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.9...v2.0.0-prerelease.10",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-19T11:14:41Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.10"
+      },
+      {
         "tagName": "v2.0.0-prerelease.9",
         "name": "v2.0.0-prerelease.9",
         "body": "## What's Changed\n* docs: reference framework as Purview.ZodSharp by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/24\n* chore: update branding assets, bump version, and use human-readable name by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/25\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.8...v2.0.0-prerelease.9",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-18T08:21:13Z",
         "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.9"
@@ -762,7 +1041,7 @@
         "tagName": "v2.0.0-prerelease.8",
         "name": "v2.0.0-prerelease.8",
         "body": "## What's Changed\n* chore: update to Purview.BuildSdk and bump to 2.0.0-prerelease.8 by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/23\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.7...v2.0.0-prerelease.8",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-17T17:50:27Z",
         "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.8"
@@ -771,7 +1050,7 @@
         "tagName": "v2.0.0-prerelease.7",
         "name": "v2.0.0-prerelease.7",
         "body": "## What's Changed\n* docs: updated urls in documentation by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/21\n* feat: added uuid version rule support by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/22\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.6...v2.0.0-prerelease.7",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-17T08:10:24Z",
         "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.7"
@@ -780,7 +1059,7 @@
         "tagName": "v2.0.0-prerelease.6",
         "name": "v2.0.0-prerelease.6",
         "body": "## What's Changed\n* docs: updated docs and bumped sdk by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/19\n* fix: double packed readme.md by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/20\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.0-prerelease.5...v2.0.0-prerelease.6",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-14T16:06:20Z",
         "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.6"
@@ -789,7 +1068,7 @@
         "tagName": "v2.0.0-prerelease.5",
         "name": "v2.0.0-prerelease.5",
         "body": "## What's Changed\n* fix: timespan/ datetime/ etc was failing with sg range validation by @kieronlanning in https://github.com/purview-dev/ZodSharp/pull/18\n\n\n**Full Changelog**: https://github.com/purview-dev/ZodSharp/compare/v2.0.0-prerelease.4...v2.0.0-prerelease.5",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-12T16:29:37Z",
         "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.5"
@@ -798,7 +1077,7 @@
         "tagName": "v2.0.0-prerelease.4",
         "name": "v2.0.0-prerelease.4",
         "body": "## What's Changed\n* chore: sdk/ sg update for perf mainly by @kieronlanning in https://github.com/purview-dev/ZodSharp/pull/17\n\n\n**Full Changelog**: https://github.com/purview-dev/ZodSharp/compare/v2.0.0-prerelease.3...v2.0.0-prerelease.4",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-12T13:50:11Z",
         "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.4"
@@ -807,7 +1086,7 @@
         "tagName": "v2.0.0-prerelease.3",
         "name": "v2.0.0-prerelease.3",
         "body": "## What's Changed\n* Sg update by @kieronlanning in https://github.com/purview-dev/ZodSharp/pull/16\n\n\n**Full Changelog**: https://github.com/purview-dev/ZodSharp/compare/v2.0.0-prerelease.2...v2.0.0-prerelease.3",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-08T17:17:32Z",
         "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.3"
@@ -816,7 +1095,7 @@
         "tagName": "v2.0.0-prerelease.2",
         "name": "v2.0.0-prerelease.2",
         "body": "## What's Changed\n* fix: uses string literal for user provided values by @kieronlanning in https://github.com/purview-dev/ZodSharp/pull/15\n\n\n**Full Changelog**: https://github.com/purview-dev/ZodSharp/compare/v2.0.0-prerelease.1...v2.0.0-prerelease.2",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-06T08:36:12Z",
         "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.2"
@@ -825,7 +1104,7 @@
         "tagName": "v2.0.0-prerelease.1",
         "name": "v2.0.0-prerelease.1",
         "body": "## What's Changed\n* Source gen perf by @kieronlanning in https://github.com/purview-dev/ZodSharp/pull/9\n* Requested changes by @kieronlanning in https://github.com/purview-dev/ZodSharp/pull/10\n* fix: required/ optional feat drift and package version pinning by @kieronlanning in https://github.com/purview-dev/ZodSharp/pull/11\n* More edits by @kieronlanning in https://github.com/purview-dev/ZodSharp/pull/12\n* Migration by @kieronlanning in https://github.com/purview-dev/ZodSharp/pull/13\n* docs: updated package IDs (Purview.*) and repo references by @kieronlanning in https://github.com/purview-dev/ZodSharp/pull/14\n\n\n**Full Changelog**: https://github.com/purview-dev/ZodSharp/commits/v2.0.0-prerelease.1",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-05T16:57:51Z",
         "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.0-prerelease.1"
@@ -833,10 +1112,100 @@
     ],
     "purview-dev/value-objects": [
       {
+        "tagName": "v1.0.0",
+        "name": "v1.0.0",
+        "body": "## What's Changed\n* chore: add MIT license file by @kieronlanning in https://github.com/purview-dev/value-objects/pull/13\n* Rules updates by @kieronlanning in https://github.com/purview-dev/value-objects/pull/14\n\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0-prerelease.11...v1.0.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-07T06:56:37Z",
+        "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.0"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.11",
+        "name": "v1.0.0-prerelease.11",
+        "body": "## What's Changed\n* fix: internal types were merged out by @kieronlanning in https://github.com/purview-dev/value-objects/pull/12\n\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0-prerelease.10...v1.0.0-prerelease.11",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-30T11:04:33Z",
+        "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.0-prerelease.11"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.10",
+        "name": "v1.0.0-prerelease.10",
+        "body": "## What's Changed\n* chore: package updates by @kieronlanning in https://github.com/purview-dev/value-objects/pull/11\n\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0-prerelease.9...v1.0.0-prerelease.10",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-29T15:34:52Z",
+        "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.0-prerelease.10"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.9",
+        "name": "v1.0.0-prerelease.9",
+        "body": "## What's Changed\n* chore: bumped zod version by @kieronlanning in https://github.com/purview-dev/value-objects/pull/10\n\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0-prerelease.8...v1.0.0-prerelease.9",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-28T20:39:13Z",
+        "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.0-prerelease.9"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.8",
+        "name": "v1.0.0-prerelease.8",
+        "body": "## What's Changed\n* chore: source gen update by @kieronlanning in https://github.com/purview-dev/value-objects/pull/9\n\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0-prerelease.7...v1.0.0-prerelease.8",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-28T20:30:13Z",
+        "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.0-prerelease.8"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.7",
+        "name": "v1.0.0-prerelease.7",
+        "body": "## What's Changed\n* Better zod integration by @kieronlanning in https://github.com/purview-dev/value-objects/pull/8\n\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0-prerelease.6...v1.0.0-prerelease.7",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-27T23:16:08Z",
+        "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.0-prerelease.7"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.6",
+        "name": "v1.0.0-prerelease.6",
+        "body": "## What's Changed\n* Ef valueconverter fix by @kieronlanning in https://github.com/purview-dev/value-objects/pull/7\n\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0-prerelease.5...v1.0.0-prerelease.6",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-25T14:21:23Z",
+        "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.0-prerelease.6"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.5",
+        "name": "v1.0.0-prerelease.5",
+        "body": "## What's Changed\n* Ef integration by @kieronlanning in https://github.com/purview-dev/value-objects/pull/6\n\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0-prerelease.4...v1.0.0-prerelease.5",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-24T08:06:39Z",
+        "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.0-prerelease.5"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.4",
+        "name": "v1.0.0-prerelease.4",
+        "body": "## What's Changed\n* fix: attribute properties were get only with no ctor by @kieronlanning in https://github.com/purview-dev/value-objects/pull/5\n\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0-prerelease.3...v1.0.0-prerelease.4",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-20T11:23:23Z",
+        "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.0-prerelease.4"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.3",
+        "name": "v1.0.0-prerelease.3",
+        "body": "## What's Changed\n* doc: added ZodSharp sample by @kieronlanning in https://github.com/purview-dev/value-objects/pull/2\n* docs: updated samples by @kieronlanning in https://github.com/purview-dev/value-objects/pull/3\n* docs: updated samples by @kieronlanning in https://github.com/purview-dev/value-objects/pull/4\n\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0-prerelease.2...v1.0.0-prerelease.3",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-20T09:28:01Z",
+        "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.0-prerelease.3"
+      },
+      {
         "tagName": "v1.0.0-prerelease.2",
         "name": "v1.0.0-prerelease.2",
         "body": "## What's Changed\n* docs: added nuget and build badges£ by @kieronlanning in https://github.com/purview-dev/value-objects/pull/1\n\n## New Contributors\n* @kieronlanning made their first contribution in https://github.com/purview-dev/value-objects/pull/1\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0-prerelease.1...v1.0.0-prerelease.2",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-18T17:06:24Z",
         "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.0-prerelease.2"
@@ -845,7 +1214,7 @@
         "tagName": "v1.0.0-prerelease.1",
         "name": "v1.0.0-prerelease.1",
         "body": "**Full Changelog**: https://github.com/purview-dev/value-objects/commits/v1.0.0-prerelease.1",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-18T16:58:43Z",
         "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.0-prerelease.1"
@@ -853,10 +1222,109 @@
     ],
     "purview-dev/sourcegenerator-framework": [
       {
+        "tagName": "v1.0.0",
+        "name": "v1.0.0",
+        "body": "## What's Changed\n* fix: keep a component's own internals grants through the merge, and r… by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/38\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0-prerelease.54...v1.0.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-06T22:51:55Z",
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.54",
+        "name": "v1.0.0-prerelease.54",
+        "body": "## What's Changed\n* fix: internaliser incorrectly matching tested types + others by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/37\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0-prerelease.53...v1.0.0-prerelease.54",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-28T19:57:00Z",
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.54"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.53",
+        "name": "v1.0.0-prerelease.53",
+        "body": "## What's Changed\n* fix: attribute name reading failed by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/36\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0-prerelease.52...v1.0.0-prerelease.53",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-27T13:50:53Z",
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.53"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.52",
+        "name": "v1.0.0-prerelease.52",
+        "body": "## What's Changed\n* fix: sg resolution on pack by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/35\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0-prerelease.51...v1.0.0-prerelease.52",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-25T13:49:57Z",
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.52"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.51",
+        "name": "v1.0.0-prerelease.51",
+        "body": "## What's Changed\n* fix: sg leaking types by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/34\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0-prerelease.50...v1.0.0-prerelease.51",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-24T18:41:28Z",
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.51"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.50",
+        "name": "v1.0.0-prerelease.50",
+        "body": "## What's Changed\n* fix: xml cref fixers by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/33\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0-prerelease.49...v1.0.0-prerelease.50",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-24T15:40:26Z",
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.50"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.49",
+        "name": "v1.0.0-prerelease.49",
+        "body": "## What's Changed\n* chore: fixed source gen il-merge by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/32\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0-prerelease.48...v1.0.0-prerelease.49",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-23T15:27:35Z",
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.49"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.48",
+        "name": "v1.0.0-prerelease.48",
+        "body": "## What's Changed\n* Refactor ilmerge by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/31\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0-prerelease.47...v1.0.0-prerelease.48",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-22T23:23:37Z",
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.48"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.47",
+        "name": "v1.0.0-prerelease.47",
+        "body": "## What's Changed\n* refactor: removed the 'Shared' assembly as it was causing significant… by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/30\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0-prerelease.46...v1.0.0-prerelease.47",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-22T14:46:52Z",
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.47"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.46",
+        "name": "v1.0.0-prerelease.46",
+        "body": "## What's Changed\n* Type library updates by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/29\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0-prerelease.45...v1.0.0-prerelease.46",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-22T12:41:12Z",
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.46"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.45",
+        "name": "v1.0.0-prerelease.45",
+        "body": "## What's Changed\n* fix: partial method gen couldn't use no accessiblity by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/28\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0-prerelease.44...v1.0.0-prerelease.45",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-21T12:20:35Z",
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.45"
+      },
+      {
         "tagName": "v1.0.0-prerelease.44",
         "name": "v1.0.0-prerelease.44",
         "body": "## What's Changed\n* chore: update branding assets, bump version, and use human-readable name by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/27\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0-prerelease.43...v1.0.0-prerelease.44",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-18T08:23:20Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.44"
@@ -865,7 +1333,7 @@
         "tagName": "v1.0.0-prerelease.43",
         "name": "v1.0.0-prerelease.43",
         "body": "## What's Changed\n* docs: updated urls in documentation by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/25\n* chore: rename to sourcegenerator-framework and bump to 1.0.0-prerelease.43 by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/26\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0-prerelease.42...v1.0.0-prerelease.43",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-17T17:50:45Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.43"
@@ -874,7 +1342,7 @@
         "tagName": "v1.0.0-prerelease.42",
         "name": "v1.0.0-prerelease.42",
         "body": "## What's Changed\n* chore: bumped sdk by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/24\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.41...v1.0.0-prerelease.42",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-14T12:53:48Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.42"
@@ -883,7 +1351,7 @@
         "tagName": "v1.0.0-prerelease.41",
         "name": "v1.0.0-prerelease.41",
         "body": "## What's Changed\n* docs: updated readme with badges by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/23\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.40...v1.0.0-prerelease.41",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-14T08:16:35Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.41"
@@ -892,7 +1360,7 @@
         "tagName": "v1.0.0-prerelease.40",
         "name": "v1.0.0-prerelease.40",
         "body": "## What's Changed\n* fix: attribute model gen doesn't work on emitted types in same run by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/22\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.39...v1.0.0-prerelease.40",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-13T13:14:59Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.40"
@@ -901,7 +1369,7 @@
         "tagName": "v1.0.0-prerelease.39",
         "name": "v1.0.0-prerelease.39",
         "body": "## What's Changed\n* Removed xml pragma by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/21\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.38...v1.0.0-prerelease.39",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-12T13:39:13Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.39"
@@ -910,7 +1378,7 @@
         "tagName": "v1.0.0-prerelease.38",
         "name": "v1.0.0-prerelease.38",
         "body": "## What's Changed\n* Perf pass by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/20\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.37...v1.0.0-prerelease.38",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-12T12:11:55Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.38"
@@ -919,7 +1387,7 @@
         "tagName": "v1.0.0-prerelease.37",
         "name": "v1.0.0-prerelease.37",
         "body": "## What's Changed\n* String litteral and version by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/19\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.36...v1.0.0-prerelease.37",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-08T09:45:06Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.37"
@@ -928,7 +1396,7 @@
         "tagName": "v1.0.0-prerelease.36",
         "name": "v1.0.0-prerelease.36",
         "body": "## What's Changed\n* feat: added string literal formatting for user provided values by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/18\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.35...v1.0.0-prerelease.36",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-06T08:26:19Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.36"
@@ -937,7 +1405,7 @@
         "tagName": "v1.0.0-prerelease.35",
         "name": "v1.0.0-prerelease.35",
         "body": "## What's Changed\n* feat: added method generation apis by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/17\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.34...v1.0.0-prerelease.35",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-05T15:46:21Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.35"
@@ -946,7 +1414,7 @@
         "tagName": "v1.0.0-prerelease.34",
         "name": "v1.0.0-prerelease.34",
         "body": "## What's Changed\n* fix: code fixers weren't included in the package by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/16\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.33...v1.0.0-prerelease.34",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-05T08:26:12Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.34"
@@ -955,7 +1423,7 @@
         "tagName": "v1.0.0-prerelease.33",
         "name": "v1.0.0-prerelease.33",
         "body": "## What's Changed\n* Feat/expanding codewriter by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/14\n* chore: bumped version by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/15\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.32...v1.0.0-prerelease.33",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-04T12:20:13Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.33"
@@ -964,7 +1432,7 @@
         "tagName": "v1.0.0-prerelease.32",
         "name": "v1.0.0-prerelease.32",
         "body": "## What's Changed\n* fix: method scope failed on single param by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/13\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.31...v1.0.0-prerelease.32",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-03T23:44:13Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.32"
@@ -973,7 +1441,7 @@
         "tagName": "v1.0.0-prerelease.31",
         "name": "v1.0.0-prerelease.31",
         "body": "## What's Changed\n* build: adopt shared Purview.Build pipeline by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/11\n* chore: bumped version by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/12\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.30...v1.0.0-prerelease.31",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-03T22:53:07Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.31"
@@ -982,7 +1450,7 @@
         "tagName": "v1.0.0-prerelease.30",
         "name": "v1.0.0-prerelease.30",
         "body": "## What's Changed\n* Adding extensions by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/10\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.29...v1.0.0-prerelease.30",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-03T15:11:51Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.30"
@@ -991,7 +1459,7 @@
         "tagName": "v1.0.0-prerelease.29",
         "name": "v1.0.0-prerelease.29",
         "body": "## What's Changed\n* Fix pack by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/9\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.28...v1.0.0-prerelease.29",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-03T09:29:18Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.29"
@@ -1000,7 +1468,7 @@
         "tagName": "v1.0.0-prerelease.28",
         "name": "v1.0.0-prerelease.28",
         "body": "## What's Changed\n* Merge pull request #6 from purview-dev/fix-pipeline by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/7\n* Feat/code query by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/8\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/compare/v1.0.0-prerelease.27...v1.0.0-prerelease.28",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-02T22:07:13Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.28"
@@ -1009,18 +1477,164 @@
         "tagName": "v1.0.0-prerelease.27",
         "name": "v1.0.0-prerelease.27",
         "body": "## What's Changed\n* Updated type system by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/1\n* build: fixed package lookup by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/2\n* fix: Roslyn comparisons don't honour IEqualityComparer<T> so added IE… by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/3\n* build: trying to fix the pipeline by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/4\n* build: trying to fix the pipeline by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/5\n* build: trying to fix the pipeline by @kieronlanning in https://github.com/purview-dev/sourcegeneratorframework/pull/6\n\n## New Contributors\n* @kieronlanning made their first contribution in https://github.com/purview-dev/sourcegeneratorframework/pull/1\n\n**Full Changelog**: https://github.com/purview-dev/sourcegeneratorframework/commits/v1.0.0-prerelease.27",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-01T21:38:48Z",
         "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.0.0-prerelease.27"
       }
     ],
+    "purview-dev/results": [
+      {
+        "tagName": "v1.0.0",
+        "name": "v1.0.0",
+        "body": "## What's Changed\n* Rules updates by @kieronlanning in https://github.com/purview-dev/results/pull/3\n\n\n**Full Changelog**: https://github.com/purview-dev/results/compare/v1.0.0-prerelease.2...v1.0.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-07T07:15:05Z",
+        "htmlUrl": "https://github.com/purview-dev/results/releases/tag/v1.0.0"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.2",
+        "name": "v1.0.0-prerelease.2",
+        "body": "## What's Changed\n* docs: added docs by @kieronlanning in https://github.com/purview-dev/results/pull/2\n\n\n**Full Changelog**: https://github.com/purview-dev/results/compare/v1.0.0-prerelease.1...v1.0.0-prerelease.2",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-30T14:05:29Z",
+        "htmlUrl": "https://github.com/purview-dev/results/releases/tag/v1.0.0-prerelease.2"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.1",
+        "name": "v1.0.0-prerelease.1",
+        "body": "## What's Changed\n* Docs update by @kieronlanning in https://github.com/purview-dev/results/pull/1\n\n## New Contributors\n* @kieronlanning made their first contribution in https://github.com/purview-dev/results/pull/1\n\n**Full Changelog**: https://github.com/purview-dev/results/commits/v1.0.0-prerelease.1",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-30T12:35:07Z",
+        "htmlUrl": "https://github.com/purview-dev/results/releases/tag/v1.0.0-prerelease.1"
+      }
+    ],
     "purview-dev/aspire-resourcekit": [
+      {
+        "tagName": "v1.0.0.1",
+        "name": "v1.0.0.1",
+        "body": "<!-- Release notes generated using configuration in .github/release.yml at main -->\n\n## What's Changed\n### Other Changes\n* chore: add MIT license file by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/47\n* Chore/adopt build sdk 1.0.3 by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/48\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0...v1.0.0.1",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-07T07:30:40Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0.1"
+      },
+      {
+        "tagName": "v1.0.0",
+        "name": "v1.0.0",
+        "body": "<!-- Release notes generated using configuration in .github/release.yml at main -->\n\n## What's Changed\n### Other Changes\n* docs(release): release v1 by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/46\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.41...v1.0.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-29T12:37:49Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.41",
+        "name": "v1.0.0-prerelease.41",
+        "body": "## What's Changed\n* chore: source gen update by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/45\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.40...v1.0.0-prerelease.41",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-28T20:36:11Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.41"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.40",
+        "name": "v1.0.0-prerelease.40",
+        "body": "## What's Changed\n* chore: package bumps by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/44\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.39...v1.0.0-prerelease.40",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-27T16:03:52Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.40"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.39",
+        "name": "v1.0.0-prerelease.39",
+        "body": "## What's Changed\n* fix: regression on file copy by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/43\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.38...v1.0.0-prerelease.39",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-25T14:26:46Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.39"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.38",
+        "name": "v1.0.0-prerelease.38",
+        "body": "## What's Changed\n* fix: sg leaking types by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/41\n* chore: bumped version by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/42\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.37...v1.0.0-prerelease.38",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-25T04:54:28Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.38"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.37",
+        "name": "v1.0.0-prerelease.37",
+        "body": "## What's Changed\n* fix: xml comment by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/40\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.36...v1.0.0-prerelease.37",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-24T16:26:37Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.37"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.36",
+        "name": "v1.0.0-prerelease.36",
+        "body": "## What's Changed\n* chore: source gen update by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/39\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.35...v1.0.0-prerelease.36",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-23T16:29:44Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.36"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.35",
+        "name": "v1.0.0-prerelease.35",
+        "body": "## What's Changed\n* build: package updates by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/38\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.34...v1.0.0-prerelease.35",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-23T10:37:39Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.35"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.34",
+        "name": "v1.0.0-prerelease.34",
+        "body": "## What's Changed\n* Source gen update by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/37\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.33...v1.0.0-prerelease.34",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-23T07:22:57Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.34"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.33",
+        "name": "v1.0.0-prerelease.33",
+        "body": "## What's Changed\n* chore: bumped package version by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/36\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.32...v1.0.0-prerelease.33",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-22T15:16:31Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.33"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.32",
+        "name": "v1.0.0-prerelease.32",
+        "body": "## What's Changed\n* feat: adding correct overload for class-based resource kit providers by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/35\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.31...v1.0.0-prerelease.32",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-21T15:17:40Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.32"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.31",
+        "name": "v1.0.0-prerelease.31",
+        "body": "## What's Changed\n* Options objects by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/34\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.30...v1.0.0-prerelease.31",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-21T12:39:59Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.31"
+      },
       {
         "tagName": "v1.0.0-prerelease.30",
         "name": "v1.0.0-prerelease.30",
         "body": "## What's Changed\n* chore: update branding assets, bump version, and use human-readable name by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/33\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.29...v1.0.0-prerelease.30",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-18T08:19:04Z",
         "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.30"
@@ -1029,7 +1643,7 @@
         "tagName": "v1.0.0-prerelease.29",
         "name": "v1.0.0-prerelease.29",
         "body": "## What's Changed\n* docs: updated urls in documentation by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/31\n* chore: update to Purview.BuildSdk and bump to 1.0.0-prerelease.29 by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/32\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.28...v1.0.0-prerelease.29",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-17T17:49:21Z",
         "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.29"
@@ -1038,7 +1652,7 @@
         "tagName": "v1.0.0-prerelease.28",
         "name": "v1.0.0-prerelease.28",
         "body": "## What's Changed\n* fix: IsEnabled by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/30\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.27...v1.0.0-prerelease.28",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-16T00:08:56Z",
         "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.28"
@@ -1047,7 +1661,7 @@
         "tagName": "v1.0.0-prerelease.27",
         "name": "v1.0.0-prerelease.27",
         "body": "## What's Changed\n* fix: option properties have setters instead of init to support Option… by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/29\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.26...v1.0.0-prerelease.27",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-15T15:59:20Z",
         "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.27"
@@ -1056,7 +1670,7 @@
         "tagName": "v1.0.0-prerelease.26",
         "name": "v1.0.0-prerelease.26",
         "body": "## What's Changed\n* docs: updated docs and bumped sdk by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/28\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.25...v1.0.0-prerelease.26",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-14T13:53:25Z",
         "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.26"
@@ -1065,7 +1679,7 @@
         "tagName": "v1.0.0-prerelease.25",
         "name": "v1.0.0-prerelease.25",
         "body": "## What's Changed\n* feat: added Project.* support, with analysers by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/26\n* chore: updating to latest source gen by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/27\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.24...v1.0.0-prerelease.25",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-12T14:08:38Z",
         "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.25"
@@ -1074,7 +1688,7 @@
         "tagName": "v1.0.0-prerelease.24",
         "name": "v1.0.0-prerelease.24",
         "body": "## What's Changed\n* Feat/shared build by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/25\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.23...v1.0.0-prerelease.24",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-08T15:44:33Z",
         "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.24"
@@ -1083,7 +1697,7 @@
         "tagName": "v1.0.0-prerelease.23",
         "name": "v1.0.0-prerelease.23",
         "body": "## What's Changed\n* build: adopt shared Purview.Build pipeline by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/23\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.22...v1.0.0-prerelease.23",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-03T23:20:05Z",
         "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.23"
@@ -1092,7 +1706,7 @@
         "tagName": "v1.0.0-prerelease.22",
         "name": "v1.0.0-prerelease.22",
         "body": "## What's Changed\n* Refactor source gen by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/22\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0-prerelease.21...v1.0.0-prerelease.22",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-03T15:19:21Z",
         "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.22"
@@ -1101,13 +1715,94 @@
         "tagName": "v1.0.0-prerelease.21",
         "name": "v1.0.0-prerelease.21",
         "body": "## What's Changed\n* feat: added auto base class by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/1\n* Doc update by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/2\n* fix: resource options namespace was wrong by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/3\n* feat: made the Options public on the geneated host app by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/4\n* Doc update by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/5\n* feat: added new options layout by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/6\n* feat: added agents skills by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/7\n* build: added ModularPipeline as a poc by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/8\n* feat: extension method callbacks by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/9\n* chore: updated project sdk with new skills function by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/10\n* Target framework update by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/11\n* feat: added post build and configure and validation config callbacks by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/12\n* feat: added options builder fluent interface by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/13\n* refactor: used new Purview SourceGenerator Framework by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/14\n* Refactor by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/15\n* Refactor by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/16\n* Sg best practices by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/17\n* Refactor source gen by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/18\n* build: skip nuget publish if api key not set by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/19\n* Source gen perf refactor by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/20\n* chore: fixed pipeline by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/21\n\n## New Contributors\n* @kieronlanning made their first contribution in https://github.com/purview-dev/aspire-resourcekit/pull/1\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/commits/v1.0.0-prerelease.21",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-02T08:07:32Z",
         "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.0-prerelease.21"
       }
     ],
     "purview-dev/aspirec4": [
+      {
+        "tagName": "v13.5.3.11",
+        "name": "v13.5.3.11",
+        "body": "## What's Changed\n* chore: add MIT license file by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/50\n* Chore/adopt build sdk 1.0.3 by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/51\n\n\n**Full Changelog**: https://github.com/purview-dev/aspirec4/compare/v13.5.3.10...v13.5.3.11",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-07T07:30:09Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.5.3.11"
+      },
+      {
+        "tagName": "v13.5.3.9",
+        "name": "v13.5.3.9",
+        "body": "## What's Changed\n* fix: correct package build props so AspireC4Strict reaches consumers by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/47\n\n\n**Full Changelog**: https://github.com/purview-dev/aspirec4/compare/v13.5.3.8...v13.5.3.9",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-29T13:52:01Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.5.3.9"
+      },
+      {
+        "tagName": "v13.5.3.10",
+        "name": "v13.5.3.10",
+        "body": "## What's Changed\n* Package update by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/48\n* chore: version update by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/49\n\n\n**Full Changelog**: https://github.com/purview-dev/aspirec4/compare/v13.5.3.9...v13.5.3.10",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-29T14:10:02Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.5.3.10"
+      },
+      {
+        "tagName": "v13.5.3.8",
+        "name": "v13.5.3.8",
+        "body": "## What's Changed\n* chore: source gen update by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/46\n\n\n**Full Changelog**: https://github.com/purview-dev/aspirec4/compare/v13.5.3.7...v13.5.3.8",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-28T20:38:05Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.5.3.8"
+      },
+      {
+        "tagName": "v13.5.3.7",
+        "name": "v13.5.3.7",
+        "body": "## What's Changed\n* chore: package bumps by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/45\n\n\n**Full Changelog**: https://github.com/purview-dev/aspirec4/compare/v13.5.3.6...v13.5.3.7",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-27T16:02:40Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.5.3.7"
+      },
+      {
+        "tagName": "v13.5.3.6",
+        "name": "v13.5.3.6",
+        "body": "## What's Changed\n* fix: sg leaking types by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/43\n* fix: regression on file copy by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/44\n\n\n**Full Changelog**: https://github.com/purview-dev/aspirec4/compare/v13.5.3.5...v13.5.3.6",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-25T14:25:14Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.5.3.6"
+      },
+      {
+        "tagName": "v13.5.3.5",
+        "name": "v13.5.3.5",
+        "body": "## What's Changed\n* chore: bumped source gen by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/42\n\n\n**Full Changelog**: https://github.com/purview-dev/aspirec4/compare/v13.5.3.4...v13.5.3.5",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-24T16:19:30Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.5.3.5"
+      },
+      {
+        "tagName": "v13.5.3.4",
+        "name": "v13.5.3.4",
+        "body": "## What's Changed\n* Source gen update by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/41\n\n\n**Full Changelog**: https://github.com/purview-dev/aspirec4/compare/v13.5.3.3...v13.5.3.4",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-23T16:28:47Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.5.3.4"
+      },
+      {
+        "tagName": "v13.5.3.3",
+        "name": "v13.5.3.3",
+        "body": "## What's Changed\n* Source gen update by @kieronlanning in https://github.com/purview-dev/aspirec4/pull/40\n\n\n**Full Changelog**: https://github.com/purview-dev/aspirec4/compare/v13.5.3.2...v13.5.3.3",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-23T10:34:39Z",
+        "htmlUrl": "https://github.com/purview-dev/aspirec4/releases/tag/v13.5.3.3"
+      },
       {
         "tagName": "v13.5.3.2",
         "name": "v13.5.3.2",
@@ -1228,6 +1923,51 @@
     ],
     "purview-dev/build": [
       {
+        "tagName": "v0.4.0",
+        "name": "v0.4.0",
+        "body": "## What's Changed\n* Release types by @kieronlanning in https://github.com/purview-dev/build/pull/24\n\n\n**Full Changelog**: https://github.com/purview-dev/build/compare/v0.3.6...v0.4.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-06T22:38:04Z",
+        "htmlUrl": "https://github.com/purview-dev/build/releases/tag/v0.4.0"
+      },
+      {
+        "tagName": "v0.3.6",
+        "name": "v0.3.6",
+        "body": "## What's Changed\n* docs: clarify that MarkPrerelease affects the GitHub release only by @kieronlanning in https://github.com/purview-dev/build/pull/21\n* chore: add MIT license file by @kieronlanning in https://github.com/purview-dev/build/pull/22\n* Fix test relative project path by @kieronlanning in https://github.com/purview-dev/build/pull/23\n\n\n**Full Changelog**: https://github.com/purview-dev/build/compare/v0.3.5...v0.3.6",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-02T13:47:56Z",
+        "htmlUrl": "https://github.com/purview-dev/build/releases/tag/v0.3.6"
+      },
+      {
+        "tagName": "v0.3.5",
+        "name": "v0.3.5",
+        "body": "## What's Changed\n* feat: mark GitHub releases as prereleases for prerelease versions by @kieronlanning in https://github.com/purview-dev/build/pull/19\n* chore: bump version to 0.3.5 by @kieronlanning in https://github.com/purview-dev/build/pull/20\n\n\n**Full Changelog**: https://github.com/purview-dev/build/compare/v0.3.4...v0.3.5",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-27T12:10:39Z",
+        "htmlUrl": "https://github.com/purview-dev/build/releases/tag/v0.3.5"
+      },
+      {
+        "tagName": "v0.3.4",
+        "name": "v0.3.4",
+        "body": "## What's Changed\n* feat: added clear for artifact publish by @kieronlanning in https://github.com/purview-dev/build/pull/18\n\n\n**Full Changelog**: https://github.com/purview-dev/build/compare/v0.3.3...v0.3.4",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-27T10:44:46Z",
+        "htmlUrl": "https://github.com/purview-dev/build/releases/tag/v0.3.4"
+      },
+      {
+        "tagName": "v0.3.3",
+        "name": "v0.3.3",
+        "body": "## What's Changed\n* feat: added roslyn-only component support by @kieronlanning in https://github.com/purview-dev/build/pull/17\n\n\n**Full Changelog**: https://github.com/purview-dev/build/compare/v0.3.2...v0.3.3",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-23T09:37:20Z",
+        "htmlUrl": "https://github.com/purview-dev/build/releases/tag/v0.3.3"
+      },
+      {
         "tagName": "v0.3.2",
         "name": "v0.3.2",
         "body": "## What's Changed\n* fix(build): new release build by @kieronlanning in https://github.com/purview-dev/build/pull/16\n\n\n**Full Changelog**: https://github.com/purview-dev/build/compare/v0.3.1...v0.3.2",
@@ -1320,10 +2060,91 @@
     ],
     "purview-dev/build-sdk": [
       {
+        "tagName": "v1.0.3.0",
+        "name": "v1.0.3.0",
+        "body": "## What's Changed\n* chore: add MIT license file by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/32\n* docs: updated docs to fix #31 by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/33\n* feat: add curated target framework sets and stop stripping Roslyn com… by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/34\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.2.2...v1.0.3.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-06T22:34:03Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.3.0"
+      },
+      {
+        "tagName": "v1.0.2.2",
+        "name": "v1.0.2.2",
+        "body": "## What's Changed\n* feat: added additional testing types and namespace prefixes to remove ! by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/30\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.2.1...v1.0.2.2",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-01T14:12:24Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.2.2"
+      },
+      {
+        "tagName": "v1.0.2.1",
+        "name": "v1.0.2.1",
+        "body": "## What's Changed\n* docs: added/ updateed all of the docs by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/28\n* chore: bumped version by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/29\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.2.0...v1.0.2.1",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-01T13:12:56Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.2.1"
+      },
+      {
+        "tagName": "v1.0.2.0",
+        "name": "v1.0.2.0",
+        "body": "## What's Changed\n* fix: editorconfig values missed the test projects by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/27\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.1.0...v1.0.2.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-30T15:18:47Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.2.0"
+      },
+      {
+        "tagName": "v1.0.1.0",
+        "name": "v1.0.1.0",
+        "body": "## What's Changed\n* feat: editorconfig fix + tests by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/26\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.0...v1.0.1.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-30T14:25:38Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.1.0"
+      },
+      {
+        "tagName": "v1.0.0",
+        "name": "v1.0.0",
+        "body": "## What's Changed\n* chore: version bump by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/25\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.0-prerelease.61...v1.0.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-09-29T10:45:18Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.61",
+        "name": "v1.0.0-prerelease.61",
+        "body": "## What's Changed\n* Updated editorconfig by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/24\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.0-prerelease.60...v1.0.0-prerelease.61",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-29T10:40:47Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.61"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.60",
+        "name": "v1.0.0-prerelease.60",
+        "body": "## What's Changed\n* docs: added testing docs for backstage spike by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/22\n* fix: sg resolution on pack by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/23\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.0-prerelease.58...v1.0.0-prerelease.60",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-25T13:17:09Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.60"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.58",
+        "name": "v1.0.0-prerelease.58",
+        "body": "## What's Changed\n* feat: added roslyn-only component support by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/21\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.0-prerelease.57...v1.0.0-prerelease.58",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-09-23T08:06:21Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.58"
+      },
+      {
         "tagName": "v1.0.0-prerelease.57",
         "name": "v1.0.0-prerelease.57",
         "body": "## What's Changed\n* chore: update branding assets, bump version, and use human-readable name by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/20\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.0-prerelease.56...v1.0.0-prerelease.57",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-18T08:16:44Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.57"
@@ -1332,7 +2153,7 @@
         "tagName": "v1.0.0-prerelease.56",
         "name": "v1.0.0-prerelease.56",
         "body": "## What's Changed\n* docs: updated urls in documentation by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/18\n* docs: updated links to new docs in repos by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/19\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.0-prerelease.55...v1.0.0-prerelease.56",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-17T17:19:07Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.56"
@@ -1341,7 +2162,7 @@
         "tagName": "v1.0.0-prerelease.55",
         "name": "v1.0.0-prerelease.55",
         "body": "## What's Changed\n* Fix entities by @kieronlanning in https://github.com/purview-dev/dotnet-project-sdk/pull/17\n\n\n**Full Changelog**: https://github.com/purview-dev/dotnet-project-sdk/compare/v1.0.0-prerelease.54...v1.0.0-prerelease.55",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-15T08:11:22Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.55"
@@ -1350,7 +2171,7 @@
         "tagName": "v1.0.0-prerelease.54",
         "name": "v1.0.0-prerelease.54",
         "body": "## What's Changed\n* docs: updated readme with badges by @kieronlanning in https://github.com/purview-dev/dotnet-project-sdk/pull/15\n* fix: fixed source link£ by @kieronlanning in https://github.com/purview-dev/dotnet-project-sdk/pull/16\n\n\n**Full Changelog**: https://github.com/purview-dev/dotnet-project-sdk/compare/v1.0.0-prerelease.53...v1.0.0-prerelease.54",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-14T11:54:59Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.54"
@@ -1359,7 +2180,7 @@
         "tagName": "v1.0.0-prerelease.53",
         "name": "v1.0.0-prerelease.53",
         "body": "## What's Changed\n* docs: updated docs by @kieronlanning in https://github.com/purview-dev/dotnet-project-sdk/pull/14\n\n\n**Full Changelog**: https://github.com/purview-dev/dotnet-project-sdk/compare/v1.0.0-prerelease.52...v1.0.0-prerelease.53",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-14T07:48:46Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.53"
@@ -1368,7 +2189,7 @@
         "tagName": "v1.0.0-prerelease.52",
         "name": "v1.0.0-prerelease.52",
         "body": "## What's Changed\n* Editorconfig update by @kieronlanning in https://github.com/purview-dev/dotnet-project-sdk/pull/13\n\n\n**Full Changelog**: https://github.com/purview-dev/dotnet-project-sdk/compare/v1.0.0-prerelease.51...v1.0.0-prerelease.52",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-12T14:29:37Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.52"
@@ -1377,7 +2198,7 @@
         "tagName": "v1.0.0-prerelease.51",
         "name": "v1.0.0-prerelease.51",
         "body": "## What's Changed\n* Editorconfig update by @kieronlanning in https://github.com/purview-dev/dotnet-project-sdk/pull/12\n\n\n**Full Changelog**: https://github.com/purview-dev/dotnet-project-sdk/compare/v1.0.0-prerelease.50...v1.0.0-prerelease.51",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-12T11:52:00Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.51"
@@ -1386,7 +2207,7 @@
         "tagName": "v1.0.0-prerelease.50",
         "name": "v1.0.0-prerelease.50",
         "body": "## What's Changed\n* fix(fixes): analysers and fixes now correctly surfaced by @kieronlanning in https://github.com/purview-dev/dotnet-project-sdk/pull/11\n\n\n**Full Changelog**: https://github.com/purview-dev/dotnet-project-sdk/compare/v1.0.0-prerelease.49...v1.0.0-prerelease.50",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-11T12:54:52Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.50"
@@ -1395,7 +2216,7 @@
         "tagName": "v1.0.0-prerelease.49",
         "name": "v1.0.0-prerelease.49",
         "body": "## What's Changed\n* fix: assembly/ package Id generation was incorrect by @kieronlanning in https://github.com/purview-dev/dotnet-project-sdk/pull/10\n\n\n**Full Changelog**: https://github.com/purview-dev/dotnet-project-sdk/compare/v1.0.0-prerelease.48...v1.0.0-prerelease.49",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-11T08:21:07Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.49"
@@ -1404,7 +2225,7 @@
         "tagName": "v1.0.0-prerelease.48",
         "name": "v1.0.0-prerelease.48",
         "body": "## What's Changed\n* fix: assembly info gen wasn't encoding content by @kieronlanning in https://github.com/purview-dev/dotnet-project-sdk/pull/9\n\n\n**Full Changelog**: https://github.com/purview-dev/dotnet-project-sdk/compare/v1.0.0-prerelease.47...v1.0.0-prerelease.48",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-08T16:09:13Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.48"
@@ -1413,7 +2234,7 @@
         "tagName": "v1.0.0-prerelease.47",
         "name": "v1.0.0-prerelease.47",
         "body": "## What's Changed\n* build: adopt shared Purview.Build pipeline by @kieronlanning in https://github.com/purview-dev/dotnet-project-sdk/pull/8\n\n\n**Full Changelog**: https://github.com/purview-dev/dotnet-project-sdk/compare/v1.0.0-prerelease.46...v1.0.0-prerelease.47",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-03T23:07:54Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.47"
@@ -1422,7 +2243,7 @@
         "tagName": "v1.0.0-prerelease.46",
         "name": "v1.0.0-prerelease.46",
         "body": "## What's Changed\n* fix: hardening the roslyn component detection by @kieronlanning in https://github.com/purview-dev/dotnet-project-sdk/pull/7\n\n\n**Full Changelog**: https://github.com/purview-dev/dotnet-project-sdk/compare/v1.0.0-prerelease.45...v1.0.0-prerelease.46",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-03T14:45:33Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.46"
@@ -1431,7 +2252,7 @@
         "tagName": "v1.0.0-prerelease.45",
         "name": "v1.0.0-prerelease.45",
         "body": "## What's Changed\n* Feat/packable updates by @kieronlanning in https://github.com/purview-dev/dotnet-project-sdk/pull/6\n\n\n**Full Changelog**: https://github.com/purview-dev/dotnet-project-sdk/compare/v1.0.0-prerelease.44...v1.0.0-prerelease.45",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-09-02T21:40:52Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.45"
@@ -1440,7 +2261,7 @@
         "tagName": "v1.0.0-prerelease.44",
         "name": "v1.0.0-prerelease.44",
         "body": "## What's Changed\n* refactor: updated the packable defauls by @kieronlanning in https://github.com/purview-dev/dotnet-project-sdk/pull/5\n\n\n**Full Changelog**: https://github.com/purview-dev/dotnet-project-sdk/compare/v1.0.0-prerelease.43...v1.0.0-prerelease.44",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-08-31T21:00:46Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.44"
@@ -1449,34 +2270,41 @@
         "tagName": "v1.0.0-prerelease.43",
         "name": "v1.0.0-prerelease.43",
         "body": "## What's Changed\n* Release by @kieronlanning in https://github.com/purview-dev/purview-dotnet-project-sdk/pull/1\n* Init release by @kieronlanning in https://github.com/purview-dev/purview-dotnet-project-sdk/pull/2\n* fix: tests weren't honouring cross-platform paths by @kieronlanning in https://github.com/purview-dev/purview-dotnet-project-sdk/pull/3\n* fix: tests weren't honouring cross-platform paths by @kieronlanning in https://github.com/purview-dev/purview-dotnet-project-sdk/pull/4\n\n## New Contributors\n* @kieronlanning made their first contribution in https://github.com/purview-dev/purview-dotnet-project-sdk/pull/1\n\n**Full Changelog**: https://github.com/purview-dev/purview-dotnet-project-sdk/commits/v1.0.0-prerelease.43",
-        "prerelease": false,
+        "prerelease": true,
         "draft": false,
         "publishedAt": "2026-08-31T16:23:47Z",
         "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.0-prerelease.43"
       }
     ],
     "purview-dev/dotnet-logging-source-generators": [],
-    "purview-dev/results": [
+    "purview-dev/containers": [
       {
-        "tagName": "v1.0.0-prerelease.2",
-        "name": "v1.0.0-prerelease.2",
-        "body": "## What's Changed\n* docs: added docs by @kieronlanning in https://github.com/purview-dev/results/pull/2\n\n\n**Full Changelog**: https://github.com/purview-dev/results/compare/v1.0.0-prerelease.1...v1.0.0-prerelease.2",
+        "tagName": "v1.0.0-prerelease.6",
+        "name": "v1.0.0-prerelease.6",
+        "body": "## What's Changed\n* feat: integrated Azure Key Vault by @kieronlanning in https://github.com/purview-dev/containers/pull/10\n\n\n**Full Changelog**: https://github.com/purview-dev/containers/compare/v1.0.0-prerelease.5...v1.0.0-prerelease.6",
         "prerelease": true,
         "draft": false,
-        "publishedAt": "2026-09-30T14:05:29Z",
-        "htmlUrl": "https://github.com/purview-dev/results/releases/tag/v1.0.0-prerelease.2"
+        "publishedAt": "2026-10-06T08:51:24Z",
+        "htmlUrl": "https://github.com/purview-dev/containers/releases/tag/v1.0.0-prerelease.6"
       },
       {
-        "tagName": "v1.0.0-prerelease.1",
-        "name": "v1.0.0-prerelease.1",
-        "body": "## What's Changed\n* Docs update by @kieronlanning in https://github.com/purview-dev/results/pull/1\n\n## New Contributors\n* @kieronlanning made their first contribution in https://github.com/purview-dev/results/pull/1\n\n**Full Changelog**: https://github.com/purview-dev/results/commits/v1.0.0-prerelease.1",
+        "tagName": "v1.0.0-prerelease.5",
+        "name": "v1.0.0-prerelease.5",
+        "body": "## What's Changed\n* feat: added wslc storage path pass through and docs by @kieronlanning in https://github.com/purview-dev/containers/pull/8\n\n\n**Full Changelog**: https://github.com/purview-dev/containers/compare/v1.0.0-prerelease.4...v1.0.0-prerelease.5",
         "prerelease": true,
         "draft": false,
-        "publishedAt": "2026-09-30T12:35:07Z",
-        "htmlUrl": "https://github.com/purview-dev/results/releases/tag/v1.0.0-prerelease.1"
-      }
-    ],
-    "purview-dev/containers": [
+        "publishedAt": "2026-10-02T13:16:43Z",
+        "htmlUrl": "https://github.com/purview-dev/containers/releases/tag/v1.0.0-prerelease.5"
+      },
+      {
+        "tagName": "v1.0.0-prerelease.4",
+        "name": "v1.0.0-prerelease.4",
+        "body": "## What's Changed\n* feat: added connection string support by @kieronlanning in https://github.com/purview-dev/containers/pull/7\n\n\n**Full Changelog**: https://github.com/purview-dev/containers/compare/v1.0.0-prerelease.3...v1.0.0-prerelease.4",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-10-02T09:10:44Z",
+        "htmlUrl": "https://github.com/purview-dev/containers/releases/tag/v1.0.0-prerelease.4"
+      },
       {
         "tagName": "v1.0.0-prerelease.3",
         "name": "v1.0.0-prerelease.3",
@@ -1567,8 +2395,22 @@
         "5.0.0-prerelease.8",
         "5.0.0-prerelease.9",
         "5.0.0-prerelease.10",
-        "5.0.0-prerelease.11"
-      ]
+        "5.0.0-prerelease.11",
+        "5.0.0-prerelease.12",
+        "5.0.0-prerelease.13",
+        "5.0.0-prerelease.14",
+        "5.0.0-prerelease.15",
+        "5.0.0-prerelease.16",
+        "5.0.0-prerelease.17",
+        "5.0.0-prerelease.18",
+        "5.0.0-prerelease.19",
+        "5.0.0",
+        "5.0.1"
+      ],
+      "targetFrameworks": [
+        ".NETStandard2.0"
+      ],
+      "targetFrameworksVersion": "5.0.1"
     },
     "Purview.EventSourcing": {
       "id": "Purview.EventSourcing",
@@ -1597,8 +2439,15 @@
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
         "2.0.0-prerelease.34",
-        "2.0.0-prerelease.35"
-      ]
+        "2.0.0-prerelease.35",
+        "2.0.0-prerelease.36",
+        "2.0.0-prerelease.38",
+        "2.0.0-prerelease.39"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "2.0.0-prerelease.39"
     },
     "Purview.EventSourcing.SqlServer": {
       "id": "Purview.EventSourcing.SqlServer",
@@ -1627,8 +2476,15 @@
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
         "2.0.0-prerelease.34",
-        "2.0.0-prerelease.35"
-      ]
+        "2.0.0-prerelease.35",
+        "2.0.0-prerelease.36",
+        "2.0.0-prerelease.38",
+        "2.0.0-prerelease.39"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "2.0.0-prerelease.39"
     },
     "Purview.EventSourcing.Postgres": {
       "id": "Purview.EventSourcing.Postgres",
@@ -1639,8 +2495,15 @@
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
         "2.0.0-prerelease.34",
-        "2.0.0-prerelease.35"
-      ]
+        "2.0.0-prerelease.35",
+        "2.0.0-prerelease.36",
+        "2.0.0-prerelease.38",
+        "2.0.0-prerelease.39"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "2.0.0-prerelease.39"
     },
     "Purview.EventSourcing.AzureStorage": {
       "id": "Purview.EventSourcing.AzureStorage",
@@ -1669,8 +2532,15 @@
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
         "2.0.0-prerelease.34",
-        "2.0.0-prerelease.35"
-      ]
+        "2.0.0-prerelease.35",
+        "2.0.0-prerelease.36",
+        "2.0.0-prerelease.38",
+        "2.0.0-prerelease.39"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "2.0.0-prerelease.39"
     },
     "Purview.EventSourcing.MongoDB": {
       "id": "Purview.EventSourcing.MongoDB",
@@ -1699,8 +2569,15 @@
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
         "2.0.0-prerelease.34",
-        "2.0.0-prerelease.35"
-      ]
+        "2.0.0-prerelease.35",
+        "2.0.0-prerelease.36",
+        "2.0.0-prerelease.38",
+        "2.0.0-prerelease.39"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "2.0.0-prerelease.39"
     },
     "Purview.EventSourcing.CosmosDb": {
       "id": "Purview.EventSourcing.CosmosDb",
@@ -1729,8 +2606,15 @@
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
         "2.0.0-prerelease.34",
-        "2.0.0-prerelease.35"
-      ]
+        "2.0.0-prerelease.35",
+        "2.0.0-prerelease.36",
+        "2.0.0-prerelease.38",
+        "2.0.0-prerelease.39"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "2.0.0-prerelease.39"
     },
     "Purview.EventSourcing.InMemory": {
       "id": "Purview.EventSourcing.InMemory",
@@ -1751,8 +2635,15 @@
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
         "2.0.0-prerelease.34",
-        "2.0.0-prerelease.35"
-      ]
+        "2.0.0-prerelease.35",
+        "2.0.0-prerelease.36",
+        "2.0.0-prerelease.38",
+        "2.0.0-prerelease.39"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "2.0.0-prerelease.39"
     },
     "Purview.EventSourcing.Validation.FluentValidation": {
       "id": "Purview.EventSourcing.Validation.FluentValidation",
@@ -1762,8 +2653,15 @@
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
         "2.0.0-prerelease.34",
-        "2.0.0-prerelease.35"
-      ]
+        "2.0.0-prerelease.35",
+        "2.0.0-prerelease.36",
+        "2.0.0-prerelease.38",
+        "2.0.0-prerelease.39"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "2.0.0-prerelease.39"
     },
     "Purview.EventSourcing.Validation.ZodSharp": {
       "id": "Purview.EventSourcing.Validation.ZodSharp",
@@ -1773,8 +2671,15 @@
         "2.0.0-prerelease.32",
         "2.0.0-prerelease.33",
         "2.0.0-prerelease.34",
-        "2.0.0-prerelease.35"
-      ]
+        "2.0.0-prerelease.35",
+        "2.0.0-prerelease.36",
+        "2.0.0-prerelease.38",
+        "2.0.0-prerelease.39"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "2.0.0-prerelease.39"
     },
     "Purview.ZodSharp": {
       "id": "Purview.ZodSharp",
@@ -1787,8 +2692,36 @@
         "2.0.0-prerelease.6",
         "2.0.0-prerelease.7",
         "2.0.0-prerelease.8",
-        "2.0.0-prerelease.9"
-      ]
+        "2.0.0-prerelease.9",
+        "2.0.0-prerelease.10",
+        "2.0.0-prerelease.11",
+        "2.0.0-prerelease.12",
+        "2.0.0-prerelease.13",
+        "2.0.0-prerelease.14",
+        "2.0.0-prerelease.15",
+        "2.0.0-prerelease.16",
+        "2.0.0-prerelease.17",
+        "2.0.0-prerelease.18",
+        "2.0.0-prerelease.19",
+        "2.0.0-prerelease.20",
+        "2.0.0-prerelease.21",
+        "2.0.0-prerelease.22",
+        "2.0.0-prerelease.23",
+        "2.0.0-prerelease.24",
+        "2.0.0-prerelease.25",
+        "2.0.0-prerelease.26",
+        "2.0.0-prerelease.27",
+        "2.0.0-prerelease.28",
+        "2.0.0",
+        "2.0.1"
+      ],
+      "targetFrameworks": [
+        "net10.0",
+        "net11.0",
+        "net8.0",
+        "net9.0"
+      ],
+      "targetFrameworksVersion": "2.0.1"
     },
     "Purview.ZodSharp.SystemTextJson": {
       "id": "Purview.ZodSharp.SystemTextJson",
@@ -1801,8 +2734,36 @@
         "2.0.0-prerelease.6",
         "2.0.0-prerelease.7",
         "2.0.0-prerelease.8",
-        "2.0.0-prerelease.9"
-      ]
+        "2.0.0-prerelease.9",
+        "2.0.0-prerelease.10",
+        "2.0.0-prerelease.11",
+        "2.0.0-prerelease.12",
+        "2.0.0-prerelease.13",
+        "2.0.0-prerelease.14",
+        "2.0.0-prerelease.15",
+        "2.0.0-prerelease.16",
+        "2.0.0-prerelease.17",
+        "2.0.0-prerelease.18",
+        "2.0.0-prerelease.19",
+        "2.0.0-prerelease.20",
+        "2.0.0-prerelease.21",
+        "2.0.0-prerelease.22",
+        "2.0.0-prerelease.23",
+        "2.0.0-prerelease.24",
+        "2.0.0-prerelease.25",
+        "2.0.0-prerelease.26",
+        "2.0.0-prerelease.27",
+        "2.0.0-prerelease.28",
+        "2.0.0",
+        "2.0.1"
+      ],
+      "targetFrameworks": [
+        "net10.0",
+        "net11.0",
+        "net8.0",
+        "net9.0"
+      ],
+      "targetFrameworksVersion": "2.0.1"
     },
     "Purview.ZodSharp.NewtonsoftJson": {
       "id": "Purview.ZodSharp.NewtonsoftJson",
@@ -1815,8 +2776,36 @@
         "2.0.0-prerelease.6",
         "2.0.0-prerelease.7",
         "2.0.0-prerelease.8",
-        "2.0.0-prerelease.9"
-      ]
+        "2.0.0-prerelease.9",
+        "2.0.0-prerelease.10",
+        "2.0.0-prerelease.11",
+        "2.0.0-prerelease.12",
+        "2.0.0-prerelease.13",
+        "2.0.0-prerelease.14",
+        "2.0.0-prerelease.15",
+        "2.0.0-prerelease.16",
+        "2.0.0-prerelease.17",
+        "2.0.0-prerelease.18",
+        "2.0.0-prerelease.19",
+        "2.0.0-prerelease.20",
+        "2.0.0-prerelease.21",
+        "2.0.0-prerelease.22",
+        "2.0.0-prerelease.23",
+        "2.0.0-prerelease.24",
+        "2.0.0-prerelease.25",
+        "2.0.0-prerelease.26",
+        "2.0.0-prerelease.27",
+        "2.0.0-prerelease.28",
+        "2.0.0",
+        "2.0.1"
+      ],
+      "targetFrameworks": [
+        "net10.0",
+        "net11.0",
+        "net8.0",
+        "net9.0"
+      ],
+      "targetFrameworksVersion": "2.0.1"
     },
     "Purview.ZodSharp.AspNetCore": {
       "id": "Purview.ZodSharp.AspNetCore",
@@ -1829,15 +2818,60 @@
         "2.0.0-prerelease.6",
         "2.0.0-prerelease.7",
         "2.0.0-prerelease.8",
-        "2.0.0-prerelease.9"
-      ]
+        "2.0.0-prerelease.9",
+        "2.0.0-prerelease.10",
+        "2.0.0-prerelease.11",
+        "2.0.0-prerelease.12",
+        "2.0.0-prerelease.13",
+        "2.0.0-prerelease.14",
+        "2.0.0-prerelease.15",
+        "2.0.0-prerelease.16",
+        "2.0.0-prerelease.17",
+        "2.0.0-prerelease.18",
+        "2.0.0-prerelease.19",
+        "2.0.0-prerelease.20",
+        "2.0.0-prerelease.21",
+        "2.0.0-prerelease.22",
+        "2.0.0-prerelease.23",
+        "2.0.0-prerelease.24",
+        "2.0.0-prerelease.25",
+        "2.0.0-prerelease.26",
+        "2.0.0-prerelease.27",
+        "2.0.0-prerelease.28",
+        "2.0.0",
+        "2.0.1"
+      ],
+      "targetFrameworks": [
+        "net10.0",
+        "net11.0",
+        "net8.0",
+        "net9.0"
+      ],
+      "targetFrameworksVersion": "2.0.1"
     },
     "Purview.ValueObjects": {
       "id": "Purview.ValueObjects",
       "versions": [
         "1.0.0-prerelease.1",
-        "1.0.0-prerelease.2"
-      ]
+        "1.0.0-prerelease.2",
+        "1.0.0-prerelease.3",
+        "1.0.0-prerelease.4",
+        "1.0.0-prerelease.5",
+        "1.0.0-prerelease.6",
+        "1.0.0-prerelease.7",
+        "1.0.0-prerelease.8",
+        "1.0.0-prerelease.9",
+        "1.0.0-prerelease.10",
+        "1.0.0-prerelease.11",
+        "1.0.0"
+      ],
+      "targetFrameworks": [
+        "net10.0",
+        "net11.0",
+        "net8.0",
+        "net9.0"
+      ],
+      "targetFrameworksVersion": "1.0.0"
     },
     "Purview.SourceGeneratorFramework": {
       "id": "Purview.SourceGeneratorFramework",
@@ -1884,8 +2918,23 @@
         "1.0.0-prerelease.41",
         "1.0.0-prerelease.42",
         "1.0.0-prerelease.43",
-        "1.0.0-prerelease.44"
-      ]
+        "1.0.0-prerelease.44",
+        "1.0.0-prerelease.45",
+        "1.0.0-prerelease.46",
+        "1.0.0-prerelease.47",
+        "1.0.0-prerelease.48",
+        "1.0.0-prerelease.49",
+        "1.0.0-prerelease.50",
+        "1.0.0-prerelease.51",
+        "1.0.0-prerelease.52",
+        "1.0.0-prerelease.53",
+        "1.0.0-prerelease.54",
+        "1.0.0"
+      ],
+      "targetFrameworks": [
+        ".NETStandard2.0"
+      ],
+      "targetFrameworksVersion": "1.0.0"
     },
     "Purview.SourceGeneratorFramework.Testing": {
       "id": "Purview.SourceGeneratorFramework.Testing",
@@ -1932,8 +2981,26 @@
         "1.0.0-prerelease.41",
         "1.0.0-prerelease.42",
         "1.0.0-prerelease.43",
-        "1.0.0-prerelease.44"
-      ]
+        "1.0.0-prerelease.44",
+        "1.0.0-prerelease.45",
+        "1.0.0-prerelease.46",
+        "1.0.0-prerelease.47",
+        "1.0.0-prerelease.48",
+        "1.0.0-prerelease.49",
+        "1.0.0-prerelease.50",
+        "1.0.0-prerelease.51",
+        "1.0.0-prerelease.52",
+        "1.0.0-prerelease.53",
+        "1.0.0-prerelease.54",
+        "1.0.0"
+      ],
+      "targetFrameworks": [
+        ".NETStandard2.0",
+        "net10.0",
+        "net8.0",
+        "net9.0"
+      ],
+      "targetFrameworksVersion": "1.0.0"
     },
     "Purview.SourceGeneratorFramework.Testing.TUnit": {
       "id": "Purview.SourceGeneratorFramework.Testing.TUnit",
@@ -1980,8 +3047,89 @@
         "1.0.0-prerelease.41",
         "1.0.0-prerelease.42",
         "1.0.0-prerelease.43",
-        "1.0.0-prerelease.44"
-      ]
+        "1.0.0-prerelease.44",
+        "1.0.0-prerelease.45",
+        "1.0.0-prerelease.46",
+        "1.0.0-prerelease.47",
+        "1.0.0-prerelease.48",
+        "1.0.0-prerelease.49",
+        "1.0.0-prerelease.50",
+        "1.0.0-prerelease.51",
+        "1.0.0-prerelease.52",
+        "1.0.0-prerelease.53",
+        "1.0.0-prerelease.54",
+        "1.0.0"
+      ],
+      "targetFrameworks": [
+        ".NETStandard2.0",
+        "net10.0",
+        "net8.0",
+        "net9.0"
+      ],
+      "targetFrameworksVersion": "1.0.0"
+    },
+    "Purview.Results": {
+      "id": "Purview.Results",
+      "versions": [
+        "1.0.0-prerelease.1",
+        "1.0.0-prerelease.2",
+        "1.0.0"
+      ],
+      "targetFrameworks": [
+        "net10.0",
+        "net11.0"
+      ],
+      "targetFrameworksVersion": "1.0.0"
+    },
+    "Purview.Results.SourceGenerator": {
+      "id": "Purview.Results.SourceGenerator",
+      "versions": [
+        "1.0.0-prerelease.1",
+        "1.0.0-prerelease.2"
+      ],
+      "targetFrameworks": [
+        ".NETStandard2.0"
+      ],
+      "targetFrameworksVersion": "1.0.0-prerelease.2"
+    },
+    "Purview.Results.AspNetCore": {
+      "id": "Purview.Results.AspNetCore",
+      "versions": [
+        "1.0.0-prerelease.1",
+        "1.0.0-prerelease.2",
+        "1.0.0"
+      ],
+      "targetFrameworks": [
+        "net10.0",
+        "net11.0"
+      ],
+      "targetFrameworksVersion": "1.0.0"
+    },
+    "Purview.Results.ZodSharp": {
+      "id": "Purview.Results.ZodSharp",
+      "versions": [
+        "1.0.0-prerelease.1",
+        "1.0.0-prerelease.2",
+        "1.0.0"
+      ],
+      "targetFrameworks": [
+        "net10.0",
+        "net11.0"
+      ],
+      "targetFrameworksVersion": "1.0.0"
+    },
+    "Purview.Results.ZodSharp.AspNetCore": {
+      "id": "Purview.Results.ZodSharp.AspNetCore",
+      "versions": [
+        "1.0.0-prerelease.1",
+        "1.0.0-prerelease.2",
+        "1.0.0"
+      ],
+      "targetFrameworks": [
+        "net10.0",
+        "net11.0"
+      ],
+      "targetFrameworksVersion": "1.0.0"
     },
     "Purview.Aspire.ResourceKit": {
       "id": "Purview.Aspire.ResourceKit",
@@ -2015,8 +3163,27 @@
         "1.0.0-prerelease.27",
         "1.0.0-prerelease.28",
         "1.0.0-prerelease.29",
-        "1.0.0-prerelease.30"
-      ]
+        "1.0.0-prerelease.30",
+        "1.0.0-prerelease.31",
+        "1.0.0-prerelease.32",
+        "1.0.0-prerelease.33",
+        "1.0.0-prerelease.34",
+        "1.0.0-prerelease.35",
+        "1.0.0-prerelease.36",
+        "1.0.0-prerelease.37",
+        "1.0.0-prerelease.38",
+        "1.0.0-prerelease.39",
+        "1.0.0-prerelease.40",
+        "1.0.0-prerelease.41",
+        "1.0.0",
+        "1.0.0.1"
+      ],
+      "targetFrameworks": [
+        "net10.0",
+        "net8.0",
+        "net9.0"
+      ],
+      "targetFrameworksVersion": "1.0.0.1"
     },
     "AspireC4.Hosting": {
       "id": "AspireC4.Hosting",
@@ -2035,8 +3202,21 @@
         "13.3.5",
         "13.5.3",
         "13.5.3.1",
-        "13.5.3.2"
-      ]
+        "13.5.3.2",
+        "13.5.3.3",
+        "13.5.3.4",
+        "13.5.3.5",
+        "13.5.3.6",
+        "13.5.3.7",
+        "13.5.3.8",
+        "13.5.3.9",
+        "13.5.3.10",
+        "13.5.3.11"
+      ],
+      "targetFrameworks": [
+        "net8.0"
+      ],
+      "targetFrameworksVersion": "13.5.3.11"
     },
     "Purview.Build": {
       "id": "Purview.Build",
@@ -2048,135 +3228,198 @@
         "0.2.6",
         "0.3.0",
         "0.3.1",
-        "0.3.2"
-      ]
+        "0.3.2",
+        "0.3.3",
+        "0.3.4",
+        "0.3.5",
+        "0.3.6",
+        "0.4.0"
+      ],
+      "targetFrameworks": [],
+      "targetFrameworksVersion": "0.4.0"
     },
     "Purview.BuildSdk": {
       "id": "Purview.BuildSdk",
       "versions": [
         "1.0.0-prerelease.56",
-        "1.0.0-prerelease.57"
-      ]
-    },
-    "Purview.Results": {
-      "id": "Purview.Results",
-      "versions": [
-        "1.0.0-prerelease.1",
-        "1.0.0-prerelease.2"
-      ]
-    },
-    "Purview.Results.SourceGenerator": {
-      "id": "Purview.Results.SourceGenerator",
-      "versions": [
-        "1.0.0-prerelease.1",
-        "1.0.0-prerelease.2"
-      ]
-    },
-    "Purview.Results.AspNetCore": {
-      "id": "Purview.Results.AspNetCore",
-      "versions": [
-        "1.0.0-prerelease.1",
-        "1.0.0-prerelease.2"
-      ]
-    },
-    "Purview.Results.ZodSharp": {
-      "id": "Purview.Results.ZodSharp",
-      "versions": [
-        "1.0.0-prerelease.1",
-        "1.0.0-prerelease.2"
-      ]
-    },
-    "Purview.Results.ZodSharp.AspNetCore": {
-      "id": "Purview.Results.ZodSharp.AspNetCore",
-      "versions": [
-        "1.0.0-prerelease.1",
-        "1.0.0-prerelease.2"
-      ]
+        "1.0.0-prerelease.57",
+        "1.0.0-prerelease.58",
+        "1.0.0-prerelease.60",
+        "1.0.0-prerelease.61",
+        "1.0.0",
+        "1.0.1",
+        "1.0.2",
+        "1.0.2.1",
+        "1.0.2.2",
+        "1.0.3"
+      ],
+      "targetFrameworks": [
+        ".NETStandard2.0"
+      ],
+      "targetFrameworksVersion": "1.0.3"
     },
     "Purview.Containers": {
       "id": "Purview.Containers",
       "versions": [
         "1.0.0-prerelease.2",
-        "1.0.0-prerelease.3"
-      ]
+        "1.0.0-prerelease.3",
+        "1.0.0-prerelease.4",
+        "1.0.0-prerelease.5",
+        "1.0.0-prerelease.6"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "1.0.0-prerelease.6"
     },
     "Purview.Containers.Core": {
       "id": "Purview.Containers.Core",
       "versions": [
         "1.0.0-prerelease.2",
-        "1.0.0-prerelease.3"
-      ]
+        "1.0.0-prerelease.3",
+        "1.0.0-prerelease.4",
+        "1.0.0-prerelease.5",
+        "1.0.0-prerelease.6"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "1.0.0-prerelease.6"
     },
     "Purview.Containers.Wsl": {
       "id": "Purview.Containers.Wsl",
       "versions": [
         "1.0.0-prerelease.2",
-        "1.0.0-prerelease.3"
-      ]
+        "1.0.0-prerelease.3",
+        "1.0.0-prerelease.4",
+        "1.0.0-prerelease.5",
+        "1.0.0-prerelease.6"
+      ],
+      "targetFrameworks": [
+        "net10.0",
+        "net10.0-windows10.0.19041"
+      ],
+      "targetFrameworksVersion": "1.0.0-prerelease.6"
     },
     "Purview.Containers.Docker": {
       "id": "Purview.Containers.Docker",
       "versions": [
         "1.0.0-prerelease.2",
-        "1.0.0-prerelease.3"
-      ]
+        "1.0.0-prerelease.3",
+        "1.0.0-prerelease.4",
+        "1.0.0-prerelease.5",
+        "1.0.0-prerelease.6"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "1.0.0-prerelease.6"
     },
     "Purview.Containers.PostgreSql": {
       "id": "Purview.Containers.PostgreSql",
       "versions": [
         "1.0.0-prerelease.2",
-        "1.0.0-prerelease.3"
-      ]
+        "1.0.0-prerelease.3",
+        "1.0.0-prerelease.4",
+        "1.0.0-prerelease.5",
+        "1.0.0-prerelease.6"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "1.0.0-prerelease.6"
     },
     "Purview.Containers.Redis": {
       "id": "Purview.Containers.Redis",
       "versions": [
         "1.0.0-prerelease.2",
-        "1.0.0-prerelease.3"
-      ]
+        "1.0.0-prerelease.3",
+        "1.0.0-prerelease.4",
+        "1.0.0-prerelease.5",
+        "1.0.0-prerelease.6"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "1.0.0-prerelease.6"
     },
     "Purview.Containers.MsSql": {
       "id": "Purview.Containers.MsSql",
       "versions": [
         "1.0.0-prerelease.2",
-        "1.0.0-prerelease.3"
-      ]
+        "1.0.0-prerelease.3",
+        "1.0.0-prerelease.4",
+        "1.0.0-prerelease.5",
+        "1.0.0-prerelease.6"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "1.0.0-prerelease.6"
     },
     "Purview.Containers.MySql": {
       "id": "Purview.Containers.MySql",
       "versions": [
         "1.0.0-prerelease.2",
-        "1.0.0-prerelease.3"
-      ]
+        "1.0.0-prerelease.3",
+        "1.0.0-prerelease.4",
+        "1.0.0-prerelease.5",
+        "1.0.0-prerelease.6"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "1.0.0-prerelease.6"
     },
     "Purview.Containers.RabbitMq": {
       "id": "Purview.Containers.RabbitMq",
       "versions": [
         "1.0.0-prerelease.2",
-        "1.0.0-prerelease.3"
-      ]
+        "1.0.0-prerelease.3",
+        "1.0.0-prerelease.4",
+        "1.0.0-prerelease.5",
+        "1.0.0-prerelease.6"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "1.0.0-prerelease.6"
     },
     "Purview.Containers.Azurite": {
       "id": "Purview.Containers.Azurite",
       "versions": [
         "1.0.0-prerelease.2",
-        "1.0.0-prerelease.3"
-      ]
+        "1.0.0-prerelease.3",
+        "1.0.0-prerelease.4",
+        "1.0.0-prerelease.5",
+        "1.0.0-prerelease.6"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "1.0.0-prerelease.6"
     },
     "Purview.Containers.Nats": {
       "id": "Purview.Containers.Nats",
       "versions": [
         "1.0.0-prerelease.2",
-        "1.0.0-prerelease.3"
-      ]
+        "1.0.0-prerelease.3",
+        "1.0.0-prerelease.4",
+        "1.0.0-prerelease.5",
+        "1.0.0-prerelease.6"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "1.0.0-prerelease.6"
     }
   },
   "packageSearch": {
     "Purview.Telemetry.SourceGenerator": {
       "id": "Purview.Telemetry.SourceGenerator",
-      "version": "4.4.0",
+      "version": "5.0.1",
       "description": ".NET Source Generator for interface-based telemetry generating tracing, logs, and metrics.",
-      "totalDownloads": 16495,
+      "totalDownloads": 17495,
       "tags": [
         "logs",
         "log",
@@ -2215,20 +3458,210 @@
     "Purview.EventSourcing.InMemory": null,
     "Purview.EventSourcing.Validation.FluentValidation": null,
     "Purview.EventSourcing.Validation.ZodSharp": null,
-    "Purview.ZodSharp": null,
-    "Purview.ZodSharp.SystemTextJson": null,
-    "Purview.ZodSharp.NewtonsoftJson": null,
-    "Purview.ZodSharp.AspNetCore": null,
-    "Purview.ValueObjects": null,
-    "Purview.SourceGeneratorFramework": null,
-    "Purview.SourceGeneratorFramework.Testing": null,
-    "Purview.SourceGeneratorFramework.Testing.TUnit": null,
-    "Purview.Aspire.ResourceKit": null,
+    "Purview.ZodSharp": {
+      "id": "Purview.ZodSharp",
+      "version": "2.0.1",
+      "description": "A high-performance C# port of Zod schema validation library.\n\t\t\tFeatures zero-allocation validation, struct-based rules, fluent API,\n\t\t\tand source generator support for maximum performance.",
+      "totalDownloads": 1898,
+      "tags": [
+        "zod",
+        "validation",
+        "schema"
+      ],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
+    "Purview.ZodSharp.SystemTextJson": {
+      "id": "Purview.ZodSharp.SystemTextJson",
+      "version": "2.0.1",
+      "description": "A high-performance C# port of Zod schema validation library. Features zero-allocation validation, struct-based rules, fluent API, and source generator support for maximum performance.",
+      "totalDownloads": 1512,
+      "tags": [
+        "zod",
+        "validation",
+        "schema",
+        "json"
+      ],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
+    "Purview.ZodSharp.NewtonsoftJson": {
+      "id": "Purview.ZodSharp.NewtonsoftJson",
+      "version": "2.0.1",
+      "description": "A high-performance C# port of Zod schema validation library. Features zero-allocation validation, struct-based rules, fluent API, and source generator support for maximum performance.",
+      "totalDownloads": 1395,
+      "tags": [
+        "zod",
+        "validation",
+        "schema",
+        "json"
+      ],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
+    "Purview.ZodSharp.AspNetCore": {
+      "id": "Purview.ZodSharp.AspNetCore",
+      "version": "2.0.1",
+      "description": "ASP.NET Core ProblemDetails integration for ZodSharp validation results.",
+      "totalDownloads": 1537,
+      "tags": [
+        "zod",
+        "validation",
+        "aspnetcore",
+        "problemdetails"
+      ],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
+    "Purview.ValueObjects": {
+      "id": "Purview.ValueObjects",
+      "version": "1.0.0",
+      "description": "Source-generated scalar and complex value objects for .NET. Brings F#-style single-case types to C# with Create/Hydrate factories, normalization, validation, equality, comparison, implicit conversions, and JSON serialization for DTOs, Entity Framework, and domain models.",
+      "totalDownloads": 662,
+      "tags": [
+        "purview",
+        "dotnet",
+        "value-objects",
+        "value-object",
+        "scalar",
+        "source-generator",
+        "domain-driven-design",
+        "dto",
+        "serialization",
+        "json",
+        "entity-framework"
+      ],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
+    "Purview.SourceGeneratorFramework": {
+      "id": "Purview.SourceGeneratorFramework",
+      "version": "1.0.0",
+      "description": "Purview SourceGeneratorFramework libraries for building and testing incremental C# source generators.",
+      "totalDownloads": 4486,
+      "tags": [],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
+    "Purview.SourceGeneratorFramework.Testing": {
+      "id": "Purview.SourceGeneratorFramework.Testing",
+      "version": "1.0.0",
+      "description": "Purview SourceGeneratorFramework libraries for building and testing incremental C# source generators.",
+      "totalDownloads": 4001,
+      "tags": [],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
+    "Purview.SourceGeneratorFramework.Testing.TUnit": {
+      "id": "Purview.SourceGeneratorFramework.Testing.TUnit",
+      "version": "1.0.0",
+      "description": "Purview SourceGeneratorFramework libraries for building and testing incremental C# source generators.",
+      "totalDownloads": 3711,
+      "tags": [],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
+    "Purview.Results": {
+      "id": "Purview.Results",
+      "version": "1.0.0",
+      "description": "Dependency-free Result<TValue, TError> for .NET, with C# 15 union ergonomics for its error cases and integrations that let expected failures flow through a value instead of an exception.",
+      "totalDownloads": 0,
+      "tags": [
+        "results",
+        "result",
+        "railway",
+        "error-handling",
+        "union",
+        "unions",
+        "csharp-15",
+        "net11",
+        "purview"
+      ],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
+    "Purview.Results.SourceGenerator": null,
+    "Purview.Results.AspNetCore": {
+      "id": "Purview.Results.AspNetCore",
+      "version": "1.0.0",
+      "description": "Maps Purview.Results results onto ASP.NET Core responses, including ProblemDetails for expected failures.",
+      "totalDownloads": 0,
+      "tags": [
+        "results",
+        "result",
+        "aspnetcore",
+        "problemdetails",
+        "minimal-api",
+        "purview"
+      ],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
+    "Purview.Results.ZodSharp": {
+      "id": "Purview.Results.ZodSharp",
+      "version": "1.0.0",
+      "description": "Bridges ZodSharp ValidationResult<T> values into Purview.Results, so validation outcomes flow through the result pipeline as ordinary error values instead of exceptions.",
+      "totalDownloads": 0,
+      "tags": [
+        "results",
+        "result",
+        "validation",
+        "zod",
+        "zodsharp",
+        "purview"
+      ],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
+    "Purview.Results.ZodSharp.AspNetCore": {
+      "id": "Purview.Results.ZodSharp.AspNetCore",
+      "version": "1.0.0",
+      "description": "Maps Purview result failures that carry ZodSharp validation errors onto ASP.NET Core HttpValidationProblemDetails responses.",
+      "totalDownloads": 0,
+      "tags": [
+        "results",
+        "result",
+        "aspnetcore",
+        "problemdetails",
+        "validation",
+        "zod",
+        "purview"
+      ],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
+    "Purview.Aspire.ResourceKit": {
+      "id": "Purview.Aspire.ResourceKit",
+      "version": "1.0.0.1",
+      "description": "Composable and test-friendly Aspire resource isolation model for local, running, and publishing modes.",
+      "totalDownloads": 2695,
+      "tags": [
+        "aspire",
+        "resource-kit",
+        "apphost",
+        "testing"
+      ],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
     "AspireC4.Hosting": {
       "id": "AspireC4.Hosting",
-      "version": "13.5.3.2",
+      "version": "13.5.3.11",
       "description": "Aspire hosting extension for the AspireC4 plugin, generating a dynamic LikeC4 architecture diagram for your Aspire application.",
-      "totalDownloads": 1435,
+      "totalDownloads": 1887,
       "tags": [
         "aspire",
         "dotnet",
@@ -2247,20 +3680,35 @@
     },
     "Purview.Build": {
       "id": "Purview.Build",
-      "version": "0.3.2",
+      "version": "0.4.0",
       "description": "Shared build/test/release pipeline for purview-dev. A Modular Pipelines based .NET tool (Purview.Build) with a GitHub composite action and reusable workflows; consumers configure, the pipeline runs.",
-      "totalDownloads": 595,
+      "totalDownloads": 1361,
       "tags": [],
       "published": null,
       "deprecated": false,
       "listed": true
     },
-    "Purview.BuildSdk": null,
-    "Purview.Results": null,
-    "Purview.Results.SourceGenerator": null,
-    "Purview.Results.AspNetCore": null,
-    "Purview.Results.ZodSharp": null,
-    "Purview.Results.ZodSharp.AspNetCore": null,
+    "Purview.BuildSdk": {
+      "id": "Purview.BuildSdk",
+      "version": "1.0.3",
+      "description": "A reusable MSBuild SDK that provides standardised .NET project defaults, code style enforcement, configurable testing framework wiring (TUnit, Xunit, or None), mocking provider wiring (TUnitMocks, NSubstitute, or None), and Central Package Management integration. Drop in via Directory.Build.props to apply uniformly across every project in a repo.",
+      "totalDownloads": 455,
+      "tags": [
+        "msbuild",
+        "sdk",
+        "build",
+        "tunit",
+        "xunit",
+        "tunitmock",
+        "nsubstitute",
+        "bogus",
+        "csharp",
+        "dotnet"
+      ],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
     "Purview.Containers": null,
     "Purview.Containers.Core": null,
     "Purview.Containers.Wsl": null,

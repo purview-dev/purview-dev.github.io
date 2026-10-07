@@ -93,6 +93,22 @@ const packageSchema = z.object({
 });
 
 /**
+ * A repository file mirrored verbatim into the built site, so a stable
+ * purview.dev URL can serve an artefact that lives in a product repository
+ * (for example a JSON Schema). `path` is relative to the repository root;
+ * `output` is relative to the site root (`public/`).
+ */
+const assetSchema = z.object({
+  path: z.string().min(1, 'must be a non-empty repository path'),
+  output: z
+    .string()
+    .min(1, 'must be a non-empty output path')
+    .regex(/^[^/\\]/, 'must be a relative path without a leading slash')
+    .refine((value) => !value.split(/[\\/]/).includes('..'), 'must not contain a ".." segment'),
+  description: z.string().min(1).optional(),
+});
+
+/**
  * Upstream work a project credits: the original library it was based on and/or
  * the project it was forked from. Optional — only derived projects declare it.
  */
@@ -131,6 +147,7 @@ const projectSchema = z
     install: z.enum(INSTALL_KINDS).optional(),
     targetFrameworks: z.array(z.string()).optional(),
     packages: z.array(packageSchema).optional(),
+    assets: z.array(assetSchema).optional(),
     related: z.array(z.string()).optional(),
     useCases: z.array(useCaseSchema).optional(),
     acknowledgments: z.array(acknowledgmentSchema).optional(),
@@ -172,6 +189,7 @@ export type ProjectRecord = z.infer<typeof projectSchema>;
 export type ExternalProjectRecord = z.infer<typeof externalProjectSchema>;
 export type ProjectDocsConfig = z.infer<typeof docsSchema>;
 export type ProjectPackage = z.infer<typeof packageSchema>;
+export type ProjectAsset = z.infer<typeof assetSchema>;
 export type ProjectAcknowledgment = z.infer<typeof acknowledgmentSchema>;
 export type ProjectUseCase = z.infer<typeof useCaseSchema>;
 
@@ -180,6 +198,7 @@ export const PROJECT_DEFAULTS = {
   featured: false,
   order: 1000,
   packages: [] as ProjectPackage[],
+  assets: [] as ProjectAsset[],
   related: [] as string[],
   useCases: [] as ProjectUseCase[],
   acknowledgments: [] as ProjectAcknowledgment[],
@@ -190,6 +209,7 @@ export const PROJECT_DEFAULTS = {
   featured: boolean;
   order: number;
   packages: ProjectPackage[];
+  assets: ProjectAsset[];
   related: string[];
   useCases: ProjectUseCase[];
   acknowledgments: ProjectAcknowledgment[];

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Purview.Results</id>
+    <version>1.0.0</version>
+    <title>Purview Results</title>
+    <authors>Kieron Lanning</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>purview-logo-light.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://purview.dev/projects/results/</projectUrl>
+    <description>Dependency-free Result&lt;TValue, TError&gt; for .NET, with C# 15 union ergonomics for its error cases and integrations that let expected failures flow through a value instead of an exception.</description>
+    <copyright>Copyright © 2026 Purview-Dev</copyright>
+    <tags>results result railway error-handling union unions csharp-15 net11 purview</tags>
+    <repository type="git" url="https://github.com/purview-dev/results" branch="refs/heads/main" commit="fbf0f23aca7dc0bdb08b9f4d0380070c5079e343" />
+    <dependencies>
+      <group targetFramework="net10.0" />
+      <group targetFramework="net11.0" />
+    </dependencies>
+  </metadata>
+</package>
