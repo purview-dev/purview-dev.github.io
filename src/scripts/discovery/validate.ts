@@ -40,7 +40,53 @@ export interface DiscoveryValidationResult {
   errors: string[];
 }
 
-export function validateDiscovery(dist = resolve('dist')): DiscoveryValidationResult {
+export interface DiscoveryValidationOptions {
+  /**
+   * Require the IndexNow key verification file (`/<INDEXNOW_KEY>.txt`) when
+   * `INDEXNOW_KEY` is configured.
+   *
+   * The build never writes this file — it is written from the secret by the
+   * deploy workflow via `bun run discovery:key`, *after* the build — so the
+   * build pipeline (`just validate` / `ci:build`) cannot require it. Only the
+   * deploy pipeline, which has just written the file, opts in with
+   * `--require-indexnow-key`.
+   */
+  requireIndexNowKey?: boolean;
+}
+
+/**
+ * Validate the IndexNow key verification file (`/<key>.txt`).
+ *
+ * Returns the error messages to report: empty when the key is unset/invalid
+ * (nothing to check), when the file is present and correct, or when it is
+ * absent and not required. `require` is only set by the deploy pipeline, which
+ * writes the file after the build.
+ */
+export function validateIndexNowKeyFile(
+  readFile: (path: string) => string | null,
+  rawKey: string | undefined,
+  options: { require?: boolean } = {},
+): string[] {
+  const key = rawKey?.trim();
+  if (!key || !/^[A-Za-z0-9-]{8,128}$/.test(key)) {
+    return [];
+  }
+  const content = readFile(`/${key}.txt`);
+  if (content === null) {
+    return options.require
+      ? ['INDEXNOW_KEY is configured but the key verification file is missing from the build.']
+      : [];
+  }
+  if (content.trim() !== key) {
+    return ['The IndexNow key verification file does not contain the configured key.'];
+  }
+  return [];
+}
+
+export function validateDiscovery(
+  dist = resolve('dist'),
+  options: DiscoveryValidationOptions = {},
+): DiscoveryValidationResult {
   const errors: string[] = [];
   const fail = (message: string): void => {
     errors.push(message);
@@ -201,15 +247,15 @@ export function validateDiscovery(dist = resolve('dist')): DiscoveryValidationRe
     }
   }
 
-  // --- IndexNow key file (only when configured) ---------------------------
-  const indexNowKey = process.env.INDEXNOW_KEY?.trim();
-  if (indexNowKey && /^[A-Za-z0-9-]{8,128}$/.test(indexNowKey)) {
-    const content = readDist(`/${indexNowKey}.txt`);
-    if (content === null) {
-      fail('INDEXNOW_KEY is configured but the key verification file is missing from the build.');
-    } else if (content.trim() !== indexNowKey) {
-      fail('The IndexNow key verification file does not contain the configured key.');
-    }
+  // --- IndexNow key file --------------------------------------------------
+  // The build never writes this file (the key is a deploy-only secret), so its
+  // presence is only required when the caller opts in — the deploy workflow
+  // runs this after `discovery:key`. When the file is present it must always
+  // contain the configured key.
+  for (const error of validateIndexNowKeyFile(readDist, process.env.INDEXNOW_KEY, {
+    require: options.requireIndexNowKey,
+  })) {
+    fail(error);
   }
 
   return { errors };
@@ -217,7 +263,8 @@ export function validateDiscovery(dist = resolve('dist')): DiscoveryValidationRe
 
 if (import.meta.main) {
   console.log('Validating discovery artifacts...');
-  const { errors } = validateDiscovery();
+  const requireIndexNowKey = process.argv.includes('--require-indexnow-key');
+  const { errors } = validateDiscovery(resolve('dist'), { requireIndexNowKey });
   if (errors.length > 0) {
     console.error(`Discovery validation failed with ${errors.length} issue(s):`);
     for (const error of errors) {

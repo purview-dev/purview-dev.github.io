@@ -388,18 +388,39 @@ site URL automatically:
   `https://<owner>.github.io`.
 - **Project Pages** (`<owner>/<repo>`): base `/<repo>`, site
   `https://<owner>.github.io`.
-- **Custom domain** (recommended for `purview.dev`): once DNS is configured at
-  your registrar (CNAME/ALIAS to `purview-dev.github.io`, or A/AAAA per GitHub's
-  guidance), set repository **variables** `SITE_URL=https://purview.dev` and
-  `PAGES_BASE=/`, and restore a `public/CNAME` file containing `purview.dev`.
+- **Custom domain** (`purview.dev`): once DNS is configured at your registrar
+  (CNAME/ALIAS to `purview-dev.github.io`, or A/AAAA per GitHub's guidance), set
+  the repository **variables** `SITE_URL=https://purview.dev` and `PAGES_BASE=/`,
+  and configure the custom domain in **Settings → Pages → Custom domain**. The
+  domain is managed through the Pages settings for the GitHub Actions
+  deployment; no `public/CNAME` file is required.
 
 Configuration notes:
 
 - Enable Pages with **Source: GitHub Actions** in the repository settings and
   create the `github-pages` environment.
-- The `public/CNAME` file is intentionally absent until the `purview.dev` DNS
-  records are configured, so the site stays reachable at the root of
-  `purview-dev.github.io`.
+- The custom domain is configured in the repository's Pages settings
+  (**Settings → Pages → Custom domain**), not by a committed `public/CNAME`
+  file, so no `CNAME` needs to be maintained in the source tree.
+
+### HTTPS for the custom domain
+
+HTTPS is enforced at the **Cloudflare** edge, not by GitHub Pages. Because
+`purview.dev` is proxied through Cloudflare (orange cloud), GitHub cannot
+complete the Let's Encrypt HTTP-01 challenge, so the repository's **Enforce
+HTTPS** toggle stays unavailable with the message *"your domain is not properly
+configured to support HTTPS"*. This is expected, not a misconfiguration:
+
+- Cloudflare's **Always Use HTTPS** setting redirects `http://purview.dev/…` to
+  `https://purview.dev/…`, so the canonical origin is always HTTPS.
+- The only side effect is that GitHub's default-domain redirect
+  (`purview-dev.github.io` → `purview.dev`) targets `http://`, adding one extra
+  hop before the HTTPS redirect. Search engines follow the chain to the
+  canonical URL and treat it as a redirect, not a duplicate.
+
+Do not try to force the GitHub toggle on: it would require temporarily setting
+the Cloudflare DNS record to **DNS only** (grey cloud) so GitHub can issue the
+certificate, and renewals can fail again once the record is proxied.
 
 The workflow validates (`just validate`), refreshes live release/documentation
 data, builds, and uploads `./src/dist`.

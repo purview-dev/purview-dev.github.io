@@ -19,6 +19,12 @@ interface Props {
    * hint for tooling; every page also exposes a normal crawlable `<a href>`.
    */
   alternateLinks?: { href: string; type: string; title?: string }[];
+  /**
+   * Keep this page out of search indexes: emits `<meta name="robots"
+   * content="noindex">` and omits the canonical link. Used by the 404 page,
+   * which has no canonical URL of its own (its route, `/404/`, does not exist).
+   */
+  noindex?: boolean;
 }
 
 const {
@@ -27,6 +33,7 @@ const {
   image,
   structuredData,
   alternateLinks = [],
+  noindex = false,
 } = Astro.props;
 const canonical = absoluteUrl(Astro.url.pathname === '' ? '/' : Astro.url.pathname);
 const ogImage = absoluteUrl(image ?? '/og/default.png');
@@ -39,7 +46,13 @@ const ogImage = absoluteUrl(image ?? '/og/default.png');
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    {
+      noindex ? (
+        <meta name="robots" content="noindex" />
+      ) : (
+        <link rel="canonical" href={canonical} />
+      )
+    }
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE.fullName} />
     <meta property="og:title" content={title} />

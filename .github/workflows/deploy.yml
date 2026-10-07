@@ -132,6 +132,14 @@ jobs:
           fi
           bun run discovery:key
 
+      - name: Validate the discovery artifacts, including the key file
+        # The build pipeline cannot require the key verification file (the build
+        # never sees the key); this is the one place it is guaranteed to exist.
+        # When INDEXNOW_KEY is unset the requirement is a no-op.
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: bun run discovery:validate --require-indexnow-key
+
       - name: Publish the previous discovery manifest for change detection
         run: |
           mkdir -p src/dist/_discovery
