@@ -12,7 +12,10 @@ pre-commit:
     oxfmt:
       root: src
       glob: '*.{ts,tsx,css,md,mdx,json,yml,yaml,toml}'
-      run: bunx oxfmt {staged_files}
+      # `--no-error-on-unmatched-pattern` keeps the hook green when the staged
+      # files are all covered by oxfmt's `ignorePatterns` (e.g. a commit that
+      # only touches `fixtures/**`). Genuine formatting issues still fail.
+      run: bunx oxfmt --no-error-on-unmatched-pattern {staged_files}
     oxlint:
       root: src
       glob: '*.{ts,tsx,js,jsx,astro}'
