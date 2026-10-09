@@ -60,6 +60,26 @@ export function selectVersions(versions: Iterable<string>): VersionSelection {
   };
 }
 
+/**
+ * The prerelease worth surfacing alongside a stable release: the given
+ * prerelease when it outranks the stable, otherwise null. A prerelease that
+ * trails the stable (e.g. `5.0.0-prerelease.19` beside stable `5.0.2`) is
+ * withheld so the package table never advertises an older build as newer.
+ * A prerelease is always kept when there is no stable version to compare to.
+ */
+export function effectivePrerelease(
+  stable: string | null,
+  prerelease: string | null,
+): string | null {
+  if (prerelease === null) {
+    return null;
+  }
+  if (stable === null) {
+    return prerelease;
+  }
+  return compareNuGetVersions(prerelease, stable) > 0 ? prerelease : null;
+}
+
 /** Compare two GitHub releases by version tag, descending. */
 export function sortGitHubReleasesDescending(releases: GitHubReleaseInfo[]): GitHubReleaseInfo[] {
   return [...releases].toSorted((a, b) => {

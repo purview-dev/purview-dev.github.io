@@ -16,6 +16,7 @@ import {
   parseNuGetSearchEntry,
 } from '../../src/lib/releases/github';
 import {
+  effectivePrerelease,
   isPrereleaseRelease,
   isPrereleaseVersion,
   isValidVersion,
@@ -263,6 +264,31 @@ describe('version selection (NuGet precedence)', () => {
       'v1.1.1',
       'v1.0.0',
     ]);
+  });
+});
+
+describe('effective prerelease (trailing prereleases are withheld)', () => {
+  test('withholds a prerelease that trails the stable release', () => {
+    // The Telemetry SourceGenerator case: stable 5.0.2 beside 5.0.0-prerelease.19.
+    expect(effectivePrerelease('5.0.2', '5.0.0-prerelease.19')).toBeNull();
+  });
+
+  test('keeps a prerelease that outranks the stable release', () => {
+    expect(effectivePrerelease('1.1.1', '2.0.0-prerelease.38')).toBe('2.0.0-prerelease.38');
+  });
+
+  test('keeps a prerelease when there is no stable release', () => {
+    expect(effectivePrerelease(null, '2.0.0-prerelease.32')).toBe('2.0.0-prerelease.32');
+  });
+
+  test('returns null when there is no prerelease', () => {
+    expect(effectivePrerelease('1.1.1', null)).toBeNull();
+    expect(effectivePrerelease(null, null)).toBeNull();
+  });
+
+  test('compares four-component versions by their build revision', () => {
+    expect(effectivePrerelease('13.5.3.6', '13.3.0-prerelease.10')).toBeNull();
+    expect(effectivePrerelease('13.5.3', '13.5.3.1-prerelease.1')).toBe('13.5.3.1-prerelease.1');
   });
 });
 
