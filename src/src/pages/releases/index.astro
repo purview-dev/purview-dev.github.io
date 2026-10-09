@@ -3,6 +3,7 @@ import SiteLayout from '~/layouts/SiteLayout.astro';
 import ReleaseFilter from '~/components/islands/ReleaseFilter.tsx';
 import PackageVersions, { type PackageRow } from '~/components/islands/PackageVersions.tsx';
 import { loadProjects } from '~/lib/manifest/load';
+import { effectivePrerelease } from '~/lib/releases/normalize';
 import { flattenReleases, projectReleaseSummary } from '~/lib/releases/transform';
 import { getReleaseIndex } from '~/lib/releases/runtime';
 import { SITE } from '~/lib/site';
@@ -30,7 +31,9 @@ const packageRows: PackageRow[] = summaries
       projectName: summary.projectName,
       packageId: pkg.packageId,
       latestStable: pkg.latestStable,
-      latestPrerelease: pkg.latestPrerelease,
+      // Only surface a prerelease that outranks the stable release, so a
+      // trailing prerelease never sits beside a newer stable version.
+      latestPrerelease: effectivePrerelease(pkg.latestStable, pkg.latestPrerelease),
       totalDownloads: pkg.totalDownloads,
       nugetUrl: pkg.nugetUrl,
       projectUrl: withBase(`/projects/${summary.projectId}/`),

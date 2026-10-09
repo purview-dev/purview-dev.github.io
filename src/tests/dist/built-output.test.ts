@@ -4,6 +4,9 @@ import { resolve } from 'node:path';
 
 import { LOCAL_PATH_PATTERNS, SECRET_PATTERNS } from '../../src/lib/build-paths';
 import { loadProjects } from '../../src/lib/manifest/load';
+import { compareNuGetVersions } from '../../src/lib/nuget-version';
+import { getReleaseIndex } from '../../src/lib/releases/runtime';
+import { projectReleaseSummary } from '../../src/lib/releases/transform';
 
 const DIST = resolve('dist');
 
@@ -174,6 +177,25 @@ describe('built use cases', () => {
     // (`just check-links`); this guards the rendered link shape.
     const content = requireBuilt('projects/event-sourcing/index.html');
     expect(content).toContain('/docs/event-sourcing/sql-server-guide/');
+  });
+});
+
+describe('built package versions', () => {
+  test('a package prerelease that trails its stable release is withheld', () => {
+    const telemetry = loadProjects().find((project) => project.id === 'telemetry-sourcegenerator');
+    expect(telemetry).toBeDefined();
+    const index = getReleaseIndex();
+    const summary = projectReleaseSummary(telemetry!, index.data, index.source);
+    const pkg = summary.packages.find(
+      (entry) => entry.packageId === 'Purview.Telemetry.SourceGenerator',
+    );
+    expect(pkg?.latestStable).not.toBeNull();
+    expect(pkg?.latestPrerelease).not.toBeNull();
+    // The package is a trailing prerelease (e.g. 5.0.0-prerelease.19 beside
+    // stable 5.0.2), so the table must not advertise it as a current version.
+    expect(compareNuGetVersions(pkg!.latestPrerelease!, pkg!.latestStable!)).toBeLessThan(0);
+    const content = requireBuilt('projects/telemetry-sourcegenerator/index.html');
+    expect(content).not.toContain(pkg!.latestPrerelease!);
   });
 });
 

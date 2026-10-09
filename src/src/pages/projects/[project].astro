@@ -10,6 +10,7 @@ import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '
 import { installAnchorId, installKindFor, installTabs } from '~/lib/install';
 import { LLMS_LINK_ATTRS } from '~/lib/llms';
 import { loadProjects } from '~/lib/manifest/load';
+import { effectivePrerelease } from '~/lib/releases/normalize';
 import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { projectReleaseSummary } from '~/lib/releases/transform';
 import { getReleaseIndex } from '~/lib/releases/runtime';
@@ -132,7 +133,9 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
   projectUrl,
   packageId: pkg.packageId,
   latestStable: pkg.latestStable,
-  latestPrerelease: pkg.latestPrerelease,
+  // Only surface a prerelease that outranks the stable release, so a trailing
+  // prerelease never sits beside a newer stable version in the table.
+  latestPrerelease: effectivePrerelease(pkg.latestStable, pkg.latestPrerelease),
   totalDownloads: pkg.totalDownloads,
   nugetUrl: pkg.nugetUrl,
   deprecated: pkg.deprecated,
@@ -315,28 +318,6 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
 
     <div class="mt-12 grid gap-10 lg:grid-cols-[1fr_320px]">
       <div class="min-w-0 space-y-12">
-        {
-          project.useCases.length > 0 && (
-            <section>
-              <h2 class="text-xl font-semibold">Use cases</h2>
-              <p class="mt-2 text-muted">
-                Concrete examples of what {project.name} does, and who each one is for.
-              </p>
-              <div class="mt-6 grid gap-5 lg:grid-cols-2">
-                {project.useCases.map((useCase) => (
-                  <UseCaseCard
-                    useCase={useCase}
-                    projectName={project.name}
-                    projectId={project.id}
-                    docsBase={docsPath}
-                    showProject={false}
-                  />
-                ))}
-              </div>
-            </section>
-          )
-        }
-
         <section>
           <h2 class="text-xl font-semibold">The problem</h2>
           <p class="mt-4 leading-relaxed text-muted">{project.description}</p>
@@ -402,6 +383,28 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
             </div>
           </div>
         </section>
+
+        {
+          project.useCases.length > 0 && (
+            <section>
+              <h2 class="text-xl font-semibold">Use cases</h2>
+              <p class="mt-2 text-muted">
+                Concrete examples of what {project.name} does, and who each one is for.
+              </p>
+              <div class="mt-6 grid gap-5 lg:grid-cols-2">
+                {project.useCases.map((useCase) => (
+                  <UseCaseCard
+                    useCase={useCase}
+                    projectName={project.name}
+                    projectId={project.id}
+                    docsBase={docsPath}
+                    showProject={false}
+                  />
+                ))}
+              </div>
+            </section>
+          )
+        }
 
         {
           project.packages.length > 0 && (
