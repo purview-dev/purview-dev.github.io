@@ -35,7 +35,7 @@ const statuses = ['stable', 'preview', 'experimental'];
       <ProjectFilter client:visible categories={categories} statuses={statuses} />
     </div>
 
-    <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
       {
         projects.map((project) => {
           const { tags } = projectRepoEnrichment(project, releaseIndex.data);
@@ -61,7 +61,7 @@ const statuses = ['stable', 'preview', 'experimental'];
             Open-source projects outside Purview that I contribute to or help maintain. These links
             take you to each project's own site or repository.
           </p>
-          <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {externalProjects.map((project) => (
               <a
                 href={project.url}

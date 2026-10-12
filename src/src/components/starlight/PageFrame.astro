@@ -66,15 +66,12 @@ const { hasSidebar } = Astro.locals.starlightRoute;
       width: 100%;
       height: var(--sl-nav-height);
       border-bottom: 1px solid var(--sl-color-hairline-shade);
-      padding: var(--sl-nav-pad-y) var(--sl-nav-pad-x);
-      padding-inline-end: var(--sl-nav-pad-x);
+      /* Horizontal padding is owned by the header's `.pv-container` wrapper (see
+       * the Header override) so the documentation header aligns with the site's
+       * page shell; the mobile menu-button reservation lives on that wrapper. */
+      padding-block: var(--sl-nav-pad-y);
+      padding-inline: 0;
       background-color: var(--sl-color-bg-nav);
-    }
-
-    :global([data-has-sidebar]) .header {
-      padding-inline-end: calc(
-        var(--sl-nav-gap) + var(--sl-nav-pad-x) + var(--sl-menu-button-size)
-      );
     }
 
     .sidebar-pane {
@@ -115,9 +112,6 @@ const { hasSidebar } = Astro.locals.starlightRoute;
     }
 
     @media (min-width: 50rem) {
-      :global([data-has-sidebar]) .header {
-        padding-inline-end: var(--sl-nav-pad-x);
-      }
       .sidebar-pane {
         /* Make the sidebar visible on larger screens instead of deferring to popover state. */
         display: block;

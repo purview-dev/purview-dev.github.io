@@ -4,4 +4,26 @@ import SiteHeader from '~/components/SiteHeader.astro';
 const { hasSidebar } = Astro.locals.starlightRoute;
 ---
 
-<SiteHeader hasSidebar={hasSidebar} />
+<div class="pv-container pv-header">
+  <SiteHeader hasSidebar={hasSidebar} />
+</div>
+
+<style>
+  /* The documentation header shares the site's page shell (`.pv-container`) so
+   * it lines up with the header rendered on the non-Starlight pages instead of
+   * spanning the full viewport width. */
+  .pv-header {
+    height: 100%;
+  }
+
+  /* Reserve room for Starlight's fixed mobile menu button (rendered alongside
+   * the sidebar popover) so the site nav does not underlap it. Above 50rem the
+   * sidebar is permanent and the button is hidden, so no reservation is needed. */
+  @media (max-width: 49.999rem) {
+    :global(html[data-has-sidebar]) .pv-header {
+      padding-inline-end: calc(
+        var(--sl-nav-gap) + var(--sl-nav-pad-x) + var(--sl-menu-button-size)
+      );
+    }
+  }
+</style>

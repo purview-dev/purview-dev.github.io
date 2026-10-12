@@ -316,9 +316,9 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
       </div>
     </div>
 
-    <div class="mt-12 grid gap-10 lg:grid-cols-[1fr_320px]">
+    <div class="mt-12 grid gap-10 lg:grid-cols-[1fr_320px] 2xl:grid-cols-[minmax(0,1fr)_22rem]">
       <div class="min-w-0 space-y-12">
-        <section>
+        <section class="pv-measure">
           <h2 class="text-xl font-semibold">The problem</h2>
           <p class="mt-4 leading-relaxed text-muted">{project.description}</p>
           {
@@ -335,7 +335,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
           }
         </section>
 
-        <section>
+        <section class="pv-measure">
           <h2 class="text-xl font-semibold">Why it became a project</h2>
           <p class="mt-4 leading-relaxed text-muted">{project.origin}</p>
         </section>
