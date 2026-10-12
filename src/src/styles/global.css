@@ -106,6 +106,11 @@
 @layer base {
   :root {
     color-scheme: light;
+    /* Maximum width of the page shell (`.pv-container`). Raised at wide and
+     * ultrawide breakpoints (see the components layer) so the site does not sit
+     * in a narrow centred column on large monitors. Prose is capped separately
+     * with `.pv-measure`, so widening the shell never stretches text. */
+    --pv-container-max: 72rem;
   }
 
   :root[data-theme='dark'] {
@@ -184,7 +189,7 @@
   .pv-container {
     margin-inline: auto;
     width: 100%;
-    max-width: 72rem;
+    max-width: var(--pv-container-max, 72rem);
     padding-inline: 1.25rem;
   }
 
@@ -192,6 +197,33 @@
     .pv-container {
       padding-inline: 1.5rem;
     }
+  }
+
+  /* Grow the shell on large monitors. The header and footer share this
+   * container, so the navigation stops clustering in the middle of the bar. */
+  @media (min-width: 80rem) {
+    :root {
+      --pv-container-max: 80rem;
+    }
+  }
+
+  @media (min-width: 96rem) {
+    :root {
+      --pv-container-max: 88rem;
+    }
+  }
+
+  @media (min-width: 120rem) {
+    :root {
+      --pv-container-max: 96rem;
+    }
+  }
+
+  /* Cap a run of prose so widening the page shell never produces uncomfortably
+   * long lines. Apply it to text blocks only; tables, card grids, code and
+   * diagrams intentionally keep the full column width. */
+  .pv-measure {
+    max-width: 72ch;
   }
 
   .pv-card {
@@ -487,6 +519,41 @@
     border-radius: 0.5rem;
     padding: 0.5rem 1rem;
     font-size: 0.8125rem;
+  }
+
+  /* -------------------------------------------------------------------------
+   * Wide-screen documentation layout
+   * -----------------------------------------------------------------------
+   * Starlight splits the horizontal slack of a docs page between the main
+   * column and the right-hand table of contents, so on a wide monitor the
+   * prose sits in a narrow island while its TOC is pushed out to the viewport
+   * edge. Above 96rem we widen the reading measure a little and stop that
+   * distribution, so the content and its TOC stay together as one centred
+   * block. The classes below are Starlight internals (TwoColumnContent.astro)
+   * and are re-checked when Starlight is upgraded. */
+  @media (min-width: 96rem) {
+    :root {
+      --sl-content-width: 50rem;
+    }
+
+    .main-frame > .lg\:sl-flex {
+      justify-content: center;
+    }
+
+    [data-has-sidebar][data-has-toc] .main-pane {
+      width: var(--sl-content-width);
+    }
+
+    .right-sidebar-container {
+      width: var(--sl-sidebar-width);
+    }
+  }
+
+  @media (min-width: 120rem) {
+    :root {
+      --sl-content-width: 52rem;
+      --sl-sidebar-width: 20rem;
+    }
   }
 }
 

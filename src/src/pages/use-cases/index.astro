@@ -47,7 +47,7 @@ const audiences = AUDIENCES.map((value) => ({ value, label: AUDIENCE_LABELS[valu
       <UseCaseFilter client:visible audiences={audiences} />
     </div>
 
-    <div class="mt-8 grid gap-5 lg:grid-cols-2">
+    <div class="mt-8 grid gap-5 lg:grid-cols-2 2xl:grid-cols-3">
       {
         entries.map(({ useCase, project, docsBase, search }, index) => (
           <div

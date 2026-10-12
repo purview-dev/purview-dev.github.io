@@ -1,0 +1,222 @@
+$schema: ../../lib/manifest/schema.ts
+
+id: engineering-playbook
+name: Engineering Playbook
+shortDescription: The reusable Purview engineering conventions — repository shape, architecture as tests, verification tiers, and agent enablement.
+description: >-
+  The conventions the Purview projects are built on, written down once with the failure each one prevents,
+  the mechanism that makes it true, and what a smaller repository does instead. It covers how a repository
+  is laid out and named, how the architecture is held by tests that read the compiled assemblies, which
+  checks run in which verification tier, how value objects, schemas and results cross a boundary, how tests
+  are written and where their data comes from, how a repository is made legible to a coding agent, and how
+  its documentation is published. It is documentation-first and ships no library: it holds the conventions,
+  ready-to-copy templates, and a small layered reference implementation whose dependency-direction rules
+  fail the build, so the rules are demonstrated rather than asserted.
+origin: >-
+  The conventions were already real and already enforced, but they were only discoverable by reading the
+  repositories and inferring the pattern from the repetition. That worked while one person held the whole
+  picture and stopped working as soon as a second contributor or a coding agent had to decide which of two
+  plausible patterns was the intended one. Writing them down in one place — with the evidence attached, and
+  scaled so a smaller repository can take the part that fits — turned an oral tradition into something a
+  repository can be pointed at.
+useWhen: >-
+  You are starting a repository that should look and behave like the Purview projects, adopting the SDK into
+  an existing one, or deciding which of the conventions are worth the cost at your size. The playbook's
+  profiles, templates and reference implementation are all meant to be taken in part.
+avoidWhen: >-
+  You want the SDK's own behaviour documented rather than the conventions built on top of it — read the
+  Build SDK's wiki instead — or you are looking for a scaffolding tool: the templates are files to read and
+  copy, not a generator.
+repository: purview-dev/engineering-playbook
+category: developer-tooling
+status: preview
+experimental: true
+order: 95
+docs:
+  source: github-path
+  path: docs/wiki
+  rootPage: Home.md
+  exclude:
+    - _Sidebar.md
+    - index.md
+related:
+  - build-sdk
+  - containers
+  - value-objects
+  - results
+  - zodsharp
+useCases:
+  - audience: developer
+    title: A repository that satisfies every convention on its first build
+    scenario: >-
+      You are starting a repository and want the project defaults, code style, test wiring and assembly
+      identity to be right from the first commit, instead of discovering the conventions one review comment
+      at a time.
+    code: |
+      {
+        "sdk": { "allowPrerelease": false },
+        "msbuild-sdks": { "Purview.BuildSdk": "1.0.4" },
+        "test": { "runner": "Microsoft.Testing.Platform" }
+      }
+    language: json
+    outcome: >-
+      A pinned SDK plus a `Directory.Build.props` that sets one namespace prefix is the whole of the
+      repository's build configuration. Every project beneath it inherits the target framework, language
+      version, nullable context, analyzers and assembly identity, so a project file is two lines and a test
+      project file is empty.
+    evidence: >-
+      Getting Started walks the steps in the order you would create the files, and every repository-level
+      file has a copy-paste version in the templates folder with a comment explaining the one thing about it
+      that is easy to get wrong.
+    docsPage: getting-started
+  - audience: architect
+    title: Architecture that fails the build when a dependency points the wrong way
+    scenario: >-
+      Your layering is documented and agreed, and you want it to stay true — rather than being eroded one
+      convenient project reference at a time, each of which looks reasonable in isolation.
+    code: |
+      [Test]
+      public async Task Application_GivenItsReferences_DependsOnTheDomainAndNotOnInfrastructure()
+      {
+          // Arrange
+          var application = typeof(ConventionCatalogue).Assembly;
+
+          // Act
+          var referenced = ReferencedAssemblyNames(application);
+
+          // Assert
+          await Assert.That(referenced).Contains($"{RepositoryPrefix}.Domain");
+          await Assert.That(referenced).DoesNotContain($"{RepositoryPrefix}.Infrastructure");
+      }
+    language: csharp
+    outcome: >-
+      The allowed dependency directions are data in a test that reads the compiled assemblies' metadata
+      references, so a reference that points the wrong way fails the build with the offending assembly
+      named — no diagram to keep in step and no separate tool to run.
+    evidence: >-
+      The reference implementation's Architecture.UnitTests project asserts four rules against three real
+      assemblies and is built by the same pipeline as everything else. The page also records the two traps
+      found by writing it, including a source generator that emits public types into its own namespace.
+    docsPage: architecture-as-tests
+  - audience: team-lead
+    title: A verification gate that stays credible
+    scenario: >-
+      The pull-request build has started needing a database and four minutes of waiting, and somebody is
+      about to make it optional — at which point nothing is gated at all.
+    code: |
+      {
+        "Build": {
+          "Solution": "src/Acme.slnx",
+          "TestRoot": "src/tests",
+          "TestPatterns": "*UnitTests.csproj",
+          "TestFilter": "/*/*/*/*[Category=Unit]"
+        }
+      }
+    language: json
+    outcome: >-
+      Tiers are expressed by where a test lives rather than by an attribute: the SDK reads the test project's
+      name suffix and emits the assembly-level category the pipeline filters on, so adding a slow suite keeps
+      it out of the fast tier without editing a filter or remembering an attribute.
+    evidence: >-
+      The verification model page documents the shared workflow's inputs, the configuration probe order, and
+      the two ways a repository and the shared workflow quietly disagree about what a green build means — and
+      names the repository that runs its container-backed suites as a second job on the same runner.
+    docsPage: verification-model
+  - audience: developer
+    title: One builder for every test's domain content
+    scenario: >-
+      You are writing a test, need a domain object, and do not want to spell out a constructor that will
+      change — nor leave the reader guessing which of the values you passed actually matter to the assertion.
+    code: |
+      public static Domain.Convention Convention(
+          Domain.ConventionId? id = null,
+          string? title = null,
+          VerificationTier? tier = null,
+          bool? enforcedByBuild = null) =>
+          Domain.Convention.Create(
+              id ?? ConventionId(),
+              title ?? Faker.Lorem.Sentence(4),
+              tier ?? Faker.Random.Enum<VerificationTier>(),
+              enforcedByBuild ?? Faker.Random.Bool());
+    language: csharp
+    outcome: >-
+      An omitted argument is generated and a supplied argument is used exactly, so a test reads as a list of
+      the values it is actually proving and everything else is realistic without the test saying so. One
+      constructor change is one edit rather than a repository-wide one.
+    evidence: >-
+      TestBuilder lives in a shared testing project the SDK references from every test project
+      automatically. The page also explains the two SDK rules that shaped its flat, ungrouped shape, and the
+      value-object exception where a test must name the rejected input itself.
+    docsPage: testing-and-test-data
+  - audience: contributor
+    title: A repository an agent can work in without hand-holding
+    scenario: >-
+      You want a coding agent to make a change that follows the repository's conventions rather than
+      confidently generalising from whichever pattern it found first.
+    code: |
+      | Path | Purpose |
+      | -- | -- |
+      | src/src/Domain | The reference implementation's value objects and aggregate |
+      | src/src/Application | The port and the service that owns the rules |
+      | src/tests/Architecture.UnitTests | Dependency-direction rules; a wrong reference fails the build |
+    language: markdown
+    outcome: >-
+      AGENTS.md states the purpose, the layout, the conventions and the definition of done, and the build
+      mirrors the SDK's own skills into the repository so the agent-facing guidance tracks the SDK version
+      rather than the repository's memory of it.
+    evidence: >-
+      The agent enablement page documents the layout of the agent folder, why the SDK's mirror writes a
+      generated .gitignore that lists exactly the files it owns, and why the guidance that makes a repository
+      obvious to an agent is the same guidance that makes it obvious to a new joiner.
+    docsPage: agent-enablement
+  - audience: architect
+    title: Take only the part of the playbook that fits
+    scenario: >-
+      You are convinced by some of the conventions and not others, and you want to know which ones are worth
+      the cost in a repository the size of yours — rather than adopting everything and discovering the
+      ceremony.
+    outcome: >-
+      Three profiles — one project, a few layers, several packages — each list what to take and what to
+      leave, and every page ends with an "at your scale" section that names the smaller version of the rule
+      explicitly. The templates are mapped to the profile that needs them.
+    evidence: >-
+      The playbook also documents what not to adopt early, with the reason each one is more expensive out of
+      order, and a migration order for an existing repository that keeps each step cheap and the build green.
+    docsPage: adopting-this-at-your-scale
+  - audience: team-lead
+    title: Data that crosses a boundary once, and is trusted after that
+    scenario: >-
+      Inbound payloads are validated in several places, an identifier is a string in one layer and a type in
+      another, and expected failures are thrown as exceptions that callers catch by message.
+    code: |
+      [Scalar]
+      public readonly partial record struct EmailAddress
+      {
+          public string Value { get; }
+
+          static partial void OnNormalize(ref string value) => value = value?.Trim().ToLowerInvariant()!;
+      }
+    language: csharp
+    outcome: >-
+      A value is a type rather than a primitive, `Create` validates at the boundary and `Hydrate` trusts
+      everything past it, normalisation runs before validation so there is exactly one canonical form, and
+      expected failures are values while exceptional circumstances still throw.
+    evidence: >-
+      The contracts page names the three public repositories that implement the rules — source-generated
+      value objects, result types with union errors, and a schema layer that also exports and imports JSON
+      Schema — and shows how a validation result is read rather than parsed.
+    docsPage: contracts-and-data-exchange
+  - audience: contributor
+    title: Extend the playbook without turning it into a second source of truth
+    scenario: >-
+      You have found a convention that is real, enforced and not written down, and you want to add it without
+      duplicating something the SDK already documents.
+    outcome: >-
+      Four tests decide whether a rule belongs: it came from a real repository and a real failure, it is
+      reusable at more than one size, it is not the SDK's to state, and it is either enforced or explicitly
+      labelled a review obligation.
+    evidence: >-
+      The contributing page also sets the expectations for changing an existing rule — update every page that
+      states it, check the reference implementation still demonstrates it, and re-check whether the
+      enforcement moved between the build and review.
+    docsPage: contributing

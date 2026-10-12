@@ -158,12 +158,14 @@ const organizationStructuredData = {
             All use cases →
           </a>
         </div>
-        <div class="mt-8 grid gap-5 lg:grid-cols-2">
+        <div class="mt-8 grid gap-5 lg:grid-cols-2 2xl:grid-cols-3">
           {examples.map(({ project, useCase }, index) => (
             <div
               class:list={[
                 'min-w-0',
-                examples.length % 2 === 1 && index === examples.length - 1 && 'lg:col-span-2',
+                examples.length % 2 === 1 &&
+                  index === examples.length - 1 &&
+                  'lg:col-span-2 2xl:col-span-1',
               ]}
             >
               <UseCaseCard
@@ -323,6 +325,15 @@ const organizationStructuredData = {
 
     .featured-projects-grid-five .featured-project-card:nth-child(n + 4) {
       flex-basis: calc((100% - 1.25rem) / 2);
+    }
+  }
+
+  /* On wide monitors the shell is wide enough for all five featured projects
+   * to sit on one row. */
+  @media (min-width: 96rem) {
+    .featured-projects-grid-five .featured-project-card,
+    .featured-projects-grid-five .featured-project-card:nth-child(n + 4) {
+      flex-basis: calc((100% - 5rem) / 5);
     }
   }
 </style>
