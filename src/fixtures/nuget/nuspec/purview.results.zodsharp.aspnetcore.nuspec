@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>Purview.Results.ZodSharp.AspNetCore</id>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
     <title>Purview Results ZodSharp ASP.NET Core</title>
     <authors>Kieron Lanning</authors>
     <license type="expression">MIT</license>
@@ -13,19 +13,19 @@
     <description>Maps Purview result failures that carry ZodSharp validation errors onto ASP.NET Core HttpValidationProblemDetails responses.</description>
     <copyright>Copyright © 2026 Purview-Dev</copyright>
     <tags>results result aspnetcore problemdetails validation zod purview</tags>
-    <repository type="git" url="https://github.com/purview-dev/results" branch="refs/heads/main" commit="fbf0f23aca7dc0bdb08b9f4d0380070c5079e343" />
+    <repository type="git" url="https://github.com/purview-dev/results" branch="refs/heads/main" commit="15358bfd9dbd673e183c092df04cf48717ee5198" />
     <dependencies>
       <group targetFramework="net10.0">
-        <dependency id="Purview.Results.AspNetCore" version="1.0.0" exclude="Build,Analyzers" />
-        <dependency id="Purview.Results.ZodSharp" version="1.0.0" exclude="Build,Analyzers" />
-        <dependency id="Purview.ZodSharp.AspNetCore" version="2.0.1" exclude="Build,Analyzers" />
-        <dependency id="Purview.ZodSharp" version="2.0.1" exclude="Build,Analyzers" />
+        <dependency id="Purview.Results.AspNetCore" version="1.0.2" exclude="Build,Analyzers" />
+        <dependency id="Purview.Results.ZodSharp" version="1.0.2" exclude="Build,Analyzers" />
+        <dependency id="Purview.ZodSharp" version="2.1.0" exclude="Build,Analyzers" />
+        <dependency id="Purview.ZodSharp.AspNetCore" version="2.1.0" exclude="Build,Analyzers" />
       </group>
       <group targetFramework="net11.0">
-        <dependency id="Purview.Results.AspNetCore" version="1.0.0" exclude="Build,Analyzers" />
-        <dependency id="Purview.Results.ZodSharp" version="1.0.0" exclude="Build,Analyzers" />
-        <dependency id="Purview.ZodSharp.AspNetCore" version="2.0.1" exclude="Build,Analyzers" />
-        <dependency id="Purview.ZodSharp" version="2.0.1" exclude="Build,Analyzers" />
+        <dependency id="Purview.Results.AspNetCore" version="1.0.2" exclude="Build,Analyzers" />
+        <dependency id="Purview.Results.ZodSharp" version="1.0.2" exclude="Build,Analyzers" />
+        <dependency id="Purview.ZodSharp" version="2.1.0" exclude="Build,Analyzers" />
+        <dependency id="Purview.ZodSharp.AspNetCore" version="2.1.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
     <frameworkReferences>

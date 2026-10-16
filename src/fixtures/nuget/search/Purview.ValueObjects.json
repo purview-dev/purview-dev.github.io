@@ -10,12 +10,12 @@
       "@type": "Package",
       "registration": "https://api.nuget.org/v3/registration5-semver1/purview.valueobjects/index.json",
       "id": "Purview.ValueObjects",
-      "version": "1.0.0",
-      "description": "Source-generated scalar and complex value objects for .NET. Brings F#-style single-case types to C# with Create/Hydrate factories, normalization, validation, equality, comparison, implicit conversions, and JSON serialization for DTOs, Entity Framework, and domain models.",
+      "version": "1.1.0",
+      "description": "Source-generated scalar and complex value objects for .NET. Brings F#-style single-case types to C# with Create/Hydrate factories, normalization, validation, equality, comparison, implicit conversions, JSON serialization, and the underlying value's formatting and parsing interfaces for DTOs, Entity Framework, and domain models.",
       "summary": "",
       "title": "Purview Value Objects",
-      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.valueobjects/1.0.0/icon",
-      "licenseUrl": "https://www.nuget.org/packages/Purview.ValueObjects/1.0.0/license",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.valueobjects/1.1.0/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.ValueObjects/1.1.0/license",
       "projectUrl": "https://purview.dev/projects/value-objects/",
       "tags": [
         "purview",
@@ -28,7 +28,9 @@
         "dto",
         "serialization",
         "json",
-        "entity-framework"
+        "entity-framework",
+        "formatting",
+        "parsing"
       ],
       "authors": [
         "Kieron Lanning"
@@ -48,6 +50,16 @@
           "version": "1.0.0",
           "downloads": 0,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.valueobjects/1.0.0.json"
+        },
+        {
+          "version": "1.0.1",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.valueobjects/1.0.1.json"
+        },
+        {
+          "version": "1.1.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.valueobjects/1.1.0.json"
         }
       ],
       "vulnerabilities": []

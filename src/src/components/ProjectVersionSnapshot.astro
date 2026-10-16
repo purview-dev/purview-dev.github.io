@@ -1,14 +1,21 @@
 ---
 import StatusBadge from '~/components/StatusBadge.astro';
+import type { ProjectPackageVersions } from '~/lib/releases/live';
+import {
+  prereleaseTooltip,
+  projectTooltip,
+} from '~/lib/releases/live';
 import type { ProjectVersionRollup } from '~/lib/releases/transform';
 import { withBase } from '~/lib/urls';
 
 interface Props {
   /** One row per active project, rolled up from that project's NuGet packages. */
   rows: ProjectVersionRollup[];
+  /** The build-time versions behind each row, so the browser can recompute it live (ADR 0008). */
+  packages: ProjectPackageVersions[];
 }
 
-const { rows } = Astro.props;
+const { rows, packages } = Astro.props;
 
 function formatDate(value: string | null): string {
   if (!value) {
@@ -20,27 +27,15 @@ function formatDate(value: string | null): string {
     : date.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
-/**
- * Explanation for a blanked prerelease cell (or for packages that trail the
- * headline version), so the suppressed detail stays discoverable on hover.
- */
-function prereleaseTooltip(row: ProjectVersionRollup): string | undefined {
-  if (row.prereleaseVersion) {
-    return row.laggingPackageCount > 0
-      ? `${row.laggingPackageCount} of ${row.packageCount} packages are not on this version`
-      : undefined;
-  }
-  if (row.suppressedPrerelease && row.stableVersion) {
-    return `Prerelease ${row.suppressedPrerelease} is older than the stable release ${row.stableVersion}`;
-  }
-  return undefined;
-}
-
-function projectTooltip(row: ProjectVersionRollup): string | undefined {
-  return row.laggingPackageCount > 0
-    ? `${row.laggingPackageCount} of ${row.packageCount} packages are on older versions`
-    : undefined;
-}
+/** The per-project package versions the browser refresh recomputes each row from. */
+const livePayload = {
+  projects: rows.map((row) => ({
+    projectId: row.projectId,
+    packages: packages
+      .filter((pkg) => pkg.projectId === row.projectId)
+      .map((pkg) => ({ id: pkg.packageId, stable: pkg.stable, prerelease: pkg.prerelease })),
+  })),
+};
 ---
 
 {
@@ -80,33 +75,31 @@ function projectTooltip(row: ProjectVersionRollup): string | undefined {
                     {row.projectName}
                   </a>
                   <StatusBadge status={row.status} />
-                  <span class="pv-chip" title={projectTooltip(row)}>
+                  <span class="pv-chip" data-package-count title={projectTooltip(row)}>
                     {row.packageCount} package{row.packageCount === 1 ? '' : 's'}
                   </span>
                 </div>
               </td>
               <td class="px-4 py-3">
-                {row.stableVersion ? (
-                  <span class="border-success/30 bg-success/10 text-success inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-xs">
-                    {row.stableVersion}
-                  </span>
-                ) : (
-                  <span class="text-muted text-xs">—</span>
-                )}
+                <span
+                  class="pv-version-badge"
+                  data-tone="stable"
+                  data-version={row.stableVersion ?? ''}
+                  data-version-stable
+                >
+                  {row.stableVersion ?? '—'}
+                </span>
               </td>
               <td class="px-4 py-3">
-                {row.prereleaseVersion ? (
-                  <span
-                    class="border-warning/30 bg-warning/10 text-warning inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-xs"
-                    title={prereleaseTooltip(row)}
-                  >
-                    {row.prereleaseVersion}
-                  </span>
-                ) : (
-                  <span class="text-muted text-xs" title={prereleaseTooltip(row)}>
-                    —
-                  </span>
-                )}
+                <span
+                  class="pv-version-badge"
+                  data-tone="prerelease"
+                  data-version={row.prereleaseVersion ?? ''}
+                  data-version-prerelease
+                  title={prereleaseTooltip(row)}
+                >
+                  {row.prereleaseVersion ?? '—'}
+                </span>
               </td>
               <td class="text-muted px-4 py-3 text-xs">
                 {row.latestRelease ? (
@@ -134,3 +127,114 @@ function projectTooltip(row: ProjectVersionRollup): string | undefined {
     </div>
   )
 }
+
+<p class="text-muted mt-3 text-xs" data-version-status hidden aria-live="polite"></p>
+
+<script type="application/json" id="pv-version-data" set:html={JSON.stringify(livePayload).replace(/</g, '\\u003c')} />
+
+<script>
+  import {
+    isStale,
+    latestFromVersions,
+    mergeVersionPair,
+    prereleaseTooltip,
+    projectTooltip,
+    readLiveVersions,
+    refreshLiveVersions,
+    rollupPackageVersions,
+    versionStatusMessage,
+    type LiveVersions,
+  } from '~/lib/releases/live';
+
+  interface SnapshotPackage {
+    id: string;
+    stable: string | null;
+    prerelease: string | null;
+  }
+  interface SnapshotProject {
+    projectId: string;
+    packages: SnapshotPackage[];
+  }
+
+  const dataElement = document.getElementById('pv-version-data');
+  const payload = dataElement?.textContent
+    ? (JSON.parse(dataElement.textContent) as { projects: SnapshotProject[] })
+    : null;
+
+  const setVersion = (element: Element | null, version: string | null) => {
+    if (!(element instanceof HTMLElement)) {
+      return;
+    }
+    element.dataset.version = version ?? '';
+    element.textContent = version ?? '—';
+  };
+
+  const setTooltip = (element: Element | null, tooltip: string | undefined) => {
+    if (!(element instanceof HTMLElement)) {
+      return;
+    }
+    if (tooltip) {
+      element.title = tooltip;
+    } else {
+      element.removeAttribute('title');
+    }
+  };
+
+  if (payload) {
+    const statusElement = document.querySelector<HTMLElement>('[data-version-status]');
+
+    // Recompute each row from the package-level versions, so a newer version of
+    // any package moves the project's rolled-up stable/prerelease cell.
+    const apply = (live: LiveVersions | null) => {
+      for (const project of payload.projects) {
+        const row = document.querySelector<HTMLElement>(
+          `[data-project-id="${project.projectId}"]`,
+        );
+        if (!row) {
+          continue;
+        }
+        const pairs = project.packages.map((pkg) => {
+          const current = { stable: pkg.stable, prerelease: pkg.prerelease };
+          const versions = live?.versions[pkg.id];
+          return versions ? mergeVersionPair(current, latestFromVersions(versions)) : current;
+        });
+        const rollup = rollupPackageVersions(pairs);
+        const tooltipRow = { ...rollup, packageCount: project.packages.length };
+
+        setVersion(row.querySelector('[data-version-stable]'), rollup.stableVersion);
+        setVersion(row.querySelector('[data-version-prerelease]'), rollup.prereleaseVersion);
+        setTooltip(row.querySelector('[data-version-prerelease]'), prereleaseTooltip(tooltipRow));
+        setTooltip(row.querySelector('[data-package-count]'), projectTooltip(tooltipRow));
+        row.dataset.projectVersion = rollup.stableVersion ?? rollup.prereleaseVersion ?? '';
+      }
+    };
+
+    const showStatus = (status: string, live: LiveVersions | null) => {
+      if (!statusElement) {
+        return;
+      }
+      statusElement.textContent = versionStatusMessage(status, live);
+      statusElement.hidden = statusElement.textContent === '';
+    };
+
+    const packageIds = [
+      ...new Set(payload.projects.flatMap((project) => project.packages.map((pkg) => pkg.id))),
+    ];
+
+    const stored = readLiveVersions();
+    apply(stored);
+    if (stored && !isStale(stored)) {
+      showStatus('stored', stored);
+    } else {
+      showStatus('checking', null);
+      void refreshLiveVersions(packageIds, stored).then((refreshed) => {
+        if (refreshed) {
+          apply(refreshed);
+          showStatus('live', refreshed);
+        } else {
+          showStatus(stored ? 'stored' : 'unavailable', stored);
+        }
+      });
+    }
+  }
+</script>

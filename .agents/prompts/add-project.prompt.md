@@ -14,16 +14,22 @@ Inputs (fill in before running):
 - Experimental? `yes` / `no` — `yes` sets the `experimental` flag (ADR 0004); it does not replace `status`
 - Notes: anything known about docs location, package ids, or the story to tell
 
+Anything left blank is answered by recon, or asked using the intake questions in
+`.agents/skills/add-project-intake/SKILL.md` (category, experimental, relationships, credit, and the
+use-case story cannot be derived from the repository).
+
 ## Instructions
 
 Load and follow these skills, in order:
 
-1. `.agents/skills/add-catalogue-project/SKILL.md` — the end-to-end procedure.
-2. `.agents/skills/project-manifest-reference/SKILL.md` — fields and rules.
-3. `.agents/skills/docs-aggregation-rules/SKILL.md` — the `docs` configuration.
-4. `.agents/skills/use-case-authoring/SKILL.md` — the use cases.
-5. `.agents/skills/github-repo-metadata/SKILL.md` — topics and stability signals.
-6. `.agents/skills/site-validation-loop/SKILL.md` — the checks to run.
+1. `.agents/skills/add-project-intake/SKILL.md` — the intake interview: the questions to ask before
+   writing anything, and the field each answer decides.
+2. `.agents/skills/add-catalogue-project/SKILL.md` — the end-to-end procedure.
+3. `.agents/skills/project-manifest-reference/SKILL.md` — fields and rules.
+4. `.agents/skills/docs-aggregation-rules/SKILL.md` — the `docs` configuration.
+5. `.agents/skills/use-case-authoring/SKILL.md` — the use cases.
+6. `.agents/skills/github-repo-metadata/SKILL.md` — topics and stability signals.
+7. `.agents/skills/site-validation-loop/SKILL.md` — the checks to run.
 
 Use the `catalogue-onboarder` agent if it is available.
 

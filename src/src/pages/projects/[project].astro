@@ -110,18 +110,19 @@ const structuredData: Record<string, unknown> = {
   ],
 };
 const targetFrameworks = project.targetFrameworks ?? [];
+const installKind = installKindFor(project);
 const installSections =
   status !== 'archived' ?
     project.packages.map((pkg) => {
       const release = releases.packages.find((candidate) => candidate.packageId === pkg.id);
+      // The snippets pin this version; the install panel re-checks it live and
+      // rebuilds the tabs when a newer one is published (ADR 0008).
+      const version = release?.latestStable ?? release?.latestPrerelease ?? null;
       return {
         packageId: pkg.id,
         primary: pkg.primary ?? false,
-        tabs: installTabs(
-          installKindFor(project),
-          pkg.id,
-          release?.latestStable ?? release?.latestPrerelease ?? null,
-        ),
+        version,
+        tabs: installTabs(installKind, pkg.id, version),
       };
     })
   : [];
@@ -433,7 +434,13 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
                       </h3>
                     )}
                     <div class={installSections.length > 1 ? 'mt-2' : ''}>
-                      <InstallPanel client:idle tabs={install.tabs} />
+                      <InstallPanel
+                        client:idle
+                        tabs={install.tabs}
+                        packageId={install.packageId}
+                        kind={installKind}
+                        version={install.version}
+                      />
                     </div>
                   </div>
                 ))}

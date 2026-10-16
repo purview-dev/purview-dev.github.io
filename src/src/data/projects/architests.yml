@@ -1,0 +1,177 @@
+$schema: ../../lib/manifest/schema.ts
+
+id: architests
+name: Architests
+shortDescription: Enforce a repository's architecture policy as TUnit tests.
+description: >-
+  Architecture tests for .NET. A repository declares its responsibilities and the dependency
+  directions they may and may not use in a policy file, then derives one test class from
+  PurviewArchitectureTests and gets the standard rule set as separate TUnit tests. The
+  project-level rules read declared ProjectReferences; the type-level rule reads the compiled
+  assemblies' metadata, so a reference that only arrives transitively or through a package is
+  caught too, and nothing is loaded or executed. The set covers dependency direction, sibling
+  independence, composition boundaries, forbidden packages and framework references, cycles, test
+  references and project naming, with reviewed per-project waivers and an extension point for
+  bespoke rules.
+origin: >-
+  The standard architecture checks were being written into each repository's own test project, so
+  the same dependency-direction and forbidden-reference rules existed in several places and drifted
+  apart. Defining them once — the policy as data, the rule set as a package — means a repository
+  states its architecture rather than re-deriving the tests, and the schema and the rules version
+  together.
+useWhen: >-
+  You have an agreed layering — domain, application, infrastructure, composition — and want it held
+  by the build rather than by review: at the project-reference level and at the type level,
+  including dependencies that arrive transitively or through a package.
+avoidWhen: >-
+  Your architecture is still moving or the layering is not agreed, so a failing dependency rule
+  would be noise rather than a decision — or you need a single repository-specific assertion that a
+  few lines in a test express more directly than a policy file.
+repository: purview-dev/architests
+category: developer-tooling
+status: stable
+order: 85
+docs:
+  source: github-path
+  path: docs
+targetFrameworks:
+  - net10.0
+packages:
+  - id: Purview.Architecture.Testing
+    description: The policy reader, project and assembly graph, rule evaluator, and the TUnit base class.
+    primary: true
+related:
+  - engineering-playbook
+  - build-sdk
+useCases:
+  - audience: developer
+    title: The whole rule set from a policy file and one derived class
+    scenario: >-
+      You want your layering enforced by the build, but you do not want to hand-write the same
+      dependency-direction and forbidden-reference tests in every repository.
+    code: |
+      // .config/architecture-policy.json declares the responsibilities.
+      // This is the entire test suite.
+      [InheritsTests]
+      public sealed class ArchitectureTests : PurviewArchitectureTests;
+    language: csharp
+    outcome: >-
+      One policy file plus one derived test class is the whole suite. Each rule is a separate test,
+      so a failure names the rule rather than collapsing the set into one assertion.
+    evidence: >-
+      The base class ships twelve rule ids as separate [Test]s — graph discovery, naming,
+      discouraged name, dependency matrix, assembly matrix, sibling independence, composition
+      boundary, forbidden package, forbidden framework, cycle, test reference and waiver integrity —
+      plus a schema-validation test that runs first. [InheritsTests] is required: without it TUnit
+      discovers nothing, the run is green and nothing is enforced, which TUnit's own analyzer
+      reports as TUnit0030.
+    docsPage: getting-started
+  - audience: developer
+    title: Catch a type-level dependency a ProjectReference never shows
+    scenario: >-
+      A project file only shows declared ProjectReferences. A type that arrives transitively through
+      another project, or through a package, is invisible to a project-level check.
+    code: |
+      "assemblyRules": {
+        "enabled": true,
+        "assemblyRoots": [],
+        "assemblyGlobs": ["*.dll"]
+      }
+    language: json
+    outcome: >-
+      The same mayDependOn/mustNotDependOn matrix is applied to the types each compiled assembly
+      actually references. An empty assemblyRoots scans the test output directory, which already
+      holds every project the test project references.
+    evidence: >-
+      The reader opens each assembly with System.Reflection.Metadata and walks the TypeReference
+      table — nothing is loaded, executed, or resolved through a probing path, so a type initialiser
+      never runs. Enabling the rule with no production assemblies found is a failure, not a silent
+      pass.
+    docsPage: type-level-rules
+  - audience: architect
+    title: A dependency the policy is silent about is a violation, not permission
+    scenario: >-
+      Your layering is agreed and documented, and you want a reference that points the wrong way to
+      fail the build rather than erode the design one reasonable-looking reference at a time.
+    code: |
+      {
+        "version": 2,
+        "sourceRoots": ["src"],
+        "responsibilities": [
+          {
+            "name": "Domain",
+            "category": "domain",
+            "purpose": "The domain model, its invariants and its rules.",
+            "mayDependOn": [],
+            "mustNotDependOn": ["Application", "Persistence", "Composition"]
+          }
+        ]
+      }
+    language: json
+    outcome: >-
+      The matrix is applied three ways: the same responsibility is always allowed, mustNotDependOn is
+      a violation, and a reference the matrix neither permits nor forbids is also a violation — so a
+      gap in the policy is surfaced instead of passing.
+    evidence: >-
+      A project name is classified by its first segment only, so Persistence.SqlServer and
+      Persistence follow the same rules and qualification is a naming choice rather than a different
+      set of rules.
+    docsPage: policy-reference
+  - audience: team-lead
+    title: A reviewed waiver instead of switching a rule off
+    scenario: >-
+      One project legitimately departs from the architecture policy, and you do not want to answer
+      that by disabling the rule for the whole repository.
+    code: |
+      {
+        "waivers": [
+          {
+            "project": "Persistence.Legacy",
+            "mapsTo": "Persistence",
+            "rules": ["forbiddenPackage"],
+            "reason": "The legacy EF6 store is being replaced and still needs EntityFramework.",
+            "reviewedOn": "2026-10-16"
+          }
+        ]
+      }
+    language: json
+    outcome: >-
+      The departure is per project, carries a reason and a review date, keeps every other rule in
+      force, and is itself checked. SkipRule opts a whole repository out with no record, so a waiver
+      is the narrower choice.
+    evidence: >-
+      Any rule id may be waived, including siblingIndependence and assemblyDependencyMatrix, but an
+      unknown id is a waiverIntegrity failure — a typo cannot silently excuse nothing — and only
+      graphDiscovery and waiverIntegrity are not waivable.
+    docsPage: policy-reference
+  - audience: contributor
+    title: Add a bespoke rule to the same reporting and waiver model
+    scenario: >-
+      You need a repository-specific check — a banned API, a required convention — and do not want a
+      second architecture framework to maintain alongside the standard set.
+    code: |
+      [InheritsTests]
+      public sealed class ArchitectureTests : PurviewArchitectureTests
+      {
+          protected override IReadOnlyList<IArchitectureRule> AdditionalRules => [new NoConsoleLoggingRule()];
+
+          sealed class NoConsoleLoggingRule : IArchitectureRule
+          {
+              public string Rule => "noConsoleLogging";
+
+              public IReadOnlyList<ArchitectureViolation> Evaluate(ArchitectureContext context) =>
+                  context.Projects.Values
+                      .Where(project => !project.IsTestProject)
+                      .Select(project => new ArchitectureViolation(Rule, project.Name, "Console logging is banned here."))
+                      .ToArray();
+          }
+      }
+    language: csharp
+    outcome: >-
+      An additional rule runs as its own test, honours SkipRule by its rule id, and is excused by a
+      matching waiver without any extra plumbing — the same reporting the built-in rules use.
+    evidence: >-
+      The evaluator takes the parsed policy, the project graph and the assemblies as constructor
+      arguments, so a rule is testable as a small in-memory fixture rather than a repository on
+      disk — which is how the package's own rules are tested.
+    docsPage: extending

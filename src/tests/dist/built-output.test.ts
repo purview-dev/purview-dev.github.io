@@ -294,8 +294,12 @@ describe('built home-page version snapshot', () => {
     expect(rows.length).toBeGreaterThanOrEqual(8);
     // The per-package table (and its legacy filter hook) moved to /releases/.
     expect(content).not.toContain('data-package-project');
-    // The snapshot is server-rendered: no island ships for the home page.
     expect(content).not.toContain('PackageVersions');
+    // The rows are server-rendered with the build-time versions, and the page
+    // also ships the payload and script the browser uses to re-check NuGet, so a
+    // published version appears without a redeploy (ADR 0008).
+    expect(content).toContain('pv-version-badge');
+    expect(content).toContain('id="pv-version-data"');
   });
 });
 

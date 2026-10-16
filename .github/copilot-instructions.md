@@ -23,6 +23,9 @@ package is `src/`.
   observations when they disagree with the packages' published NuGet versions and frameworks. Apply
   the machine-applicable ones with `just fix-projects` (dry run; pass `--write` to edit).
 - Keep documentation where it lives (the product repository). This site aggregates it at build time.
+- Keep the NuGet version hydration intact (ADR 0008): the build-time version renders first, the
+  browser only ever raises it, and the result is stored in `localStorage` for six hours. Do not move
+  any other data to the client.
 - Use Conventional Commits and keep changes small and reviewable.
 
 ## Never
@@ -43,7 +46,8 @@ package is `src/`.
 ## Task routing
 
 - Adding a project → `.agents/agents/catalogue-onboarder.agent.md` and
-  `.agents/skills/add-catalogue-project/SKILL.md`.
+  `.agents/skills/add-project-intake/SKILL.md` (the questions to ask) then
+  `.agents/skills/add-catalogue-project/SKILL.md` (the procedure).
 - Auditing/fixing the catalogue → `.agents/agents/catalogue-auditor.agent.md` and
   `.agents/skills/audit-catalogue-projects/SKILL.md`.
 - Any other change → `.agents/` holds the manifest reference, docs-aggregation rules, use-case

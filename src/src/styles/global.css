@@ -337,6 +337,42 @@
     border-color: var(--color-border);
   }
 
+  /* Version badge in the version tables. The current version lives in the
+   * `data-version` attribute, so the browser refresh (ADR 0008) swaps the text
+   * and the empty/non-empty styling follows from CSS — the script never has to
+   * rebuild the class list. Mirrors the Tailwind utilities the package table
+   * uses (`border-success/30 bg-success/10 text-success`). */
+  .pv-version-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    padding: 0.125rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+  }
+
+  .pv-version-badge[data-version=''] {
+    padding: 0;
+    border-color: transparent;
+    background-color: transparent;
+    font-family: inherit;
+    color: var(--color-muted);
+  }
+
+  .pv-version-badge[data-tone='stable']:not([data-version='']) {
+    color: var(--color-success);
+    border-color: color-mix(in oklab, var(--color-success) 30%, transparent);
+    background-color: color-mix(in oklab, var(--color-success) 10%, transparent);
+  }
+
+  .pv-version-badge[data-tone='prerelease']:not([data-version='']) {
+    color: var(--color-warning);
+    border-color: color-mix(in oklab, var(--color-warning) 30%, transparent);
+    background-color: color-mix(in oklab, var(--color-warning) 10%, transparent);
+  }
+
   .pv-link {
     color: var(--color-accent);
     text-decoration: underline;

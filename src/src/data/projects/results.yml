@@ -37,12 +37,10 @@ targetFrameworks:
   - net11.0
 packages:
   - id: Purview.Results
-    description: The result type, its factories, and IResultValue. No dependencies.
+    description: The result type, its factories, IResultValue, and the bundled union source generator. No dependencies.
     primary: true
-  - id: Purview.Results.SourceGenerator
-    description: Incremental generator that emits AsFailure helpers for annotated unions, with a code fix and diagnostic suppression.
-    targetFrameworks:
-      - netstandard2.0
+  # Purview.Results.SourceGenerator was published by mistake and is now packed
+  # into Purview.Results as an analyzer, so it is deliberately not declared here.
   - id: Purview.Results.AspNetCore
     description: Result-to-response mapping, endpoint filter, and dependency-injection registration.
   - id: Purview.Results.ZodSharp

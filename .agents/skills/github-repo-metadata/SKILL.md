@@ -16,7 +16,10 @@ tags:
 
 The manifest is curated, but several site surfaces read **live repository metadata** that is fetched
 at build time into `src/.cache/releases/releases.json` (`fetchGitHubRepo`, `fetchNuGetIndex`,
-`fetchNuGetSearch` in `src/src/lib/releases/github.ts`).
+`fetchNuGetSearch` in `src/src/lib/releases/github.ts`). NuGet **version numbers** are the one
+exception: the browser re-checks them against the flat-container index and stores the result
+(ADR 0008, `src/src/lib/releases/live.ts`), so a published version appears without a redeploy.
+Everything else in the table below is build-time.
 
 ## What comes from where
 

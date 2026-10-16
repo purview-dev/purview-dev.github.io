@@ -1,6 +1,15 @@
-import { useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 
 import { compareNuGetVersions } from '~/lib/nuget-version';
+import {
+  isStale,
+  latestFromVersions,
+  mergeVersionPair,
+  readLiveVersions,
+  refreshLiveVersions,
+  versionStatusMessage,
+  type LiveVersions,
+} from '~/lib/releases/live';
 
 export interface PackageRow {
   projectId: string;
@@ -18,6 +27,9 @@ export interface PackageRow {
 
 type SortKey = 'package' | 'project' | 'stable' | 'prerelease' | 'downloads';
 type SortDir = 'asc' | 'desc';
+
+/** Where the versions on screen came from, for the status line under the table. */
+type RefreshStatus = 'idle' | 'checking' | 'live' | 'stored' | 'unavailable';
 
 interface Props {
   packages: PackageRow[];
@@ -70,9 +82,65 @@ export default function PackageVersions({ packages, showProject = true }: Props)
   const [sortKey, setSortKey] = useState<SortKey>('project');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [groupByProject, setGroupByProject] = useState(true);
+  const [live, setLive] = useState<LiveVersions | null>(null);
+  const [status, setStatus] = useState<RefreshStatus>('idle');
+
+  const packageIds = useMemo(() => packages.map((row) => row.packageId), [packages]);
+
+  // The build-time versions render first (the table is server-rendered). On
+  // mount we apply the stored copy instantly, then re-check NuGet only when the
+  // stored copy is missing or older than the TTL (ADR 0008).
+  useEffect(() => {
+    let cancelled = false;
+    const stored = readLiveVersions();
+    if (stored) {
+      setLive(stored);
+      setStatus('stored');
+    }
+    if (stored && !isStale(stored)) {
+      return () => {
+        cancelled = true;
+      };
+    }
+    setStatus('checking');
+    void refreshLiveVersions(packageIds, stored).then((refreshed) => {
+      if (cancelled) {
+        return;
+      }
+      if (refreshed) {
+        setLive(refreshed);
+        setStatus('live');
+      } else {
+        setStatus(stored ? 'stored' : 'unavailable');
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [packageIds]);
+
+  // A live version only ever replaces a build-time one when it is higher, so a
+  // NuGet index that trails the build's release-tag reconciliation cannot make
+  // the table go backwards.
+  const resolvedPackages = useMemo(() => {
+    if (!live) {
+      return packages;
+    }
+    return packages.map((row) => {
+      const versions = live.versions[row.packageId];
+      if (!versions) {
+        return row;
+      }
+      const merged = mergeVersionPair(
+        { stable: row.latestStable, prerelease: row.latestPrerelease },
+        latestFromVersions(versions),
+      );
+      return { ...row, latestStable: merged.stable, latestPrerelease: merged.prerelease };
+    });
+  }, [packages, live]);
 
   const query = search.trim().toLowerCase();
-  const canGroup = showProject && new Set(packages.map((row) => row.projectId)).size > 1;
+  const canGroup = showProject && new Set(resolvedPackages.map((row) => row.projectId)).size > 1;
   const isGrouped = canGroup && groupByProject;
   const showProjectColumn = showProject && !isGrouped;
   const columns: { key: SortKey; label: string; title: string }[] = [
@@ -85,7 +153,7 @@ export default function PackageVersions({ packages, showProject = true }: Props)
     { key: 'downloads', label: 'Downloads', title: 'Sort by total downloads' },
   ];
 
-  const rows = packages
+  const rows = resolvedPackages
     .filter(
       (row) =>
         query === '' ||
@@ -316,6 +384,12 @@ export default function PackageVersions({ packages, showProject = true }: Props)
       {rows.length === 0 && (
         <p class="border-border bg-surface text-muted mt-4 rounded-lg border p-6">
           No packages match your search.
+        </p>
+      )}
+
+      {status !== 'idle' && (
+        <p class="text-muted mt-3 text-xs" aria-live="polite">
+          {versionStatusMessage(status, live)}
         </p>
       )}
     </div>

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Purview.ValueObjects</id>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <title>Purview Value Objects</title>
     <authors>Kieron Lanning</authors>
     <license type="expression">MIT</license>
@@ -10,10 +10,10 @@
     <icon>purview-logo-light.png</icon>
     <readme>README.md</readme>
     <projectUrl>https://purview.dev/projects/value-objects/</projectUrl>
-    <description>Source-generated scalar and complex value objects for .NET. Brings F#-style single-case types to C# with Create/Hydrate factories, normalization, validation, equality, comparison, implicit conversions, and JSON serialization for DTOs, Entity Framework, and domain models.</description>
+    <description>Source-generated scalar and complex value objects for .NET. Brings F#-style single-case types to C# with Create/Hydrate factories, normalization, validation, equality, comparison, implicit conversions, JSON serialization, and the underlying value's formatting and parsing interfaces for DTOs, Entity Framework, and domain models.</description>
     <copyright>Copyright © 2026 Purview-Dev</copyright>
-    <tags>purview dotnet value-objects value-object scalar source-generator domain-driven-design dto serialization json entity-framework</tags>
-    <repository type="git" url="https://github.com/purview-dev/value-objects.git" branch="refs/heads/main" commit="0260753a6fcb37fe4297a7c919ecf96f27b6ac37" />
+    <tags>purview dotnet value-objects value-object scalar source-generator domain-driven-design dto serialization json entity-framework formatting parsing</tags>
+    <repository type="git" url="https://github.com/purview-dev/value-objects.git" branch="refs/heads/main" commit="510bb853e13cd2ee06a4d5410bc12aafb8162d00" />
     <dependencies>
       <group targetFramework="net10.0" />
       <group targetFramework="net11.0" />

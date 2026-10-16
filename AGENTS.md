@@ -28,7 +28,9 @@ from the repository root and delegated to the package.
 - **Task runner:** Just (`justfile`; switches to pwsh on Windows).
 - **All external data is fetched at build time**, never by the visitor's browser: GitHub/NuGet
   release data, the documentation mirror, and any `assets:` a project mirrors into `public/`, cached
-  under `src/.cache/` with committed fixtures as the offline fallback.
+  under `src/.cache/` with committed fixtures as the offline fallback. The one exception is the NuGet
+  **version numbers** the page already displays: the browser re-checks them against the NuGet
+  flat-container index, applies any higher version, and stores it (ADR 0008).
 
 ### Generated outputs — never edit by hand
 
@@ -114,6 +116,8 @@ Do not assume this file contains everything; consult `.agents/` while planning.
 - `.agents/agents/catalogue-onboarder.agent.md` — add and integrate a project end-to-end.
 - `.agents/agents/catalogue-auditor.agent.md` — audit (and repair) the whole catalogue.
 - `.agents/skills/add-catalogue-project/SKILL.md` — the ordered onboarding procedure.
+- `.agents/skills/add-project-intake/SKILL.md` — the intake interview: the questions to ask, what
+  recon answers instead, and the field each answer decides.
 - `.agents/skills/audit-catalogue-projects/SKILL.md` — the audit procedure and report format.
 - `.agents/skills/project-manifest-reference/SKILL.md` — every manifest field and rule.
 - `.agents/skills/docs-aggregation-rules/SKILL.md` — how repository docs become `/docs/<id>/`.

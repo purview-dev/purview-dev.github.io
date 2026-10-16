@@ -17,8 +17,8 @@ tags:
 
 Use this skill when a repository must be added to (or promoted within) the Purview-Dev website.
 
-Related: `project-manifest-reference`, `docs-aggregation-rules`, `use-case-authoring`,
-`github-repo-metadata`, `site-validation-loop`.
+Related: `add-project-intake`, `project-manifest-reference`, `docs-aggregation-rules`,
+`use-case-authoring`, `github-repo-metadata`, `site-validation-loop`.
 
 ## Step 0 — decide the target collection
 

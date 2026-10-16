@@ -26,6 +26,7 @@ configuration, concrete use cases, tags/metadata, and a green `just validate`.
 
 Load and apply these skills before writing anything:
 
+- `add-project-intake` — the questions to ask the human, and what recon answers instead.
 - `add-catalogue-project` — the ordered onboarding procedure and the record skeleton.
 - `project-manifest-reference` — every field, the allowed vocabularies, and the hard rules.
 - `docs-aggregation-rules` — how `github-path`, `wiki`, and `readme` sources are aggregated.
@@ -49,18 +50,23 @@ The most important rules are:
 ## Workflow
 
 1. **Recon** — repository metadata, docs tree, packages, releases (skills list the exact commands).
-2. **Classify** — Purview-owned (`projects:`) or collaboration (`externalProjects:`); choose
+2. **Ask** — put the intake questions from `add-project-intake` that recon cannot answer: `category`
+   (confirm), `experimental`, the use-case audiences and story, relationships and credit, curation,
+   and permission to fix upstream topics/description. Lead with a recommendation and its evidence;
+   never invent a use case, and stop rather than guess.
+3. **Classify** — Purview-owned (`projects:`) or collaboration (`externalProjects:`); settle
    `category` and `status` from the schema vocabulary (never invent values).
-3. **Author** — add the record in the correct `order`, with `docs`, `packages`, `targetFrameworks`,
+4. **Author** — add the record in the correct `order`, with `docs`, `packages`, `targetFrameworks`,
    `install`, `related`/`acknowledgments` where they apply, and at least one use case.
-4. **Fix upstream metadata** — set GitHub topics (tags), make the description useful, enable
+5. **Fix upstream metadata** — set GitHub topics (tags), make the description useful, enable
    discussions only when `discussions: true` is declared.
-5. **Integrate and prove** — run `just data-sync`, then `just check-projects`, `bun run typecheck`,
+6. **Integrate and prove** — run `just data-sync`, then `just check-projects`, `bun run typecheck`,
    `bun run test`, `just check-generated`, and finally `just validate`. Confirm the docs page count,
    the sidebar topic, the `/_llms-txt/<id>.txt` bundle, and the catalogue/use-case cards.
-6. **Report** — list the record added, the evidence gathered (docs pages, packages, release
-   channel), the checks run, and anything that still needs a human (for example, no stable release
-   yet, or docs that should be moved into a `docs/` folder upstream).
+7. **Report** — list the record added, the evidence gathered (docs pages, packages, release
+   channel), the answers received (and any assumption taken where the human was unavailable), the
+   checks run, and anything that still needs a human (for example, no stable release yet, or docs
+   that should be moved into a `docs/` folder upstream).
 
 ## Constraints
 

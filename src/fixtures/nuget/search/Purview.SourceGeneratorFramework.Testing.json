@@ -10,12 +10,12 @@
       "@type": "Package",
       "registration": "https://api.nuget.org/v3/registration5-semver1/purview.sourcegeneratorframework.testing/index.json",
       "id": "Purview.SourceGeneratorFramework.Testing",
-      "version": "1.0.0",
+      "version": "1.1.1",
       "description": "Purview SourceGeneratorFramework libraries for building and testing incremental C# source generators.",
       "summary": "",
       "title": "Purview.SourceGeneratorFramework.Testing",
-      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.sourcegeneratorframework.testing/1.0.0/icon",
-      "licenseUrl": "https://www.nuget.org/packages/Purview.SourceGeneratorFramework.Testing/1.0.0/license",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.sourcegeneratorframework.testing/1.1.1/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.SourceGeneratorFramework.Testing/1.1.1/license",
       "projectUrl": "https://purview.dev/projects/sourcegenerator-framework/",
       "tags": [],
       "authors": [
@@ -36,6 +36,16 @@
           "version": "1.0.0",
           "downloads": 0,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.sourcegeneratorframework.testing/1.0.0.json"
+        },
+        {
+          "version": "1.1.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.sourcegeneratorframework.testing/1.1.0.json"
+        },
+        {
+          "version": "1.1.1",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.sourcegeneratorframework.testing/1.1.1.json"
         }
       ],
       "vulnerabilities": []

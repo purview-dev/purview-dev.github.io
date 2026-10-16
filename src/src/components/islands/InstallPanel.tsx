@@ -1,6 +1,16 @@
-import type { InstallOption, InstallTab } from '~/lib/install';
+import type { InstallKind, InstallOption, InstallTab } from '~/lib/install';
 
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
+
+import { installTabs } from '~/lib/install';
+import {
+  isStale,
+  latestFromVersions,
+  preferNewer,
+  readLiveVersions,
+  refreshLiveVersions,
+  type LiveVersions,
+} from '~/lib/releases/live';
 
 /** macOS-style traffic light dots that frame the code window, matching Expressive Code. */
 function FrameDots() {
@@ -70,15 +80,61 @@ function CopyBlock({ label, detail, code }: InstallOption) {
 }
 
 interface Props {
+  /** The tabs as rendered at build time, so the panel works without JavaScript. */
   tabs: InstallTab[];
+  /** The package the snippets install, used to re-check the version live. */
+  packageId?: string;
+  /** How the package is consumed, so the tabs can be rebuilt for a newer version. */
+  kind?: InstallKind;
+  /** The build-time version baked into the snippets. */
+  version?: string | null;
 }
 
-export default function InstallPanel({ tabs }: Props) {
+export default function InstallPanel({ tabs, packageId, kind, version = null }: Props) {
   const [active, setActive] = useState(0);
-  if (tabs.length === 0) {
+  const [resolvedTabs, setResolvedTabs] = useState(tabs);
+
+  // The snippets pin a version, so a live version bump has to reach them too:
+  // otherwise the table would say 1.1.0 while the copy-paste command still says
+  // 1.0.6 (ADR 0008). A live version only replaces the build-time one when it is
+  // higher.
+  useEffect(() => {
+    if (!packageId || !kind) {
+      return;
+    }
+    let cancelled = false;
+    const apply = (live: LiveVersions | null) => {
+      const versions = live?.versions[packageId];
+      if (!versions) {
+        return;
+      }
+      const pair = latestFromVersions(versions);
+      const next = preferNewer(version, pair.stable ?? pair.prerelease);
+      if (next !== null && next !== version) {
+        setResolvedTabs(installTabs(kind, packageId, next));
+      }
+    };
+    const stored = readLiveVersions();
+    apply(stored);
+    if (stored && !isStale(stored)) {
+      return () => {
+        cancelled = true;
+      };
+    }
+    void refreshLiveVersions([packageId], stored).then((refreshed) => {
+      if (!cancelled) {
+        apply(refreshed);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [packageId, kind, version]);
+
+  if (resolvedTabs.length === 0) {
     return null;
   }
-  const tab = tabs[Math.min(active, tabs.length - 1)];
+  const tab = resolvedTabs[Math.min(active, resolvedTabs.length - 1)];
   if (!tab) {
     return null;
   }
@@ -89,7 +145,7 @@ export default function InstallPanel({ tabs }: Props) {
     }
     event.preventDefault();
     const direction = event.key === 'ArrowRight' ? 1 : -1;
-    const next = (active + direction + tabs.length) % tabs.length;
+    const next = (active + direction + resolvedTabs.length) % resolvedTabs.length;
     setActive(next);
     document.getElementById(`install-tab-${next}`)?.focus();
   };
@@ -103,7 +159,7 @@ export default function InstallPanel({ tabs }: Props) {
         tabIndex={-1}
         class="flex flex-wrap gap-1 px-1"
       >
-        {tabs.map((tabOption, index) => (
+        {resolvedTabs.map((tabOption, index) => (
           <button
             type="button"
             role="tab"
