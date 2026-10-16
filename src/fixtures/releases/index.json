@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "retrievedAt": "2026-10-07T09:23:19.376Z",
+  "retrievedAt": "2026-10-16T12:17:43.716Z",
   "repos": {
     "purview-dev/telemetry-sourcegenerator": {
       "name": "telemetry-sourcegenerator",
@@ -30,10 +30,10 @@
         "telemetry",
         "tracing"
       ],
-      "stargazersCount": 35,
+      "stargazersCount": 36,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-10-07T07:00:07Z",
+      "updatedAt": "2026-10-15T23:49:42Z",
       "hasDiscussions": false
     },
     "purview-dev/event-sourcing": {
@@ -90,7 +90,7 @@
       "stargazersCount": 1,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-10-07T06:24:39Z",
+      "updatedAt": "2026-10-16T09:58:01Z",
       "hasDiscussions": false
     },
     "purview-dev/value-objects": {
@@ -122,7 +122,7 @@
       "stargazersCount": 1,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-10-07T06:54:13Z",
+      "updatedAt": "2026-10-16T10:16:43Z",
       "hasDiscussions": false
     },
     "purview-dev/sourcegenerator-framework": {
@@ -149,10 +149,10 @@
         "source-generators",
         "testing"
       ],
-      "stargazersCount": 2,
+      "stargazersCount": 3,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-10-06T22:47:00Z",
+      "updatedAt": "2026-10-15T23:29:41Z",
       "hasDiscussions": false
     },
     "purview-dev/results": {
@@ -180,7 +180,7 @@
       "stargazersCount": 1,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-10-07T07:13:09Z",
+      "updatedAt": "2026-10-16T10:33:55Z",
       "hasDiscussions": false
     },
     "purview-dev/aspire-resourcekit": {
@@ -208,7 +208,7 @@
       "stargazersCount": 2,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-10-07T07:28:16Z",
+      "updatedAt": "2026-10-16T07:16:07Z",
       "hasDiscussions": false
     },
     "purview-dev/aspirec4": {
@@ -241,7 +241,7 @@
       "stargazersCount": 9,
       "openIssuesCount": 2,
       "defaultBranch": "main",
-      "updatedAt": "2026-10-07T07:28:42Z",
+      "updatedAt": "2026-10-08T19:16:59Z",
       "hasDiscussions": false
     },
     "purview-dev/build": {
@@ -267,7 +267,7 @@
       "stargazersCount": 1,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-10-06T22:37:09Z",
+      "updatedAt": "2026-10-15T16:05:54Z",
       "hasDiscussions": false
     },
     "purview-dev/build-sdk": {
@@ -297,7 +297,7 @@
       "stargazersCount": 1,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-10-06T22:32:50Z",
+      "updatedAt": "2026-10-16T11:10:41Z",
       "hasDiscussions": false
     },
     "purview-dev/dotnet-logging-source-generators": {
@@ -311,6 +311,29 @@
       "openIssuesCount": 0,
       "defaultBranch": "main",
       "updatedAt": "2024-04-28T11:21:49Z",
+      "hasDiscussions": false
+    },
+    "purview-dev/architests": {
+      "name": "architests",
+      "fullName": "purview-dev/architests",
+      "description": ".NET architecture tests driven by a policy file: declare responsibilities and dependency directions, then enforce them as TUnit tests at the project-reference and compiled-assembly level - including composition boundaries, forbidden packages and framework references, cycles, naming, and reviewed waivers.",
+      "archived": false,
+      "homepage": "https://purview.dev/projects/architests/",
+      "topics": [
+        "architecture",
+        "architecture-tests",
+        "csharp",
+        "dependency-rules",
+        "dotnet",
+        "nuget",
+        "roslyn",
+        "static-analysis",
+        "tunit"
+      ],
+      "stargazersCount": 0,
+      "openIssuesCount": 0,
+      "defaultBranch": "main",
+      "updatedAt": "2026-10-16T11:15:39Z",
       "hasDiscussions": false
     },
     "purview-dev/containers": {
@@ -341,14 +364,65 @@
         "wslc"
       ],
       "stargazersCount": 3,
+      "openIssuesCount": 1,
+      "defaultBranch": "main",
+      "updatedAt": "2026-10-13T11:52:06Z",
+      "hasDiscussions": false
+    },
+    "purview-dev/engineering-playbook": {
+      "name": "engineering-playbook",
+      "fullName": "purview-dev/engineering-playbook",
+      "description": "The reusable Purview engineering conventions - repository shape, architecture as tests, verification tiers, contracts and data exchange, testing, and agent enablement.",
+      "archived": false,
+      "homepage": null,
+      "topics": [
+        "architecture-tests",
+        "best-practices",
+        "coding-agents",
+        "conventions",
+        "csharp",
+        "documentation",
+        "dotnet",
+        "engineering",
+        "msbuild-sdk",
+        "tunit"
+      ],
+      "stargazersCount": 0,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-10-07T08:30:54Z",
+      "updatedAt": "2026-10-16T00:04:32Z",
       "hasDiscussions": false
     }
   },
   "releases": {
     "purview-dev/telemetry-sourcegenerator": [
+      {
+        "tagName": "v5.0.4",
+        "name": "v5.0.4",
+        "body": "## What's Changed\n* chore: move authored skills to repository-root skills folder by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/146\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.3...v5.0.4",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-15T23:55:33Z",
+        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.4"
+      },
+      {
+        "tagName": "v5.0.3",
+        "name": "v5.0.3",
+        "body": "## What's Changed\n* Chore/build sdk 1.0.4 by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/144\n* build: take Purview.Build 0.5.3 by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/145\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.2...v5.0.3",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-13T11:07:04Z",
+        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.3"
+      },
+      {
+        "tagName": "v5.0.2",
+        "name": "v5.0.2",
+        "body": "## What's Changed\n* Telemetry name gen by @kieronlanning in https://github.com/purview-dev/telemetry-sourcegenerator/pull/143\n\n\n**Full Changelog**: https://github.com/purview-dev/telemetry-sourcegenerator/compare/v5.0.1...v5.0.2",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-07T19:13:33Z",
+        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v5.0.2"
+      },
       {
         "tagName": "v5.0.1",
         "name": "v5.0.1",
@@ -681,33 +755,6 @@
         "draft": false,
         "publishedAt": "2024-05-20T21:40:33Z",
         "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v1.07"
-      },
-      {
-        "tagName": "v1.0.5",
-        "name": "v1.0.5",
-        "body": "## What's Changed\r\n* Fixed diagnostics ID duplication by @kieronlanning in https://github.com/purview-dev/purview-telemetry-sourcegenerator/pull/27\r\n\r\n\r\n**Full Changelog**: https://github.com/purview-dev/purview-telemetry-sourcegenerator/compare/v1.0.4...v1.0.5",
-        "prerelease": false,
-        "draft": false,
-        "publishedAt": "2024-05-06T09:09:48Z",
-        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v1.0.5"
-      },
-      {
-        "tagName": "v1.0.4",
-        "name": "v1.0.4",
-        "body": "## What's Changed\r\n* docs: fixed sample app by @kieronlanning in https://github.com/purview-dev/purview-telemetry-sourcegenerator/pull/22\r\n* docs: completed docs to wiki migration by @kieronlanning in https://github.com/purview-dev/purview-telemetry-sourcegenerator/pull/23\r\n* docs: fixed invalid xml comments in attributes by @kieronlanning in https://github.com/purview-dev/purview-telemetry-sourcegenerator/pull/24\r\n* test: fixed tests from xml comment change by @kieronlanning in https://github.com/purview-dev/purview-telemetry-sourcegenerator/pull/25\r\n* fix: fixed invalid prefix modes for instruments by @kieronlanning in https://github.com/purview-dev/purview-telemetry-sourcegenerator/pull/26\r\n\r\n\r\n**Full Changelog**: https://github.com/purview-dev/purview-telemetry-sourcegenerator/compare/v1.0.3...v1.0.4",
-        "prerelease": false,
-        "draft": false,
-        "publishedAt": "2024-05-01T18:55:02Z",
-        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v1.0.4"
-      },
-      {
-        "tagName": "v1.0.3",
-        "name": "v1.0.3",
-        "body": "## What's Changed\r\n* build(deps): bump xunit.runner.visualstudio from 2.5.8 to 2.8.0 by @dependabot in https://github.com/purview-dev/purview-telemetry-sourcegenerator/pull/20\r\n* build(deps): bump xunit from 2.7.1 to 2.8.0 by @dependabot in https://github.com/purview-dev/purview-telemetry-sourcegenerator/pull/19\r\n* Fix generic parameters and added AutoCounterAttribute by @kieronlanning in https://github.com/purview-dev/purview-telemetry-sourcegenerator/pull/21\r\n\r\n\r\n**Full Changelog**: https://github.com/purview-dev/purview-telemetry-sourcegenerator/compare/v1.0.2...v1.0.3",
-        "prerelease": false,
-        "draft": false,
-        "publishedAt": "2024-04-30T17:35:41Z",
-        "htmlUrl": "https://github.com/purview-dev/telemetry-sourcegenerator/releases/tag/v1.0.3"
       }
     ],
     "purview-dev/event-sourcing": [
@@ -839,6 +886,33 @@
       }
     ],
     "purview-dev/zodsharp": [
+      {
+        "tagName": "v2.1.0",
+        "name": "v2.1.0",
+        "body": "## What's Changed\n* Added nonsentiel default tests by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/54\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.2...v2.1.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-16T10:03:37Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.1.0"
+      },
+      {
+        "tagName": "v2.0.2",
+        "name": "v2.0.2",
+        "body": "## What's Changed\n* Fix/package identity and build sdk 1.0.4 by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/53\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.1.1...v2.0.2",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-08T18:09:19Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.2"
+      },
+      {
+        "tagName": "v2.0.1.1",
+        "name": "v2.0.1.1",
+        "body": "## What's Changed\n* fix: nullable scalar support by @kieronlanning in https://github.com/purview-dev/zodsharp/pull/52\n\n\n**Full Changelog**: https://github.com/purview-dev/zodsharp/compare/v2.0.1...v2.0.1.1",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-07T19:18:05Z",
+        "htmlUrl": "https://github.com/purview-dev/zodsharp/releases/tag/v2.0.1.1"
+      },
       {
         "tagName": "v2.0.1",
         "name": "v2.0.1",
@@ -1112,6 +1186,24 @@
     ],
     "purview-dev/value-objects": [
       {
+        "tagName": "v1.1.0",
+        "name": "v1.1.0",
+        "body": "## What's Changed\n* Feat tostring mirroring by @kieronlanning in https://github.com/purview-dev/value-objects/pull/16\n\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.1...v1.1.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-16T10:20:14Z",
+        "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.1.0"
+      },
+      {
+        "tagName": "v1.0.1",
+        "name": "v1.0.1",
+        "body": "## What's Changed\n* Fix/target framework sets and build sdk 1.0.4 by @kieronlanning in https://github.com/purview-dev/value-objects/pull/15\n\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0...v1.0.1",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-08T18:23:18Z",
+        "htmlUrl": "https://github.com/purview-dev/value-objects/releases/tag/v1.0.1"
+      },
+      {
         "tagName": "v1.0.0",
         "name": "v1.0.0",
         "body": "## What's Changed\n* chore: add MIT license file by @kieronlanning in https://github.com/purview-dev/value-objects/pull/13\n* Rules updates by @kieronlanning in https://github.com/purview-dev/value-objects/pull/14\n\n\n**Full Changelog**: https://github.com/purview-dev/value-objects/compare/v1.0.0-prerelease.11...v1.0.0",
@@ -1221,6 +1313,24 @@
       }
     ],
     "purview-dev/sourcegenerator-framework": [
+      {
+        "tagName": "v1.1.1",
+        "name": "v1.1.1",
+        "body": "## What's Changed\n* chore: move authored skills to repository-root skills folder by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/41\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.1.0...v1.1.1",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-15T23:36:46Z",
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.1.1"
+      },
+      {
+        "tagName": "v1.1.0",
+        "name": "v1.1.0",
+        "body": "## What's Changed\n* Chore/build sdk 1.0.4 by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/39\n* build: take Purview.Build 0.5.3 by @kieronlanning in https://github.com/purview-dev/sourcegenerator-framework/pull/40\n\n\n**Full Changelog**: https://github.com/purview-dev/sourcegenerator-framework/compare/v1.0.0...v1.1.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-13T10:28:59Z",
+        "htmlUrl": "https://github.com/purview-dev/sourcegenerator-framework/releases/tag/v1.1.0"
+      },
       {
         "tagName": "v1.0.0",
         "name": "v1.0.0",
@@ -1485,6 +1595,24 @@
     ],
     "purview-dev/results": [
       {
+        "tagName": "v1.0.2",
+        "name": "v1.0.2",
+        "body": "## What's Changed\n* Better zod vo integration by @kieronlanning in https://github.com/purview-dev/results/pull/5\n\n\n**Full Changelog**: https://github.com/purview-dev/results/compare/v1.0.0.1...v1.0.2",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-16T10:36:06Z",
+        "htmlUrl": "https://github.com/purview-dev/results/releases/tag/v1.0.2"
+      },
+      {
+        "tagName": "v1.0.0.1",
+        "name": "v1.0.0.1",
+        "body": "## What's Changed\n* Chore/build sdk 1.0.4 by @kieronlanning in https://github.com/purview-dev/results/pull/4\n\n\n**Full Changelog**: https://github.com/purview-dev/results/compare/v1.0.0...v1.0.0.1",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-08T19:20:40Z",
+        "htmlUrl": "https://github.com/purview-dev/results/releases/tag/v1.0.0.1"
+      },
+      {
         "tagName": "v1.0.0",
         "name": "v1.0.0",
         "body": "## What's Changed\n* Rules updates by @kieronlanning in https://github.com/purview-dev/results/pull/3\n\n\n**Full Changelog**: https://github.com/purview-dev/results/compare/v1.0.0-prerelease.2...v1.0.0",
@@ -1513,6 +1641,15 @@
       }
     ],
     "purview-dev/aspire-resourcekit": [
+      {
+        "tagName": "v1.0.1",
+        "name": "v1.0.1",
+        "body": "<!-- Release notes generated using configuration in .github/release.yml at main -->\n\n## What's Changed\n### Other Changes\n* Chore/build sdk 1.0.4 by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/49\n* build: Purview.Build as a local tool, SDK 1.0.5 and aligned package versions by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/50\n* chore: move authored skills to repository-root skills folder by @kieronlanning in https://github.com/purview-dev/aspire-resourcekit/pull/51\n\n\n**Full Changelog**: https://github.com/purview-dev/aspire-resourcekit/compare/v1.0.0.1...v1.0.1",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-16T07:18:43Z",
+        "htmlUrl": "https://github.com/purview-dev/aspire-resourcekit/releases/tag/v1.0.1"
+      },
       {
         "tagName": "v1.0.0.1",
         "name": "v1.0.0.1",
@@ -1923,6 +2060,42 @@
     ],
     "purview-dev/build": [
       {
+        "tagName": "v0.5.4",
+        "name": "v0.5.4",
+        "body": "## What's Changed\n* build: take Purview.Build 0.5.3 by @kieronlanning in https://github.com/purview-dev/build/pull/28\n* Chore/skills root folder by @kieronlanning in https://github.com/purview-dev/build/pull/29\n* ci: make global.json the single source of truth for the SDK version by @kieronlanning in https://github.com/purview-dev/build/pull/30\n* Fix pack by @kieronlanning in https://github.com/purview-dev/build/pull/31\n\n\n**Full Changelog**: https://github.com/purview-dev/build/compare/v0.5.3...v0.5.4",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-15T16:07:12Z",
+        "htmlUrl": "https://github.com/purview-dev/build/releases/tag/v0.5.4"
+      },
+      {
+        "tagName": "v0.5.3",
+        "name": "v0.5.3",
+        "body": "## What's Changed\n* fix: configurable RequiredCompilerFlags, local-tool install, and dogfood path (0.5.3) by @kieronlanning in https://github.com/purview-dev/build/pull/27\n\n\n**Full Changelog**: https://github.com/purview-dev/build/compare/v0.5.2...v0.5.3",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-13T07:48:26Z",
+        "htmlUrl": "https://github.com/purview-dev/build/releases/tag/v0.5.3"
+      },
+      {
+        "tagName": "v0.5.2",
+        "name": "v0.5.2",
+        "body": "## What's Changed\n* Fix/stale ca1515 suppression and build sdk 1.0.4 by @kieronlanning in https://github.com/purview-dev/build/pull/26\n\n\n**Full Changelog**: https://github.com/purview-dev/build/compare/v0.5.1...v0.5.2",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-08T18:17:27Z",
+        "htmlUrl": "https://github.com/purview-dev/build/releases/tag/v0.5.2"
+      },
+      {
+        "tagName": "v0.5.1",
+        "name": "v0.5.1",
+        "body": "## What's Changed\n* feat: added json schema by @kieronlanning in https://github.com/purview-dev/build/pull/25\n\n\n**Full Changelog**: https://github.com/purview-dev/build/compare/v0.4.0...v0.5.1",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-07T10:12:30Z",
+        "htmlUrl": "https://github.com/purview-dev/build/releases/tag/v0.5.1"
+      },
+      {
         "tagName": "v0.4.0",
         "name": "v0.4.0",
         "body": "## What's Changed\n* Release types by @kieronlanning in https://github.com/purview-dev/build/pull/24\n\n\n**Full Changelog**: https://github.com/purview-dev/build/compare/v0.3.6...v0.4.0",
@@ -2059,6 +2232,51 @@
       }
     ],
     "purview-dev/build-sdk": [
+      {
+        "tagName": "v1.0.7",
+        "name": "v1.0.7",
+        "body": "## What's Changed\n* chore: move Purview.Architecture.Testing to purview-dev/architests by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/40\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.6...v1.0.7",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-16T10:36:39Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.7"
+      },
+      {
+        "tagName": "v1.0.6",
+        "name": "v1.0.6",
+        "body": "## What's Changed\n* build: Purview.Build as a local tool by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/38\n* Adding assembly name gen class by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/39\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.5...v1.0.6",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-15T15:25:17Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.6"
+      },
+      {
+        "tagName": "v1.0.5",
+        "name": "v1.0.5",
+        "body": "## What's Changed\n* docs: correct the test-detection and namespace-stripping claims by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/37\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.4...v1.0.5",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-12T10:33:21Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.5"
+      },
+      {
+        "tagName": "v1.0.4",
+        "name": "v1.0.4",
+        "body": "## What's Changed\n* Fix/tfm floor and mirrored file tracking by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/36\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.3.1...v1.0.4",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-08T17:47:17Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.4"
+      },
+      {
+        "tagName": "v1.0.3.1",
+        "name": "v1.0.3.1",
+        "body": "## What's Changed\n* fix: target frameworks were empty under certain conditions by @kieronlanning in https://github.com/purview-dev/build-sdk/pull/35\n\n\n**Full Changelog**: https://github.com/purview-dev/build-sdk/compare/v1.0.3.0...v1.0.3.1",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-08T15:34:55Z",
+        "htmlUrl": "https://github.com/purview-dev/build-sdk/releases/tag/v1.0.3.1"
+      },
       {
         "tagName": "v1.0.3.0",
         "name": "v1.0.3.0",
@@ -2277,6 +2495,26 @@
       }
     ],
     "purview-dev/dotnet-logging-source-generators": [],
+    "purview-dev/architests": [
+      {
+        "tagName": "v1.1.1",
+        "name": "v1.1.1",
+        "body": "## What's Changed\n* feat: sample, documentation, package metadata and an extending skill by @kieronlanning in https://github.com/purview-dev/architests/pull/1\n\n## New Contributors\n* @kieronlanning made their first contribution in https://github.com/purview-dev/architests/pull/1\n\n**Full Changelog**: https://github.com/purview-dev/architests/compare/v1.1.0...v1.1.1",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-16T11:01:18Z",
+        "htmlUrl": "https://github.com/purview-dev/architests/releases/tag/v1.1.1"
+      },
+      {
+        "tagName": "v1.1.0",
+        "name": "v1.1.0",
+        "body": "**Full Changelog**: https://github.com/purview-dev/architests/commits/v1.1.0",
+        "prerelease": false,
+        "draft": false,
+        "publishedAt": "2026-10-16T10:30:00Z",
+        "htmlUrl": "https://github.com/purview-dev/architests/releases/tag/v1.1.0"
+      }
+    ],
     "purview-dev/containers": [
       {
         "tagName": "v1.0.0-prerelease.6",
@@ -2331,6 +2569,26 @@
         "draft": false,
         "publishedAt": "2026-09-30T16:41:23Z",
         "htmlUrl": "https://github.com/purview-dev/containers/releases/tag/v1.0.0-prerelease.1"
+      }
+    ],
+    "purview-dev/engineering-playbook": [
+      {
+        "tagName": "v0.1.0-prerelease.2",
+        "name": "v0.1.0-prerelease.2",
+        "body": "## What's Changed\n* build: Purview.Build as a local tool and SDK 1.0.5 by @kieronlanning in https://github.com/purview-dev/engineering-playbook/pull/1\n* docs: add agent skills distribution page and canonical skills by @kieronlanning in https://github.com/purview-dev/engineering-playbook/pull/2\n* feat: architecture policy, enforcement tests and guidance skills by @kieronlanning in https://github.com/purview-dev/engineering-playbook/pull/3\n* Chore/skills root folder by @kieronlanning in https://github.com/purview-dev/engineering-playbook/pull/5\n\n## New Contributors\n* @kieronlanning made their first contribution in https://github.com/purview-dev/engineering-playbook/pull/1\n\n**Full Changelog**: https://github.com/purview-dev/engineering-playbook/compare/v0.1.0-prerelease.1...v0.1.0-prerelease.2",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-10-16T00:05:25Z",
+        "htmlUrl": "https://github.com/purview-dev/engineering-playbook/releases/tag/v0.1.0-prerelease.2"
+      },
+      {
+        "tagName": "v0.1.0-prerelease.1",
+        "name": "v0.1.0-prerelease.1",
+        "body": "**Full Changelog**: https://github.com/purview-dev/engineering-playbook/commits/v0.1.0-prerelease.1",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-10-12T00:02:54Z",
+        "htmlUrl": "https://github.com/purview-dev/engineering-playbook/releases/tag/v0.1.0-prerelease.1"
       }
     ]
   },
@@ -2405,12 +2663,15 @@
         "5.0.0-prerelease.18",
         "5.0.0-prerelease.19",
         "5.0.0",
-        "5.0.1"
+        "5.0.1",
+        "5.0.2",
+        "5.0.3",
+        "5.0.4"
       ],
       "targetFrameworks": [
         ".NETStandard2.0"
       ],
-      "targetFrameworksVersion": "5.0.1"
+      "targetFrameworksVersion": "5.0.4"
     },
     "Purview.EventSourcing": {
       "id": "Purview.EventSourcing",
@@ -2713,7 +2974,10 @@
         "2.0.0-prerelease.27",
         "2.0.0-prerelease.28",
         "2.0.0",
-        "2.0.1"
+        "2.0.1",
+        "2.0.1.1",
+        "2.0.2",
+        "2.1.0"
       ],
       "targetFrameworks": [
         "net10.0",
@@ -2721,7 +2985,7 @@
         "net8.0",
         "net9.0"
       ],
-      "targetFrameworksVersion": "2.0.1"
+      "targetFrameworksVersion": "2.1.0"
     },
     "Purview.ZodSharp.SystemTextJson": {
       "id": "Purview.ZodSharp.SystemTextJson",
@@ -2755,7 +3019,10 @@
         "2.0.0-prerelease.27",
         "2.0.0-prerelease.28",
         "2.0.0",
-        "2.0.1"
+        "2.0.1",
+        "2.0.1.1",
+        "2.0.2",
+        "2.1.0"
       ],
       "targetFrameworks": [
         "net10.0",
@@ -2763,7 +3030,7 @@
         "net8.0",
         "net9.0"
       ],
-      "targetFrameworksVersion": "2.0.1"
+      "targetFrameworksVersion": "2.1.0"
     },
     "Purview.ZodSharp.NewtonsoftJson": {
       "id": "Purview.ZodSharp.NewtonsoftJson",
@@ -2797,7 +3064,10 @@
         "2.0.0-prerelease.27",
         "2.0.0-prerelease.28",
         "2.0.0",
-        "2.0.1"
+        "2.0.1",
+        "2.0.1.1",
+        "2.0.2",
+        "2.1.0"
       ],
       "targetFrameworks": [
         "net10.0",
@@ -2805,7 +3075,7 @@
         "net8.0",
         "net9.0"
       ],
-      "targetFrameworksVersion": "2.0.1"
+      "targetFrameworksVersion": "2.1.0"
     },
     "Purview.ZodSharp.AspNetCore": {
       "id": "Purview.ZodSharp.AspNetCore",
@@ -2839,7 +3109,10 @@
         "2.0.0-prerelease.27",
         "2.0.0-prerelease.28",
         "2.0.0",
-        "2.0.1"
+        "2.0.1",
+        "2.0.1.1",
+        "2.0.2",
+        "2.1.0"
       ],
       "targetFrameworks": [
         "net10.0",
@@ -2847,7 +3120,7 @@
         "net8.0",
         "net9.0"
       ],
-      "targetFrameworksVersion": "2.0.1"
+      "targetFrameworksVersion": "2.1.0"
     },
     "Purview.ValueObjects": {
       "id": "Purview.ValueObjects",
@@ -2863,7 +3136,9 @@
         "1.0.0-prerelease.9",
         "1.0.0-prerelease.10",
         "1.0.0-prerelease.11",
-        "1.0.0"
+        "1.0.0",
+        "1.0.1",
+        "1.1.0"
       ],
       "targetFrameworks": [
         "net10.0",
@@ -2871,7 +3146,7 @@
         "net8.0",
         "net9.0"
       ],
-      "targetFrameworksVersion": "1.0.0"
+      "targetFrameworksVersion": "1.1.0"
     },
     "Purview.SourceGeneratorFramework": {
       "id": "Purview.SourceGeneratorFramework",
@@ -2929,12 +3204,14 @@
         "1.0.0-prerelease.52",
         "1.0.0-prerelease.53",
         "1.0.0-prerelease.54",
-        "1.0.0"
+        "1.0.0",
+        "1.1.0",
+        "1.1.1"
       ],
       "targetFrameworks": [
         ".NETStandard2.0"
       ],
-      "targetFrameworksVersion": "1.0.0"
+      "targetFrameworksVersion": "1.1.1"
     },
     "Purview.SourceGeneratorFramework.Testing": {
       "id": "Purview.SourceGeneratorFramework.Testing",
@@ -2992,7 +3269,9 @@
         "1.0.0-prerelease.52",
         "1.0.0-prerelease.53",
         "1.0.0-prerelease.54",
-        "1.0.0"
+        "1.0.0",
+        "1.1.0",
+        "1.1.1"
       ],
       "targetFrameworks": [
         ".NETStandard2.0",
@@ -3000,7 +3279,7 @@
         "net8.0",
         "net9.0"
       ],
-      "targetFrameworksVersion": "1.0.0"
+      "targetFrameworksVersion": "1.1.1"
     },
     "Purview.SourceGeneratorFramework.Testing.TUnit": {
       "id": "Purview.SourceGeneratorFramework.Testing.TUnit",
@@ -3058,7 +3337,9 @@
         "1.0.0-prerelease.52",
         "1.0.0-prerelease.53",
         "1.0.0-prerelease.54",
-        "1.0.0"
+        "1.0.0",
+        "1.1.0",
+        "1.1.1"
       ],
       "targetFrameworks": [
         ".NETStandard2.0",
@@ -3066,70 +3347,67 @@
         "net8.0",
         "net9.0"
       ],
-      "targetFrameworksVersion": "1.0.0"
+      "targetFrameworksVersion": "1.1.1"
     },
     "Purview.Results": {
       "id": "Purview.Results",
       "versions": [
         "1.0.0-prerelease.1",
         "1.0.0-prerelease.2",
-        "1.0.0"
+        "1.0.0",
+        "1.0.0.1",
+        "1.0.2"
       ],
       "targetFrameworks": [
         "net10.0",
         "net11.0"
       ],
-      "targetFrameworksVersion": "1.0.0"
-    },
-    "Purview.Results.SourceGenerator": {
-      "id": "Purview.Results.SourceGenerator",
-      "versions": [
-        "1.0.0-prerelease.1",
-        "1.0.0-prerelease.2"
-      ],
-      "targetFrameworks": [
-        ".NETStandard2.0"
-      ],
-      "targetFrameworksVersion": "1.0.0-prerelease.2"
+      "targetFrameworksVersion": "1.0.2"
     },
     "Purview.Results.AspNetCore": {
       "id": "Purview.Results.AspNetCore",
       "versions": [
         "1.0.0-prerelease.1",
         "1.0.0-prerelease.2",
-        "1.0.0"
+        "1.0.0",
+        "1.0.0.1",
+        "1.0.2"
       ],
       "targetFrameworks": [
         "net10.0",
         "net11.0"
       ],
-      "targetFrameworksVersion": "1.0.0"
+      "targetFrameworksVersion": "1.0.2"
     },
     "Purview.Results.ZodSharp": {
       "id": "Purview.Results.ZodSharp",
       "versions": [
         "1.0.0-prerelease.1",
         "1.0.0-prerelease.2",
-        "1.0.0"
+        "1.0.0",
+        "1.0.0.1",
+        "1.0.2"
       ],
       "targetFrameworks": [
         "net10.0",
         "net11.0"
       ],
-      "targetFrameworksVersion": "1.0.0"
+      "targetFrameworksVersion": "1.0.2"
     },
     "Purview.Results.ZodSharp.AspNetCore": {
       "id": "Purview.Results.ZodSharp.AspNetCore",
       "versions": [
         "1.0.0-prerelease.1",
         "1.0.0-prerelease.2",
-        "1.0.0"
+        "1.0.0",
+        "1.0.0.1",
+        "1.0.2"
       ],
       "targetFrameworks": [
         "net10.0",
         "net11.0"
       ],
-      "targetFrameworksVersion": "1.0.0"
+      "targetFrameworksVersion": "1.0.2"
     },
     "Purview.Aspire.ResourceKit": {
       "id": "Purview.Aspire.ResourceKit",
@@ -3176,14 +3454,15 @@
         "1.0.0-prerelease.40",
         "1.0.0-prerelease.41",
         "1.0.0",
-        "1.0.0.1"
+        "1.0.0.1",
+        "1.0.1"
       ],
       "targetFrameworks": [
         "net10.0",
         "net8.0",
         "net9.0"
       ],
-      "targetFrameworksVersion": "1.0.0.1"
+      "targetFrameworksVersion": "1.0.1"
     },
     "AspireC4.Hosting": {
       "id": "AspireC4.Hosting",
@@ -3233,10 +3512,14 @@
         "0.3.4",
         "0.3.5",
         "0.3.6",
-        "0.4.0"
+        "0.4.0",
+        "0.5.1",
+        "0.5.2",
+        "0.5.3",
+        "0.5.4"
       ],
       "targetFrameworks": [],
-      "targetFrameworksVersion": "0.4.0"
+      "targetFrameworksVersion": "0.5.4"
     },
     "Purview.BuildSdk": {
       "id": "Purview.BuildSdk",
@@ -3251,12 +3534,29 @@
         "1.0.2",
         "1.0.2.1",
         "1.0.2.2",
-        "1.0.3"
+        "1.0.3",
+        "1.0.3.1",
+        "1.0.4",
+        "1.0.5",
+        "1.0.6",
+        "1.0.7"
       ],
       "targetFrameworks": [
         ".NETStandard2.0"
       ],
-      "targetFrameworksVersion": "1.0.3"
+      "targetFrameworksVersion": "1.0.7"
+    },
+    "Purview.Architecture.Testing": {
+      "id": "Purview.Architecture.Testing",
+      "versions": [
+        "1.0.6",
+        "1.1.0",
+        "1.1.1"
+      ],
+      "targetFrameworks": [
+        "net10.0"
+      ],
+      "targetFrameworksVersion": "1.1.1"
     },
     "Purview.Containers": {
       "id": "Purview.Containers",
@@ -3417,7 +3717,7 @@
   "packageSearch": {
     "Purview.Telemetry.SourceGenerator": {
       "id": "Purview.Telemetry.SourceGenerator",
-      "version": "5.0.1",
+      "version": "5.0.4",
       "description": ".NET Source Generator for interface-based telemetry generating tracing, logs, and metrics.",
       "totalDownloads": 17495,
       "tags": [
@@ -3460,7 +3760,7 @@
     "Purview.EventSourcing.Validation.ZodSharp": null,
     "Purview.ZodSharp": {
       "id": "Purview.ZodSharp",
-      "version": "2.0.1",
+      "version": "2.1.0",
       "description": "A high-performance C# port of Zod schema validation library.\n\t\t\tFeatures zero-allocation validation, struct-based rules, fluent API,\n\t\t\tand source generator support for maximum performance.",
       "totalDownloads": 1898,
       "tags": [
@@ -3474,7 +3774,7 @@
     },
     "Purview.ZodSharp.SystemTextJson": {
       "id": "Purview.ZodSharp.SystemTextJson",
-      "version": "2.0.1",
+      "version": "2.1.0",
       "description": "A high-performance C# port of Zod schema validation library. Features zero-allocation validation, struct-based rules, fluent API, and source generator support for maximum performance.",
       "totalDownloads": 1512,
       "tags": [
@@ -3489,7 +3789,7 @@
     },
     "Purview.ZodSharp.NewtonsoftJson": {
       "id": "Purview.ZodSharp.NewtonsoftJson",
-      "version": "2.0.1",
+      "version": "2.1.0",
       "description": "A high-performance C# port of Zod schema validation library. Features zero-allocation validation, struct-based rules, fluent API, and source generator support for maximum performance.",
       "totalDownloads": 1395,
       "tags": [
@@ -3504,7 +3804,7 @@
     },
     "Purview.ZodSharp.AspNetCore": {
       "id": "Purview.ZodSharp.AspNetCore",
-      "version": "2.0.1",
+      "version": "2.1.0",
       "description": "ASP.NET Core ProblemDetails integration for ZodSharp validation results.",
       "totalDownloads": 1537,
       "tags": [
@@ -3519,8 +3819,8 @@
     },
     "Purview.ValueObjects": {
       "id": "Purview.ValueObjects",
-      "version": "1.0.0",
-      "description": "Source-generated scalar and complex value objects for .NET. Brings F#-style single-case types to C# with Create/Hydrate factories, normalization, validation, equality, comparison, implicit conversions, and JSON serialization for DTOs, Entity Framework, and domain models.",
+      "version": "1.1.0",
+      "description": "Source-generated scalar and complex value objects for .NET. Brings F#-style single-case types to C# with Create/Hydrate factories, normalization, validation, equality, comparison, implicit conversions, JSON serialization, and the underlying value's formatting and parsing interfaces for DTOs, Entity Framework, and domain models.",
       "totalDownloads": 662,
       "tags": [
         "purview",
@@ -3533,7 +3833,9 @@
         "dto",
         "serialization",
         "json",
-        "entity-framework"
+        "entity-framework",
+        "formatting",
+        "parsing"
       ],
       "published": null,
       "deprecated": false,
@@ -3541,7 +3843,7 @@
     },
     "Purview.SourceGeneratorFramework": {
       "id": "Purview.SourceGeneratorFramework",
-      "version": "1.0.0",
+      "version": "1.1.1",
       "description": "Purview SourceGeneratorFramework libraries for building and testing incremental C# source generators.",
       "totalDownloads": 4486,
       "tags": [],
@@ -3551,7 +3853,7 @@
     },
     "Purview.SourceGeneratorFramework.Testing": {
       "id": "Purview.SourceGeneratorFramework.Testing",
-      "version": "1.0.0",
+      "version": "1.1.1",
       "description": "Purview SourceGeneratorFramework libraries for building and testing incremental C# source generators.",
       "totalDownloads": 4001,
       "tags": [],
@@ -3561,7 +3863,7 @@
     },
     "Purview.SourceGeneratorFramework.Testing.TUnit": {
       "id": "Purview.SourceGeneratorFramework.Testing.TUnit",
-      "version": "1.0.0",
+      "version": "1.1.1",
       "description": "Purview SourceGeneratorFramework libraries for building and testing incremental C# source generators.",
       "totalDownloads": 3711,
       "tags": [],
@@ -3571,7 +3873,7 @@
     },
     "Purview.Results": {
       "id": "Purview.Results",
-      "version": "1.0.0",
+      "version": "1.0.2",
       "description": "Dependency-free Result<TValue, TError> for .NET, with C# 15 union ergonomics for its error cases and integrations that let expected failures flow through a value instead of an exception.",
       "totalDownloads": 0,
       "tags": [
@@ -3589,10 +3891,9 @@
       "deprecated": false,
       "listed": true
     },
-    "Purview.Results.SourceGenerator": null,
     "Purview.Results.AspNetCore": {
       "id": "Purview.Results.AspNetCore",
-      "version": "1.0.0",
+      "version": "1.0.2",
       "description": "Maps Purview.Results results onto ASP.NET Core responses, including ProblemDetails for expected failures.",
       "totalDownloads": 0,
       "tags": [
@@ -3609,7 +3910,7 @@
     },
     "Purview.Results.ZodSharp": {
       "id": "Purview.Results.ZodSharp",
-      "version": "1.0.0",
+      "version": "1.0.2",
       "description": "Bridges ZodSharp ValidationResult<T> values into Purview.Results, so validation outcomes flow through the result pipeline as ordinary error values instead of exceptions.",
       "totalDownloads": 0,
       "tags": [
@@ -3626,7 +3927,7 @@
     },
     "Purview.Results.ZodSharp.AspNetCore": {
       "id": "Purview.Results.ZodSharp.AspNetCore",
-      "version": "1.0.0",
+      "version": "1.0.2",
       "description": "Maps Purview result failures that carry ZodSharp validation errors onto ASP.NET Core HttpValidationProblemDetails responses.",
       "totalDownloads": 0,
       "tags": [
@@ -3644,7 +3945,7 @@
     },
     "Purview.Aspire.ResourceKit": {
       "id": "Purview.Aspire.ResourceKit",
-      "version": "1.0.0.1",
+      "version": "1.0.1",
       "description": "Composable and test-friendly Aspire resource isolation model for local, running, and publishing modes.",
       "totalDownloads": 2695,
       "tags": [
@@ -3680,7 +3981,7 @@
     },
     "Purview.Build": {
       "id": "Purview.Build",
-      "version": "0.4.0",
+      "version": "0.5.4",
       "description": "Shared build/test/release pipeline for purview-dev. A Modular Pipelines based .NET tool (Purview.Build) with a GitHub composite action and reusable workflows; consumers configure, the pipeline runs.",
       "totalDownloads": 1361,
       "tags": [],
@@ -3690,7 +3991,7 @@
     },
     "Purview.BuildSdk": {
       "id": "Purview.BuildSdk",
-      "version": "1.0.3",
+      "version": "1.0.7",
       "description": "A reusable MSBuild SDK that provides standardised .NET project defaults, code style enforcement, configurable testing framework wiring (TUnit, Xunit, or None), mocking provider wiring (TUnitMocks, NSubstitute, or None), and Central Package Management integration. Drop in via Directory.Build.props to apply uniformly across every project in a repo.",
       "totalDownloads": 455,
       "tags": [
@@ -3704,6 +4005,27 @@
         "bogus",
         "csharp",
         "dotnet"
+      ],
+      "published": null,
+      "deprecated": false,
+      "listed": true
+    },
+    "Purview.Architecture.Testing": {
+      "id": "Purview.Architecture.Testing",
+      "version": "1.1.1",
+      "description": "Enforces a repository's architecture policy as TUnit tests: project and type-level dependency direction, sibling independence, composition boundaries, forbidden packages and framework references, cycles and naming. Ships the policy JSON Schema and a TUnit base class, so a consuming repository adds a policy file and one derived test class.",
+      "totalDownloads": 0,
+      "tags": [
+        "architecture",
+        "architecture-tests",
+        "dependency-rules",
+        "dependency-matrix",
+        "type-level-dependencies",
+        "tunit",
+        "policy",
+        "purview",
+        "dotnet",
+        "testing"
       ],
       "published": null,
       "deprecated": false,

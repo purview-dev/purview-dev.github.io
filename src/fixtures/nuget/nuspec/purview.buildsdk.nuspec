@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Purview.BuildSdk</id>
-    <version>1.0.3</version>
+    <version>1.0.7</version>
     <authors>Purview.BuildSdk</authors>
     <license type="expression">MIT</license>
     <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
@@ -14,7 +14,7 @@
     <packageTypes>
       <packageType name="MSBuildSdk" />
     </packageTypes>
-    <repository type="git" url="https://github.com/purview-dev/build-sdk.git" branch="refs/heads/main" commit="d59336431e7f284513eba2daf12c2a1a2b568d99" />
+    <repository type="git" url="https://github.com/purview-dev/build-sdk.git" branch="refs/heads/main" commit="5a657746d0881bd1d133d02aa217791b7e01e7b1" />
     <dependencies>
       <group targetFramework=".NETStandard2.0" />
     </dependencies>

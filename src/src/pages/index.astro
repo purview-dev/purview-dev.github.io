@@ -4,6 +4,8 @@ import ProjectCard from '~/components/ProjectCard.astro';
 import ProjectVersionSnapshot from '~/components/ProjectVersionSnapshot.astro';
 import UseCaseCard from '~/components/UseCaseCard.astro';
 import { loadProjects } from '~/lib/manifest/load';
+import type { ProjectPackageVersions } from '~/lib/releases/live';
+import { effectivePrerelease } from '~/lib/releases/normalize';
 import { projectReleaseSummary, projectVersionRollup } from '~/lib/releases/transform';
 import { getReleaseIndex } from '~/lib/releases/runtime';
 import { SITE } from '~/lib/site';
@@ -25,11 +27,22 @@ const examples = featured
   .slice(0, 3);
 
 const releaseIndex = getReleaseIndex();
-const versionRows = active.map((project) =>
-  projectVersionRollup(
-    project,
-    projectReleaseSummary(project, releaseIndex.data, releaseIndex.source),
-  ),
+const summaries = active.map((project) => ({
+  project,
+  summary: projectReleaseSummary(project, releaseIndex.data, releaseIndex.source),
+}));
+const versionRows = summaries.map(({ project, summary }) =>
+  projectVersionRollup(project, summary),
+);
+// The build-time package versions behind each row, so the browser can recompute
+// the rollup from live NuGet data without a redeploy (ADR 0008).
+const snapshotPackages: ProjectPackageVersions[] = summaries.flatMap(({ project, summary }) =>
+  summary.packages.map((pkg) => ({
+    projectId: project.id,
+    packageId: pkg.packageId,
+    stable: pkg.latestStable,
+    prerelease: effectivePrerelease(pkg.latestStable, pkg.latestPrerelease),
+  })),
 );
 
 const organizationStructuredData = {
@@ -237,7 +250,7 @@ const organizationStructuredData = {
       </a>
     </div>
     <div class="mt-8">
-      <ProjectVersionSnapshot rows={versionRows} />
+      <ProjectVersionSnapshot rows={versionRows} packages={snapshotPackages} />
     </div>
     <p class="mt-3 text-xs text-muted">
       Release data retrieved on {releaseIndex.data.retrievedAt.slice(0, 10)} ({releaseIndex.source} source).

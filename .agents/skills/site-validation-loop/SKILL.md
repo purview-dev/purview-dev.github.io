@@ -86,6 +86,13 @@ missing schema never silently ships a broken URL.
 `DATA_FALLBACK_TO_FIXTURES=false` makes `auto` fail loudly instead of silently using fixtures. Set
 `GITHUB_TOKEN` (or `gh auth token`) to avoid unauthenticated rate limits.
 
+The one thing the **browser** fetches is the NuGet **version numbers** a page already displays
+(ADR 0008, `src/src/lib/releases/live.ts`): the build-time value renders first, a strictly higher
+live version replaces it, and the result is stored in `localStorage` for six hours. The home-page
+snapshot, the package tables on `/releases/` and project pages, and the version pinned in the
+install snippets refresh this way. Nothing else is fetched client-side, and no check depends on the
+live value — `just check-projects` and `tests/dist` assert the build-time output.
+
 ## Rules
 
 - **Never edit generated files** (`src/src/content/docs/**`, `src/.cache/**`, `src/dist/**`).

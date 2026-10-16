@@ -35,8 +35,9 @@ This repository gains `AGENTS.md` (authoritative repository context and mandator
 
 - **Agents** — `catalogue-onboarder` (add and integrate a project) and `catalogue-auditor` (audit and
   repair the catalogue).
-- **Skills** — `add-catalogue-project`, `audit-catalogue-projects`, `project-manifest-reference`,
-  `docs-aggregation-rules`, `use-case-authoring`, `github-repo-metadata`, `site-validation-loop`.
+- **Skills** — `add-project-intake`, `add-catalogue-project`, `audit-catalogue-projects`,
+  `project-manifest-reference`, `docs-aggregation-rules`, `use-case-authoring`,
+  `github-repo-metadata`, `site-validation-loop`.
 - **Prompts** — `add-project.prompt.md`, `audit-projects.prompt.md`.
 
 The skills document what the code actually does (schema vocabularies and loader rules, the three

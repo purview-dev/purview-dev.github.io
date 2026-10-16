@@ -7,9 +7,10 @@ import type {
   ReleaseCacheData,
 } from './types';
 
-import { compareNuGetVersions, formatNuGetVersion } from '../nuget-version';
+import { formatNuGetVersion } from '../nuget-version';
 import { displayStatus } from '../status';
 import { nugetPackageUrl } from '../urls';
+import { rollupPackageVersions, type VersionRollup } from './live';
 import {
   isPrereleaseRelease,
   normalizePrereleaseVersion,
@@ -153,43 +154,18 @@ export function flattenReleases(summaries: ProjectReleaseSummary[]): ReleaseEntr
 
 /**
  * A project's packages folded into a single version row for the home-page
- * snapshot (e.g. `Purview.EventSourcing*` rolls up to Event Sourcing).
+ * snapshot (e.g. `Purview.EventSourcing*` rolls up to Event Sourcing). The
+ * version maths lives in `live.ts` so the browser can recompute the row from
+ * live NuGet versions (ADR 0008).
  */
-export interface ProjectVersionRollup {
+export interface ProjectVersionRollup extends VersionRollup {
   projectId: string;
   projectName: string;
   status: DisplayStatus;
   /** Number of NuGet packages the project publishes. */
   packageCount: number;
-  /** Highest stable version across the project's packages, when one exists. */
-  stableVersion: string | null;
-  /**
-   * Highest prerelease version, reported only when it outranks the stable
-   * version. A prerelease that trails the stable release stays out of this field
-   * so the snapshot never advertises an older build as a project's latest
-   * version.
-   */
-  prereleaseVersion: string | null;
-  /** The highest prerelease when `prereleaseVersion` withholds it. */
-  suppressedPrerelease: string | null;
-  /** Packages that are not on the project's headline versions (usually 0). */
-  laggingPackageCount: number;
   /** Most recent GitHub release across the project, used for the snapshot date. */
   latestRelease: GitHubReleaseInfo | null;
-}
-
-/** Highest version in a list, ignoring nulls, by NuGet precedence. */
-function highestVersion(versions: Array<string | null>): string | null {
-  let highest: string | null = null;
-  for (const version of versions) {
-    if (version === null) {
-      continue;
-    }
-    if (highest === null || compareNuGetVersions(version, highest) > 0) {
-      highest = version;
-    }
-  }
-  return highest;
 }
 
 /**
@@ -203,26 +179,16 @@ export function projectVersionRollup(
   project: ResolvedProject,
   summary: ProjectReleaseSummary,
 ): ProjectVersionRollup {
-  const stableVersion = highestVersion(summary.packages.map((pkg) => pkg.latestStable));
-  const highestPrerelease = highestVersion(summary.packages.map((pkg) => pkg.latestPrerelease));
-  const prereleaseOutranks =
-    highestPrerelease !== null &&
-    (stableVersion === null || compareNuGetVersions(highestPrerelease, stableVersion) > 0);
-  const headline = prereleaseOutranks ? highestPrerelease : stableVersion;
-  const laggingPackageCount = summary.packages.filter((pkg) => {
-    const effective = prereleaseOutranks ? pkg.latestPrerelease : pkg.latestStable;
-    return effective !== null && effective !== headline;
-  }).length;
+  const rollup = rollupPackageVersions(
+    summary.packages.map((pkg) => ({ stable: pkg.latestStable, prerelease: pkg.latestPrerelease })),
+  );
 
   return {
     projectId: project.id,
     projectName: project.name,
     status: displayStatus(project),
     packageCount: summary.packages.length,
-    stableVersion,
-    prereleaseVersion: prereleaseOutranks ? highestPrerelease : null,
-    suppressedPrerelease: prereleaseOutranks ? null : highestPrerelease,
-    laggingPackageCount,
+    ...rollup,
     latestRelease: summary.latestRelease,
   };
 }

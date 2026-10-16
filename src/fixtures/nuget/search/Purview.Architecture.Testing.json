@@ -1,0 +1,65 @@
+{
+  "@context": {
+    "@vocab": "http://schema.nuget.org/schema#",
+    "@base": "https://api.nuget.org/v3/registration5-semver1/"
+  },
+  "totalHits": 1,
+  "data": [
+    {
+      "@id": "https://api.nuget.org/v3/registration5-semver1/purview.architecture.testing/index.json",
+      "@type": "Package",
+      "registration": "https://api.nuget.org/v3/registration5-semver1/purview.architecture.testing/index.json",
+      "id": "Purview.Architecture.Testing",
+      "version": "1.1.1",
+      "description": "Enforces a repository's architecture policy as TUnit tests: project and type-level dependency direction, sibling independence, composition boundaries, forbidden packages and framework references, cycles and naming. Ships the policy JSON Schema and a TUnit base class, so a consuming repository adds a policy file and one derived test class.",
+      "summary": "",
+      "title": "Purview Architecture Testing",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.architecture.testing/1.1.1/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.Architecture.Testing/1.1.1/license",
+      "projectUrl": "https://purview.dev/projects/architests/",
+      "tags": [
+        "architecture",
+        "architecture-tests",
+        "dependency-rules",
+        "dependency-matrix",
+        "type-level-dependencies",
+        "tunit",
+        "policy",
+        "purview",
+        "dotnet",
+        "testing"
+      ],
+      "authors": [
+        "Kieron Lanning"
+      ],
+      "owners": [
+        "kieronlanning"
+      ],
+      "totalDownloads": 0,
+      "verified": false,
+      "packageTypes": [
+        {
+          "name": "Dependency"
+        }
+      ],
+      "versions": [
+        {
+          "version": "1.0.6",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.architecture.testing/1.0.6.json"
+        },
+        {
+          "version": "1.1.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.architecture.testing/1.1.0.json"
+        },
+        {
+          "version": "1.1.1",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.architecture.testing/1.1.1.json"
+        }
+      ],
+      "vulnerabilities": []
+    }
+  ]
+}

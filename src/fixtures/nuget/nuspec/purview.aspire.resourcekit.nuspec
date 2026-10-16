@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>Purview.Aspire.ResourceKit</id>
-    <version>1.0.0.1</version>
+    <version>1.0.1</version>
     <title>Purview Aspire ResourceKit</title>
     <authors>Purview Contributors</authors>
     <license type="expression">MIT</license>
@@ -12,22 +12,22 @@
     <projectUrl>https://purview.dev/projects/aspire-resourcekit/</projectUrl>
     <description>Composable and test-friendly Aspire resource isolation model for local, running, and publishing modes.</description>
     <tags>aspire resource-kit apphost testing</tags>
-    <repository type="git" url="https://github.com/purview-dev/aspire-resourcekit" branch="refs/heads/main" commit="6656f8021f019c33700ccba99c1dfe7c60c3e932" />
+    <repository type="git" url="https://github.com/purview-dev/aspire-resourcekit" branch="refs/heads/main" commit="a90e7e257c02db6518f388f018aeeac4b2c5b1aa" />
     <dependencies>
       <group targetFramework="net10.0">
-        <dependency id="Aspire.Hosting" version="13.4.6" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Configuration.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Telemetry.Abstractions" version="10.10.0" exclude="Build,Analyzers" />
+        <dependency id="Aspire.Hosting" version="13.6.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.Abstractions" version="10.0.13" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Telemetry.Abstractions" version="10.11.0" exclude="Build,Analyzers" />
       </group>
       <group targetFramework="net8.0">
-        <dependency id="Aspire.Hosting" version="13.4.6" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Configuration.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Telemetry.Abstractions" version="10.10.0" exclude="Build,Analyzers" />
+        <dependency id="Aspire.Hosting" version="13.6.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.Abstractions" version="10.0.13" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Telemetry.Abstractions" version="10.11.0" exclude="Build,Analyzers" />
       </group>
       <group targetFramework="net9.0">
-        <dependency id="Aspire.Hosting" version="13.4.6" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Configuration.Abstractions" version="10.0.12" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Telemetry.Abstractions" version="10.10.0" exclude="Build,Analyzers" />
+        <dependency id="Aspire.Hosting" version="13.6.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Configuration.Abstractions" version="10.0.13" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Telemetry.Abstractions" version="10.11.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>

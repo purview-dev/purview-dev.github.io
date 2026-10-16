@@ -308,6 +308,16 @@ cache. Version selection is based on semver tags because the organisation's
 changesets automation publishes `vX.Y.Z-prerelease.N` tags with the GitHub
 `prerelease` flag set to `false`.
 
+The one thing the browser does fetch is the **NuGet version numbers the page
+already shows**: the build-time value renders first, then the browser re-checks
+the NuGet flat-container index, applies any strictly higher version, and stores
+the result in `localStorage` for six hours. This is what lets a published package
+appear without redeploying the site (ADR 0008, `src/lib/releases/live.ts`). The
+home-page snapshot, the package tables on `/releases/` and the project pages, and
+the version pinned in the install snippets all refresh this way; the GitHub
+release cards, downloads, docs, `llms*.txt`, `discover.json` and the sitemap stay
+build-time.
+
 - `just fetch-releases` fetches live data into `src/.cache/releases/releases.json`
   (typed, versioned, timestamped, gitignored).
 - Without a cache, the site falls back to committed fixtures under
@@ -339,7 +349,7 @@ auditing the ones already published (ADR 0003):
 
 | Task | Agent | Skills |
 | ---- | ----- | ------ |
-| Add and integrate a repository | `.agents/agents/catalogue-onboarder.agent.md` | `add-catalogue-project`, `project-manifest-reference`, `docs-aggregation-rules`, `use-case-authoring`, `github-repo-metadata` |
+| Add and integrate a repository | `.agents/agents/catalogue-onboarder.agent.md` | `add-project-intake`, `add-catalogue-project`, `project-manifest-reference`, `docs-aggregation-rules`, `use-case-authoring`, `github-repo-metadata` |
 | Audit and repair the catalogue | `.agents/agents/catalogue-auditor.agent.md` | `audit-catalogue-projects`, plus the reference skills |
 
 `AGENTS.md` holds the repository context and the mandatory rules, `.github/copilot-instructions.md`
