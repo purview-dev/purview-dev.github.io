@@ -62,7 +62,7 @@ The most important rules are:
    discussions only when `discussions: true` is declared.
 6. **Integrate and prove** — run `just data-sync`, then `just check-projects`, `bun run typecheck`,
    `bun run test`, `just check-generated`, and finally `just validate`. Confirm the docs page count,
-   the sidebar topic, the `/_llms-txt/<id>.txt` bundle, and the catalogue/use-case cards.
+   the sidebar topic, the `/projects/<id>/llms.txt` bundle, and the catalogue/use-case cards.
 7. **Report** — list the record added, the evidence gathered (docs pages, packages, release
    channel), the answers received (and any assumption taken where the human was unavailable), the
    checks run, and anything that still needs a human (for example, no stable release yet, or docs

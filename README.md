@@ -332,13 +332,16 @@ The build generates `/llms.txt`, `/llms-small.txt`, and `/llms-full.txt`
 (Starlight's `starlight-llms-txt` plugin) using canonical production URLs and
 the aggregated documentation.
 
-Each documented project is also emitted as its own scoped bundle at
-`/_llms-txt/<project-id>.txt` via the plugin's `customSets` option. The project
-page, the project's documentation overview page, and the documentation portal
-all link to that path, and `/llms.txt` lists every bundle under
-`Documentation Sets`. Because `rawContent` is enabled, each bundle is the raw
-aggregated Markdown for that project (the same content that feeds
-`llms-full.txt`, scoped down).
+Each documented project is also emitted as its own scoped bundle by the
+discovery integration (see [docs/discovery.md](docs/discovery.md)) at
+`/projects/<id>/llms.txt` (a concise index) and `/projects/<id>/llms-full.txt`
+(the project's aggregated documentation), following the `llms.txt` convention at
+the per-project scope. The project page, the project's documentation overview
+page, the documentation portal and `/llms.txt` all link to those paths.
+
+The suite-level narrative in `/llms.txt` is generated from the project catalogue
+(`src/src/lib/llms-details.ts`) rather than authored by hand, so it cannot drift
+from the projects the site actually ships.
 
 The built outputs are asserted by `tests/dist/` and `just check-generated`.
 

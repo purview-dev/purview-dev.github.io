@@ -10,8 +10,8 @@ Adding a project to the website touches several coupled surfaces: a typed manife
 NuGet package declarations that drive install snippets and release tables, GitHub repository topics
 that provide the site's tag chips, and concrete audience-tagged use cases. The catalogue also has
 implicit invariants that are easy to break by hand — for example the display `name` of a documented
-project must slugify to its `id`, because `starlight-llms-txt` derives the per-project bundle path
-from the project name while the UI links `/_llms-txt/<id>.txt`.
+project must slugify to its `id`, so the display name and the project's `/projects/<id>/` and
+`/docs/<id>/` URLs agree.
 
 Two tasks recur and were previously tribal knowledge:
 

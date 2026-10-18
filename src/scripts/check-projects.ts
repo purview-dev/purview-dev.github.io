@@ -134,7 +134,7 @@ function checkDocs(
       observed: project.name,
       expected: `a display name that slugifies to "${project.id}"`,
       remediation:
-        'rename the project (or its id) so the per-project LLM bundle at /_llms-txt/<id>.txt resolves.',
+        'rename the project (or its id) so the display name and the /projects/<id>/ URL slug agree.',
     });
   }
   const docsProject = docsManifest?.projects.find((entry) => entry.projectId === project.id);

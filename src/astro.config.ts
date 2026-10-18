@@ -14,6 +14,7 @@ import { remarkMermaid } from './config/remark-mermaid.mjs';
 import { projectLlmsUrl } from './src/lib/discovery/urls';
 import { readDocsManifest } from './src/lib/docs/aggregate';
 import { buildProjectItems } from './src/lib/docs/sidebar';
+import { buildLlmsDetails } from './src/lib/llms-details';
 import { loadProjects } from './src/lib/manifest/load';
 import { SITE, BRAND } from './src/lib/site';
 import { displayStatus, type DisplayStatus } from './src/lib/status';
@@ -182,12 +183,12 @@ export default defineConfig({
           errorOnRelativeLinks: false,
         }),
         starlightLlmsTxt({
-          projectName: 'Purview Dev',
+          projectName: SITE.fullName,
           description: SITE.description,
-          details: [
-            'Purview Dev builds developer tooling for .NET: event sourcing, telemetry, validation, source generators, and build automation. The site combines a project catalogue, release information, and unified documentation aggregated from the product repositories.',
-            'See the projects catalogue for the full product family, the releases page for GitHub and NuGet version information, and the documentation portal for per-project guides.',
-          ].join('\n\n'),
+          // The suite-level narrative is generated from the catalogue (see
+          // `src/lib/llms-details.ts`) rather than authored here, so it cannot
+          // drift from the projects the site actually ships.
+          details: buildLlmsDetails(projects),
           optionalLinks: [
             {
               label: 'GitHub organisation',
@@ -219,7 +220,6 @@ export default defineConfig({
           ],
           promote: ['index*', 'docs/*/index'],
           demote: [],
-          exclude: ['dotnet-logging-source-generators/**'],
           minify: {
             note: true,
             tip: true,

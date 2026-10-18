@@ -63,7 +63,7 @@ combination is a conscious decision rather than an oversight.
 
 Only `archived` removes a project from the catalogue, the documentation portal, the sidebar topics
 and the per-project LLM bundles. An experimental project with documentation is aggregated, listed,
-indexed by `/use-cases/`, included in `/releases/`, and gets its `/_llms-txt/<id>.txt` bundle like
+indexed by `/use-cases/`, included in `/releases/`, and gets its `/projects/<id>/llms.txt` bundle like
 any other project. Discoverability with an explicit warning is the point of the flag.
 
 ### 6. The flag is presented on the project page and on every documentation page
