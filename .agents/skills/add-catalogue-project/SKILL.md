@@ -68,8 +68,8 @@ description/topics.
   channel alongside it (`preview` for prerelease-only tooling). See ADR 0004; the project page and
   every aggregated documentation page then carry an Experimental warning.
 - `id`: lowercase `[a-z0-9-]` slug, normally the repository name.
-- `name`: display name. **It must slugify to `id` when the project has `docs`** (the LLM bundle is
-  emitted at `/_llms-txt/<slug(name)>.txt` while the UI links `/_llms-txt/<id>.txt`).
+- `name`: display name. **It must slugify to `id` when the project has `docs`** (so the display name
+  and the `/projects/<id>/` and `/docs/<id>/` URLs agree).
 - `order`: pick an unused value (10–80 in tens is the existing convention).
 
 ## Step 3 — author the record
@@ -150,7 +150,8 @@ Confirm each surface actually lights up:
 1. `/projects/` shows the card with the right category/status/tags (tags come from topics).
 2. `/projects/<id>/` renders description, use cases, install panel, packages, and related links.
 3. `/docs/<id>/` exists with the expected page count and a sidebar topic named after the project.
-4. `/_llms-txt/<id>.txt` is emitted and linked from `/llms.txt`.
+4. `/projects/<id>/llms.txt` and `/projects/<id>/llms-full.txt` are emitted and linked from
+   `/llms.txt`.
 5. `/use-cases/` lists the new use cases under the right audiences.
 6. `/releases/` shows GitHub/NuGet versions for the declared packages.
 

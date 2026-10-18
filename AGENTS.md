@@ -75,8 +75,8 @@ prints advisory observations (which never fail the build) when a project's decla
    `just check-projects`:
    - `id` is a lowercase `[a-z0-9-]` slug; `repository` is `owner/repository` and must be
      `purview-dev/*` for `projects:` entries.
-   - For any project with `docs`, the display `name` must slugify to exactly `id` (the per-project
-     LLM bundle is emitted at `/_llms-txt/<id>.txt` from the slugified name).
+   - For any project with `docs`, the display `name` must slugify to exactly `id` (so the display
+     name and the `/projects/<id>/` and `/docs/<id>/` URLs agree).
    - NuGet package ids are unique across the whole catalogue; when a project has more than one
      package, exactly one must be `primary: true`.
    - Every non-archived project needs at least one concrete use case; a use case with `code` must

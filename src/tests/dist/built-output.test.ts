@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { LOCAL_PATH_PATTERNS, SECRET_PATTERNS } from '../../src/lib/build-paths';
+import { buildLlmsDetails } from '../../src/lib/llms-details';
 import { loadProjects } from '../../src/lib/manifest/load';
 import { compareNuGetVersions } from '../../src/lib/nuget-version';
 import { getReleaseIndex } from '../../src/lib/releases/runtime';
@@ -30,6 +31,15 @@ describe('built llms outputs', () => {
     expect(content).toContain('https://purview.dev/llms-small.txt');
     expect(content).toContain('https://purview.dev/llms-full.txt');
     expect(content).toContain('https://github.com/purview-dev');
+  });
+
+  test('llms.txt suite narrative is generated from the catalogue', () => {
+    const content = requireBuilt('llms.txt');
+    // The narrative must be exactly what the generator produces, so it cannot
+    // drift from the published projects or be hand-edited back into the config.
+    for (const paragraph of buildLlmsDetails(loadProjects()).split('\n\n')) {
+      expect(content, `llms.txt is missing generated paragraph: ${paragraph}`).toContain(paragraph);
+    }
   });
 
   test('llms-full.txt includes aggregated documentation content', () => {

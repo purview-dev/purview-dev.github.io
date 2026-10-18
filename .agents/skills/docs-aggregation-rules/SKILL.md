@@ -81,8 +81,8 @@ H1s are demoted to keep one title per document.
   `src/.cache/docs/index.json` (so the mirror and the manifest must come from the same sync).
 - Archived projects are excluded from the docs portal, the sidebar topics, and per-project LLM
   bundles, even if they declare `docs`.
-- Every documented project gets `/_llms-txt/<id>.txt` (built from `rawContent`), linked from
-  `/llms.txt` and from the project page.
+- Every documented project gets `/projects/<id>/llms.txt` and `/projects/<id>/llms-full.txt`, linked
+  from `/llms.txt` and from the project page.
 - Staleness: a page is flagged when `lastReviewed` is older than 365 days
   (`src/src/lib/docs/staleness.ts`).
 

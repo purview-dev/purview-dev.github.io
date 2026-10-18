@@ -1,7 +1,8 @@
 /**
  * Link attributes for the generated LLM text bundles — `llms.txt`,
  * `llms-small.txt`, `llms-full.txt`, and the per-project
- * `/_llms-txt/<project-id>.txt` sets.
+ * `/projects/<project-id>/llms.txt` + `/projects/<project-id>/llms-full.txt`
+ * bundles.
  *
  * These are plain-text files rather than site pages, so every link to one is
  * treated like an external link and opens in a new tab. Spreading the object
