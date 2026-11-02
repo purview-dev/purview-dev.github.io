@@ -36,6 +36,7 @@ docs:
   path: docs
 targetFrameworks:
   - net10.0
+  - net11.0
 packages:
   - id: Purview.Architecture.Testing
     description: The policy reader, project and assembly graph, rule evaluator, and the TUnit base class.

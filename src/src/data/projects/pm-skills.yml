@@ -1,0 +1,124 @@
+$schema: ../../lib/manifest/schema.ts
+
+id: pm-skills
+name: PM Skills
+shortDescription: Project-management skills that decide which feature an AI coding agent works on next.
+description: >-
+  Fourteen agent skills that give a solo developer a parking lot, challenged shaping, strategy, a
+  roadmap, a task board, and memory across sessions — installed above a development workflow skill
+  set such as Superpowers. They decide which feature is worked on; the workflow skills decide how it
+  is built. Ideas are captured in one line at any time, shaped into a brief whose ramifications are
+  challenged before they reach the roadmap, and every decision is written to a file as it is made so
+  a compacted session can resume from it. The skills write only to the configured planning directory
+  and never to specs, plans, branches, or git state.
+origin: >-
+  The bottleneck on a solo project driven by a coding agent was not the code but the decision about
+  what to build next: ideas arrived mid-task and were lost, a half-formed feature reached the roadmap
+  unchallenged, and after a context compaction the thread of what was in flight had to be rebuilt
+  from the conversation. Writing that discipline down as skills — a capture that works at any moment,
+  a shaping step that argues with the idea first, and state files that survive compaction — turned it
+  into something the agent runs rather than something the developer has to remember.
+useWhen: >-
+  You drive a project with an AI coding agent and want the product decisions — what is next, what was
+  dropped, and why a bet was taken — kept in files that outlive the session rather than in the
+  conversation. It fits a solo developer or a small team that already has a development workflow
+  skill set and wants the layer above it.
+avoidWhen: >-
+  You want a hosted planning tool, a shared backlog for a large team, or a portfolio view: the state
+  is plain markdown in your repository and the skills assume one developer plus an agent. With no
+  agent workflow to sit above, there is nothing for the PM skills to hand off to.
+repository: purview-dev/pm-skills
+category: developer-tooling
+status: stable
+order: 100
+docs:
+  source: readme
+related:
+  - engineering-playbook
+acknowledgments:
+  - name: Superpowers
+    url: https://github.com/obra/superpowers
+    description: The development workflow skill set the PM skills are installed above.
+useCases:
+  - audience: developer
+    title: Capture a bug or an idea in one line, mid-task
+    scenario: >-
+      You are in the middle of an implementation when you spot an unrelated bug, or an idea arrives
+      that you cannot act on now but do not want to lose.
+    code: |
+      park this: the export button does nothing in Safari
+
+      Parked: planning/inbox/2026-11-01-0912-export-button-safari.md (bug). Back to step 3.
+    language: plaintext
+    outcome: >-
+      One inbox file is written under the configured planning directory and the reply is a single
+      line, so the agent resumes the step it was on. pm-park is the only PM skill allowed to run
+      during an active workflow, so nothing else interrupts the build.
+    evidence: >-
+      pm-park writes in the main worktree rather than the current feature worktree, and its Output
+      section allows exactly one line plus — only when no workflow is active — a single choice
+      question, "Shape it now, or keep it parked?".
+  - audience: team-lead
+    title: A board and a roadmap that come from the same files
+    scenario: >-
+      You want to see what is in progress, what the agent will pick up next, and what is waiting on
+      you, without maintaining a second copy of the plan in a tracker.
+    code: |
+      | Column | ID | Title | Owner | Size | Detail |
+      | --- | --- | --- | --- | --- | --- |
+      | Now | R-007 | Tenant billing | agent | M | execute, 4/9 steps |
+      | Next (agent) | R-008 | Invoice email | agent | S | ready |
+      | For you | R-009 | Open a Stripe account | user | S | blocks R-008 |
+      | Waiting | R-010 | Usage export | agent | M | needs R-008 |
+      | Done | R-006 | Tenant model | agent | M | 2026-10-28 |
+    language: markdown
+    outcome: >-
+      pm-status renders the task board, a milestone roadmap, or just your own queue from the same
+      state files the agent works from, and it is read-only: asking for status never changes the
+      plan.
+    evidence: >-
+      The board's "For you" column is every Owner: user item in Next plus the open questions, and
+      "Waiting" names the blocking item — the same roadmap items pm-next claims work from, so the
+      board cannot drift from what is actually being built.
+  - audience: architect
+    title: The idea is challenged before it reaches the roadmap
+    scenario: >-
+      An idea sounds obviously good, and you want it argued with — the alternatives, the
+      ramifications across data, security, performance, cost and maintenance, and the smallest
+      version that still delivers the outcome — before it becomes work.
+    code: |
+      ## Who and evidence
+      ## Alternatives considered
+      ## Challenges and answers
+      ## Ramifications
+      ## Proposal
+      ## Done when
+      ## Open questions
+      ## Decision
+    language: markdown
+    outcome: >-
+      A brief is written to the planning directory after every answer, so the discussion survives
+      compaction and a later session resumes it from the first empty heading, and the run ends with
+      one decision: add to Next, add to Later, build it now, keep it parked, or drop it.
+    evidence: >-
+      pm-shape writes at least three alternatives — do nothing, the smallest version, and the full
+      idea — and completes a ramifications row for each of the eight Challenge protocol areas,
+      writing "none found" rather than leaving one out; a dropped idea appends its reason to Dropped
+      in LOG.md.
+  - audience: contributor
+    title: Add a skill without breaking the consistency checks
+    scenario: >-
+      You want to add a new pm-* skill, and the repository has to stay consistent: the README table,
+      the managed section, the pm-setup inventory and the pm-help guide all have to describe the
+      same set.
+    code: |
+      just validate
+      just lint-check
+    language: bash
+    outcome: >-
+      Adding a skill is a directory plus the four listings that reference it. just validate checks
+      skill frontmatter, the README and managed-section tables, the pm-setup inventory, the section
+      markers and the template placeholders, and fails when one listing is missed.
+    evidence: >-
+      CI runs the same checks on every push and pull request to main, and lefthook runs commitlint
+      on commit and just lint-check on push, so a half-registered skill cannot be merged.
