@@ -26,11 +26,20 @@ release cache). **There is no hand-maintained list of URLs.**
 | Site map (JSON) | `/discover.json` | integration (`lib/discovery/manifest.ts`) |
 | Root LLM content | `/llms.txt`, `/llms-small.txt`, `/llms-full.txt` | `starlight-llms-txt` |
 | Per-project LLM content | `/projects/<slug>/llms.txt`, `/projects/<slug>/llms-full.txt` | integration (`lib/discovery/project-llms.ts`) |
+| Per-version LLM content | `/projects/<slug>/<channel>/llms.txt`, `/projects/<slug>/<channel>/llms-full.txt` | integration (`lib/discovery/project-llms.ts`) |
 | IndexNow key file | `/<INDEXNOW_KEY>.txt` (written from the secret) | deploy workflow via `bun run discovery:key` |
 | Internal deployment state | `src/.cache/discovery/state.json` (never published) | integration |
 
 The integration lives in `src/config/discovery-integration.ts`; the shared model
 is in `src/src/lib/discovery/`.
+
+A project that publishes more than one documentation version (ADR 0009) gets one
+bundle pair **per version**. The default channel keeps the historical
+`/projects/<slug>/llms*.txt` paths; every other channel adds its id as a path
+segment, mirroring its `/docs/<slug>/<channel>/` URLs. Each bundle names the
+version it documents and links the other versions' bundles, and no corpus
+contains two versions of the same page. `discover.json` exposes every version
+under `docsChannels` (schemaVersion 2).
 
 ### Sitemap partitioning
 
@@ -181,6 +190,7 @@ Automated (nothing to do per deploy):
 - [x] `robots.txt` generated and references the sitemap
 - [x] Root `llms.txt` / `llms-full.txt` generated
 - [x] Per-project `llms.txt` / `llms-full.txt` generated
+- [x] Per-version `llms.txt` / `llms-full.txt` generated for every published channel
 - [x] `discover.json` generated
 - [x] IndexNow key file written from the secret by the deploy workflow
 - [x] IndexNow notifies changed URLs after a successful deploy
@@ -203,6 +213,8 @@ One-time (operator):
 - [ ] Verify the first IndexNow deployment
 - [ ] Verify a representative project LLM resource
       (`https://purview.dev/projects/zodsharp/llms.txt`)
+- [ ] Verify a representative versioned LLM resource while a second channel is
+      published (`https://purview.dev/projects/zodsharp/prerelease/llms.txt`)
 
 ## Security
 

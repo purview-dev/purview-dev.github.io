@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Purview.ZodSharp.Http</id>
+    <version>3.0.0-prerelease.2</version>
+    <authors>ZodSharp Contributors,Purview-Dev Contributors</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>purview-logo-light.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://purview.dev/projects/zodsharp/</projectUrl>
+    <description>HttpClient integration for ZodSharp: validates request bodies before they are sent and response bodies as they
+			are read, and reads the validation problems Purview.ZodSharp.AspNetCore writes back into ZodSharp errors.
+			Trim-, Native AOT- and Blazor WebAssembly-safe.</description>
+    <tags>zod validation schema http httpclient problemdetails webassembly</tags>
+    <repository type="git" url="https://github.com/purview-dev/zodsharp" branch="refs/heads/main" commit="d0dbc74417d4445226a58ef96464d4d3519bd3c4" />
+    <dependencies>
+      <group targetFramework="net10.0">
+        <dependency id="Purview.ZodSharp.SystemTextJson" version="3.0.0-prerelease.2" exclude="Build,Analyzers" />
+        <dependency id="Purview.ZodSharp" version="3.0.0-prerelease.2" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="10.0.14" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Options" version="10.0.14" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net11.0">
+        <dependency id="Purview.ZodSharp.SystemTextJson" version="3.0.0-prerelease.2" exclude="Build,Analyzers" />
+        <dependency id="Purview.ZodSharp" version="3.0.0-prerelease.2" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

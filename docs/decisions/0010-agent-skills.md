@@ -37,15 +37,24 @@ nothing on another) and could not read a skill without cloning its repository.
    to `public/skills/<project>/<skill>/…` and caches it under `.cache/skills/`,
    so `https://purview.dev/skills/<project>/<skill>/SKILL.md` (and its
    references) is a real, stable URL. `public/skills/` is generated and
-   gitignored like `public/schemas/`.
+   gitignored like `public/schemas/`. A skill's description is read from its own
+   YAML front matter — inline or a folded block scalar (`description: >-`) — so
+   what the site shows is what the CLI shows.
 3. **One shared instruction block, everywhere.** A single component
-   (`components/SkillInstall.astro`) renders the command, the `#<ref>` pinning
-   syntax and the `skills-lock.json` restore note. It is used unchanged on
-   `/skills/`, on each project page that declares skills, and in
-   `/skills.json` — so the instructions cannot drift between projects.
-4. **`/skills/` is the browse and install page**, grouped by project, and
-   `/skills.json` is the machine-readable index (name, description, directory,
-   entry URL, file list, install commands).
+   (`components/SkillInstall.astro`) renders the install commands, the `#<ref>`
+   pinning syntax and the `skills-lock.json` restore note. Every command is an
+   Expressive Code block (so it carries the copy button), and every package
+   manager a reader may use is offered — `npx`, `bunx`, `pnpm dlx`, `yarn dlx` —
+   rather than telling a bun or pnpm user to reach for npm. The component is used
+   unchanged on each project page that declares skills and in `/skills.json`, so
+   the instructions cannot drift.
+4. **Skills are presented in project context.** Each project page lists the
+   skills that project authors, with the description from each `SKILL.md` and a
+   direct link to the file; the catalogue cards show how many skills a project
+   has. `/skills.json` remains the machine-readable index (name, description,
+   directory, entry URL, file list, install commands per package manager), and
+   `/skills/` redirects to `/projects/` — a site-wide list separated a skill from
+   the project that gives it meaning.
 5. **Guards, not hopes.** `just check-projects` fails when a declared skill has
    no mirror, `just check-generated` fails when a declared skill is missing from
    the built site, and the sync fails when a declared skill resolves to no files
@@ -54,8 +63,8 @@ nothing on another) and could not read a skill without cloning its repository.
 ## Consequences
 
 - `pm-skills` gains fourteen declarations; `aspire-resourcekit` and `results` gain
-  five each, so the same install block now appears on their project pages and on
-  `/skills/` with their own repositories.
+  five each, so the same install block now appears on each of their project pages
+  with its own repository.
 - The site never claims to *host* the CLI source: it serves the skill files. The
   CLI still installs from the git repository, which is what records a pinnable
   ref; the portal URLs exist so a skill can be read, reviewed or fetched without

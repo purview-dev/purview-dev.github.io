@@ -16,8 +16,15 @@
  *   recognises — see `docs/discovery.md`.
  */
 
-/** Bumped whenever the public `discover.json` shape changes incompatibly. */
-export const DISCOVERY_MANIFEST_SCHEMA_VERSION = 1;
+/**
+ * Bumped whenever the public `discover.json` shape changes incompatibly.
+ *
+ * Version 2 adds `docsChannels`: a project may publish more than one version of
+ * its documentation, and each version is its own docs site with its own
+ * machine-readable bundles. The top-level `docs`/`llms` fields keep describing
+ * the default channel, so version-1 consumers still read the same values.
+ */
+export const DISCOVERY_MANIFEST_SCHEMA_VERSION = 2;
 
 /** Bumped whenever the internal deployment-state shape changes. */
 export const DEPLOYMENT_STATE_SCHEMA_VERSION = 1;
@@ -51,6 +58,22 @@ export interface DiscoverableResource {
   projectId?: string;
 }
 
+/** One published documentation version of a project. */
+export interface DiscoveryManifestChannel {
+  /** Channel id: `live` or `prerelease`. */
+  id: string;
+  /** Version label (`2.4.2`) or the ref when no version is known (`main`). */
+  label: string;
+  /** The version this channel documents, when it names one. */
+  version: string | null;
+  /** True for the channel that owns the canonical `/docs/<id>/` URLs. */
+  default: boolean;
+  /** Canonical documentation entry point for this version. */
+  docs: string;
+  /** This version's machine-readable bundles. */
+  llms: { summary: string; full: string };
+}
+
 /** A project as exposed by the discovery manifest. */
 export interface DiscoveryManifestProject {
   name: string;
@@ -70,6 +93,12 @@ export interface DiscoveryManifestProject {
   latestVersion: string | null;
   /** Per-project machine-readable resources, or null when the project has none. */
   llms: { summary: string; full: string } | null;
+  /**
+   * Every published documentation version, default first. Empty when the
+   * project has no documentation. Each entry is a full docs site: its own URLs
+   * and its own `llms.txt` / `llms-full.txt` bundle.
+   */
+  docsChannels: DiscoveryManifestChannel[];
 }
 
 /**

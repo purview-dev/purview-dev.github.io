@@ -4,7 +4,7 @@ import type { DiscoverableResource } from './types';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
-import { DOCS_OUTPUT_DIR, defaultDocsChannel } from '../docs/aggregate';
+import { DOCS_OUTPUT_DIR } from '../docs/aggregate';
 import {
   buildDeploymentState,
   buildDiscoveryManifest,
@@ -23,7 +23,12 @@ import { renderRobotsTxt } from './robots';
 import { latestLastmod, renderSitemapIndex, renderUrlset } from './sitemap';
 import {
   SITEMAP_INDEX_PATH,
+  docsChannelUrl,
   docsUrl,
+  projectChannelLlmsFullPath,
+  projectChannelLlmsFullUrl,
+  projectChannelLlmsPath,
+  projectChannelLlmsUrl,
   sitemapLlmsUrl,
   sitemapPagesUrl,
   sitemapProjectsUrl,
@@ -92,7 +97,12 @@ export function emitDiscoveryArtifacts(options: EmitOptions): EmitResult {
 
   const manifest = buildDiscoveryManifest({
     resources,
-    projects: buildManifestProjects(ctx.projects, ctx.releaseData, ctx.dataSource),
+    projects: buildManifestProjects(
+      ctx.projects,
+      ctx.releaseData,
+      ctx.dataSource,
+      ctx.docsManifest,
+    ),
     generatedAt,
   });
   write('discover.json', serializeJson(manifest));
@@ -101,29 +111,54 @@ export function emitDiscoveryArtifacts(options: EmitOptions): EmitResult {
     const manifestEntry = ctx.docsManifest?.projects.find(
       (entry) => entry.projectId === project.id,
     );
-    // The machine-readable bundles publish the default (live) channel: two
-    // versions of the same page in one corpus would be ambiguous. The concise
-    // bundle still links the prerelease channel when one is published.
-    const channel = defaultDocsChannel(manifestEntry);
-    const projectPages = (channel?.pages ?? []).map((page) => ({
-      slug: page.slug,
-      title: page.title,
+    const channels = manifestEntry?.channels ?? [];
+    const llmsChannels = channels.map((channel) => ({
+      id: channel.id,
+      label: channel.label,
+      version: channel.version,
+      ref: channel.ref,
+      default: channel.default,
     }));
-    const readPage = (slug: string): string | null => {
-      const file = resolve(DOCS_OUTPUT_DIR, 'docs', project.id, `${slug}.md`);
-      return existsSync(file) ? readFileSync(file, 'utf8') : null;
-    };
-    const prerelease = manifestEntry?.channels.find((candidate) => !candidate.default);
-    write(
-      `projects/${project.id}/llms.txt`,
-      renderProjectLlms(project, projectPages, {
-        prereleaseUrl: prerelease ? docsUrl(project.id, prerelease.id) : undefined,
-      }),
-    );
-    write(
-      `projects/${project.id}/llms-full.txt`,
-      renderProjectLlmsFull(project, projectPages, readPage),
-    );
+    // Every published version gets its own machine-readable bundle (ADR 0009):
+    // the same product at two versions is two documentation sets, and one corpus
+    // holding both would leave a model unable to tell which version it read. The
+    // default channel keeps the historical `/projects/<id>/llms*.txt` paths; the
+    // others mirror the docs URL shape under their channel segment.
+    const targets: (typeof channels)[number][] | [undefined] =
+      channels.length > 0 ? channels : [undefined];
+    for (const channel of targets) {
+      const channelId = channel?.id ?? 'live';
+      const isDefault = channel?.default ?? true;
+      const summaryPath = projectChannelLlmsPath(project.id, channelId, isDefault);
+      const fullPath = projectChannelLlmsFullPath(project.id, channelId, isDefault);
+      const projectPages = (channel?.pages ?? []).map((page) => ({
+        slug: page.slug,
+        title: page.title,
+      }));
+      const sourceDir = isDefault
+        ? resolve(DOCS_OUTPUT_DIR, 'docs', project.id)
+        : resolve(DOCS_OUTPUT_DIR, 'docs', project.id, channelId);
+      const readPage = (slug: string): string | null => {
+        const file = resolve(sourceDir, `${slug}.md`);
+        return existsSync(file) ? readFileSync(file, 'utf8') : null;
+      };
+      const llmsOptions = {
+        ...(channel ? { channel } : {}),
+        channels: llmsChannels,
+        docsBaseUrl: channel
+          ? docsChannelUrl(project.id, channel.id, channel.default)
+          : docsUrl(project.id),
+        fullUrl: projectChannelLlmsFullUrl(project.id, channelId, isDefault),
+      };
+      write(summaryPath.replace(/^\//, ''), renderProjectLlms(project, projectPages, llmsOptions));
+      write(
+        fullPath.replace(/^\//, ''),
+        renderProjectLlmsFull(project, projectPages, readPage, {
+          ...llmsOptions,
+          summaryUrl: projectChannelLlmsUrl(project.id, channelId, isDefault),
+        }),
+      );
+    }
   }
 
   const stateFile = resolve('.cache', 'discovery', 'state.json');

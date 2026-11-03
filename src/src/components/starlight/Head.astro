@@ -1,21 +1,35 @@
 ---
 import DefaultHead from '@astrojs/starlight/components/Head.astro';
-import { projectLlmsFullUrl } from '~/lib/discovery/urls';
+import { readDocsManifest } from '~/lib/docs/aggregate';
+import { projectChannelLlmsFullUrl } from '~/lib/discovery/urls';
 import { SITE } from '~/lib/site';
 import { absoluteUrl } from '~/lib/urls';
 
 // Documentation pages are aggregated from the product repositories. Expose the
-// per-project machine-readable bundle as an alternate representation and a
-// `TechArticle` JSON-LD block. Only accurate values are emitted; the canonical
-// HTML page remains the primary content.
+// machine-readable bundle of the version the page came from as an alternate
+// representation and a `TechArticle` JSON-LD block. A project can publish more
+// than one version (ADR 0009), and each version has its own bundle, so the link
+// follows the page's channel rather than the project's default. Only accurate
+// values are emitted; the canonical HTML page remains the primary content.
 const data = Astro.locals.starlightRoute?.entry?.data;
 const sourceProject = typeof data?.sourceProject === 'string' ? data.sourceProject : undefined;
 const hasMachineReadable = sourceProject !== undefined && data?.status !== 'archived';
+const docsChannel = typeof data?.docsChannel === 'string' ? data.docsChannel : undefined;
+const channel =
+  sourceProject === undefined
+    ? undefined
+    : readDocsManifest()
+        ?.projects.find((project) => project.projectId === sourceProject)
+        ?.channels.find((candidate) => candidate.id === docsChannel);
+const fullUrl =
+  sourceProject === undefined
+    ? null
+    : projectChannelLlmsFullUrl(sourceProject, channel?.id ?? 'live', channel?.default ?? true);
 const alternateLinks =
-  hasMachineReadable && sourceProject ?
+  hasMachineReadable && fullUrl ?
     [
       {
-        href: projectLlmsFullUrl(sourceProject),
+        href: fullUrl,
         type: 'text/markdown',
         title: `${data?.title ?? sourceProject} — machine-readable documentation`,
       },

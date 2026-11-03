@@ -8,6 +8,7 @@ import {
   channelBasePath,
   channelDisplayLabel,
   channelLayout,
+  channelTopicLabel,
   prereleaseChannelGate,
   prereleaseLinePromoted,
   projectReleaseLine,
@@ -266,6 +267,17 @@ describe('documentation channels', () => {
     expect(channelDisplayLabel({ id: 'prerelease', label: 'main' })).toBe('Prerelease main');
     expect(channelBasePath('zodsharp', 'live', true)).toBe('/docs/zodsharp/');
     expect(channelBasePath('zodsharp', 'prerelease', false)).toBe('/docs/zodsharp/prerelease/');
+  });
+
+  test('each version gets its own sidebar topic label', () => {
+    // Same product, different versions: the product name stays, the version
+    // distinguishes the topics.
+    expect(channelTopicLabel('ZodSharp', { label: '2.4.2' }, 2)).toBe('ZodSharp 2.4.2');
+    expect(channelTopicLabel('ZodSharp', { label: '3.0.0-prerelease.2' }, 2)).toBe(
+      'ZodSharp 3.0.0-prerelease.2',
+    );
+    // A single-channel project keeps the historical bare name.
+    expect(channelTopicLabel('ZodSharp', { label: '2.4.2' }, 1)).toBe('ZodSharp');
   });
 });
 

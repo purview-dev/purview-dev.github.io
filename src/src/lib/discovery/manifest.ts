@@ -1,3 +1,4 @@
+import type { DocsManifest } from '../docs/aggregate';
 import type { ResolvedProject } from '../manifest/load';
 import type { DataSource } from '../releases/transform';
 import type { ReleaseCacheData } from '../releases/types';
@@ -16,7 +17,10 @@ import { nugetPackageUrl } from '../urls';
 import { DEPLOYMENT_STATE_SCHEMA_VERSION, DISCOVERY_MANIFEST_SCHEMA_VERSION } from './types';
 import {
   canonical,
+  docsChannelUrl,
   docsUrl,
+  projectChannelLlmsFullUrl,
+  projectChannelLlmsUrl,
   projectLlmsFullUrl,
   projectLlmsUrl,
   projectPageUrl,
@@ -38,11 +42,18 @@ import {
  * carries a hash per URL for diagnostics and is never published.
  */
 
-/** Build the project list for the discovery manifest. */
+/**
+ * Build the project list for the discovery manifest.
+ *
+ * `docsManifest` is optional so a caller without the aggregation cache still
+ * gets a valid manifest; when it is present, every published documentation
+ * version is described as its own docs site with its own bundles.
+ */
 export function buildManifestProjects(
   projects: readonly ResolvedProject[],
   releaseData: ReleaseCacheData,
   dataSource: DataSource,
+  docsManifest: DocsManifest | null = null,
 ): DiscoveryManifestProject[] {
   return projects
     .toSorted((a, b) => a.order - b.order || a.name.localeCompare(b.name))
@@ -51,6 +62,12 @@ export function buildManifestProjects(
       const rollup = projectVersionRollup(project, summary);
       const primary = project.packages.find((pkg) => pkg.primary) ?? project.packages[0];
       const hasDocs = project.docs !== undefined && project.status !== 'archived';
+      const channels =
+        docsManifest?.projects.find((entry) => entry.projectId === project.id)?.channels ?? [];
+      const orderedChannels = [
+        ...channels.filter((channel) => channel.default),
+        ...channels.filter((channel) => !channel.default),
+      ];
       return {
         name: project.name,
         slug: project.id,
@@ -67,6 +84,19 @@ export function buildManifestProjects(
         llms: hasDocs
           ? { summary: projectLlmsUrl(project.id), full: projectLlmsFullUrl(project.id) }
           : null,
+        docsChannels: hasDocs
+          ? orderedChannels.map((channel) => ({
+              id: channel.id,
+              label: channel.label,
+              version: channel.version,
+              default: channel.default,
+              docs: docsChannelUrl(project.id, channel.id, channel.default),
+              llms: {
+                summary: projectChannelLlmsUrl(project.id, channel.id, channel.default),
+                full: projectChannelLlmsFullUrl(project.id, channel.id, channel.default),
+              },
+            }))
+          : [],
       };
     });
 }

@@ -2,12 +2,16 @@
 import SiteLayout from '~/layouts/SiteLayout.astro';
 import GitHubIcon from '~/components/GitHubIcon.astro';
 import SkillInstall from '~/components/SkillInstall.astro';
+import SkillList from '~/components/SkillList.astro';
 import InstallPanel from '~/components/islands/InstallPanel.tsx';
 import PackageVersions, { type PackageRow } from '~/components/islands/PackageVersions.tsx';
 import StarOnGitHub from '~/components/StarOnGitHub.astro';
 import StatusBadge from '~/components/StatusBadge.astro';
 import UseCaseCard from '~/components/UseCaseCard.astro';
 import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '~/lib/badges';
+import { readDocsManifest, type DocsManifestChannel } from '~/lib/docs/aggregate';
+import { channelBasePath, channelDisplayLabel } from '~/lib/docs/channels';
+import { projectChannelLlmsFullPath, projectChannelLlmsPath } from '~/lib/discovery/urls';
 import { installAnchorId, installKindFor, installTabs } from '~/lib/install';
 import { LLMS_LINK_ATTRS } from '~/lib/llms';
 import { loadProjects } from '~/lib/manifest/load';
@@ -58,26 +62,48 @@ const supersededBy =
 const primaryPackage = project.packages.find((pkg) => pkg.primary) ?? project.packages[0];
 // Agent skills (ADR 0010): the catalogue names them, the mirrored SKILL.md
 // supplies the description the CLI shows, and one shared component renders the
-// same install instructions here as on /skills/.
+// same install instructions wherever skills appear. The list lives here, on the
+// project that authors the skills, rather than on a separate site-wide page:
+// a skill only makes sense next to the project it belongs to.
 const skills = listMirroredSkills(project.id).map((skill) => ({
   name: skill.name,
-  description: skill.description ?? undefined,
+  description: skill.description,
+  files: skill.files.length,
 }));
 const docsPath = project.docs ? withBase(`/docs/${project.id}/`) : null;
-// Per-project machine-readable bundles, emitted by the discovery integration at
-// /projects/<id>/llms.txt and /projects/<id>/llms-full.txt (the llms.txt
-// convention applied at the per-project scope).
+// Every published documentation version is its own docs set with its own
+// machine-readable bundle (ADR 0009): same product, different version, different
+// docs. The default channel keeps /projects/<id>/llms*.txt; the others live
+// under their channel segment, mirroring their documentation URLs.
 const hasMachineReadable = project.docs !== undefined && status !== 'archived';
-const llmsPath = hasMachineReadable ? withBase(`/projects/${project.id}/llms.txt`) : null;
-const alternateLinks =
-  hasMachineReadable ?
-    [
-      {
-        href: absoluteUrl(`/projects/${project.id}/llms-full.txt`),
-        type: 'text/markdown',
-        title: `${project.name} — machine-readable documentation`,
-      },
-    ]
+const docsEntry = readDocsManifest()?.projects.find((entry) => entry.projectId === project.id);
+const docsVersions: Pick<DocsManifestChannel, 'id' | 'label' | 'default'>[] = hasMachineReadable
+  ? (docsEntry?.channels.length ?? 0) > 0
+    ? (docsEntry?.channels ?? []).map(({ id, label, default: isDefault }) => ({
+        id,
+        label,
+        default: isDefault,
+      }))
+    : [{ id: 'live', label: 'live', default: true }]
+  : [];
+const llmsBundles = docsVersions.map((version) => ({
+  href: withBase(projectChannelLlmsPath(project.id, version.id, version.default)),
+  label:
+    docsVersions.length > 1 ? `llms.txt · ${channelDisplayLabel(version)}` : 'llms.txt',
+  title:
+    docsVersions.length > 1
+      ? `Machine-readable documentation bundle for ${project.name} — ${channelDisplayLabel(version)}`
+      : `Machine-readable documentation bundle for ${project.name}`,
+}));
+const alternateLinks = hasMachineReadable
+  ? docsVersions.map((version) => ({
+      href: absoluteUrl(projectChannelLlmsFullPath(project.id, version.id, version.default)),
+      type: 'text/markdown',
+      title:
+        docsVersions.length > 1
+          ? `${project.name} ${version.label} — machine-readable documentation`
+          : `${project.name} — machine-readable documentation`,
+    }))
   : [];
 // Structured data for an open-source library: name, description, repository,
 // language, licence, package and current version. A BreadcrumbList mirrors the
@@ -232,16 +258,16 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
           )
         }
         {
-          llmsPath && (
+          llmsBundles.map((bundle) => (
             <a
-              href={llmsPath}
+              href={bundle.href}
               {...LLMS_LINK_ATTRS}
               class="pv-btn pv-btn-secondary pv-btn-sm"
-              title={`Machine-readable documentation bundle for ${project.name}`}
+              title={bundle.title}
             >
-              llms.txt
+              {bundle.label}
             </a>
-          )
+          ))
         }
         <a
           href={project.releasesUrl}
@@ -272,6 +298,24 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
           )
         }
       </div>
+      {
+        docsVersions.length > 1 && (
+          <p class="mt-3 flex flex-wrap items-center gap-1.5 text-sm">
+            <span class="text-muted">Documentation versions:</span>
+            {docsVersions.map((version) => (
+              <a
+                href={withBase(channelBasePath(project.id, version.id, version.default))}
+                class="pv-chip"
+                title={`Documentation for ${project.name} — ${channelDisplayLabel(version)}`}
+              >
+                {channelDisplayLabel(version)}
+              </a>
+            ))}
+          </p>
+        )
+      }
+
+
 
       <div class="mt-6 flex flex-wrap items-center gap-1.5">
         {
@@ -460,7 +504,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
 
         {
           skills.length > 0 && (
-            <section>
+            <section id="agent-skills" class="scroll-mt-24">
               <h2 class="text-xl font-semibold">Agent skills</h2>
               <p class="mt-2 text-muted">
                 {project.name} authors agent skills for coding agents. They are installed explicitly
@@ -471,7 +515,11 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
                   repository={project.repository}
                   projectId={project.id}
                   skills={skills}
+                  showLinks={false}
                 />
+              </div>
+              <div class="mt-4">
+                <SkillList projectId={project.id} skills={skills} />
               </div>
             </section>
           )

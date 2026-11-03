@@ -5,6 +5,7 @@ import StatusBadge from '~/components/StatusBadge.astro';
 import { readDocsManifest } from '~/lib/docs/aggregate';
 import { channelBasePath, channelDisplayLabel } from '~/lib/docs/channels';
 import { isStale, STALE_AFTER_DAYS } from '~/lib/docs/staleness';
+import { projectChannelLlmsFullPath, projectChannelLlmsPath } from '~/lib/discovery/urls';
 import { LLMS_LINK_ATTRS } from '~/lib/llms';
 import { getReleaseIndex } from '~/lib/releases/runtime';
 import { displayStatus } from '~/lib/status';
@@ -39,20 +40,50 @@ const channelHref = (channelId: 'live' | 'prerelease', isDefault: boolean): stri
 const pinnedChannel = activeChannel?.refKind === 'tag';
 const stale = lastReviewed && !pinnedChannel ? isStale(lastReviewed) : false;
 
-// Project overview pages surface the per-project `llms.txt` bundle emitted by
-// the discovery integration at /projects/<id>/llms.txt. Other aggregated pages
-// keep the heading lean and only link the global files from the site footer.
-const entryId = typeof entry?.id === 'string' ? entry.id : undefined;
-const isProjectOverview = entryId !== undefined && /^docs\/[^/]+(\/index)?$/.test(entryId);
-const sourceProject = typeof data?.sourceProject === 'string' ? data.sourceProject : undefined;
+// A channel's landing page advertises that version's machine-readable bundles.
+// A project can publish more than one version (ADR 0009), and each version is a
+// whole docs set with its own `llms.txt`, so the link follows the channel the
+// reader is on rather than the project's default channel. Other aggregated
+// pages keep the heading lean and only link the global files from the site
+// footer.
 const sourceRepo = typeof data?.sourceRepo === 'string' ? data.sourceRepo : undefined;
+// A channel's landing page is the one page whose URL is exactly the channel
+// base path; comparing paths keeps this independent of how Starlight names the
+// content entry.
+const channelPath =
+  sourceProjectId !== undefined && activeChannel
+    ? withBase(channelBasePath(sourceProjectId, activeChannel.id, activeChannel.default))
+    : undefined;
+const isChannelIndex =
+  channelPath !== undefined &&
+  Astro.url.pathname.replace(/\/+$/, '') === channelPath.replace(/\/+$/, '');
+const versionLabel = activeChannel
+  ? `${data?.projectName ?? sourceProjectId} ${activeChannel.label}`
+  : '';
+const llmsLinks =
+  isChannelIndex && sourceProjectId && activeChannel
+    ? [
+        {
+          label: 'llms.txt',
+          href: withBase(
+            projectChannelLlmsPath(sourceProjectId, activeChannel.id, activeChannel.default),
+          ),
+          title: `Machine-readable index for ${versionLabel}`,
+        },
+        {
+          label: 'llms-full.txt',
+          href: withBase(
+            projectChannelLlmsFullPath(sourceProjectId, activeChannel.id, activeChannel.default),
+          ),
+          title: `Full machine-readable documentation for ${versionLabel}`,
+        },
+      ]
+    : [];
 // Live star count for the owning repository, when the release cache knows it.
 const starCount =
   sourceRepo === undefined ?
     null
   : (getReleaseIndex().data.repos[sourceRepo]?.stargazersCount ?? null);
-const llmsHref =
-  isProjectOverview && sourceProject ? withBase(`/projects/${sourceProject}/llms.txt`) : null;
 ---
 
 <h1 id="_top">{data?.title}</h1>
@@ -171,18 +202,13 @@ const llmsHref =
         )
       }
       {
-        llmsHref && (
+        llmsLinks.map((link) => (
           <span class="doc-meta-item">
-            <a
-              href={llmsHref}
-              {...LLMS_LINK_ATTRS}
-              class="pv-link"
-              title={`Machine-readable documentation bundle for ${data?.projectName ?? sourceProject}`}
-            >
-              llms.txt
+            <a href={link.href} {...LLMS_LINK_ATTRS} class="pv-link" title={link.title}>
+              {link.label}
             </a>
           </span>
-        )
+        ))
       }
     </div>
   )

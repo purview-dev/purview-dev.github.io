@@ -87,14 +87,19 @@ prints advisory observations (which never fail the build) when a project's decla
      pin a project's live and prerelease documentation to refs (`default`, `latest-stable`,
      `latest-prerelease`, or an explicit branch/tag). The default channel owns `/docs/<id>/`, the
      other is served at `/docs/<id>/<channel>/`, and `docsPage` resolves against the default channel.
+     Each channel is a first-class docs set — its own sidebar topic (`<Project> <version>`), its own
+     `/projects/<id>/<channel>/llms*.txt` bundle, and its own entry on the docs portal — because the
+     same product at another version is different documentation.
      Only `github-path` supports two channels; `wiki`/`readme` have a single version. Promotion is
      automatic: the prerelease channel is withheld once a stable release (GitHub release or NuGet
      version) catches up with the prerelease line, and returns with the next prerelease — never
      delete the declaration to stop publishing it.
    - Agent Skills a project publishes are declared in `skills:` (ADR 0010) at
      `skills/<name>/SKILL.md`; the sync mirrors the whole directory to
-     `/skills/<id>/<name>/` and every page renders the same install block
-     (`npx skills add <owner>/<repo>`). Never ship a skill in a package or copy it
+     `/skills/<id>/<name>/` and each project page renders the same install block
+     (npm, bun, pnpm and yarn runners) plus that project's skill list with the
+     descriptions from each `SKILL.md`. `/skills/` redirects to `/projects/`.
+     Never ship a skill in a package or copy it
      into an agent directory at build time, and never hand-edit `src/public/skills/`.
    - `order` values are unique and control the catalogue order.
    - `related`, `supersedes`, `supersededBy` must reference known ids.

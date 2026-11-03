@@ -3,6 +3,8 @@ import SiteLayout from '~/layouts/SiteLayout.astro';
 import { LLMS_LINK_ATTRS } from '~/lib/llms';
 import { loadProjects } from '~/lib/manifest/load';
 import { defaultDocsChannel, readDocsManifest } from '~/lib/docs/aggregate';
+import { channelBasePath, channelDisplayLabel, channelTopicLabel } from '~/lib/docs/channels';
+import { projectChannelLlmsFullPath, projectChannelLlmsPath } from '~/lib/discovery/urls';
 import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { getReleaseIndex } from '~/lib/releases/runtime';
 import { SITE } from '~/lib/site';
@@ -13,6 +15,14 @@ const projects = loadProjects().filter(
 );
 const releaseIndex = getReleaseIndex();
 const docsManifest = readDocsManifest();
+const channelsFor = (projectId: string) =>
+  docsManifest?.projects.find((entry) => entry.projectId === projectId)?.channels ?? [];
+// Documentation versions are first-class (ADR 0009): the same product at two
+// versions is two docs sets, so the portal lists them rather than hiding the
+// second one behind a switcher inside the first.
+const versionedProjects = projects
+  .map((project) => ({ project, channels: channelsFor(project.id) }))
+  .filter((entry) => entry.channels.length > 1);
 const pageCount = docsManifest?.projects.reduce(
   (total, entry) => total + entry.channels.reduce((count, channel) => count + channel.pages.length, 0),
   0,
@@ -66,6 +76,58 @@ const pageCount = docsManifest?.projects.reduce(
         })
       }
     </div>
+    {
+      versionedProjects.length > 0 && (
+        <section class="mt-10 rounded-xl border border-border bg-surface p-6 md:p-8">
+          <h2 class="text-xl font-semibold">Documentation versions</h2>
+          <p class="mt-3 max-w-3xl text-sm text-muted">
+            Some projects publish more than one version of their documentation. Each version is a
+            documentation set in its own right — its own pages, its own sidebar entry and its own
+            machine-readable bundle — because installing a different version means reading different
+            docs.
+          </p>
+          <ul class="mt-5 space-y-5">
+            {versionedProjects.map(({ project, channels }) => (
+              <li>
+                <p class="font-semibold">{project.name}</p>
+                <ul class="mt-2 space-y-2">
+                  {channels.map((channel) => (
+                    <li class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                      <a
+                        href={withBase(channelBasePath(project.id, channel.id, channel.default))}
+                        class="pv-link font-medium"
+                      >
+                        {channelDisplayLabel(channel)}
+                      </a>
+                      <a
+                        href={withBase(
+                          projectChannelLlmsPath(project.id, channel.id, channel.default),
+                        )}
+                        {...LLMS_LINK_ATTRS}
+                        class="text-muted hover:text-accent"
+                      >
+                        llms.txt
+                      </a>
+                      <a
+                        href={withBase(
+                          projectChannelLlmsFullPath(project.id, channel.id, channel.default),
+                        )}
+                        {...LLMS_LINK_ATTRS}
+                        class="text-muted hover:text-accent"
+                      >
+                        llms-full.txt
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+
 
     <section class="mt-16 rounded-xl border border-border bg-surface p-6 md:p-8">
       <h2 class="text-xl font-semibold">Kept close to the code</h2>
@@ -85,8 +147,10 @@ const pageCount = docsManifest?.projects.reduce(
     <section class="mt-8 rounded-xl border border-border bg-surface p-6 md:p-8">
       <h2 class="text-xl font-semibold">Machine-readable documentation</h2>
       <p class="mt-3 max-w-2xl text-sm text-muted">
-        Each project's documentation is also published as a single <code>llms.txt</code> bundle for
-        language models and other tooling. The whole site is available as
+        Every documentation version is also published as its own <code>llms.txt</code> bundle (and a
+        full <code>llms-full.txt</code> corpus) for language models and other tooling, so a model
+        reads the version it needs instead of one corpus holding two versions of the same page. The
+        whole site is available as
         <a href={withBase('/llms.txt')} {...LLMS_LINK_ATTRS} class="pv-link">llms.txt</a>,
         <a href={withBase('/llms-small.txt')} {...LLMS_LINK_ATTRS} class="pv-link">
           llms-small.txt
@@ -97,17 +161,37 @@ const pageCount = docsManifest?.projects.reduce(
       </p>
       <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
         {
-          projects.map((project) => (
-            <li>
-              <a
-                href={withBase(`/projects/${project.id}/llms.txt`)}
-                {...LLMS_LINK_ATTRS}
-                class="pv-link"
-              >
-                {project.name}
-              </a>
-            </li>
-          ))
+          projects.map((project) => {
+            const channels = channelsFor(project.id);
+            if (channels.length === 0) {
+              return (
+                <li>
+                  <a
+                    href={withBase(`/projects/${project.id}/llms.txt`)}
+                    {...LLMS_LINK_ATTRS}
+                    class="pv-link"
+                  >
+                    {project.name}
+                  </a>
+                </li>
+              );
+            }
+            return (
+              <li class="flex flex-wrap gap-x-2">
+                {channels.map((channel) => (
+                  <a
+                    href={withBase(
+                      projectChannelLlmsPath(project.id, channel.id, channel.default),
+                    )}
+                    {...LLMS_LINK_ATTRS}
+                    class="pv-link"
+                  >
+                    {channelTopicLabel(project.name, channel, channels.length)}
+                  </a>
+                ))}
+              </li>
+            );
+          })
         }
       </ul>
     </section>

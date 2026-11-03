@@ -10,6 +10,8 @@ import {
   ROBOTS_PATH,
   SITEMAP_INDEX_PATH,
   isCanonicalUrl,
+  projectChannelLlmsFullUrl,
+  projectChannelLlmsUrl,
   projectLlmsFullUrl,
   projectLlmsUrl,
   projectPageUrl,
@@ -206,6 +208,10 @@ export function validateDiscovery(
           slug?: string;
           url?: string;
           llms?: { summary?: string; full?: string } | null;
+          docsChannels?: {
+            docs?: string;
+            llms?: { summary?: string; full?: string };
+          }[];
         }[];
       };
       if (manifest.schemaVersion !== DISCOVERY_MANIFEST_SCHEMA_VERSION) {
@@ -229,20 +235,45 @@ export function validateDiscovery(
             fail(`discover.json project LLM URL is off-origin: ${url}`);
           }
         }
+        // Each published documentation version is its own docs site, so its
+        // docs and bundle URLs must be canonical too.
+        for (const channel of project.docsChannels ?? []) {
+          for (const url of [channel.docs, channel.llms?.summary, channel.llms?.full]) {
+            if (url && !isCanonicalUrl(url, origin)) {
+              fail(`discover.json documentation version URL is off-origin: ${url}`);
+            }
+          }
+        }
       }
     } catch {
       fail('discover.json is not valid JSON.');
     }
   }
 
-  // --- per-project llms resources -----------------------------------------
-  for (const project of documentedProjects(loadDiscoveryContext())) {
-    for (const url of [projectLlmsUrl(project.id), projectLlmsFullUrl(project.id)]) {
+  // --- per-version llms resources -----------------------------------------
+  // Every published documentation version has its own bundle pair: the default
+  // channel at `/projects/<id>/llms*.txt`, every other channel under its
+  // segment (`/projects/<id>/<channel>/llms*.txt`). A missing bundle means the
+  // docs and the machine-readable representation disagree about what exists.
+  const context = loadDiscoveryContext();
+  for (const project of documentedProjects(context)) {
+    const entry = context.docsManifest?.projects.find(
+      (candidate) => candidate.projectId === project.id,
+    );
+    const channels = entry?.channels ?? [];
+    const urls =
+      channels.length > 0
+        ? channels.flatMap((channel) => [
+            projectChannelLlmsUrl(project.id, channel.id, channel.default),
+            projectChannelLlmsFullUrl(project.id, channel.id, channel.default),
+          ])
+        : [projectLlmsUrl(project.id), projectLlmsFullUrl(project.id)];
+    for (const url of new Set(urls)) {
       const content = readDistByUrl(url);
       if (content === null) {
-        fail(`Missing per-project LLM resource: ${url}`);
+        fail(`Missing per-version LLM resource: ${url}`);
       } else if (content.trim().length === 0) {
-        fail(`Per-project LLM resource is empty: ${url}`);
+        fail(`Per-version LLM resource is empty: ${url}`);
       }
     }
   }

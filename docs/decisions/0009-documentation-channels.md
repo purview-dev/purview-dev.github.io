@@ -149,12 +149,20 @@ history has to survive between builds, and an existing page is never overwritten
   while two channels are published: promotion withholds the prerelease channel,
   so the switcher disappears with it and nothing in the UI advertises a version
   that is no longer published (its retired URLs redirect instead).
-- The sidebar shows one Starlight group per channel with the same labels
-  (`Live 2.4.2`, `Prerelease 3.0.0-prerelease.2`); single-channel projects keep
-  the flat list.
-- The per-project `llms-full.txt` corpus publishes the live channel only, and
-  the concise `llms.txt` links the prerelease channel when it exists. Two
-  versions of one page in a single corpus is ambiguous to a model.
+- The sidebar treats each channel as a **topic of its own**: `ZodSharp 2.4.2` and
+  `ZodSharp 3.0.0-prerelease.2` are separate entries in the topic picker, each
+  with a flat page list, exactly as two projects would be. A channel is a whole
+  documentation set, not a section of one, so grouping both under a single
+  project topic would claim one tree while the pages belong to two. A
+  single-channel project keeps the bare project name.
+- Every published version has its own machine-readable bundle. The default
+  channel keeps `/projects/<id>/llms.txt` and `llms-full.txt`; any other channel
+  mirrors its documentation URL shape at
+  `/projects/<id>/<channel>/llms.txt` and `llms-full.txt`. Each bundle carries a
+  version block (version, channel, source ref) and links the other versions'
+  bundles, and never mixes two versions of one page in a single corpus.
+  `discover.json` describes each version under `docsChannels`, and the sitemaps
+  list every version's bundles.
 - `wiki` and `readme` sources support exactly one channel. A wiki is a
   standalone git repository with a single HEAD, and a README is one page; the
   schema rejects `channels` on them instead of accepting a declaration it cannot
@@ -177,5 +185,6 @@ history has to survive between builds, and an existing page is never overwritten
   search engines and from `llms.txt`, and make `/docs/<id>/<page>/` ambiguous.
 - **Versioning the wiki source.** A repository wiki has no tags, so there is
   nothing to pin. Documented as unsupported rather than half-implemented.
-- **Keeping both channels in `llms-full.txt`.** Rejected: one corpus should not
-  contain two versions of the same page.
+- **Keeping both channels in one `llms-full.txt`.** Rejected: one corpus should
+  not contain two versions of the same page. Each channel publishes its own
+  `/projects/<id>[/<channel>]/llms*.txt` bundle instead.
