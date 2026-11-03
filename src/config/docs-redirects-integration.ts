@@ -3,18 +3,23 @@ import type { AstroIntegration } from 'astro';
 import { fileURLToPath } from 'node:url';
 
 import { readDocsManifest } from '../src/lib/docs/aggregate';
-import { writeRetiredChannelRedirects, writeRetiredPageRedirects } from '../src/lib/docs/redirects';
+import {
+  writeDocsPageRedirects,
+  writeRetiredChannelRedirects,
+  writeRetiredPageRedirects,
+} from '../src/lib/docs/redirects';
 import { loadProjects } from '../src/lib/manifest/load';
 
 /**
- * Redirects for retired documentation channels and moved pages (ADR 0009,
- * ADR 0010).
+ * Redirects for retired documentation channels, moved documentation pages and the
+ * site's own moved pages (ADR 0009, ADR 0010).
  *
  * A project's `prerelease` channel is withheld automatically once a stable
- * release catches up with it, and `/skills/` moved to the project pages, so
- * neither set of URLs may 404. purview.dev is served from GitHub Pages, which
- * only serves files, so each retired URL is written as a meta-refresh page
- * pointing at its new home.
+ * release catches up with it, a project may declare the slugs a reorganisation
+ * moved (`docs.redirects`), and `/skills/` moved to the project pages, so none of
+ * those URLs may 404. purview.dev is served from GitHub Pages, which only serves
+ * files, so each retired URL is written as a meta-refresh page pointing at its new
+ * home.
  *
  * Runs at `astro:build:done` beside the discovery integration. It deliberately
  * writes outside Astro's route list, so the redirects never enter the sitemap,
@@ -28,11 +33,13 @@ export default function docsRedirectsIntegration(): AstroIntegration {
     hooks: {
       'astro:build:done': ({ dir, logger }) => {
         const dist = fileURLToPath(dir);
-        const retired = writeRetiredChannelRedirects(dist, loadProjects(), readDocsManifest());
-        const moved = writeRetiredPageRedirects(dist);
-        if (retired.length + moved.length > 0) {
+        const projects = loadProjects();
+        const retired = writeRetiredChannelRedirects(dist, projects, readDocsManifest());
+        const moved = writeDocsPageRedirects(dist, projects);
+        const relocated = writeRetiredPageRedirects(dist);
+        if (retired.length + moved.length + relocated.length > 0) {
           logger.info(
-            `Redirects: ${retired.length} retired documentation URL(s) and ${moved.length} moved page(s) now point at their new home.`,
+            `Redirects: ${retired.length} retired documentation URL(s), ${moved.length} moved documentation page(s) and ${relocated.length} moved site page(s) now point at their new home.`,
           );
         }
       },

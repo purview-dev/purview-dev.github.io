@@ -104,6 +104,16 @@ const docsPathSchema = z.object({
   order: z.array(z.string()).optional(),
   exclude: z.array(z.string()).optional(),
   channels: docsChannelsSchema.optional(),
+  /**
+   * Slugs that moved, as `previous: current`.
+   *
+   * Reorganising a documentation tree changes published URLs, and a reader's
+   * bookmark should not 404 because of it. The site writes a meta-refresh
+   * redirect for every pair; a redirect never shadows a real page, so an entry
+   * stays inert while the old slug is still published — for example on a `live`
+   * channel pinned to an older tag, which activates it at promotion.
+   */
+  redirects: z.record(z.string().min(1), z.string().min(1)).optional(),
 });
 
 /**

@@ -23,7 +23,9 @@ import {
   renderFrontmatter,
 } from '../../src/lib/docs/frontmatter';
 import {
+  docSlug,
   extractHeadingSlugs,
+  isUrlSafeDocSlug,
   resolveDocRelativeLink,
   resolveRepoPath,
   rewriteDocMarkdown,
@@ -56,6 +58,54 @@ describe('slugifyDocFile', () => {
     expect(slugifyDocFile('Getting-Started.md')).toBe('getting-started');
     expect(slugifyDocFile('Multi-Targeting')).toBe('multi-targeting');
     expect(slugifyDocFile('SQL Server Guide.md')).toBe('sql-server-guide');
+  });
+});
+
+describe('docSlug', () => {
+  test('leaves a flat corpus flat, so no published URL moves', () => {
+    expect(docSlug('Getting-Started.md')).toBe('getting-started');
+    expect(docSlug('Getting-Started')).toBe('getting-started');
+  });
+
+  test('keeps each topic folder as a path segment', () => {
+    expect(docSlug('schemas/Custom-Rules.md')).toBe('schemas/custom-rules');
+    expect(docSlug('serialization/SystemTextJson-Integration.md')).toBe(
+      'serialization/systemtextjson-integration',
+    );
+    expect(docSlug('/nested//deeper/Page.md')).toBe('nested/deeper/page');
+  });
+
+  test('reduces a folder that would need encoding to a URL-safe segment', () => {
+    expect(docSlug('Topic Folder/Page Name.md')).toBe('topic-folder/page-name');
+    expect(docSlug('Q&A/Dot.Net.md')).toBe('q-a/dot-net');
+    expect(docSlug('Ünïcode/Page.md')).toBe('n-code/page');
+    expect(docSlug('API v2 (beta)/Page.md')).toBe('api-v2-beta/page');
+  });
+});
+
+describe('isUrlSafeDocSlug', () => {
+  test('accepts the slugs the sync emits, folders included', () => {
+    expect(isUrlSafeDocSlug('index')).toBe(true);
+    expect(isUrlSafeDocSlug('custom-rules')).toBe(true);
+    expect(isUrlSafeDocSlug('schemas/custom-rules')).toBe(true);
+    expect(isUrlSafeDocSlug('a/b/c/page-2')).toBe(true);
+  });
+
+  test('rejects a slug that would need an address to be encoded', () => {
+    expect(isUrlSafeDocSlug('')).toBe(false);
+    expect(isUrlSafeDocSlug('schemas/')).toBe(false);
+    expect(isUrlSafeDocSlug('a//b')).toBe(false);
+    expect(isUrlSafeDocSlug('/page')).toBe(false);
+    expect(isUrlSafeDocSlug('-page')).toBe(false);
+    expect(isUrlSafeDocSlug('page-')).toBe(false);
+    expect(isUrlSafeDocSlug('Page')).toBe(false);
+    expect(isUrlSafeDocSlug('page name')).toBe(false);
+  });
+
+  test('catches a folder whose name reduces to nothing', () => {
+    // `___` slugifies to an empty segment, which would publish the page at a URL that cannot be written down.
+    expect(docSlug('___/Page.md')).toBe('/page');
+    expect(isUrlSafeDocSlug(docSlug('___/Page.md'))).toBe(false);
   });
 });
 
@@ -270,6 +320,52 @@ describe('link rewriting', () => {
   });
 });
 
+describe('link rewriting inside a topic folder', () => {
+  const nested = (overrides: Partial<DocLinkContext> = {}) =>
+    context({
+      sourcePath: 'docs/wiki',
+      pagePath: 'schemas/Custom-Rules.md',
+      knownSlugs: new Set([
+        'index',
+        'schemas/custom-rules',
+        'schemas/string-validation',
+        'concepts/core-concepts',
+        'serialization/jsonschema-export',
+      ]),
+      ...overrides,
+    });
+
+  test('resolves a sibling by file name', () => {
+    expect(rewriteDocMarkdown('[String](String-Validation.md)', nested())).toBe(
+      '[String](<doclink:schemas/string-validation>)',
+    );
+  });
+
+  test('resolves a link that climbs out of the folder', () => {
+    expect(rewriteDocMarkdown('[Core](../concepts/Core-Concepts.md)', nested())).toBe(
+      '[Core](<doclink:concepts/core-concepts>)',
+    );
+    expect(rewriteDocMarkdown('[Json](../serialization/JsonSchema-Export.md)', nested())).toBe(
+      '[Json](<doclink:serialization/jsonschema-export>)',
+    );
+  });
+
+  test('reaches the landing page through its slug alias', () => {
+    const output = rewriteDocMarkdown(
+      '[Start](../Getting-Started.md)',
+      nested({ slugAliases: new Map([['getting-started', 'index']]) }),
+    );
+    expect(output).toBe('[Start](<doclink:index>)');
+  });
+
+  test('rewrites a page-relative repository path to a GitHub blob URL', () => {
+    // Three levels up from `docs/wiki/schemas/` is the repository root.
+    expect(rewriteDocMarkdown('[Source](../../../src/src/Z.cs)', nested())).toBe(
+      '[Source](https://github.com/purview-dev/demo/blob/main/src/src/Z.cs)',
+    );
+  });
+});
+
 describe('docs root page selection', () => {
   test('allows a configured non-index root when no conventional root exists', () => {
     const selected = selectDocsRootFile(
@@ -356,6 +452,19 @@ describe('resolveDocRelativeLink', () => {
     expect(resolveDocRelativeLink('index', 'sql-server-guide')).toBe('sql-server-guide/');
     expect(resolveDocRelativeLink('getting-started', 'index')).toBe('../');
     expect(resolveDocRelativeLink('index', 'index')).toBe('./');
+  });
+
+  test('counts the hops a topic folder adds', () => {
+    // A nested page is served at `/docs/<project>/schemas/custom-rules/`, so reaching a sibling folder is two
+    // levels up, not one.
+    expect(resolveDocRelativeLink('schemas/custom-rules', 'serialization/jsonschema-export')).toBe(
+      '../../serialization/jsonschema-export/',
+    );
+    expect(resolveDocRelativeLink('schemas/custom-rules', 'schemas/string-validation')).toBe(
+      '../string-validation/',
+    );
+    expect(resolveDocRelativeLink('schemas/custom-rules', 'index')).toBe('../../');
+    expect(resolveDocRelativeLink('index', 'schemas/custom-rules')).toBe('schemas/custom-rules/');
   });
 });
 

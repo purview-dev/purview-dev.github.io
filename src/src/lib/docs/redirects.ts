@@ -97,6 +97,67 @@ export function retiredChannelRedirects(
   return redirects;
 }
 
+/**
+ * URLs a project declared it moved (`docs.redirects`), mapped to their new home.
+ *
+ * Unlike retired channels, a moved page has no derivable destination: the old slug
+ * and the new one share nothing, so the mapping is declared in the project
+ * catalogue. `writeStaticRedirect` never overwrites a file, which is what makes
+ * the declaration timing-safe - while the `live` channel still reads an older tag,
+ * the old slug is a real page and the redirect is simply not written.
+ */
+export function docsPageRedirects(projects: readonly ResolvedProject[]): DocChannelRedirect[] {
+  const redirects: DocChannelRedirect[] = [];
+  for (const project of projects) {
+    if (project.docs?.source !== 'github-path' || project.status === 'archived') {
+      continue;
+    }
+    const moved = project.docs.redirects ?? {};
+    for (const [from, to] of Object.entries(moved)) {
+      redirects.push({
+        from: `/docs/${project.id}/${from}/`,
+        to: `/docs/${project.id}/${to}/`,
+        title: 'This documentation page moved…',
+        message: 'The page now lives at its new address.',
+      });
+    }
+  }
+  return redirects;
+}
+
+/**
+ * Write the moved-page redirects into a built site. Returns the paths written, relative to `dist`.
+ *
+ * A redirect is written only when its destination is published *and* its source is not:
+ *
+ * - the source check is `writeStaticRedirect`'s - a real page owns its URL, so a redirect never shadows one;
+ * - the destination check is this function's. A project that nests its pages changes every slug at once, but the
+ *   default channel keeps reading the last release tag until the next release is promoted (ADR 0009), so the new
+ *   address can be unpublished while the declaration is already in source. Forwarding a reader into a 404 is worse
+ *   than leaving the old URL alone, and the post-build link crawl says so - which is how this was found.
+ */
+export function writeDocsPageRedirects(
+  dist: string,
+  projects: readonly ResolvedProject[],
+): string[] {
+  const written: string[] = [];
+  for (const redirect of docsPageRedirects(projects)) {
+    if (!isPublished(dist, redirect.to)) {
+      continue;
+    }
+    const relative = writeStaticRedirect(dist, redirect);
+    if (relative) {
+      written.push(relative);
+    }
+  }
+  return written;
+}
+
+/** Whether a site path was written by the build as a page (`/a/b/` → `a/b/index.html`). */
+function isPublished(dist: string, path: string): boolean {
+  return existsSync(join(dist, ...path.split('/').filter(Boolean), 'index.html'));
+}
+
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')

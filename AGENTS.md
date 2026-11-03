@@ -94,6 +94,11 @@ prints advisory observations (which never fail the build) when a project's decla
      automatic: the prerelease channel is withheld once a stable release (GitHub release or NuGet
      version) catches up with the prerelease line, and returns with the next prerelease — never
      delete the declaration to stop publishing it.
+   - A page's slug is its path from the docs root (ADR 0011): a topic folder stays a path segment
+     (`schemas/Custom-Rules.md` is published at `/docs/<id>/schemas/custom-rules/`), a flat corpus
+     keeps the single-segment slug it always had, and every relative link resolves against the page
+     that contains it. A project whose docs are reorganised records the old→new slug in
+     `docs.redirects`, which the build turns into redirects; a redirect never shadows a real page.
    - Agent Skills a project publishes are declared in `skills:` (ADR 0010) at
      `skills/<name>/SKILL.md`; the sync mirrors the whole directory to
      `/skills/<id>/<name>/` and each project page renders the same install block
