@@ -105,6 +105,15 @@ export function retiredChannelRedirects(
  * catalogue. `writeStaticRedirect` never overwrites a file, which is what makes
  * the declaration timing-safe - while the `live` channel still reads an older tag,
  * the old slug is a real page and the redirect is simply not written.
+ *
+ * Every published channel owns URLs of its own, so a move is forwarded from each
+ * base the project publishes: the default channel at `/docs/<id>/` and, when the
+ * project declares both channels, the prerelease one at `/docs/<id>/prerelease/`.
+ * A tree can be reorganised on the default branch long before the release that
+ * carries it is promoted, and the readers on the prerelease channel are following
+ * URLs that change at the same moment. Whether a pair is real is decided by the
+ * write guards exactly as for the default channel, so a withheld channel writes
+ * nothing here (its URLs are retired-channel redirects instead).
  */
 export function docsPageRedirects(projects: readonly ResolvedProject[]): DocChannelRedirect[] {
   const redirects: DocChannelRedirect[] = [];
@@ -113,13 +122,22 @@ export function docsPageRedirects(projects: readonly ResolvedProject[]): DocChan
       continue;
     }
     const moved = project.docs.redirects ?? {};
+    const bases = [`/docs/${project.id}`];
+    // `prerelease` is only a second channel when `live` is declared with it;
+    // on its own it would be the default channel and own the canonical URLs.
+    const declared = project.docs.channels;
+    if (declared?.live !== undefined && declared.prerelease !== undefined) {
+      bases.push(`/docs/${project.id}/prerelease`);
+    }
     for (const [from, to] of Object.entries(moved)) {
-      redirects.push({
-        from: `/docs/${project.id}/${from}/`,
-        to: `/docs/${project.id}/${to}/`,
-        title: 'This documentation page moved…',
-        message: 'The page now lives at its new address.',
-      });
+      for (const base of bases) {
+        redirects.push({
+          from: `${base}/${from}/`,
+          to: `${base}/${to}/`,
+          title: 'This documentation page moved…',
+          message: 'The page now lives at its new address.',
+        });
+      }
     }
   }
   return redirects;

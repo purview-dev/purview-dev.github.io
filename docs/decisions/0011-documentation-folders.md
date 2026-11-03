@@ -75,7 +75,35 @@ the newer tree, the new address is unpublished too, so forwarding the reader wou
 be forwarding into a 404 — the post-build link crawl fails the build on exactly
 that, which is how this was found. Both halves activate per page, at promotion.
 
-### 4. `docsPage` stays a single segment
+A pair is emitted for every base the project publishes: the default channel at
+`/docs/<id>/` and, when `live` and `prerelease` are both declared, the prerelease
+channel at `/docs/<id>/prerelease/`. The reorganised tree is usually published on
+the prerelease channel *first* — that is what a default-branch docs change is —
+and its readers follow URLs that move at the same moment the default channel's
+do later. The same two guards decide which pairs are real, so a withheld channel
+still writes nothing here; its URLs belong to the retired-channel redirects.
+
+### 4. The sidebar and the page show the tree the URL describes
+
+Publishing a hierarchy in the URL and then flattening it in the sidebar would
+leave the reader with the one thing folders were meant to fix: grouping that the
+address disagrees with. So the display follows the slug:
+
+- `buildChannelItems` nests a channel's pages into Starlight sidebar groups, one
+  per folder, labelled with the folder's segment spelled out (`schemas` →
+  `Schemas`, `json-schema` → `JSON Schema`). A group appears where its first page
+  appears and absorbs its later pages, so a folder is listed once and the sync's
+  reading order (`docs.order` / `_Sidebar.md`) survives.
+- Nesting is recursive, because a slug is a path: `guides/getting-started/install`
+  is a group inside a group. A folder's index file (`schemas/index.md`) is
+  published at the folder's own address, so its sidebar entry links the folder.
+- A flat corpus has no folder in any slug, so it produces no group and no code
+  path changes for the projects that never nested.
+- A page names its section above the title (`PageTitle.astro`), using the same
+  spelling as the sidebar, so a reader arriving from search knows which part of
+  the documentation they are in.
+
+### 5. `docsPage` stays a single segment
 
 The catalogue's deep-link slug keeps its `^[a-z0-9-]+$` shape and resolves against
 the default channel. A deep link must therefore keep working across two trees that
@@ -94,7 +122,14 @@ move the failure to the moment a channel's tree diverges.
 - Documentation written for a flat corpus is unaffected in both slug and link
   terms, so this landed without touching another project's catalogue.
 - ZodSharp's own move is the first user of `docs.redirects`: 30 entries that stay
-  inert until the release that carries the folders is promoted to `live`.
+  inert on the default channel until the release that carries the folders is
+  promoted to `live`, and apply immediately to the prerelease channel, which reads
+  the reorganised tree today.
+- `buildChannelItems` returns a tree instead of a list. That is the only shape
+  change the display took: `SidebarDocItem[]` replaced `SidebarSlugEntry[]`, and
+  every other use of the docs cache (`llms` bundles, discovery resources, the docs
+  portal) still reads the flat page list, which remains the source of truth for
+  what a channel publishes.
 
 ## Alternatives considered
 

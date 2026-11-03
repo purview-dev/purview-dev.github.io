@@ -6,6 +6,7 @@ import { LOCAL_PATH_PATTERNS, SECRET_PATTERNS } from '../../src/lib/build-paths'
 import { DISCOVERY_MANIFEST_SCHEMA_VERSION } from '../../src/lib/discovery/types';
 import { readDocsManifest } from '../../src/lib/docs/aggregate';
 import { channelDisplayLabel } from '../../src/lib/docs/channels';
+import { docSectionLabel } from '../../src/lib/docs/sidebar';
 import { buildLlmsDetails } from '../../src/lib/llms-details';
 import { loadProjects } from '../../src/lib/manifest/load';
 import { compareNuGetVersions } from '../../src/lib/nuget-version';
@@ -576,5 +577,55 @@ describe('built documentation channels', () => {
     // Event Sourcing declares no channels, so it must not grow a second tree.
     expect(existsSync(resolve(DIST, 'docs/event-sourcing/index.html'))).toBe(true);
     expect(existsSync(resolve(DIST, 'docs/event-sourcing/prerelease'))).toBe(false);
+  });
+
+  test('the docs sidebar mirrors the documentation tree of each published channel', () => {
+    // A page's folder is a path segment of its URL (ADR 0011), so the sidebar
+    // nests it as a group and the page names its section above the title. A
+    // channel whose pages all sit at the docs root renders neither, which is what
+    // keeps a flat corpus looking exactly as it did before folders existed.
+    const channels = [live, prerelease].filter(
+      (channel): channel is NonNullable<typeof channel> => channel !== undefined,
+    );
+    expect(channels.length).toBeGreaterThan(0);
+
+    for (const channel of channels) {
+      const site = channel.default ? '/docs/zodsharp/' : `/docs/zodsharp/${channel.id}/`;
+      const distBase = channel.default ? 'docs/zodsharp/' : `docs/zodsharp/${channel.id}/`;
+      const content = requireBuilt(`${distBase}index.html`);
+      const start = content.indexOf('class="sidebar-content');
+      const sidebar = content.slice(start, content.indexOf('</sl-sidebar-pane', start));
+      const folders = [
+        ...new Set(
+          channel.pages
+            .filter((page) => page.slug.includes('/'))
+            .map((page) => page.slug.split('/')[0] ?? ''),
+        ),
+      ];
+
+      if (folders.length === 0) {
+        expect(sidebar).not.toContain('group-label');
+      }
+      for (const folder of folders) {
+        // One group per folder, labelled with the segment spelled out, holding
+        // links to the hierarchical addresses.
+        expect(sidebar).toContain('group-label');
+        expect(sidebar).toContain(`>${docSectionLabel(folder)}<`);
+      }
+
+      const nested = channel.pages.find((page) => page.slug.includes('/'));
+      if (nested) {
+        expect(sidebar).toContain(`href="${site}${nested.slug}/"`);
+        const page = requireBuilt(`${distBase}${nested.slug}/index.html`);
+        expect(page).toContain('class="doc-sections');
+      }
+      const atRoot = channel.pages.find(
+        (page) => page.slug !== 'index' && !page.slug.includes('/'),
+      );
+      if (atRoot) {
+        const page = requireBuilt(`${distBase}${atRoot.slug}/index.html`);
+        expect(page).not.toContain('class="doc-sections');
+      }
+    }
   });
 });

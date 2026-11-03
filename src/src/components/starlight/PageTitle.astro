@@ -4,6 +4,7 @@ import StarOnGitHub from '~/components/StarOnGitHub.astro';
 import StatusBadge from '~/components/StatusBadge.astro';
 import { readDocsManifest } from '~/lib/docs/aggregate';
 import { channelBasePath, channelDisplayLabel } from '~/lib/docs/channels';
+import { docSectionTrail } from '~/lib/docs/sidebar';
 import { isStale, STALE_AFTER_DAYS } from '~/lib/docs/staleness';
 import { projectChannelLlmsFullPath, projectChannelLlmsPath } from '~/lib/discovery/urls';
 import { LLMS_LINK_ATTRS } from '~/lib/llms';
@@ -34,6 +35,14 @@ const liveChannel = channels.find((channel) => channel.default);
 const showChannelSwitcher = channels.length > 1 && activeChannel !== undefined;
 const channelHref = (channelId: 'live' | 'prerelease', isDefault: boolean): string =>
   withBase(channelBasePath(sourceProjectId ?? '', channelId, isDefault));
+
+// A page's folder is part of its URL (ADR 0011), so a reader who arrives from
+// search on `schemas/custom-rules` is told which section of the documentation
+// they are in, not only which project. The trail is the same spelling the
+// sidebar uses for its folder groups, and it is empty for a flat corpus — a
+// page at the docs root has no section above it.
+const activePage = activeChannel?.pages.find((page) => page.sourcePath === data?.sourcePath);
+const sectionTrail = activePage ? docSectionTrail(activePage.slug) : [];
 
 // A tag-pinned channel does not move, so its review date is the release date:
 // flagging it as stale would be noise rather than drift.
@@ -85,6 +94,15 @@ const starCount =
     null
   : (getReleaseIndex().data.repos[sourceRepo]?.stargazersCount ?? null);
 ---
+
+{
+  sectionTrail.length > 0 && (
+    <p class="doc-sections">
+      <span class="sr-only">Documentation section: </span>
+      {sectionTrail.join(' / ')}
+    </p>
+  )
+}
 
 <h1 id="_top">{data?.title}</h1>
 
@@ -224,6 +242,19 @@ const starCount =
 }
 
 <style>
+  /* The section trail names the folders above the page (ADR 0011). It sits
+   * directly above the title, in the same tracked-uppercase treatment as the
+   * sidebar's folder groups, so the two read as the same hierarchy. Hidden for
+   * pages at the docs root, which have no section. */
+  .doc-sections {
+    margin: 0 0 0.375rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-2);
+  }
+
   /* Channel switcher (ADR 0009). Rendered only when a project publishes both a
    * live and a prerelease channel. It is a native <details> disclosure so the
    * versions stay reachable without JavaScript: the summary names the channel
