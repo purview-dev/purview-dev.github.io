@@ -58,14 +58,22 @@ the right GitHub blob.
 hops between two pages with `path.posix.relative` instead of assuming one `..`, so
 `schemas/custom-rules` reaches `serialization/jsonschema-export` at `../../`.
 
-### 3. A move is declared, and the redirect never shadows a page
+### 3. A move is declared, and a redirect needs both ends
 
 A page's folder is part of its URL, so reorganising a tree changes published URLs.
 `docs.redirects` maps a former slug to its current one and the build writes a
-meta-refresh redirect for each pair. `writeStaticRedirect` refuses to overwrite an
-existing file, which makes the declaration timing-safe: while a `live` channel
-reads a tag from before the move, the old slug is a real page and the redirect is
-simply not written; at promotion it takes effect.
+meta-refresh redirect for each pair — but only when the pair is real in the build
+at hand. `writeStaticRedirect` refuses to overwrite an existing file, so a redirect
+never shadows a page that owns its URL; and `writeDocsPageRedirects` skips a pair
+whose destination the channel has not published yet.
+
+That second check is what makes a declaration timing-safe across a promotion. A
+project that nests its pages changes every slug at once, while the `live` channel
+keeps reading the last release tag until the next release is promoted: the old
+slug is still a real page, so nothing is written. For a page that only exists in
+the newer tree, the new address is unpublished too, so forwarding the reader would
+be forwarding into a 404 — the post-build link crawl fails the build on exactly
+that, which is how this was found. Both halves activate per page, at promotion.
 
 ### 4. `docsPage` stays a single segment
 

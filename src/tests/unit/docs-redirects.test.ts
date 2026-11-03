@@ -162,9 +162,14 @@ describe('moved documentation page redirects', () => {
     });
   });
 
-  test('a moved page is written as a redirect, and an existing page still wins', () => {
+  test('a moved page is written as a redirect once its new address is published', () => {
     const dist = mkdtempSync(join(tmpdir(), 'purview-redirects-'));
     try {
+      // The destination exists in this channel, the old slug does not: the redirect is written.
+      const target = join(dist, 'docs', 'zodsharp', 'quality', 'performance', 'index.html');
+      mkdirSync(dirname(target), { recursive: true });
+      writeFileSync(target, 'real page', 'utf8');
+
       const written = writeDocsPageRedirects(dist, projects);
       expect(written).toContain(join('docs', 'zodsharp', 'performance', 'index.html'));
 
@@ -177,6 +182,33 @@ describe('moved documentation page redirects', () => {
 
       // A second run writes nothing: the redirects are created once.
       expect(writeDocsPageRedirects(dist, projects)).toEqual([]);
+    } finally {
+      rmSync(dist, { recursive: true, force: true });
+    }
+  });
+
+  test('a moved page is left alone while its new address is unpublished', () => {
+    // This is the promotion lag: the folders are in source, but the default channel still reads the release tag from
+    // before the move, so `quality/performance/` is not published yet. Forwarding into a 404 - or shadowing the live
+    // page at the old slug - would both be wrong, so nothing is written.
+    const dist = mkdtempSync(join(tmpdir(), 'purview-redirects-'));
+    try {
+      const livePage = join(dist, 'docs', 'zodsharp', 'performance', 'index.html');
+      mkdirSync(dirname(livePage), { recursive: true });
+      writeFileSync(livePage, 'live page', 'utf8');
+
+      expect(writeDocsPageRedirects(dist, projects)).toEqual([]);
+      expect(readFileSync(livePage, 'utf8')).toBe('live page');
+
+      // The same page, once the release that carries the folders is promoted: the old slug is gone and the new
+      // address is published, so the redirect appears.
+      rmSync(livePage);
+      const target = join(dist, 'docs', 'zodsharp', 'quality', 'performance', 'index.html');
+      mkdirSync(dirname(target), { recursive: true });
+      writeFileSync(target, 'real page', 'utf8');
+      expect(writeDocsPageRedirects(dist, projects)).toEqual([
+        join('docs', 'zodsharp', 'performance', 'index.html'),
+      ]);
     } finally {
       rmSync(dist, { recursive: true, force: true });
     }

@@ -125,19 +125,37 @@ export function docsPageRedirects(projects: readonly ResolvedProject[]): DocChan
   return redirects;
 }
 
-/** Write the moved-page redirects into a built site. Returns the paths written, relative to `dist`. */
+/**
+ * Write the moved-page redirects into a built site. Returns the paths written, relative to `dist`.
+ *
+ * A redirect is written only when its destination is published *and* its source is not:
+ *
+ * - the source check is `writeStaticRedirect`'s - a real page owns its URL, so a redirect never shadows one;
+ * - the destination check is this function's. A project that nests its pages changes every slug at once, but the
+ *   default channel keeps reading the last release tag until the next release is promoted (ADR 0009), so the new
+ *   address can be unpublished while the declaration is already in source. Forwarding a reader into a 404 is worse
+ *   than leaving the old URL alone, and the post-build link crawl says so - which is how this was found.
+ */
 export function writeDocsPageRedirects(
   dist: string,
   projects: readonly ResolvedProject[],
 ): string[] {
   const written: string[] = [];
   for (const redirect of docsPageRedirects(projects)) {
+    if (!isPublished(dist, redirect.to)) {
+      continue;
+    }
     const relative = writeStaticRedirect(dist, redirect);
     if (relative) {
       written.push(relative);
     }
   }
   return written;
+}
+
+/** Whether a site path was written by the build as a page (`/a/b/` → `a/b/index.html`). */
+function isPublished(dist: string, path: string): boolean {
+  return existsSync(join(dist, ...path.split('/').filter(Boolean), 'index.html'));
 }
 
 function escapeHtml(value: string): string {

@@ -318,11 +318,12 @@ docs:
     custom-rules: schemas/custom-rules
 ```
 
-Redirects never overwrite a real page, so an entry is inert while the old slug is
-still published — for example on a `live` channel pinned to a tag from before the
-move — and takes effect at promotion (ADR 0011). `docsPage` deep links are the
-exception: the catalogue keeps them a single path segment, so a page the catalogue
-deep-links either stays at the docs root or moves together with its deep link.
+Redirects never overwrite a real page, and a pair is skipped while the channel has
+not published the new address — so while a `live` channel is pinned to a tag from
+before the move, nothing happens; at promotion each redirect appears (ADR 0011).
+`docsPage` deep links are the exception: the catalogue keeps them a single path
+segment, so a page the catalogue deep-links either stays at the docs root or moves
+together with its deep link.
 
 ### Live and prerelease documentation
 
