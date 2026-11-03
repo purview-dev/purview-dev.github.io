@@ -558,6 +558,30 @@
   }
 
   /* -------------------------------------------------------------------------
+   * Documentation folders in the docs sidebar
+   * -----------------------------------------------------------------------
+   * A page's folder is part of its URL (ADR 0011), and the sidebar nests it as a
+   * Starlight group so the list mirrors the tree instead of flattening thirty
+   * links. Starlight gives every group label the top-level "large" treatment,
+   * which would make a folder read like a second project inside the topic, so a
+   * *nested* group is reduced to a tracked section label: smaller than a page
+   * link, uppercase, and muted. A project with a flat corpus renders no group at
+   * all, so nothing here reaches it. The classes are Starlight internals
+   * (SidebarSublist.astro) and are re-checked when Starlight is upgraded.
+   */
+  .sidebar-content ul:not(.top-level) > li > details > summary {
+    margin-top: 0.625rem;
+  }
+
+  .sidebar-content ul:not(.top-level) > li > details > summary .large {
+    font-size: var(--sl-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-2);
+  }
+
+  /* -------------------------------------------------------------------------
    * Wide-screen documentation layout
    * -----------------------------------------------------------------------
    * Starlight splits the horizontal slack of a docs page between the main

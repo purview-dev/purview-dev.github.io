@@ -97,8 +97,13 @@ prints advisory observations (which never fail the build) when a project's decla
    - A page's slug is its path from the docs root (ADR 0011): a topic folder stays a path segment
      (`schemas/Custom-Rules.md` is published at `/docs/<id>/schemas/custom-rules/`), a flat corpus
      keeps the single-segment slug it always had, and every relative link resolves against the page
-     that contains it. A project whose docs are reorganised records the old→new slug in
-     `docs.redirects`, which the build turns into redirects; a redirect never shadows a real page.
+     that contains it. The display mirrors that tree: the docs sidebar nests each folder as a group
+     (labelled with the folder's name spelled out) and each page names its section above the title,
+     so a flat corpus renders exactly as before. A project whose docs are reorganised records the
+     old→new slug in `docs.redirects`, which the build turns into redirects on **every** channel that
+     publishes the tree — the default channel at `/docs/<id>/` and the prerelease one at
+     `/docs/<id>/prerelease/`, each pair written only once its destination exists; a redirect never
+     shadows a real page.
    - Agent Skills a project publishes are declared in `skills:` (ADR 0010) at
      `skills/<name>/SKILL.md`; the sync mirrors the whole directory to
      `/skills/<id>/<name>/` and each project page renders the same install block

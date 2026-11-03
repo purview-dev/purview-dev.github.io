@@ -162,6 +162,41 @@ describe('moved documentation page redirects', () => {
     });
   });
 
+  test('a move is forwarded on every channel that publishes the tree', () => {
+    // The prerelease channel publishes the reorganised tree long before the
+    // release that carries it is promoted, so its readers follow the same move:
+    // every pair exists under both bases, and the write guards decide which of
+    // them are real in the build at hand.
+    expect(docsPageRedirects(projects)).toContainEqual({
+      from: '/docs/zodsharp/prerelease/performance/',
+      to: '/docs/zodsharp/prerelease/quality/performance/',
+      title: 'This documentation page moved…',
+      message: 'The page now lives at its new address.',
+    });
+  });
+
+  test('a single-channel project forwards the canonical base only', () => {
+    // Without a second declared channel there is no `/prerelease/` URL to
+    // forward: the channel is the default one, and it owns `/docs/<id>/`.
+    const singleChannel = projects.map((project) =>
+      project.id === 'zodsharp'
+        ? {
+            ...project,
+            docs: {
+              source: 'github-path' as const,
+              path: 'docs/wiki',
+              redirects: { performance: 'quality/performance' },
+            },
+          }
+        : project,
+    );
+    expect(
+      docsPageRedirects(singleChannel)
+        .filter((redirect) => redirect.from.startsWith('/docs/zodsharp/'))
+        .map((redirect) => [redirect.from, redirect.to]),
+    ).toEqual([['/docs/zodsharp/performance/', '/docs/zodsharp/quality/performance/']]);
+  });
+
   test('a moved page is written as a redirect once its new address is published', () => {
     const dist = mkdtempSync(join(tmpdir(), 'purview-redirects-'));
     try {
