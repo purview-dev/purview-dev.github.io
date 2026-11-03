@@ -4,6 +4,7 @@ import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '
 import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { getReleaseIndex } from '~/lib/releases/runtime';
 import type { ResolvedProject } from '~/lib/manifest/load';
+import { listMirroredSkills } from '~/lib/skills';
 import { displayStatus } from '~/lib/status';
 import { nugetPackageUrl, withBase } from '~/lib/urls';
 
@@ -16,6 +17,7 @@ interface Props {
 const { project, showBadges = true } = Astro.props;
 const status = displayStatus(project);
 const { tags } = projectRepoEnrichment(project, getReleaseIndex().data);
+const skillCount = listMirroredSkills(project.id).length;
 const primaryPackage = project.packages.find((pkg) => pkg.primary) ?? project.packages[0];
 const badges =
   status === 'archived' ?
@@ -56,6 +58,13 @@ const badges =
         project.packages.length > 0 && (
           <span class="pv-chip">
             {project.packages.length} package{project.packages.length === 1 ? '' : 's'}
+          </span>
+        )
+      }
+      {
+        skillCount > 0 && (
+          <span class="pv-chip" title={`${skillCount} agent skills on this project page`}>
+            {skillCount} skill{skillCount === 1 ? '' : 's'}
           </span>
         )
       }

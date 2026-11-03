@@ -18,8 +18,8 @@ import {
 } from './last-modified';
 import {
   canonical,
-  projectLlmsFullUrl,
-  projectLlmsUrl,
+  projectChannelLlmsFullUrl,
+  projectChannelLlmsUrl,
   rootLlmsFullUrl,
   rootLlmsSmallUrl,
   rootLlmsUrl,
@@ -196,14 +196,21 @@ export function projectLastModified(id: string, ctx: DiscoveryContext): string |
   );
 }
 
-/** `lastmod` for an aggregated documentation page: the review date wins. */
+/**
+ * `lastmod` for an aggregated documentation page: the review date wins.
+ *
+ * `channelId` addresses a non-default version, whose mirror key carries the
+ * channel segment (`<project>/<channel>/<slug>`) exactly like its URL does.
+ */
 export function documentationLastModified(
   projectId: string,
   slug: string,
   ctx: DiscoveryContext,
+  channelId?: string,
 ): string | undefined {
+  const key = channelId ? `${projectId}/${channelId}/${slug}` : `${projectId}/${slug}`;
   return firstTimestamp([
-    ctx.docsLastReviewed.get(`${projectId}/${slug}`),
+    ctx.docsLastReviewed.get(key),
     ctx.fileDates.get(projectManifestFile(projectId)),
     ctx.fallbackDate,
   ]);
@@ -298,21 +305,36 @@ export function buildResources(
   });
 
   for (const project of documentedProjects(ctx)) {
-    const lastModified = documentationLastModified(project.id, 'index', ctx) ?? docsSyncedAt;
-    list.push({
-      url: projectLlmsUrl(project.id),
-      kind: 'llms',
-      lastModified,
-      indexable: true,
-      projectId: project.id,
-    });
-    list.push({
-      url: projectLlmsFullUrl(project.id),
-      kind: 'llms-full',
-      lastModified,
-      indexable: true,
-      projectId: project.id,
-    });
+    const entry = ctx.docsManifest?.projects.find(
+      (candidate) => candidate.projectId === project.id,
+    );
+    const channels = entry?.channels ?? [];
+    // One bundle pair per published version (ADR 0009). The default channel
+    // keeps `/projects/<id>/llms*.txt`; every other version adds its channel
+    // segment, mirroring its documentation URLs.
+    const targets: (typeof channels)[number][] | [undefined] =
+      channels.length > 0 ? channels : [undefined];
+    for (const channel of targets) {
+      const channelId = channel?.id ?? 'live';
+      const isDefault = channel?.default ?? true;
+      const lastModified =
+        documentationLastModified(project.id, 'index', ctx, isDefault ? undefined : channelId) ??
+        docsSyncedAt;
+      list.push({
+        url: projectChannelLlmsUrl(project.id, channelId, isDefault),
+        kind: 'llms',
+        lastModified,
+        indexable: true,
+        projectId: project.id,
+      });
+      list.push({
+        url: projectChannelLlmsFullUrl(project.id, channelId, isDefault),
+        kind: 'llms-full',
+        lastModified,
+        indexable: true,
+        projectId: project.id,
+      });
+    }
   }
 
   return dedupeByUrl(list);

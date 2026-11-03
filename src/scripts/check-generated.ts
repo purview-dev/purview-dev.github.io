@@ -236,8 +236,8 @@ function validateProjectAssets(): void {
 
 /**
  * Every declared Agent Skill is mirrored from its repository into `public/` and
- * copied into the built site (ADR 0010), so a missing mirror means `/skills/`
- * and the project page link to a 404.
+ * copied into the built site (ADR 0010), so a missing mirror means the project
+ * page and `/skills.json` link to a 404.
  */
 function validateProjectSkills(): void {
   for (const project of loadProjects()) {

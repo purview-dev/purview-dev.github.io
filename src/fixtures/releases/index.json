@@ -3712,6 +3712,47 @@
         "net10.0"
       ],
       "targetFrameworksVersion": "1.0.0-prerelease.6"
+    },
+    "Purview.ZodSharp.Http": {
+      "id": "Purview.ZodSharp.Http",
+      "versions": [
+        "3.0.0-prerelease.2"
+      ],
+      "targetFrameworks": [
+        "net10.0",
+        "net11.0"
+      ],
+      "targetFrameworksVersion": "3.0.0-prerelease.2"
+    },
+    "Purview.ZodSharp.Blazor": {
+      "id": "Purview.ZodSharp.Blazor",
+      "versions": [
+        "3.0.0-prerelease.2"
+      ],
+      "targetFrameworks": [
+        "net11.0"
+      ],
+      "targetFrameworksVersion": "3.0.0-prerelease.2"
+    },
+    "Purview.ZodSharp.AspNetCore.OpenApi": {
+      "id": "Purview.ZodSharp.AspNetCore.OpenApi",
+      "versions": [
+        "3.0.0-prerelease.2"
+      ],
+      "targetFrameworks": [
+        "net11.0"
+      ],
+      "targetFrameworksVersion": "3.0.0-prerelease.2"
+    },
+    "Purview.ZodSharp.Extensions.Validation": {
+      "id": "Purview.ZodSharp.Extensions.Validation",
+      "versions": [
+        "3.0.0-prerelease.2"
+      ],
+      "targetFrameworks": [
+        "net11.0"
+      ],
+      "targetFrameworksVersion": "3.0.0-prerelease.2"
     }
   },
   "packageSearch": {
@@ -4041,6 +4082,10 @@
     "Purview.Containers.MySql": null,
     "Purview.Containers.RabbitMq": null,
     "Purview.Containers.Azurite": null,
-    "Purview.Containers.Nats": null
+    "Purview.Containers.Nats": null,
+    "Purview.ZodSharp.Http": null,
+    "Purview.ZodSharp.Blazor": null,
+    "Purview.ZodSharp.AspNetCore.OpenApi": null,
+    "Purview.ZodSharp.Extensions.Validation": null
   }
 }

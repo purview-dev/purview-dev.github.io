@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { LOCAL_PATH_PATTERNS, SECRET_PATTERNS } from '../../src/lib/build-paths';
+import { DISCOVERY_MANIFEST_SCHEMA_VERSION } from '../../src/lib/discovery/types';
 import { readDocsManifest } from '../../src/lib/docs/aggregate';
 import { channelDisplayLabel } from '../../src/lib/docs/channels';
 import { buildLlmsDetails } from '../../src/lib/llms-details';
@@ -10,6 +11,7 @@ import { loadProjects } from '../../src/lib/manifest/load';
 import { compareNuGetVersions } from '../../src/lib/nuget-version';
 import { getReleaseIndex } from '../../src/lib/releases/runtime';
 import { projectReleaseSummary } from '../../src/lib/releases/transform';
+import { listMirroredSkills } from '../../src/lib/skills';
 
 const DIST = resolve('dist');
 
@@ -158,21 +160,44 @@ describe('built docs strip mkdocs markup', () => {
 });
 
 describe('built agent skills', () => {
-  test('the skills page and machine-readable index are published', () => {
-    const page = requireBuilt('skills/index.html');
-    expect(page).toContain('Agent skills');
+  test('skills live with their project, and the old list page redirects', () => {
+    // `/skills/` was a site-wide list out of context; each project page now owns
+    // its skills, so the old URL forwards to the catalogue instead of 404ing.
+    const redirect = requireBuilt('skills/index.html');
+    expect(redirect).toContain('http-equiv="refresh" content="0; url=/projects/"');
+    expect(redirect).toContain('name="robots" content="noindex, follow"');
 
     const manifest = JSON.parse(requireBuilt('skills.json')) as {
+      schema: number;
       projects: {
         id: string;
-        install: { command: string };
-        skills: { name: string; url: string }[];
+        install: { command: string; commands: { id: string; command: string }[] };
+        skills: { name: string; description: string | null; url: string }[];
       }[];
     };
+    expect(manifest.schema).toBe(2);
     const pmSkills = manifest.projects.find((project) => project.id === 'pm-skills');
-    expect(pmSkills?.skills.length).toBe(14);
+    // Compare with the mirror rather than a hard-coded count: a new skill in the
+    // repository is a data change, not a test failure. This still catches a
+    // manifest that truncates or omits the mirrored set.
+    const mirroredPmSkills = listMirroredSkills('pm-skills');
+    expect(mirroredPmSkills.length).toBeGreaterThan(0);
+    expect(pmSkills?.skills.length).toBe(mirroredPmSkills.length);
     expect(pmSkills?.install.command).toBe('npx skills add purview-dev/pm-skills');
+    expect(pmSkills?.install.commands.map((command) => command.id)).toEqual([
+      'npm',
+      'bun',
+      'pnpm',
+      'yarn',
+    ]);
     expect(pmSkills?.skills[0]?.url).toStartWith('https://purview.dev/skills/pm-skills/');
+
+    // A folded (`description: >-`) skill still reports its prose description.
+    const zodsharp = manifest.projects.find((project) => project.id === 'zodsharp');
+    expect(zodsharp?.skills.length).toBeGreaterThan(0);
+    expect(
+      zodsharp?.skills.every((skill) => skill.description !== null && skill.description !== '>-'),
+    ).toBe(true);
   });
 
   test('every declared skill is served from purview.dev', () => {
@@ -182,19 +207,29 @@ describe('built agent skills', () => {
     );
   });
 
-  test('the same install block is shown for every project that authors skills', () => {
-    const skillsPage = requireBuilt('skills/index.html');
-    for (const repository of [
-      'purview-dev/pm-skills',
-      'purview-dev/aspire-resourcekit',
-      'purview-dev/results',
-    ]) {
-      expect(skillsPage).toContain(`npx skills add ${repository}`);
-    }
-    // A product project's own page shows the identical command.
-    expect(requireBuilt('projects/results/index.html')).toContain(
+  test('the project page lists its skills with descriptions', () => {
+    const page = requireBuilt('projects/results/index.html');
+    expect(page).toContain('id="agent-skills"');
+    expect(page).toContain('purview-results-core');
+    // The description comes from the skill's own front matter.
+    expect(page).toMatch(/purview-results-core[\s\S]{0,400}text-muted/);
+  });
+
+  test('every package manager is shown as copyable Expressive Code', () => {
+    const page = requireBuilt('projects/results/index.html');
+    for (const command of [
       'npx skills add purview-dev/results',
-    );
+      'bunx skills add purview-dev/results',
+      'pnpm dlx skills add purview-dev/results',
+      'yarn dlx skills add purview-dev/results',
+    ]) {
+      expect(page).toContain(command);
+    }
+    // Expressive Code renders a copy button per command, so the reader pastes
+    // instead of retyping. `data-code` is the exact text it copies.
+    expect(page).toContain('title="Copy to clipboard"');
+    expect(page).toContain('data-code="bunx skills add purview-dev/results"');
+    expect(page).toContain('data-code="pnpm dlx skills add purview-dev/results"');
   });
 });
 
@@ -250,6 +285,24 @@ describe('built package versions', () => {
     const content = requireBuilt('projects/telemetry-sourcegenerator/index.html');
     expect(content).not.toContain(pkg!.latestPrerelease!);
   });
+
+  test('a package with only prereleases is still listed', () => {
+    // Purview.ZodSharp.Http has never published a stable version. The package
+    // listing is not a stable-only view: the stable cell is empty and the
+    // prerelease version is shown (and pinned in its install snippet).
+    const zodsharp = loadProjects().find((project) => project.id === 'zodsharp');
+    expect(zodsharp).toBeDefined();
+    const index = getReleaseIndex();
+    const summary = projectReleaseSummary(zodsharp!, index.data, index.source);
+    const pkg = summary.packages.find((entry) => entry.packageId === 'Purview.ZodSharp.Http');
+    expect(pkg).toBeDefined();
+    expect(pkg?.latestStable).toBeNull();
+    expect(pkg?.latestPrerelease).toBe('3.0.0-prerelease.2');
+
+    const content = requireBuilt('projects/zodsharp/index.html');
+    expect(content).toContain('Purview.ZodSharp.Http');
+    expect(content).toContain('3.0.0-prerelease.2');
+  });
 });
 
 describe('built llms links', () => {
@@ -296,7 +349,7 @@ describe('built SEO outputs', () => {
       resources: unknown[];
       projects: { slug: string }[];
     };
-    expect(manifest.schemaVersion).toBe(1);
+    expect(manifest.schemaVersion).toBe(DISCOVERY_MANIFEST_SCHEMA_VERSION);
     expect(manifest.url).toBe('https://purview.dev/');
     expect(manifest.sitemaps.index).toBe('https://purview.dev/sitemap-index.xml');
     expect(manifest.resources.length).toBeGreaterThan(0);
@@ -392,6 +445,60 @@ describe('built documentation channels', () => {
       // A published channel owns its URLs: no redirect may shadow it.
       expect(requireBuilt(prereleaseIndex)).not.toContain('http-equiv="refresh"');
     }
+  });
+
+  test.skipIf(!prerelease)('each documentation version is its own sidebar topic', () => {
+    // Versions are distinct sidebar entries, not groups inside one project
+    // topic: the same product, two documentation sets. The topic picker lists
+    // both, each pointing at its own landing page.
+    const content = requireBuilt(prereleaseIndex);
+    expect(content).toContain(`ZodSharp ${live!.label}`);
+    expect(content).toContain(`ZodSharp ${prerelease!.label}`);
+    expect(content).toContain('value="/docs/zodsharp/"');
+    expect(content).toContain('value="/docs/zodsharp/prerelease/"');
+  });
+
+  test.skipIf(!prerelease)('each documentation version publishes its own llms bundles', () => {
+    for (const file of [
+      'projects/zodsharp/llms.txt',
+      'projects/zodsharp/llms-full.txt',
+      'projects/zodsharp/prerelease/llms.txt',
+      'projects/zodsharp/prerelease/llms-full.txt',
+    ]) {
+      expect(existsSync(resolve(DIST, file))).toBe(true);
+    }
+    // Every bundle names the version it documents...
+    expect(requireBuilt('projects/zodsharp/llms.txt')).toContain(`- Version: ${live!.version}`);
+    const prereleaseFull = requireBuilt('projects/zodsharp/prerelease/llms-full.txt');
+    expect(prereleaseFull).toContain(`- Version: ${prerelease!.version}`);
+    expect(prereleaseFull).toContain('/docs/zodsharp/prerelease/');
+    // ...and carries one version's pages only, so a model cannot mix them.
+    expect(requireBuilt('projects/zodsharp/llms-full.txt')).not.toContain(
+      '/docs/zodsharp/prerelease/',
+    );
+    // discover.json describes each version as its own docs site.
+    const discover = JSON.parse(requireBuilt('discover.json')) as {
+      projects: { slug: string; docsChannels: { id: string; llms: { summary: string } }[] }[];
+    };
+    const zodsharpEntry = discover.projects.find((project) => project.slug === 'zodsharp');
+    expect(zodsharpEntry?.docsChannels.map((channel) => channel.id)).toEqual([
+      'live',
+      'prerelease',
+    ]);
+    expect(zodsharpEntry?.docsChannels[1]?.llms.summary).toBe(
+      'https://purview.dev/projects/zodsharp/prerelease/llms.txt',
+    );
+  });
+
+  test.skipIf(!prerelease)('each version overview links its own machine-readable bundles', () => {
+    // The overview page of a version advertises that version's bundle, not the
+    // project's default one: the link follows the docs the reader is reading.
+    const prereleaseContent = requireBuilt(prereleaseIndex);
+    expect(prereleaseContent).toContain('href="/projects/zodsharp/prerelease/llms.txt"');
+    expect(prereleaseContent).toContain('href="/projects/zodsharp/prerelease/llms-full.txt"');
+    const liveContent = requireBuilt('docs/zodsharp/index.html');
+    expect(liveContent).toContain('href="/projects/zodsharp/llms.txt"');
+    expect(liveContent).not.toContain('href="/projects/zodsharp/prerelease/llms.txt"');
   });
 
   test.skipIf(!prerelease)('the live page offers the prerelease channel', () => {

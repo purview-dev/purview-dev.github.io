@@ -12,6 +12,7 @@ import {
   skillSitePath,
   skillSourcePath,
   skillsInstallCommand,
+  skillsInstallCommands,
   skillsPinnedInstallCommand,
   skillsProjectPath,
 } from '../../src/lib/skills';
@@ -33,6 +34,24 @@ describe('skill paths and commands', () => {
     expect(skillsPinnedInstallCommand(REPOSITORY, 'v4.0.0')).toBe(
       'npx skills add purview-dev/pm-skills#v4.0.0',
     );
+  });
+
+  test('every package manager gets the same CLI, pinning and restore story', () => {
+    const commands = skillsInstallCommands(REPOSITORY);
+    expect(commands.map((entry) => entry.id)).toEqual(['npm', 'bun', 'pnpm', 'yarn']);
+    expect(commands.map((entry) => entry.command)).toEqual([
+      'npx skills add purview-dev/pm-skills',
+      'bunx skills add purview-dev/pm-skills',
+      'pnpm dlx skills add purview-dev/pm-skills',
+      'yarn dlx skills add purview-dev/pm-skills',
+    ]);
+    expect(commands.map((entry) => entry.restore)).toEqual([
+      'npx skills experimental_install',
+      'bunx skills experimental_install',
+      'pnpm dlx skills experimental_install',
+      'yarn dlx skills experimental_install',
+    ]);
+    expect(commands[1]?.pinned).toBe('bunx skills add purview-dev/pm-skills#<ref>');
   });
 });
 
@@ -57,6 +76,34 @@ describe('mirrored skill files', () => {
       expect(readSkillDescription(PROJECT, 'pm-park', root)).toBe('Capture an idea in one line.');
       expect(listMirroredSkillFiles(PROJECT, 'missing', root)).toEqual([]);
       expect(readSkillDescription(PROJECT, 'missing', root)).toBeNull();
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  test('a folded YAML description is read as prose, not as the `>-` marker', () => {
+    const root = mkdtempSync(join(tmpdir(), 'purview-skills-'));
+    try {
+      const directory = join(root, PROJECT, 'pm-fold');
+      mkdirSync(directory, { recursive: true });
+      writeFileSync(
+        join(directory, 'SKILL.md'),
+        [
+          '---',
+          'name: pm-fold',
+          'description: >-',
+          '  Use when a session ends, the context is about to be compacted,',
+          '  or the user says pause.',
+          '---',
+          '',
+          '# Fold',
+          '',
+        ].join('\n'),
+        'utf8',
+      );
+      expect(readSkillDescription(PROJECT, 'pm-fold', root)).toBe(
+        'Use when a session ends, the context is about to be compacted, or the user says pause.',
+      );
     } finally {
       rmSync(root, { recursive: true, force: true });
     }

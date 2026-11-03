@@ -70,19 +70,61 @@ export function projectPageUrl(id: string): string {
   return canonical(`/projects/${id}/`);
 }
 
-/** Documentation entry point (`/docs/<id>/`) or a specific page when `slug` is given. */
-export function docsUrl(projectId: string, slug?: string): string {
-  return slug && slug !== 'index'
-    ? canonical(`/docs/${projectId}/${slug}/`)
-    : canonical(`/docs/${projectId}/`);
+/**
+ * Documentation URL for one published version.
+ *
+ * The default channel owns the historical `/docs/<id>/` URLs; every other
+ * channel adds its id as a path segment (`/docs/<id>/prerelease/`), exactly
+ * like the aggregated mirror writes it. `slug` may be a page slug or omitted
+ * for the channel landing page.
+ */
+export function docsChannelUrl(
+  projectId: string,
+  channelId: string,
+  isDefault: boolean,
+  slug?: string,
+): string {
+  const base = isDefault ? `/docs/${projectId}/` : `/docs/${projectId}/${channelId}/`;
+  return slug && slug !== 'index' ? canonical(`${base}${slug}/`) : canonical(base);
 }
 
-/** Per-project `llms.txt` (concise) and `llms-full.txt` (full corpus). */
+/** Documentation entry point (`/docs/<id>/`) or a specific page when `slug` is given. */
+export function docsUrl(projectId: string, slug?: string): string {
+  return docsChannelUrl(projectId, 'live', true, slug);
+}
+
+/** Site-relative path of a version's concise `llms.txt` bundle. */
+export function projectChannelLlmsPath(id: string, channelId: string, isDefault: boolean): string {
+  return isDefault ? `/projects/${id}/llms.txt` : `/projects/${id}/${channelId}/llms.txt`;
+}
+
+/** Site-relative path of a version's `llms-full.txt` bundle. */
+export function projectChannelLlmsFullPath(
+  id: string,
+  channelId: string,
+  isDefault: boolean,
+): string {
+  return isDefault ? `/projects/${id}/llms-full.txt` : `/projects/${id}/${channelId}/llms-full.txt`;
+}
+
+/** Per-version `llms.txt` (concise) and `llms-full.txt` (full corpus). */
+export function projectChannelLlmsUrl(id: string, channelId: string, isDefault: boolean): string {
+  return canonical(projectChannelLlmsPath(id, channelId, isDefault));
+}
+export function projectChannelLlmsFullUrl(
+  id: string,
+  channelId: string,
+  isDefault: boolean,
+): string {
+  return canonical(projectChannelLlmsFullPath(id, channelId, isDefault));
+}
+
+/** The default channel's bundles, which keep the historical project URLs. */
 export function projectLlmsUrl(id: string): string {
-  return canonical(`/projects/${id}/llms.txt`);
+  return projectChannelLlmsUrl(id, 'live', true);
 }
 export function projectLlmsFullUrl(id: string): string {
-  return canonical(`/projects/${id}/llms-full.txt`);
+  return projectChannelLlmsFullUrl(id, 'live', true);
 }
 
 /** Whether an absolute URL belongs to the configured canonical origin. */

@@ -10,6 +10,7 @@ import {
   renderChannelRedirect,
   retiredChannelRedirects,
   writeRetiredChannelRedirects,
+  writeRetiredPageRedirects,
 } from '../../src/lib/docs/redirects';
 import { loadProjects } from '../../src/lib/manifest/load';
 
@@ -112,6 +113,22 @@ describe('retired documentation channel redirects', () => {
           'utf8',
         ),
       ).toContain('url=/docs/zodsharp/core-concepts/');
+    } finally {
+      rmSync(dist, { recursive: true, force: true });
+    }
+  });
+
+  test('a page that moved writes a redirect to its new home', () => {
+    const dist = mkdtempSync(join(tmpdir(), 'purview-redirects-'));
+    try {
+      expect(writeRetiredPageRedirects(dist)).toEqual([join('skills', 'index.html')]);
+      const html = readFileSync(join(dist, 'skills', 'index.html'), 'utf8');
+      expect(html).toContain('http-equiv="refresh" content="0; url=/projects/"');
+      expect(html).toContain('Agent skills are now listed on the project');
+      expect(html).toContain('name="robots" content="noindex, follow"');
+
+      // The moved page never overwrites a real page that owns the URL.
+      expect(writeRetiredPageRedirects(dist)).toEqual([]);
     } finally {
       rmSync(dist, { recursive: true, force: true });
     }

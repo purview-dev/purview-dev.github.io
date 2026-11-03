@@ -81,7 +81,10 @@ const context: DiscoveryContext = {
   dataSource: 'fixture',
   fileDates: new Map([['src/src/pages/about.astro', '2025-11-01T00:00:00Z']]),
   fallbackDate: '2025-01-01T00:00:00Z',
-  docsLastReviewed: new Map([['zodsharp/core-concepts', '2025-12-02']]),
+  docsLastReviewed: new Map([
+    ['zodsharp/core-concepts', '2025-12-02'],
+    ['zodsharp/prerelease/index', '2025-12-09'],
+  ]),
 };
 
 describe('page path normalisation', () => {
@@ -131,6 +134,10 @@ describe('resource building', () => {
     expect(urls).toContain('https://purview.dev/llms.txt');
     expect(urls).toContain('https://purview.dev/projects/zodsharp/llms.txt');
     expect(urls).toContain('https://purview.dev/projects/zodsharp/llms-full.txt');
+    // Every published version has its own bundle, so the prerelease channel is
+    // discoverable without being merged into the live corpus.
+    expect(urls).toContain('https://purview.dev/projects/zodsharp/prerelease/llms.txt');
+    expect(urls).toContain('https://purview.dev/projects/zodsharp/prerelease/llms-full.txt');
   });
 
   test('excludes error pages and de-duplicates', () => {
@@ -145,6 +152,11 @@ describe('resource building', () => {
       (resource) => resource.url === 'https://purview.dev/docs/zodsharp/core-concepts/',
     );
     expect(docs?.lastModified).toBe('2025-12-02');
+    // A version's bundle inherits that version's landing-page review date.
+    const prereleaseLlms = resources.find(
+      (resource) => resource.url === 'https://purview.dev/projects/zodsharp/prerelease/llms.txt',
+    );
+    expect(prereleaseLlms?.lastModified).toBe('2025-12-09');
   });
 
   test('partitions indexable resources into three sitemaps', () => {

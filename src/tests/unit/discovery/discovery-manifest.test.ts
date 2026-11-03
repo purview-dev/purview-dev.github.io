@@ -1,4 +1,5 @@
 import type { DiscoverableResource } from '../../../src/lib/discovery/types';
+import type { DocsManifest } from '../../../src/lib/docs/aggregate';
 import type { ReleaseCacheData } from '../../../src/lib/releases/types';
 
 import { describe, expect, test } from 'bun:test';
@@ -22,6 +23,7 @@ import {
 } from '../../../src/lib/discovery/manifest';
 import { DISCOVERY_MANIFEST_SCHEMA_VERSION } from '../../../src/lib/discovery/types';
 import { siteOrigin } from '../../../src/lib/discovery/urls';
+import { DOCS_MANIFEST_SCHEMA } from '../../../src/lib/docs/aggregate';
 import { loadProjects } from '../../../src/lib/manifest/load';
 import { RELEASE_CACHE_SCHEMA_VERSION } from '../../../src/lib/releases/types';
 
@@ -32,6 +34,37 @@ const emptyReleaseData: ReleaseCacheData = {
   releases: {},
   packages: {},
   packageSearch: {},
+};
+
+const docsManifest: DocsManifest = {
+  schema: DOCS_MANIFEST_SCHEMA,
+  syncedAt: '2026-01-01T00:00:00.000Z',
+  releaseRetrievedAt: '2026-01-01T00:00:00.000Z',
+  projects: [
+    {
+      projectId: 'zodsharp',
+      channels: [
+        {
+          id: 'live',
+          ref: 'v2.4.2',
+          refKind: 'tag',
+          version: '2.4.2',
+          label: '2.4.2',
+          default: true,
+          pages: [],
+        },
+        {
+          id: 'prerelease',
+          ref: 'main',
+          refKind: 'branch',
+          version: '3.0.0-prerelease.2',
+          label: '3.0.0-prerelease.2',
+          default: false,
+          pages: [],
+        },
+      ],
+    },
+  ],
 };
 
 function resource(
@@ -45,7 +78,12 @@ function resource(
 describe('discovery manifest', () => {
   test('builds a versioned manifest from resources and projects', () => {
     const projects = loadProjects();
-    const manifestProjects = buildManifestProjects(projects, emptyReleaseData, 'fixture');
+    const manifestProjects = buildManifestProjects(
+      projects,
+      emptyReleaseData,
+      'fixture',
+      docsManifest,
+    );
     const manifest = buildDiscoveryManifest({
       resources: [
         resource('https://purview.dev/', '2025-01-01'),
@@ -64,6 +102,39 @@ describe('discovery manifest', () => {
     expect(zodsharp?.url).toBe('https://purview.dev/projects/zodsharp/');
     expect(zodsharp?.repository).toBe('purview-dev/zodsharp');
     expect(zodsharp?.llms?.summary).toBe('https://purview.dev/projects/zodsharp/llms.txt');
+    // Same product, two versions: discover.json describes each docs set, with
+    // its own URLs and its own bundles, default first.
+    expect(zodsharp?.docsChannels).toEqual([
+      {
+        id: 'live',
+        label: '2.4.2',
+        version: '2.4.2',
+        default: true,
+        docs: 'https://purview.dev/docs/zodsharp/',
+        llms: {
+          summary: 'https://purview.dev/projects/zodsharp/llms.txt',
+          full: 'https://purview.dev/projects/zodsharp/llms-full.txt',
+        },
+      },
+      {
+        id: 'prerelease',
+        label: '3.0.0-prerelease.2',
+        version: '3.0.0-prerelease.2',
+        default: false,
+        docs: 'https://purview.dev/docs/zodsharp/prerelease/',
+        llms: {
+          summary: 'https://purview.dev/projects/zodsharp/prerelease/llms.txt',
+          full: 'https://purview.dev/projects/zodsharp/prerelease/llms-full.txt',
+        },
+      },
+    ]);
+  });
+
+  test('a manifest built without the docs cache still lists projects', () => {
+    const zodsharp = buildManifestProjects(loadProjects(), emptyReleaseData, 'fixture').find(
+      (project) => project.slug === 'zodsharp',
+    );
+    expect(zodsharp?.docsChannels).toEqual([]);
   });
 
   test('deployment state hashes resources deterministically', () => {

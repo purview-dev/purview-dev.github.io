@@ -316,9 +316,12 @@ docs:
 ```
 
 The `live` channel is the default and keeps the canonical `/docs/<project>/`
-URLs; the `prerelease` channel is served at `/docs/<project>/prerelease/`. The
-sidebar groups pages per channel, and every page offers a switcher. Only
-`github-path` sources support two channels.
+URLs; the `prerelease` channel is served at `/docs/<project>/prerelease/`.
+Versions are first-class: each published channel is its own sidebar topic
+(`ZodSharp 2.4.2`, `ZodSharp 3.0.0-prerelease.2`) with its own page list, its
+own machine-readable bundle, and its own entry on the documentation portal —
+same product, different version, therefore different docs. Every page also
+offers a switcher. Only `github-path` sources support two channels.
 
 **Promotion is automatic.** The build publishes the prerelease channel only
 while a prerelease version outranks the newest stable release — comparing GitHub
@@ -333,18 +336,23 @@ config to declare).
 ## Agent skills
 
 Purview projects publish Agent Skills at `skills/<name>/SKILL.md` and deliver
-them with the skills CLI (`npx skills add <owner>/<repo>`); nothing ships a
-skill in a NuGet package. The catalogue declares the skills a project authors,
-`just data-sync` mirrors each whole skill directory to `public/skills/<project>/
-<skill>/…`, and the site presents them two ways (ADR 0010):
+them with the skills CLI (`npx`, `bunx`, `pnpm dlx` or `yarn dlx` — every runner
+is offered); nothing ships a skill in a NuGet package. The catalogue declares the
+skills a project authors, `just data-sync` mirrors each whole skill directory to
+`public/skills/<project>/<skill>/…`, and the site presents them in project
+context (ADR 0010):
 
-- `/skills/` lists every skill grouped by project, with the install instructions
-  and a direct link to each `SKILL.md`;
-- `/skills.json` is the machine-readable index (install commands, URLs, files).
+- each project page lists that project's skills with the description from its
+  own `SKILL.md` and a direct link to the file;
+- `/skills.json` is the machine-readable index (install commands per package
+  manager, URLs, files);
+- `/skills/` redirects to `/projects/`, because a skill only makes sense next to
+  the project that authors it.
 
 The install block is one component (`components/SkillInstall.astro`), rendered
-unchanged on `/skills/` and on every project page that declares skills, so the
-instructions are identical across the suite:
+unchanged on every project page that declares skills, so the instructions are
+identical across the suite. Each command is an Expressive Code block, so it
+carries the copy button:
 
 ```yaml
 skills:
@@ -379,6 +387,10 @@ build-time.
 - Without a cache, the site falls back to committed fixtures under
   `src/fixtures/releases/` and labels the data source (`live` / `cache` /
   `fixture`) in the UI.
+- A package that has only prereleases is still listed: the stable cell reads `—`
+  and the prerelease cell carries the version. Package membership comes from the
+  catalogue (`packages:`), so a new package is one manifest entry — the release
+  data supplies its versions, downloads and deprecation state.
 - `just refresh-fixtures` regenerates the committed test fixtures from live
   sources (review the diff before committing).
 
@@ -392,8 +404,13 @@ Each documented project is also emitted as its own scoped bundle by the
 discovery integration (see [docs/discovery.md](docs/discovery.md)) at
 `/projects/<id>/llms.txt` (a concise index) and `/projects/<id>/llms-full.txt`
 (the project's aggregated documentation), following the `llms.txt` convention at
-the per-project scope. The project page, the project's documentation overview
-page, the documentation portal and `/llms.txt` all link to those paths.
+the per-project scope. Documentation versions are first-class, so a second
+published channel gets its own pair under its channel segment
+(`/projects/<id>/<channel>/llms.txt`, `/projects/<id>/<channel>/llms-full.txt`):
+one corpus never mixes two versions of the same page. Every bundle names its
+version and links the other versions' bundles. The project page, each
+documentation version's overview page, the documentation portal, `discover.json`
+and `/llms.txt` all link to those paths.
 
 The suite-level narrative in `/llms.txt` is generated from the project catalogue
 (`src/src/lib/llms-details.ts`) rather than authored by hand, so it cannot drift

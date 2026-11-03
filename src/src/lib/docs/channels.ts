@@ -432,6 +432,23 @@ export function channelDisplayLabel(channel: { id: DocChannelId; label: string }
   return `${CHANNEL_LABELS[channel.id]} ${channel.label}`;
 }
 
+/**
+ * Sidebar topic label for one documentation version.
+ *
+ * Each channel is a first-class documentation set (ADR 0009), so a project that
+ * publishes two channels appears as two topics — `ZodSharp 2.4.2` and
+ * `ZodSharp 3.0.0-prerelease.2` — rather than as one topic that groups both
+ * versions. The product name stays in front so the pair still reads as the same
+ * product, and a single-channel project keeps its historical bare name.
+ */
+export function channelTopicLabel(
+  projectName: string,
+  channel: { label: string },
+  channelCount: number,
+): string {
+  return channelCount > 1 ? `${projectName} ${channel.label}` : projectName;
+}
+
 /** URL path for a channel's landing page: `/docs/<id>/` or `/docs/<id>/<channel>/`. */
 export function channelBasePath(
   projectId: string,

@@ -1,21 +1,26 @@
 import type { ResolvedProject } from '../manifest/load';
 import type { DocsManifest, DocsManifestChannel } from './aggregate';
 
-import { channelDisplayLabel } from './channels';
+import { channelBasePath, channelTopicLabel } from './channels';
 
 export interface SidebarSlugEntry {
   label?: string;
   slug: string;
 }
 
-/** A Starlight sidebar group: one documentation channel of a project. */
-export interface SidebarGroupEntry {
+/**
+ * One documentation version, exposed as its own Starlight topic.
+ *
+ * `link` is the version's landing page and `items` are that version's pages
+ * only: the two channels of a project never share a topic.
+ */
+export interface SidebarChannelTopic {
+  /** Stable topic identifier (`<project>` or `<project>-<channel>`). */
+  id: string;
   label: string;
-  collapsed?: boolean;
+  link: string;
   items: SidebarSlugEntry[];
 }
-
-export type SidebarEntry = SidebarSlugEntry | SidebarGroupEntry;
 
 /** Content-relative base for a channel: `docs/<id>` or `docs/<id>/<channel>`. */
 function channelBase(projectId: string, channel: DocsManifestChannel): string {
@@ -27,7 +32,10 @@ function channelBase(projectId: string, channel: DocsManifestChannel): string {
  * then one entry per page. Index pages resolve to the directory slug (no
  * trailing `/index`); Starlight prefixes the locale dir itself.
  */
-function channelItems(projectId: string, channel: DocsManifestChannel): SidebarSlugEntry[] {
+export function buildChannelItems(
+  projectId: string,
+  channel: DocsManifestChannel,
+): SidebarSlugEntry[] {
   const base = channelBase(projectId, channel);
   const items: SidebarSlugEntry[] = [];
   if (channel.pages.some((page) => page.slug === 'index')) {
@@ -43,43 +51,36 @@ function channelItems(projectId: string, channel: DocsManifestChannel): SidebarS
 }
 
 /**
- * Build the sidebar items for a single project's documentation.
+ * Build the sidebar topics for a single project's documentation.
  *
- * A single-channel project keeps a flat list (the historical behaviour). A
- * project with a second channel groups its pages per channel — `Live v2.4.2`
- * and `Prerelease main` — because the sidebar is shown for every page of the
- * project and must be able to reach both.
+ * A channel is a whole documentation set, not a section of one: the same
+ * product at a different version has different pages, different links and its
+ * own `llms.txt`. Grouping the channels inside one topic would make the sidebar
+ * claim a single tree while the pages belong to two, and it would bury the
+ * second version behind a collapsed group. Each channel therefore becomes its
+ * own topic — `ZodSharp 2.4.2` and `ZodSharp 3.0.0-prerelease.2` — with a flat
+ * item list, so switching versions works exactly like switching projects.
+ * A single-channel project keeps its historical topic (the bare project name).
  */
-export function buildProjectItems(
+export function buildProjectTopics(
   project: ResolvedProject,
   manifest: DocsManifest | null,
-): SidebarEntry[] {
+): SidebarChannelTopic[] {
   const entry = manifest?.projects.find((candidate) => candidate.projectId === project.id);
   const channels = entry?.channels ?? [];
   if (channels.length === 0) {
     return [];
   }
-  if (channels.length === 1) {
-    return channelItems(project.id, channels[0]!);
-  }
-
   const ordered = [
     ...channels.filter((channel) => channel.default),
     ...channels.filter((channel) => !channel.default),
   ];
-  const groups: SidebarGroupEntry[] = [];
-  for (const channel of ordered) {
-    const items = channelItems(project.id, channel);
-    if (items.length === 0) {
-      continue;
-    }
-    groups.push({
-      label: channelDisplayLabel(channel),
-      // The default channel stays open; the alternative starts collapsed so the
-      // sidebar does not double in length for every reader.
-      collapsed: !channel.default,
-      items,
-    });
-  }
-  return groups;
+  return ordered
+    .map((channel) => ({
+      id: channels.length > 1 ? `${project.id}-${channel.id}` : project.id,
+      label: channelTopicLabel(project.name, channel, channels.length),
+      link: channelBasePath(project.id, channel.id, channel.default),
+      items: buildChannelItems(project.id, channel),
+    }))
+    .filter((topic) => topic.items.length > 0);
 }

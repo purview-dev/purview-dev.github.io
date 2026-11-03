@@ -466,6 +466,25 @@ describe('NuGet index lag reconciliation', () => {
     expect(pkg?.latestPrerelease).toBeNull();
     expect(pkg?.hasAnyRelease).toBe(false);
   });
+
+  test('does not invent versions for releases that predate the package', () => {
+    const releases = [
+      parseGitHubRelease({ tag_name: 'v2.4.2', prerelease: false }),
+      parseGitHubRelease({ tag_name: 'v3.0.0-prerelease.2', prerelease: false }),
+    ];
+    // A package first published at 3.0.0-prerelease.2 never shipped 2.4.2, so
+    // the repository's older release tag must not be folded into it.
+    expect(reconcileWithGitHubReleases(['3.0.0-prerelease.2'], releases)).toEqual([
+      '3.0.0-prerelease.2',
+    ]);
+    // A tag newer than the package's floor is still folded in when NuGet lags.
+    expect(
+      reconcileWithGitHubReleases(
+        ['3.0.0-prerelease.2'],
+        [...releases, parseGitHubRelease({ tag_name: 'v3.1.0', prerelease: false })],
+      ),
+    ).toEqual(['3.0.0-prerelease.2', '3.1.0']);
+  });
 });
 
 describe('project version rollup (home-page snapshot)', () => {

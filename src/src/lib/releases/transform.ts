@@ -7,7 +7,7 @@ import type {
   ReleaseCacheData,
 } from './types';
 
-import { formatNuGetVersion } from '../nuget-version';
+import { compareNuGetVersions, formatNuGetVersion } from '../nuget-version';
 import { displayStatus } from '../status';
 import { nugetPackageUrl } from '../urls';
 import { rollupPackageVersions, type VersionRollup } from './live';
@@ -38,6 +38,13 @@ export interface ReleaseEntry {
  * Fold GitHub release tag versions into the NuGet candidate list when the
  * flat-container index has not caught up with a release. Tags already present
  * in the NuGet list are left untouched; only missing tags are appended.
+ *
+ * A tag is only a candidate for **this** package when the package already
+ * existed at that release. A package first published at `3.0.0-prerelease.2`
+ * (Http, Blazor, …) never shipped `2.4.2`, so the repository's older release
+ * tags must not be folded in — otherwise a prerelease-only package would be
+ * reported as having a stable version it never published. The floor is the
+ * package's own oldest NuGet version.
  */
 export function reconcileWithGitHubReleases(
   versions: string[],
@@ -45,8 +52,17 @@ export function reconcileWithGitHubReleases(
 ): string[] {
   const known = new Set(versions.map(normalizePrereleaseVersion));
   const reconciled = [...versions];
+  const floor =
+    versions.length > 0
+      ? versions.reduce((oldest, version) =>
+          compareNuGetVersions(version, oldest) < 0 ? version : oldest,
+        )
+      : null;
   for (const release of releases) {
     const version = normalizePrereleaseVersion(release.tagName);
+    if (floor !== null && compareNuGetVersions(version, floor) < 0) {
+      continue;
+    }
     if (!known.has(version)) {
       known.add(version);
       reconciled.push(version);

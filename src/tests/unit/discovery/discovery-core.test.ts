@@ -6,7 +6,10 @@ import { latestTimestamp, parseGitLogDates } from '../../../src/lib/discovery/la
 import { renderSitemapIndex, renderUrlset } from '../../../src/lib/discovery/sitemap';
 import {
   canonical,
+  docsChannelUrl,
   isCanonicalUrl,
+  projectChannelLlmsFullUrl,
+  projectChannelLlmsUrl,
   projectLlmsFullUrl,
   projectLlmsUrl,
   projectPageUrl,
@@ -30,6 +33,28 @@ describe('discovery canonical URLs', () => {
       'https://purview.dev/projects/zodsharp/llms-full.txt',
     );
     expect(sitemapIndexUrl()).toBe('https://purview.dev/sitemap-index.xml');
+  });
+
+  test('each documentation version gets its own URLs and bundles', () => {
+    // The default channel keeps the historical URLs...
+    expect(docsChannelUrl('zodsharp', 'live', true)).toBe('https://purview.dev/docs/zodsharp/');
+    expect(projectChannelLlmsUrl('zodsharp', 'live', true)).toBe(projectLlmsUrl('zodsharp'));
+    expect(projectChannelLlmsFullUrl('zodsharp', 'live', true)).toBe(
+      projectLlmsFullUrl('zodsharp'),
+    );
+    // ...and every other version adds its channel segment.
+    expect(docsChannelUrl('zodsharp', 'prerelease', false)).toBe(
+      'https://purview.dev/docs/zodsharp/prerelease/',
+    );
+    expect(docsChannelUrl('zodsharp', 'prerelease', false, 'core-concepts')).toBe(
+      'https://purview.dev/docs/zodsharp/prerelease/core-concepts/',
+    );
+    expect(projectChannelLlmsUrl('zodsharp', 'prerelease', false)).toBe(
+      'https://purview.dev/projects/zodsharp/prerelease/llms.txt',
+    );
+    expect(projectChannelLlmsFullUrl('zodsharp', 'prerelease', false)).toBe(
+      'https://purview.dev/projects/zodsharp/prerelease/llms-full.txt',
+    );
   });
 
   test('isCanonicalUrl only accepts the configured origin', () => {

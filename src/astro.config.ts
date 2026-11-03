@@ -12,9 +12,10 @@ import starlightSidebarTopics from 'starlight-sidebar-topics';
 import discoveryIntegration from './config/discovery-integration';
 import docsRedirectsIntegration from './config/docs-redirects-integration';
 import { remarkMermaid } from './config/remark-mermaid.mjs';
-import { projectLlmsUrl } from './src/lib/discovery/urls';
+import { projectChannelLlmsUrl, projectLlmsUrl } from './src/lib/discovery/urls';
 import { readDocsManifest } from './src/lib/docs/aggregate';
-import { buildProjectItems } from './src/lib/docs/sidebar';
+import { channelDisplayLabel, channelTopicLabel } from './src/lib/docs/channels';
+import { buildProjectTopics } from './src/lib/docs/sidebar';
 import { buildLlmsDetails } from './src/lib/llms-details';
 import { loadProjects } from './src/lib/manifest/load';
 import { SITE, BRAND } from './src/lib/site';
@@ -53,12 +54,18 @@ const topicBadges: Partial<Record<DisplayStatus, { text: string; variant: 'cauti
   };
 const sidebarTopics = [
   { label: 'Documentation home', link: '/docs/' },
-  ...docsProjects.map((project) => ({
-    label: project.name,
-    link: `/docs/${project.id}/`,
-    badge: topicBadges[displayStatus(project)],
-    items: buildProjectItems(project, docsManifest),
-  })),
+  // Each published documentation version is its own topic (ADR 0009): the same
+  // product at a different version is a different documentation set, with its
+  // own pages, its own sidebar and its own machine-readable bundle. A project
+  // with one channel therefore produces exactly the topic it always did.
+  ...docsProjects.flatMap((project) =>
+    buildProjectTopics(project, docsManifest).map((topic) => ({
+      label: topic.label,
+      link: topic.link,
+      badge: topicBadges[displayStatus(project)],
+      items: topic.items,
+    })),
+  ),
 ];
 
 const HEAD = [
@@ -215,13 +222,30 @@ export default defineConfig({
               url: absoluteUrl('/releases/'),
               description: 'GitHub and NuGet release information.',
             },
-            // Per-project machine-readable bundles, emitted by the discovery
-            // integration at /projects/<id>/llms.txt.
-            ...docsProjects.map((project) => ({
-              label: project.name,
-              url: projectLlmsUrl(project.id),
-              description: project.shortDescription,
-            })),
+            // Per-version machine-readable bundles, emitted by the discovery
+            // integration at /projects/<id>[/<channel>]/llms.txt. Each published
+            // documentation version advertises its own bundle, so a model can
+            // read the version it needs instead of one corpus with two versions
+            // of the same page.
+            ...docsProjects.flatMap((project) => {
+              const channels =
+                docsManifest?.projects.find((entry) => entry.projectId === project.id)?.channels ??
+                [];
+              if (channels.length === 0) {
+                return [
+                  {
+                    label: project.name,
+                    url: projectLlmsUrl(project.id),
+                    description: project.shortDescription,
+                  },
+                ];
+              }
+              return channels.map((channel) => ({
+                label: channelTopicLabel(project.name, channel, channels.length),
+                url: projectChannelLlmsUrl(project.id, channel.id, channel.default),
+                description: `${project.shortDescription} (${channelDisplayLabel(channel)})`,
+              }));
+            }),
           ],
           promote: ['index*', 'docs/*/index'],
           demote: [],

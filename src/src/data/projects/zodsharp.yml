@@ -58,6 +58,17 @@ packages:
     description: Newtonsoft.Json integration and JSON Schema import.
   - id: Purview.ZodSharp.AspNetCore
     description: ASP.NET Core ProblemDetails integration.
+  # Published only as prereleases today, but published all the same: the package
+  # listing must show every package a project ships, not only the ones that have
+  # reached a stable version.
+  - id: Purview.ZodSharp.Http
+    description: HttpClient integration — validates request and response bodies and maps validation problems back to ZodSharp errors.
+  - id: Purview.ZodSharp.Blazor
+    description: Blazor EditForm validation on Server, WebAssembly and Auto render modes.
+  - id: Purview.ZodSharp.AspNetCore.OpenApi
+    description: OpenAPI transformers for the constraints, formats and error contract ZodSharp enforces.
+  - id: Purview.ZodSharp.Extensions.Validation
+    description: Microsoft.Extensions.Validation resolver so minimal APIs and Blazor validate with ZodSharp.
 related:
   - value-objects
 acknowledgments:

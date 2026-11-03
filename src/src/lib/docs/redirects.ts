@@ -28,7 +28,27 @@ export interface DocChannelRedirect {
   from: string;
   /** Live site path it now belongs to. */
   to: string;
+  /** Page title; defaults to the documentation wording. */
+  title?: string;
+  /** Plain-text explanation shown above the link. */
+  message?: string;
 }
+
+/**
+ * Pages that moved and must not 404 (ADR 0010).
+ *
+ * `/skills/` was a site-wide list of every project's skills, shown away from
+ * the project that authors them. Each project page now owns its skills, so the
+ * old entry point forwards to the catalogue where those pages live.
+ */
+export const RETIRED_PAGE_REDIRECTS: readonly DocChannelRedirect[] = [
+  {
+    from: '/skills/',
+    to: '/projects/',
+    title: 'Skills moved to the project pages…',
+    message: 'Agent skills are now listed on the project that authors them.',
+  },
+];
 
 /** Schema-relative file path for a redirect target directory (`/a/b/` → `a/b/index.html`). */
 export function redirectFilePath(redirect: DocChannelRedirect): string {
@@ -93,19 +113,23 @@ function escapeHtml(value: string): string {
 export function renderChannelRedirect(redirect: DocChannelRedirect): string {
   const href = escapeHtml(withBase(redirect.to));
   const canonical = escapeHtml(absoluteUrl(redirect.to));
+  const title = escapeHtml(redirect.title ?? 'Redirecting to the live documentation…');
+  const message = escapeHtml(
+    redirect.message ?? 'This page documented a prerelease that has since been released.',
+  );
   return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Redirecting to the live documentation…</title>
+    <title>${title}</title>
     <link rel="canonical" href="${canonical}" />
     <meta name="robots" content="noindex, follow" />
     <meta http-equiv="refresh" content="0; url=${href}" />
   </head>
   <body data-pagefind-ignore>
     <p>
-      This page documented a prerelease that has since been released.
+      ${message}
       Continue to <a href="${href}">${href}</a>.
     </p>
   </body>
@@ -114,9 +138,24 @@ export function renderChannelRedirect(redirect: DocChannelRedirect): string {
 }
 
 /**
- * Write the retired-channel redirect pages into a built site. Existing files are
- * never overwritten: a published channel owns its URLs, and a redirect must not
- * shadow a real page. Returns the paths written, relative to `dist`.
+ * Write one redirect page. Existing files are never overwritten: a real page
+ * owns its URL, and a redirect must never shadow it. Returns the path written,
+ * relative to `dist`, or null when nothing was written.
+ */
+export function writeStaticRedirect(dist: string, redirect: DocChannelRedirect): string | null {
+  const relative = redirectFilePath(redirect);
+  const target = join(dist, relative);
+  if (existsSync(target)) {
+    return null;
+  }
+  mkdirSync(dirname(target), { recursive: true });
+  writeFileSync(target, renderChannelRedirect(redirect), 'utf8');
+  return relative;
+}
+
+/**
+ * Write the retired-channel redirect pages into a built site. Returns the paths
+ * written, relative to `dist`.
  */
 export function writeRetiredChannelRedirects(
   dist: string,
@@ -125,14 +164,25 @@ export function writeRetiredChannelRedirects(
 ): string[] {
   const written: string[] = [];
   for (const redirect of retiredChannelRedirects(projects, manifest)) {
-    const relative = redirectFilePath(redirect);
-    const target = join(dist, relative);
-    if (existsSync(target)) {
-      continue;
+    const relative = writeStaticRedirect(dist, redirect);
+    if (relative) {
+      written.push(relative);
     }
-    mkdirSync(dirname(target), { recursive: true });
-    writeFileSync(target, renderChannelRedirect(redirect), 'utf8');
-    written.push(relative);
+  }
+  return written;
+}
+
+/** Write the pages that moved to a new home (see `RETIRED_PAGE_REDIRECTS`). */
+export function writeRetiredPageRedirects(
+  dist: string,
+  redirects: readonly DocChannelRedirect[] = RETIRED_PAGE_REDIRECTS,
+): string[] {
+  const written: string[] = [];
+  for (const redirect of redirects) {
+    const relative = writeStaticRedirect(dist, redirect);
+    if (relative) {
+      written.push(relative);
+    }
   }
   return written;
 }
