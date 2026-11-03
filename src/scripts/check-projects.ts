@@ -1,9 +1,10 @@
-import type { DocsManifest } from '../src/lib/docs/aggregate';
+import type { DocsManifest, DocsManifestChannel } from '../src/lib/docs/aggregate';
 import type { ResolvedProject } from '../src/lib/manifest/load';
 import type { ProjectStatus } from '../src/lib/manifest/schema';
 import type { ReleaseCacheData } from '../src/lib/releases/types';
 
-import { readDocsManifest } from '../src/lib/docs/aggregate';
+import { defaultDocsChannel, docsChannelPages, readDocsManifest } from '../src/lib/docs/aggregate';
+import { DOC_CHANNELS, prereleaseLinePromoted } from '../src/lib/docs/channels';
 import { slugifyDocFile } from '../src/lib/docs/links';
 import {
   ManifestValidationError,
@@ -119,10 +120,30 @@ function checkUseCases(project: ResolvedProject, docsPages: Set<string> | undefi
   }
 }
 
+/**
+ * True when two channels publish the same pages from the same source text.
+ * This is the "the prerelease has been promoted" signal: the tag now carries
+ * the same docs as the default branch, so the second channel adds nothing.
+ */
+function publishesSamePages(a: DocsManifestChannel, b: DocsManifestChannel): boolean {
+  if (a.pages.length !== b.pages.length) {
+    return false;
+  }
+  const bySlug = new Map(b.pages.map((page) => [page.slug, page]));
+  return a.pages.every((page) => {
+    const other = bySlug.get(page.slug);
+    if (!other) {
+      return false;
+    }
+    return page.hash ? other.hash === page.hash : other.sourcePath === page.sourcePath;
+  });
+}
+
 /** Documentation must resolve for every documented, non-archived project. */
 function checkDocs(
   project: ResolvedProject,
   docsManifest: DocsManifest | null,
+  data: ReleaseCacheData | null,
 ): Set<string> | undefined {
   if (!project.docs) {
     return undefined;
@@ -138,7 +159,10 @@ function checkDocs(
     });
   }
   const docsProject = docsManifest?.projects.find((entry) => entry.projectId === project.id);
-  const pages = new Set((docsProject?.pages ?? []).map((page) => page.slug));
+  const live = defaultDocsChannel(docsProject);
+  // Use-case deep links point at the canonical `/docs/<id>/<page>/` URLs, so
+  // they resolve against the default channel only.
+  const pages = new Set(docsChannelPages(docsProject).map((page) => page.slug));
   if (project.status === 'archived') {
     return pages;
   }
@@ -148,11 +172,105 @@ function checkDocs(
       field: 'docs',
       observed: 'no aggregated pages',
       expected: 'at least one page under /docs/<id>/',
-      remediation: `check that ${project.docs.source} resolves on branch main, run \`just live-data-sync\`, and review the sync output.`,
+      remediation: `check that ${project.docs.source} resolves at the channel refs, run \`just live-data-sync\`, and review the sync output.`,
     });
     return pages;
   }
-  if (docsProject.pages.length === 0) {
+
+  const declared = project.docs.source === 'github-path' ? project.docs.channels : undefined;
+  if (declared) {
+    for (const id of DOC_CHANNELS) {
+      if (declared[id] === undefined) {
+        continue;
+      }
+      const channel = docsProject.channels.find((candidate) => candidate.id === id);
+      // A prerelease channel is published only while its line is ahead of the
+      // newest stable release (ADR 0009). Absence at promotion time is expected,
+      // not drift, so it is an observation rather than a blocker.
+      const gate =
+        data === null
+          ? null
+          : id === 'prerelease'
+            ? prereleaseLinePromoted(project, data)
+            : { publish: true };
+      if (!channel) {
+        if (gate && !gate.publish) {
+          warn({
+            project: project.id,
+            field: `docs.channels.${id}`,
+            observed: `not published (${gate.reason})`,
+            expected:
+              'a prerelease channel only while a prerelease outranks the latest stable release',
+            remediation:
+              'nothing to do: the channel is declared and returns automatically with the next prerelease release.',
+          });
+          continue;
+        }
+        fail({
+          project: project.id,
+          field: `docs.channels.${id}`,
+          observed: 'not present in the aggregated documentation',
+          expected: `a "${id}" channel in src/.cache/docs/index.json`,
+          remediation:
+            'run `just data-sync` and review the sync output: the pinned ref may not contain the docs path, or the channel duplicated another ref and was dropped.',
+        });
+        continue;
+      }
+      if (channel.pages.length === 0) {
+        fail({
+          project: project.id,
+          field: `docs.channels.${id}`,
+          observed: '0 pages',
+          expected: 'at least one page',
+          remediation: `fix the ${id} channel source/exclude configuration and re-run \`just data-sync\`.`,
+        });
+        continue;
+      }
+      if (gate && !gate.publish) {
+        warn({
+          project: project.id,
+          field: `docs.channels.${id}`,
+          observed: `published while ${gate.reason}`,
+          expected:
+            'a prerelease channel only while a prerelease outranks the latest stable release',
+          remediation:
+            'run `just data-sync` so the mirror is rebuilt from the current release data.',
+        });
+      }
+      if (!channel.default && live && publishesSamePages(channel, live)) {
+        warn({
+          project: project.id,
+          field: `docs.channels.${id}`,
+          observed: `publishes the same ${channel.pages.length} page(s) as the "${live.id}" channel`,
+          expected: 'a second channel only while the prerelease differs from the live release',
+          remediation:
+            'nothing to do: the channel is withheld automatically once the release data shows the prerelease has shipped.',
+        });
+      }
+    }
+    const undeclared = docsProject.channels.filter((channel) => declared[channel.id] === undefined);
+    if (undeclared.length > 0) {
+      warn({
+        project: project.id,
+        field: 'docs.channels',
+        observed: `the docs cache has a "${undeclared[0]!.id}" channel that the manifest does not declare`,
+        expected: 'a docs cache written from the current manifest',
+        remediation: 'run `just data-sync` so the mirror, sidebar and manifest agree.',
+      });
+    }
+  }
+
+  if (!live) {
+    fail({
+      project: project.id,
+      field: 'docs',
+      observed: 'no default channel',
+      expected: 'one channel that owns /docs/<id>/',
+      remediation: 'run `just data-sync`; every documented project must contribute a live channel.',
+    });
+    return pages;
+  }
+  if (live.pages.length === 0) {
     fail({
       project: project.id,
       field: 'docs',
@@ -609,7 +727,7 @@ export function checkProjects(): { errors: Finding[]; warnings: Finding[] } {
   }
 
   for (const project of projects) {
-    const docsPages = checkDocs(project, docsManifest);
+    const docsPages = checkDocs(project, docsManifest, data);
     checkUseCases(project, docsPages);
     checkExperimental(project);
     if (data) {

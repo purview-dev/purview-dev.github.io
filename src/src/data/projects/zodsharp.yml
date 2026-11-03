@@ -31,6 +31,18 @@ docs:
     - _Sidebar.md
     - Home.md
     - index.md
+  # Two views of the same documentation (ADR 0009): the published release a
+  # reader can install today (`live`, the canonical /docs/zodsharp/ URLs) and
+  # the line that has not shipped yet (`prerelease`, /docs/zodsharp/prerelease/).
+  # `main` is ahead of the latest release, so the pinned tag is the honest
+  # source for the live docs. Promotion is automatic: the prerelease channel
+  # stops being published as soon as a stable release catches up with the
+  # prerelease line, and returns with the next prerelease.
+  channels:
+    live:
+      ref: latest-stable
+    prerelease:
+      ref: default
 targetFrameworks:
   - net8.0
   - net9.0

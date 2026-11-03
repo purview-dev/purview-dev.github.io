@@ -1,4 +1,5 @@
 import type { ProjectStatus } from '../manifest/schema';
+import type { DocChannelId, DocRefKind } from './channels';
 
 import { slugifyDocFile } from './links';
 
@@ -20,6 +21,14 @@ export interface DocFrontmatter {
   projectName?: string;
   sourcePath: string;
   editUrl: string;
+  /** Documentation channel this page was aggregated for (ADR 0009). */
+  docsChannel?: DocChannelId;
+  /** Git ref the page was read from (`main`, `v2.4.2`). */
+  docsRef?: string;
+  /** How that ref is addressed, so the edit link can be a view link for a tag. */
+  docsRefKind?: DocRefKind;
+  /** Display version of a tag-pinned channel (e.g. `2.4.2`). */
+  docsVersion?: string;
   /** Repository topics, surfaced as tags on the documentation page. */
   tags?: string[];
   sidebarLabel?: string;
@@ -136,6 +145,18 @@ export function renderFrontmatter(frontmatter: DocFrontmatter): string {
   }
   lines.push(`sourcePath: ${quote(frontmatter.sourcePath)}`);
   lines.push(`editUrl: ${quote(frontmatter.editUrl)}`);
+  if (frontmatter.docsChannel !== undefined) {
+    lines.push(`docsChannel: ${frontmatter.docsChannel}`);
+  }
+  if (frontmatter.docsRef !== undefined) {
+    lines.push(`docsRef: ${quote(frontmatter.docsRef)}`);
+  }
+  if (frontmatter.docsRefKind !== undefined) {
+    lines.push(`docsRefKind: ${frontmatter.docsRefKind}`);
+  }
+  if (frontmatter.docsVersion !== undefined) {
+    lines.push(`docsVersion: ${quote(frontmatter.docsVersion)}`);
+  }
   if (frontmatter.tags && frontmatter.tags.length > 0) {
     lines.push(`tags: [${frontmatter.tags.join(', ')}]`);
   }

@@ -4,7 +4,7 @@ import type { DiscoverableResource } from './types';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
-import { DOCS_OUTPUT_DIR } from '../docs/aggregate';
+import { DOCS_OUTPUT_DIR, defaultDocsChannel } from '../docs/aggregate';
 import {
   buildDeploymentState,
   buildDiscoveryManifest,
@@ -21,7 +21,13 @@ import {
 } from './resources';
 import { renderRobotsTxt } from './robots';
 import { latestLastmod, renderSitemapIndex, renderUrlset } from './sitemap';
-import { SITEMAP_INDEX_PATH, sitemapLlmsUrl, sitemapPagesUrl, sitemapProjectsUrl } from './urls';
+import {
+  SITEMAP_INDEX_PATH,
+  docsUrl,
+  sitemapLlmsUrl,
+  sitemapPagesUrl,
+  sitemapProjectsUrl,
+} from './urls';
 
 /**
  * Emit every discovery artifact from the discovery model. Shared by the Astro
@@ -95,7 +101,11 @@ export function emitDiscoveryArtifacts(options: EmitOptions): EmitResult {
     const manifestEntry = ctx.docsManifest?.projects.find(
       (entry) => entry.projectId === project.id,
     );
-    const projectPages = (manifestEntry?.pages ?? []).map((page) => ({
+    // The machine-readable bundles publish the default (live) channel: two
+    // versions of the same page in one corpus would be ambiguous. The concise
+    // bundle still links the prerelease channel when one is published.
+    const channel = defaultDocsChannel(manifestEntry);
+    const projectPages = (channel?.pages ?? []).map((page) => ({
       slug: page.slug,
       title: page.title,
     }));
@@ -103,7 +113,13 @@ export function emitDiscoveryArtifacts(options: EmitOptions): EmitResult {
       const file = resolve(DOCS_OUTPUT_DIR, 'docs', project.id, `${slug}.md`);
       return existsSync(file) ? readFileSync(file, 'utf8') : null;
     };
-    write(`projects/${project.id}/llms.txt`, renderProjectLlms(project, projectPages));
+    const prerelease = manifestEntry?.channels.find((candidate) => !candidate.default);
+    write(
+      `projects/${project.id}/llms.txt`,
+      renderProjectLlms(project, projectPages, {
+        prereleaseUrl: prerelease ? docsUrl(project.id, prerelease.id) : undefined,
+      }),
+    );
     write(
       `projects/${project.id}/llms-full.txt`,
       renderProjectLlmsFull(project, projectPages, readPage),

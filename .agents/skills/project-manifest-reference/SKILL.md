@@ -62,9 +62,9 @@ Adding a value to any of these lists is a schema change and requires an ADR. `ex
 
 | `source` | Fields | Behaviour |
 | --- | --- | --- |
-| `github-path` | `path` (required), plus `rootPage`, `readmeAsIndex`, `order`, `exclude` | Walks `<path>/**/*.md` on branch `main` |
-| `wiki` | `rootPage`, `readmeAsIndex`, `order`, `exclude` | Shallow-clones `<repo>.wiki.git`; `_Sidebar.md` orders pages, `_Footer.md` is skipped |
-| `readme` | none | Publishes `README.md` alone as `/docs/<id>/` |
+| `github-path` | `path` (required), plus `rootPage`, `readmeAsIndex`, `order`, `exclude`, `channels` | Walks `<path>/**/*.md` at each channel's ref (default branch when no `channels`) |
+| `wiki` | `rootPage`, `readmeAsIndex`, `order`, `exclude` | Shallow-clones `<repo>.wiki.git`; `_Sidebar.md` orders pages, `_Footer.md` is skipped. Single channel only |
+| `readme` | none | Publishes `README.md` alone as `/docs/<id>/`. Single channel only |
 
 - `rootPage` names the markdown file that becomes the landing page (`index`). It may only select a
   non-index page when the conventional root page is removed via `exclude` (the aggregation otherwise
@@ -74,6 +74,44 @@ Adding a value to any of these lists is a schema change and requires an ADR. `ex
   `rootPage`; it aliases `readme` to `index`.
 - `order` is an explicit list of page slugs, applied before the `_Sidebar.md` order.
 - If `docs` is set but the aggregation yields no pages, `just data-sync` fails loudly.
+
+## `docs.channels` — live and prerelease documentation (ADR 0009)
+
+A project whose default branch is ahead of its latest release can publish two
+views of its documentation. Channels are optional; omitting them keeps one
+`live` channel on the default branch.
+
+```yaml
+docs:
+  source: github-path
+  path: docs/wiki
+  rootPage: Getting-Started.md
+  channels:
+    live:
+      ref: latest-stable   # newest non-prerelease release tag
+    prerelease:
+      ref: default         # the repository's default branch
+```
+
+| Field | Meaning |
+| --- | --- |
+| `channels.live` / `channels.prerelease` | At most these two; unknown keys are rejected |
+| `ref` | `default` (default branch), `latest-stable`, `latest-prerelease`, or any branch/tag/commit used verbatim. Defaults: `live` → `latest-stable`, `prerelease` → `default` |
+| `path`, `rootPage`, `readmeAsIndex`, `order`, `exclude` | Optional per-channel overrides of the shared block (a tag's docs tree can differ from `main`) |
+
+- **`live` is the default channel** and owns `/docs/<id>/…`; `prerelease` is
+  served at `/docs/<id>/prerelease/…`. A prerelease-only project is the default
+  channel and serves its docs at the canonical URLs.
+- `latest-stable` with no stable release → live follows the default branch
+  (warning). `latest-prerelease` with no tag → the channel is skipped. Two
+  channels on the same ref → the non-default one is dropped.
+- **Promotion is automatic.** The prerelease channel is published only while a
+  prerelease version outranks the newest stable release, comparing GitHub
+  release tags with NuGet versions. Publishing `3.0.0` retires
+  `3.0.0-prerelease.N` docs on the next build; the channel returns with the next
+  prerelease. No manifest edit or PR is needed to stop publishing it.
+- `wiki` and `readme` sources reject `channels`: they have a single version.
+- Use-case `docsPage` deep links resolve against the **default** channel.
 
 ## Loader-enforced rules (`loadProjects()`)
 

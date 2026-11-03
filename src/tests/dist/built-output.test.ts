@@ -3,6 +3,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { LOCAL_PATH_PATTERNS, SECRET_PATTERNS } from '../../src/lib/build-paths';
+import { readDocsManifest } from '../../src/lib/docs/aggregate';
+import { channelDisplayLabel } from '../../src/lib/docs/channels';
 import { buildLlmsDetails } from '../../src/lib/llms-details';
 import { loadProjects } from '../../src/lib/manifest/load';
 import { compareNuGetVersions } from '../../src/lib/nuget-version';
@@ -324,5 +326,51 @@ describe('built footer version', () => {
     const content = requireBuilt('index.html');
     expect(content).toContain(`>\nv${version} <`);
     expect(content).toContain('https://github.com/purview-dev/purview-dev.github.io/releases');
+  });
+});
+
+describe('built documentation channels', () => {
+  // ADR 0009: a project may publish a live channel (canonical URLs) and a
+  // prerelease channel (`/docs/<id>/prerelease/`). Labels come from the docs
+  // cache so the assertions never hard-code the current release.
+  const manifest = readDocsManifest();
+  const zodsharp = manifest?.projects.find((project) => project.projectId === 'zodsharp');
+  const live = zodsharp?.channels.find((channel) => channel.default);
+  const prerelease = zodsharp?.channels.find((channel) => !channel.default);
+
+  test('ZodSharp builds both channel trees', () => {
+    expect(live?.pages.length ?? 0).toBeGreaterThan(0);
+    expect(prerelease?.pages.length ?? 0).toBeGreaterThan(0);
+    expect(existsSync(resolve(DIST, 'docs/zodsharp/index.html'))).toBe(true);
+    expect(existsSync(resolve(DIST, 'docs/zodsharp/prerelease/index.html'))).toBe(true);
+  });
+
+  test('the live page offers the prerelease channel', () => {
+    const content = requireBuilt('docs/zodsharp/index.html');
+    expect(content).toContain('/docs/zodsharp/prerelease/');
+    if (live) {
+      expect(content).toContain(channelDisplayLabel(live));
+    }
+    if (prerelease) {
+      expect(content).toContain(channelDisplayLabel(prerelease));
+    }
+  });
+
+  test('a prerelease page says so and links back to the live channel', () => {
+    const content = requireBuilt('docs/zodsharp/prerelease/index.html');
+    expect(content).toContain('Prerelease.');
+    expect(content).toContain('href="/docs/zodsharp/"');
+  });
+
+  test('a published channel is never replaced by a promotion redirect', () => {
+    // The redirect writer must skip URLs that a live channel still owns.
+    const content = requireBuilt('docs/zodsharp/prerelease/index.html');
+    expect(content).not.toContain('http-equiv="refresh"');
+  });
+
+  test('the single-channel projects keep the canonical layout', () => {
+    // Event Sourcing declares no channels, so it must not grow a second tree.
+    expect(existsSync(resolve(DIST, 'docs/event-sourcing/index.html'))).toBe(true);
+    expect(existsSync(resolve(DIST, 'docs/event-sourcing/prerelease'))).toBe(false);
   });
 });

@@ -80,67 +80,80 @@ function validateDocsMirror(): void {
 
   const expected = new Set<string>();
   for (const project of manifest.projects) {
-    for (const page of project.pages) {
-      expected.add(`${project.projectId}/${page.slug}`);
-      if (!existsSync(join(mirrorRoot, project.projectId, `${page.slug}.md`))) {
-        fail(
-          `Docs manifest lists a page with no mirror file: docs/${project.projectId}/${page.slug}. ` +
-            'The Starlight sidebar would link to a missing page — re-run `just data-sync`.',
-        );
+    for (const channel of project.channels) {
+      for (const page of channel.pages) {
+        // A non-default channel adds its id as a path segment:
+        // `docs/<id>/<channel>/<slug>.md` versus `docs/<id>/<slug>.md`.
+        const relative = channel.default
+          ? `${project.projectId}/${page.slug}`
+          : `${project.projectId}/${channel.id}/${page.slug}`;
+        expected.add(relative);
+        if (!existsSync(`${join(mirrorRoot, ...relative.split('/'))}.md`)) {
+          fail(
+            `Docs manifest lists a page with no mirror file: docs/${relative}.md. ` +
+              'The Starlight sidebar would link to a missing page — re-run `just data-sync`.',
+          );
+        }
       }
     }
   }
 
-  for (const entry of readdirSync(mirrorRoot, { withFileTypes: true })) {
-    if (!entry.isDirectory()) {
-      continue;
-    }
-    for (const page of readdirSync(join(mirrorRoot, entry.name))) {
-      if (page.endsWith('.md') && !expected.has(`${entry.name}/${page.slice(0, -3)}`)) {
+  const walk = (directory: string, prefix: string): void => {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        walk(join(directory, entry.name), `${prefix}${entry.name}/`);
+        continue;
+      }
+      if (!entry.name.endsWith('.md')) {
+        continue;
+      }
+      const relative = `${prefix}${entry.name.slice(0, -3)}`;
+      if (!expected.has(relative)) {
         fail(
-          `Docs mirror page is missing from the manifest: docs/${entry.name}/${page}. ` +
+          `Docs mirror page is missing from the manifest: docs/${relative}.md. ` +
             'Re-run `just data-sync` so the sidebar and content agree.',
         );
       }
-      if (!page.endsWith('.md')) {
-        continue;
-      }
-
-      const relativePath = `docs/${entry.name}/${page}`;
-      const markdown = readFileSync(join(mirrorRoot, entry.name, page), 'utf8');
-      const frontmatterMatch = /^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n([\s\S]*)$/.exec(markdown);
-      if (!frontmatterMatch?.[1] || frontmatterMatch[2] === undefined) {
-        fail(`Generated Markdown has invalid front matter: ${relativePath}.`);
-        continue;
-      }
-
-      let frontmatter: Record<string, unknown>;
-      try {
-        frontmatter = parse(frontmatterMatch[1]) as Record<string, unknown>;
-      } catch {
-        fail(`Generated Markdown front matter is not valid YAML: ${relativePath}.`);
-        continue;
-      }
-
-      const body = frontmatterMatch[2];
-      const description = String(frontmatter.description ?? '').trim();
-      if (!description || description === '---' || !/[A-Za-z0-9]/.test(description)) {
-        fail(`Generated Markdown has an unreadable description: ${relativePath}.`);
-      }
-      if (!extractDescription(body)) {
-        fail(`Generated Markdown has no readable prose: ${relativePath}.`);
-      }
-      const { titleCount, unclosedFence } = inspectMarkdownStructure(body);
-      if (titleCount !== 1) {
-        fail(`Generated Markdown must contain exactly one H1: ${relativePath} (${titleCount}).`);
-      }
-      if (unclosedFence) {
-        fail(`Generated Markdown has an unclosed fenced block: ${relativePath}.`);
-      }
-      if (body.includes('<doclink:')) {
-        fail(`Generated Markdown contains an unresolved documentation link: ${relativePath}.`);
-      }
+      validateMirrorPage(join(directory, entry.name), `docs/${relative}.md`);
     }
+  };
+  walk(mirrorRoot, '');
+}
+
+/** Front-matter and body invariants applied to every generated mirror page. */
+function validateMirrorPage(file: string, relativePath: string): void {
+  const markdown = readFileSync(file, 'utf8');
+  const frontmatterMatch = /^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n([\s\S]*)$/.exec(markdown);
+  if (!frontmatterMatch?.[1] || frontmatterMatch[2] === undefined) {
+    fail(`Generated Markdown has invalid front matter: ${relativePath}.`);
+    return;
+  }
+
+  let frontmatter: Record<string, unknown>;
+  try {
+    frontmatter = parse(frontmatterMatch[1]) as Record<string, unknown>;
+  } catch {
+    fail(`Generated Markdown front matter is not valid YAML: ${relativePath}.`);
+    return;
+  }
+
+  const body = frontmatterMatch[2];
+  const description = String(frontmatter.description ?? '').trim();
+  if (!description || description === '---' || !/[A-Za-z0-9]/.test(description)) {
+    fail(`Generated Markdown has an unreadable description: ${relativePath}.`);
+  }
+  if (!extractDescription(body)) {
+    fail(`Generated Markdown has no readable prose: ${relativePath}.`);
+  }
+  const { titleCount, unclosedFence } = inspectMarkdownStructure(body);
+  if (titleCount !== 1) {
+    fail(`Generated Markdown must contain exactly one H1: ${relativePath} (${titleCount}).`);
+  }
+  if (unclosedFence) {
+    fail(`Generated Markdown has an unclosed fenced block: ${relativePath}.`);
+  }
+  if (body.includes('<doclink:')) {
+    fail(`Generated Markdown contains an unresolved documentation link: ${relativePath}.`);
   }
 }
 

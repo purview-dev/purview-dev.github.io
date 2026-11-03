@@ -19,6 +19,13 @@ export const collections = {
         projectName: z.string().optional(),
         sourcePath: z.string(),
         editUrl: z.string(),
+        // Documentation channels (ADR 0009): which channel and git ref the page
+        // was aggregated from, and whether that ref is editable (branch) or
+        // read-only (tag).
+        docsChannel: z.enum(['live', 'prerelease']).optional(),
+        docsRef: z.string().optional(),
+        docsRefKind: z.enum(['branch', 'tag', 'sha']).optional(),
+        docsVersion: z.string().optional(),
         tags: z.array(z.string()).default([]),
       }),
     }),

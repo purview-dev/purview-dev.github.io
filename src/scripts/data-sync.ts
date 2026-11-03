@@ -5,7 +5,7 @@ import { readReleaseCache, readReleaseFixture, writeReleaseCache } from '../src/
 import { fetchReleaseData } from './fetch-releases';
 import { processBranding } from './process-branding';
 import { syncAssets } from './sync-assets';
-import { hasDocsMirror, syncDocs } from './sync-docs';
+import { hasCurrentDocsMirror, hasDocsMirror, syncDocs } from './sync-docs';
 
 const RELEASES_CACHE_FILE = resolve('.cache/releases/releases.json');
 
@@ -67,10 +67,17 @@ async function syncReleases(mode: Mode): Promise<void> {
 }
 
 async function syncDocsMirror(mode: Mode): Promise<void> {
+  const current = hasCurrentDocsMirror();
   if (mode === 'cache' || mode === 'fixture') {
-    if (hasDocsMirror()) {
+    if (current) {
       console.log('Docs: using existing mirror.');
       return;
+    }
+    if (hasDocsMirror()) {
+      throw new Error(
+        'Docs: the mirror at src/content/docs was written by an older docs manifest schema. ' +
+          'Run `just data-sync` (live) once to regenerate it.',
+      );
     }
     if (mode === 'cache') {
       throw new Error(
@@ -78,7 +85,7 @@ async function syncDocsMirror(mode: Mode): Promise<void> {
       );
     }
   }
-  if (hasDocsMirror() && mode === 'auto') {
+  if (current && mode === 'auto') {
     console.log('Docs: using existing mirror.');
     return;
   }

@@ -45,6 +45,7 @@ function resourceLines(project: ResolvedProject): string[] {
 export function renderProjectLlms(
   project: ResolvedProject,
   pages: readonly ProjectLlmsPage[],
+  options: { prereleaseUrl?: string } = {},
 ): string {
   const lines: string[] = [
     `# ${project.name}`,
@@ -57,6 +58,10 @@ export function renderProjectLlms(
     '',
     ...resourceLines(project),
   ];
+
+  if (options.prereleaseUrl) {
+    lines.push(`- Prerelease documentation: ${options.prereleaseUrl}`);
+  }
 
   if (pages.length > 0) {
     lines.push('', '## Documentation pages', '');

@@ -58,6 +58,44 @@ const useCaseSchema = z
     path: ['language'],
   });
 
+/**
+ * Documentation channels (`live` and, optionally, `prerelease`).
+ *
+ * A channel is a second view of the same documentation taken from a different
+ * git ref: the release a reader can install today (`live`, the default) and the
+ * line that has not shipped yet (`prerelease`). `ref` selects the source; every
+ * other field overrides the shared `docs` layout, because a release tag's tree
+ * can legitimately differ from the default branch (a renamed page, a different
+ * landing page).
+ *
+ * `ref` accepts three tokens — `default` (the repository's default branch),
+ * `latest-stable` and `latest-prerelease` (the newest matching GitHub release
+ * tag) — or any branch/tag name used verbatim. See `lib/docs/channels`.
+ */
+const docsChannelSchema = z.object({
+  ref: z
+    .string()
+    .min(
+      1,
+      'must be a ref token (`default`, `latest-stable`, `latest-prerelease`) or a branch/tag name',
+    )
+    .optional(),
+  path: z.string().min(1, 'must be a non-empty repository path such as "docs"').optional(),
+  rootPage: z.string().min(1, 'must be a non-empty markdown file path').optional(),
+  readmeAsIndex: z.boolean().optional(),
+  order: z.array(z.string()).optional(),
+  exclude: z.array(z.string()).optional(),
+});
+
+const docsChannelsSchema = z
+  .object({
+    live: docsChannelSchema.optional(),
+    prerelease: docsChannelSchema.optional(),
+  })
+  .refine((value) => value.live !== undefined || value.prerelease !== undefined, {
+    message: 'must declare `live`, `prerelease`, or both',
+  });
+
 const docsPathSchema = z.object({
   source: z.literal('github-path'),
   path: z.string().min(1, 'must be a non-empty repository path such as "docs"'),
@@ -65,19 +103,30 @@ const docsPathSchema = z.object({
   readmeAsIndex: z.boolean().optional(),
   order: z.array(z.string()).optional(),
   exclude: z.array(z.string()).optional(),
+  channels: docsChannelsSchema.optional(),
 });
 
-const docsWikiSchema = z.object({
-  source: z.literal('wiki'),
-  rootPage: z.string().min(1, 'must be a non-empty markdown file path').optional(),
-  readmeAsIndex: z.boolean().optional(),
-  order: z.array(z.string()).optional(),
-  exclude: z.array(z.string()).optional(),
-});
+/**
+ * A wiki is its own git repository with a single HEAD, so it has no ref to pin
+ * a second channel to. `.strict()` is what turns a mistaken
+ * `channels:`/`path:` on a wiki block into an error instead of silently
+ * dropping it.
+ */
+const docsWikiSchema = z
+  .object({
+    source: z.literal('wiki'),
+    rootPage: z.string().min(1, 'must be a non-empty markdown file path').optional(),
+    readmeAsIndex: z.boolean().optional(),
+    order: z.array(z.string()).optional(),
+    exclude: z.array(z.string()).optional(),
+  })
+  .strict();
 
-const docsReadmeSchema = z.object({
-  source: z.literal('readme'),
-});
+const docsReadmeSchema = z
+  .object({
+    source: z.literal('readme'),
+  })
+  .strict();
 
 const docsSchema = z.discriminatedUnion('source', [
   docsPathSchema,
@@ -188,6 +237,7 @@ export type ProjectManifest = z.infer<typeof manifestSchema>;
 export type ProjectRecord = z.infer<typeof projectSchema>;
 export type ExternalProjectRecord = z.infer<typeof externalProjectSchema>;
 export type ProjectDocsConfig = z.infer<typeof docsSchema>;
+export type ProjectDocsChannel = z.infer<typeof docsChannelSchema>;
 export type ProjectPackage = z.infer<typeof packageSchema>;
 export type ProjectAsset = z.infer<typeof assetSchema>;
 export type ProjectAcknowledgment = z.infer<typeof acknowledgmentSchema>;

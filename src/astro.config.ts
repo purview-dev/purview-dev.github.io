@@ -10,6 +10,7 @@ import starlightLlmsTxt from 'starlight-llms-txt';
 import starlightSidebarTopics from 'starlight-sidebar-topics';
 
 import discoveryIntegration from './config/discovery-integration';
+import docsRedirectsIntegration from './config/docs-redirects-integration';
 import { remarkMermaid } from './config/remark-mermaid.mjs';
 import { projectLlmsUrl } from './src/lib/discovery/urls';
 import { readDocsManifest } from './src/lib/docs/aggregate';
@@ -124,6 +125,10 @@ export default defineConfig({
   integrations: [
     preact(),
     suppressStarlightSitemap,
+    // Registered before discovery so a retired channel's redirect pages exist
+    // before the sitemap/llms artifacts are derived (Astro's page list never
+    // includes them, so they stay out of every generated index).
+    docsRedirectsIntegration(),
     discoveryIntegration(),
     starlight({
       title: SITE.fullName,

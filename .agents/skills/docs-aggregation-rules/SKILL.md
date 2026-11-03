@@ -24,12 +24,61 @@ and records the page list in `src/.cache/docs/index.json`.
 
 | `docs.source` | Fetch mechanism | Notes |
 | --- | --- | --- |
-| `github-path` | Repository tree (`git/trees/main?recursive=1`) filtered to `<path>/**/*.md` | Each file fetched from `raw.githubusercontent.com` on branch `main` |
-| `wiki` | `git clone --depth 1 https://github.com/<repo>.wiki.git` | `_Sidebar.md` and `_Footer.md` are never rendered |
-| `readme` | Raw `README.md` | Exactly one page (`index`) |
+| `github-path` | Repository tree (`git/trees/<ref>?recursive=1`) filtered to `<path>/**/*.md` | Each file fetched from `raw.githubusercontent.com` at the channel's ref (the repository's default branch when no `channels` are declared) |
+| `wiki` | `git clone --depth 1 https://github.com/<repo>.wiki.git` | `_Sidebar.md` and `_Footer.md` are never rendered. A wiki has one HEAD, so it supports a single channel |
+| `readme` | Raw `README.md` | Exactly one page (`index`), single channel |
 
-Branch is always **`main`**. `lastReviewed` is the last commit date for the file (Atom feed for
-`github-path`/`readme`, wiki HEAD commit for `wiki`).
+The ref is the repository's **default branch** (from the release cache, falling
+back to `main`) unless the manifest declares `docs.channels` (ADR 0009).
+`lastReviewed` is the last commit date for the file (Atom feed for
+`github-path`/`readme`, wiki HEAD commit for `wiki`); a channel pinned to a
+release tag uses that release's date instead, because the content cannot move.
+
+## Channels (`live` and `prerelease`)
+
+A project may publish two views of its documentation:
+
+```yaml
+    docs:
+      source: github-path
+      path: docs/wiki
+      rootPage: Getting-Started.md
+      channels:
+        live:
+          ref: latest-stable
+        prerelease:
+          ref: default
+```
+
+- The **default** channel (`live`, or the only declared channel) is written to
+  `src/src/content/docs/docs/<id>/<page>.md` and served at `/docs/<id>/<page>/`.
+- Any other channel is written to
+  `src/src/content/docs/docs/<id>/<channel>/<page>.md` and served at
+  `/docs/<id>/<channel>/<page>/`.
+- `docs/<id>/<channel>` is reserved: a source page whose slug equals a channel id
+  raises `DocsValidationError`.
+- `src/.cache/docs/index.json` is schema 2 and stores
+  `projects[].channels[] = { id, ref, refKind, version, label, default, pages[] }`.
+  A cache from an older schema reads as absent, so `just data-sync` regenerates it.
+- The Starlight sidebar groups a two-channel project per channel (`Live 2.4.2`,
+  `Prerelease main`); a one-channel project keeps a flat list. The page title
+  component renders the switcher and a prerelease notice.
+- **Promotion is automatic.** The prerelease channel is only aggregated while a
+  prerelease version outranks the newest stable release, computed from GitHub
+  release tags and NuGet versions. A stable release that catches up retires the
+  channel on the next sync (a `docs <id>: prerelease documentation is not
+  published: …` line, not an error) and the next prerelease restores it. Never
+  remove the declaration just to stop publishing it.
+- **Retired URLs redirect to live.** For each withheld channel URL the build
+  writes a `noindex` meta-refresh page (canonical + `data-pagefind-ignore`)
+  pointing at the live page with the same slug — GitHub Pages serves files only,
+  so `_redirects` is not an option. These files are written at
+  `astro:build:done` (`config/docs-redirects-integration.ts`), outside Astro's
+  route list, so they stay out of the sitemap, `discover.json` and the llms
+  bundles.
+- Per-project `llms-full.txt` publishes the default channel only; `llms.txt`
+  also links the prerelease channel when one exists.
+
 
 ## Root page selection (the most common onboarding failure)
 
