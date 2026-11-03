@@ -195,7 +195,23 @@ function checkDocs(
             ? prereleaseLinePromoted(project, data)
             : { publish: true };
       if (!channel) {
-        if (gate && !gate.publish) {
+        if (gate === null) {
+          // No release data, so nothing can say whether this channel should exist.
+          // Reporting it against `docs.channels` points the reviewer at the manifest
+          // and the project's documentation, which are the two things that are
+          // usually fine: the missing input is the release cache.
+          warn({
+            project: project.id,
+            field: `docs.channels.${id}`,
+            observed:
+              'not present in the aggregated documentation, and no release data to explain it',
+            expected: 'a docs mirror built from the release data this check reads',
+            remediation:
+              'run `just data-sync` so the mirror and the catalogue are built from the same release data.',
+          });
+          continue;
+        }
+        if (!gate.publish) {
           warn({
             project: project.id,
             field: `docs.channels.${id}`,

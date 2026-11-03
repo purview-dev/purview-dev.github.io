@@ -122,8 +122,14 @@ describe('documentation channels', () => {
       id: 'prerelease',
       ref: 'main',
       refKind: 'branch',
+      // The channel follows `main`, but it documents the version that line
+      // ships: a reader chooses between versions, not branch names. The ref stays
+      // on the record for the tooltip and the edit links.
+      version: '3.0.0-prerelease.2',
+      label: '3.0.0-prerelease.2',
       default: false,
     });
+    expect(channelDisplayLabel(channels[1]!)).toBe('Prerelease 3.0.0-prerelease.2');
   });
 
   test('live falls back to the default branch when no stable release exists', () => {
@@ -185,11 +191,26 @@ describe('documentation channels', () => {
         id: 'prerelease',
         ref: 'main',
         refKind: 'branch',
-        version: null,
-        label: 'main',
+        version: '3.0.0-prerelease.2',
+        label: '3.0.0-prerelease.2',
         default: true,
       },
     ]);
+  });
+
+  test('a commit-pinned prerelease channel keeps the commit label', () => {
+    // A SHA is frozen, so there is no release line to name: the commit stays the
+    // most honest label the switcher can show.
+    const { channels } = resolveDocChannels(
+      project(docsConfig({ prerelease: { ref: 'd0dbc74417d4445226a58ef96464d4d3519bd3c4' } })),
+      releaseData(ZODSHARP_RELEASES),
+    );
+    expect(channels[0]).toMatchObject({
+      id: 'prerelease',
+      refKind: 'sha',
+      version: null,
+      label: 'd0dbc74',
+    });
   });
 
   test('explicit refs keep their kind and display label', () => {

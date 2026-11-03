@@ -164,6 +164,30 @@ function publishedVersions(project: ResolvedProject, data: ReleaseCacheData): st
   return versions;
 }
 
+/**
+ * The version a branch-pinned channel documents, for display.
+ *
+ * A tag channel names its own version. A branch channel names the line it is
+ * preparing instead, which says nothing to a reader choosing between two
+ * versions: `main` on a `prerelease` channel is the line that ships the newest
+ * published prerelease, so that version is the honest label. The resolved `ref`
+ * is kept, so the UI can still show the branch (the page switcher uses it as a
+ * tooltip) and the edit links still target it.
+ *
+ * A `live` channel that fell back to a branch has no stable release to name and
+ * keeps the branch name, and a commit SHA is frozen, so neither is relabelled.
+ */
+function documentedVersion(
+  project: ResolvedProject,
+  data: ReleaseCacheData,
+  channel: { id: DocChannelId; refKind: DocRefKind },
+): string | null {
+  if (channel.id !== 'prerelease' || channel.refKind === 'sha') {
+    return null;
+  }
+  return projectReleaseLine(project, data).prerelease;
+}
+
 export interface PrereleaseChannelGate {
   publish: boolean;
   /** Why the channel is withheld, phrased for the sync log and the catalogue guard. */
@@ -333,14 +357,21 @@ export function resolveDocChannels(
     };
   }
   return {
-    channels: published.map((channel) => ({
-      id: channel.id,
-      ref: channel.ref,
-      refKind: channel.refKind,
-      version: channel.version,
-      label: channel.label,
-      default: channel === defaultChannel,
-    })),
+    channels: published.map((channel) => {
+      // A branch-pinned channel still documents a version: `main` on a
+      // `prerelease` channel is the line that ships the newest published
+      // prerelease. Naming that version — instead of the branch — is what lets a
+      // reader tell the two channels apart in the page switcher (ADR 0009).
+      const version = channel.version ?? documentedVersion(project, data, channel);
+      return {
+        id: channel.id,
+        ref: channel.ref,
+        refKind: channel.refKind,
+        version,
+        label: version ?? channel.label,
+        default: channel === defaultChannel,
+      };
+    }),
     warnings,
   };
 }

@@ -9,6 +9,7 @@ import {
   normalizePagePath,
   partitionResources,
 } from '../../../src/lib/discovery/resources';
+import { DOCS_MANIFEST_SCHEMA } from '../../../src/lib/docs/aggregate';
 import { loadProjects } from '../../../src/lib/manifest/load';
 import { RELEASE_CACHE_SCHEMA_VERSION } from '../../../src/lib/releases/types';
 
@@ -24,8 +25,9 @@ const emptyReleaseData: ReleaseCacheData = {
 const context: DiscoveryContext = {
   projects: loadProjects(),
   docsManifest: {
-    schema: 2,
+    schema: DOCS_MANIFEST_SCHEMA,
     syncedAt: '2026-01-01T00:00:00.000Z',
+    releaseRetrievedAt: '2026-01-01T00:00:00.000Z',
     projects: [
       {
         projectId: 'zodsharp',
