@@ -409,6 +409,22 @@ describe('built documentation channels', () => {
     expect(content).not.toContain('http-equiv="refresh"');
   });
 
+  test('the channel switcher is a drop-down that names each version', () => {
+    const content = requireBuilt('docs/zodsharp/index.html');
+    // A native disclosure keeps every version reachable without JavaScript, and
+    // each option stays a real link.
+    expect(content).toContain('class="doc-channel-menu');
+    expect(content).toContain('<summary');
+    expect(content).toContain('class="doc-channel-options');
+    if (prerelease) {
+      // The option names the version the branch ships — not the branch — and the
+      // branch stays available as the tooltip.
+      expect(channelDisplayLabel(prerelease)).not.toContain('main');
+      expect(content).toContain(channelDisplayLabel(prerelease));
+      expect(content).toContain(`title="Documentation from ${prerelease.ref}"`);
+    }
+  });
+
   test('the single-channel projects keep the canonical layout', () => {
     // Event Sourcing declares no channels, so it must not grow a second tree.
     expect(existsSync(resolve(DIST, 'docs/event-sourcing/index.html'))).toBe(true);

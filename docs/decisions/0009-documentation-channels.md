@@ -134,8 +134,21 @@ history has to survive between builds, and an existing page is never overwritten
   `docsRef`, `docsRefKind`, `docsVersion`). A tag-pinned page links to the file
   at that tag ("View source") rather than offering an edit that cannot work, and
   is not flagged stale: its content is the release, not drift.
-- The sidebar shows one Starlight group per channel (`Live 2.4.2`,
-  `Prerelease main`); single-channel projects keep the flat list.
+- Channels are labelled with the **version they document**, not the ref they read.
+  A tag channel names its own version, and a `prerelease` channel that follows
+  `main` is labelled with the newest published prerelease
+  (`Prerelease 3.0.0-prerelease.2`): a reader chooses between versions, and a
+  branch name says nothing about which one the page describes. A `live` channel
+  that fell back to a branch has no stable release to name and keeps the branch,
+  as does a commit SHA. The resolved `ref` stays on the record, so the branch is
+  still visible and the edit links still target it.
+- The page switcher is a native `<details>` drop-down: the summary names the
+  channel being read, the menu lists every version, the current one carries
+  `aria-current`, and the ref is each option's tooltip. It needs no JavaScript,
+  so the versions stay reachable, and every option is a real link.
+- The sidebar shows one Starlight group per channel with the same labels
+  (`Live 2.4.2`, `Prerelease 3.0.0-prerelease.2`); single-channel projects keep
+  the flat list.
 - The per-project `llms-full.txt` corpus publishes the live channel only, and
   the concise `llms.txt` links the prerelease channel when it exists. Two
   versions of one page in a single corpus is ambiguous to a model.

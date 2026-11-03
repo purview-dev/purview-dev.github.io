@@ -58,21 +58,39 @@ const llmsHref =
 <h1 id="_top">{data?.title}</h1>
 
 {
-  showChannelSwitcher && (
+  showChannelSwitcher && activeChannel && (
     <nav class="doc-channels" aria-label="Documentation version">
       <span class="doc-channels-label">Docs for</span>
-      {channels.map((channel) => (
-        <a
-          href={channelHref(channel.id, channel.default)}
-          class:list={[
-            'doc-channel',
-            { 'doc-channel-current': channel.id === activeChannelId },
-          ]}
-          aria-current={channel.id === activeChannelId ? 'page' : undefined}
-        >
-          {channelDisplayLabel(channel)}
-        </a>
-      ))}
+      <details class="doc-channel-menu">
+        <summary>
+          {channelDisplayLabel(activeChannel)}
+          <span class="doc-channel-caret" aria-hidden="true">
+            ▾
+          </span>
+        </summary>
+        <ul class="doc-channel-options">
+          {channels.map((channel) => (
+            <li>
+              <a
+                href={channelHref(channel.id, channel.default)}
+                class:list={[
+                  'doc-channel-option',
+                  { 'doc-channel-option-current': channel.id === activeChannelId },
+                ]}
+                aria-current={channel.id === activeChannelId ? 'page' : undefined}
+                title={`Documentation from ${channel.ref}`}
+              >
+                <span>{channelDisplayLabel(channel)}</span>
+                {channel.id === activeChannelId && (
+                  <span class="doc-channel-check" aria-hidden="true">
+                    ✓
+                  </span>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
     </nav>
   )
 }
@@ -181,9 +199,11 @@ const llmsHref =
 
 <style>
   /* Channel switcher (ADR 0009). Rendered only when a project publishes both a
-   * live and a prerelease channel; the current channel is marked with
-   * aria-current as well as colour, and the label reads as prose rather than a
-   * bare toggle. */
+   * live and a prerelease channel. It is a native <details> disclosure so the
+   * versions stay reachable without JavaScript: the summary names the channel
+   * the reader is on, the menu lists every version, and each option is a real
+   * link (middle-click and open-in-new-tab keep working). The current option is
+   * marked with aria-current as well as colour. */
   .doc-channels {
     display: flex;
     flex-wrap: wrap;
@@ -198,26 +218,76 @@ const llmsHref =
     margin-right: 0.125rem;
   }
 
-  .doc-channel {
+  .doc-channel-menu {
+    position: relative;
+  }
+
+  .doc-channel-menu > summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    cursor: pointer;
+    list-style: none;
     border-radius: 9999px;
-    border: 1px solid var(--sl-color-hairline);
-    background-color: var(--sl-color-gray-6);
+    border: 1px solid var(--color-brand);
+    background-color: color-mix(in oklab, var(--color-brand) 12%, transparent);
     padding: 0.125rem 0.625rem;
+    color: var(--color-brand);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .doc-channel-menu > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .doc-channel-menu > summary:hover,
+  .doc-channel-menu[open] > summary {
+    background-color: color-mix(in oklab, var(--color-brand) 22%, transparent);
+  }
+
+  .doc-channel-caret {
+    font-size: 0.625rem;
+    line-height: 1;
+  }
+
+  .doc-channel-options {
+    position: absolute;
+    z-index: 20;
+    margin: 0.375rem 0 0;
+    padding: 0.25rem;
+    min-width: 100%;
+    list-style: none;
+    border-radius: 0.5rem;
+    border: 1px solid var(--sl-color-hairline);
+    background-color: var(--sl-color-bg-nav, var(--sl-color-black));
+    box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 0.25);
+  }
+
+  .doc-channel-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border-radius: 0.375rem;
+    padding: 0.1875rem 0.5rem;
     color: var(--sl-color-gray-2);
     text-decoration: none;
     white-space: nowrap;
   }
 
-  .doc-channel:hover {
-    border-color: var(--color-brand);
+  .doc-channel-option:hover {
+    background-color: var(--sl-color-gray-6);
     color: var(--color-brand);
   }
 
-  .doc-channel-current {
-    border-color: var(--color-brand);
-    background-color: color-mix(in oklab, var(--color-brand) 12%, transparent);
+  .doc-channel-option-current {
     color: var(--color-brand);
     font-weight: 600;
+  }
+
+  .doc-channel-check {
+    font-size: 0.6875rem;
   }
 
   /* Stated in prose as well as in the switcher, so a reader who lands on a
