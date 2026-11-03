@@ -58,8 +58,8 @@ The most important rules are:
    `category` and `status` from the schema vocabulary (never invent values).
 4. **Author** — add the record in the correct `order`, with `docs`, `packages`, `targetFrameworks`,
    `install`, `related`/`acknowledgments` where they apply, and at least one use case.
-5. **Fix upstream metadata** — set GitHub topics (tags), make the description useful, enable
-   discussions only when `discussions: true` is declared.
+5. **Fix upstream metadata** — set GitHub topics (tags), make the description useful, and leave
+   `discussions` unset: the site detects it from the repository.
 6. **Integrate and prove** — run `just data-sync`, then `just check-projects`, `bun run typecheck`,
    `bun run test`, `just check-generated`, and finally `just validate`. Confirm the docs page count,
    the sidebar topic, the `/projects/<id>/llms.txt` bundle, and the catalogue/use-case cards.

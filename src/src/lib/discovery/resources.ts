@@ -246,6 +246,16 @@ export function buildResources(
     if (normalized === '404' || normalized === '500') {
       continue;
     }
+    // Non-HTML endpoints (`/skills.json`, …) are machine-readable resources, not
+    // pages: they are linked from the pages that describe them and stay out of
+    // the HTML sitemap, like `discover.json`.
+    if (
+      normalized.endsWith('.json') ||
+      normalized.endsWith('.xml') ||
+      normalized.endsWith('.txt')
+    ) {
+      continue;
+    }
     const classified = classifyPath(normalized, projectIds);
     let lastModified: string | undefined;
     if (classified.kind === 'project' && classified.projectId) {

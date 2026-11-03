@@ -699,3 +699,6 @@ sketch
 BenchmarkDotNet.Artifacts/
 
 .tools/purview-build/**
+
+# Generated: Agent Skills mirrored from the product repositories by `just data-sync`.
+src/public/skills/

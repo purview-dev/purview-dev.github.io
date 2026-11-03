@@ -330,6 +330,31 @@ writes a `noindex` meta-refresh page for each one that points at the live page
 with the same slug (GitHub Pages serves files only, so there is no redirect
 config to declare).
 
+## Agent skills
+
+Purview projects publish Agent Skills at `skills/<name>/SKILL.md` and deliver
+them with the skills CLI (`npx skills add <owner>/<repo>`); nothing ships a
+skill in a NuGet package. The catalogue declares the skills a project authors,
+`just data-sync` mirrors each whole skill directory to `public/skills/<project>/
+<skill>/…`, and the site presents them two ways (ADR 0010):
+
+- `/skills/` lists every skill grouped by project, with the install instructions
+  and a direct link to each `SKILL.md`;
+- `/skills.json` is the machine-readable index (install commands, URLs, files).
+
+The install block is one component (`components/SkillInstall.astro`), rendered
+unchanged on `/skills/` and on every project page that declares skills, so the
+instructions are identical across the suite:
+
+```yaml
+skills:
+  - name: pm-park
+  - name: pm-shape
+```
+
+`just check-projects` fails when a declared skill has no mirror, and
+`just check-generated` fails when one is missing from the build.
+
 ## Release data
 
 Release data is fetched at build time — never from the visitor's browser.

@@ -13,6 +13,7 @@ import {
 import { extractDescription } from '../src/lib/docs/frontmatter';
 import { loadProjects } from '../src/lib/manifest/load';
 import { isReleaseCache, readReleaseCache } from '../src/lib/releases/cache';
+import { listMirroredSkills } from '../src/lib/skills';
 
 const DIST = resolve('dist');
 
@@ -233,6 +234,31 @@ function validateProjectAssets(): void {
   }
 }
 
+/**
+ * Every declared Agent Skill is mirrored from its repository into `public/` and
+ * copied into the built site (ADR 0010), so a missing mirror means `/skills/`
+ * and the project page link to a 404.
+ */
+function validateProjectSkills(): void {
+  for (const project of loadProjects()) {
+    const skills = listMirroredSkills(project.id);
+    if (skills.length === 0) {
+      if (project.skills.length > 0) {
+        fail(`No skills are mirrored for "${project.id}" although the manifest declares them.`);
+      }
+      continue;
+    }
+    for (const skill of skills) {
+      if (!existsSync(resolve(DIST, 'skills', project.id, skill.name, 'SKILL.md'))) {
+        fail(
+          `Missing mirrored skill: skills/${project.id}/${skill.name}/SKILL.md ` +
+            `(declared by "${project.id}"). Re-run \`just data-sync\`.`,
+        );
+      }
+    }
+  }
+}
+
 async function scanForSecrets(): Promise<void> {
   const files = await glob('**/*', { cwd: DIST, onlyFiles: true });
   for (const file of files) {
@@ -281,6 +307,7 @@ async function run(): Promise<number> {
 
   validateProjectLlmsBundles();
   validateProjectAssets();
+  validateProjectSkills();
 
   const llmsFull = readFileSync(resolve(DIST, 'llms-full.txt'), 'utf8');
   const llms = readFileSync(resolve(DIST, 'llms.txt'), 'utf8');

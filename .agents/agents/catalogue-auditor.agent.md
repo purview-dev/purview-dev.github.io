@@ -54,7 +54,8 @@ Load and apply these skills:
    exclusions that cover `_Sidebar.md`/`index.md` stubs, and a non-zero aggregated page count.
 4. **Stability** — `status` matches the repository `archived` flag and the NuGet release channel.
 5. **Metadata and tags** — repository description present and useful, topics non-empty (they are the
-   site's tag chips), homepage/link targets correct, `discussions` matches the repository flag.
+   site's tag chips), homepage/link targets correct, and `discussions` left unset (it is detected
+   from the repository, so only an explicit override may disagree with it).
 6. **Packages** — every declared package id exists on NuGet with published versions, exactly one
    `primary`, and `targetFrameworks` are plausible for the repository.
 7. **Use cases** — at least one per non-archived project, valid audiences, `code` paired with

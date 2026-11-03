@@ -6,6 +6,7 @@ import { fetchReleaseData } from './fetch-releases';
 import { processBranding } from './process-branding';
 import { syncAssets } from './sync-assets';
 import { hasCurrentDocsMirror, hasDocsMirror, syncDocs } from './sync-docs';
+import { syncSkills } from './sync-skills';
 
 const RELEASES_CACHE_FILE = resolve('.cache/releases/releases.json');
 
@@ -102,6 +103,7 @@ export async function dataSync(): Promise<void> {
   await syncReleases(mode);
   await syncDocsMirror(mode);
   await syncAssets(mode);
+  await syncSkills(mode);
   if (!existsSync(RELEASES_CACHE_FILE) && !readReleaseFixture('index')) {
     console.warn(
       'Note: release data is unavailable. The releases page will be empty until `just fetch-releases` runs.',
