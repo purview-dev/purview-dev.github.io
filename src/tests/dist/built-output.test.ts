@@ -11,6 +11,7 @@ import { loadProjects } from '../../src/lib/manifest/load';
 import { compareNuGetVersions } from '../../src/lib/nuget-version';
 import { getReleaseIndex } from '../../src/lib/releases/runtime';
 import { projectReleaseSummary } from '../../src/lib/releases/transform';
+import { listMirroredSkills } from '../../src/lib/skills';
 
 const DIST = resolve('dist');
 
@@ -176,7 +177,12 @@ describe('built agent skills', () => {
     };
     expect(manifest.schema).toBe(2);
     const pmSkills = manifest.projects.find((project) => project.id === 'pm-skills');
-    expect(pmSkills?.skills.length).toBe(14);
+    // Compare with the mirror rather than a hard-coded count: a new skill in the
+    // repository is a data change, not a test failure. This still catches a
+    // manifest that truncates or omits the mirrored set.
+    const mirroredPmSkills = listMirroredSkills('pm-skills');
+    expect(mirroredPmSkills.length).toBeGreaterThan(0);
+    expect(pmSkills?.skills.length).toBe(mirroredPmSkills.length);
     expect(pmSkills?.install.command).toBe('npx skills add purview-dev/pm-skills');
     expect(pmSkills?.install.commands.map((command) => command.id)).toEqual([
       'npm',

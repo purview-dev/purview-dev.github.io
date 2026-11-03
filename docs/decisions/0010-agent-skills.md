@@ -62,7 +62,7 @@ nothing on another) and could not read a skill without cloning its repository.
 
 ## Consequences
 
-- `pm-skills` gains fourteen declarations; `aspire-resourcekit` and `results` gain
+- `pm-skills` gains its own declarations; `aspire-resourcekit` and `results` gain
   five each, so the same install block now appears on each of their project pages
   with its own repository.
 - The site never claims to *host* the CLI source: it serves the skill files. The
