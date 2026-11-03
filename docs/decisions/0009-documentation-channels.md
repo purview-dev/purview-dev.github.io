@@ -145,7 +145,10 @@ history has to survive between builds, and an existing page is never overwritten
 - The page switcher is a native `<details>` drop-down: the summary names the
   channel being read, the menu lists every version, the current one carries
   `aria-current`, and the ref is each option's tooltip. It needs no JavaScript,
-  so the versions stay reachable, and every option is a real link.
+  so the versions stay reachable, and every option is a real link. It exists only
+  while two channels are published: promotion withholds the prerelease channel,
+  so the switcher disappears with it and nothing in the UI advertises a version
+  that is no longer published (its retired URLs redirect instead).
 - The sidebar shows one Starlight group per channel with the same labels
   (`Live 2.4.2`, `Prerelease 3.0.0-prerelease.2`); single-channel projects keep
   the flat list.

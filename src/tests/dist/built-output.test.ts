@@ -371,59 +371,87 @@ describe('built footer version', () => {
 });
 
 describe('built documentation channels', () => {
-  // ADR 0009: a project may publish a live channel (canonical URLs) and a
-  // prerelease channel (`/docs/<id>/prerelease/`). Labels come from the docs
-  // cache so the assertions never hard-code the current release.
+  // ADR 0009: a project publishes a live channel (canonical URLs) and, while a
+  // prerelease line is in flight, a second channel at `/docs/<id>/prerelease/`.
+  // Promotion is automatic, so this block has to hold in *both* worlds: the
+  // two-channel assertions run only while that channel exists, and the promoted
+  // shape — no switcher at all, retired URLs redirecting — is asserted instead of
+  // being assumed away. Labels come from the docs cache, so nothing hard-codes
+  // the current release.
   const manifest = readDocsManifest();
   const zodsharp = manifest?.projects.find((project) => project.projectId === 'zodsharp');
   const live = zodsharp?.channels.find((channel) => channel.default);
   const prerelease = zodsharp?.channels.find((channel) => !channel.default);
+  const prereleaseIndex = 'docs/zodsharp/prerelease/index.html';
 
-  test('ZodSharp builds both channel trees', () => {
+  test('ZodSharp publishes its live channel, and a prerelease tree only while that line is in flight', () => {
     expect(live?.pages.length ?? 0).toBeGreaterThan(0);
-    expect(prerelease?.pages.length ?? 0).toBeGreaterThan(0);
     expect(existsSync(resolve(DIST, 'docs/zodsharp/index.html'))).toBe(true);
-    expect(existsSync(resolve(DIST, 'docs/zodsharp/prerelease/index.html'))).toBe(true);
+    if (prerelease) {
+      expect(prerelease.pages.length).toBeGreaterThan(0);
+      // A published channel owns its URLs: no redirect may shadow it.
+      expect(requireBuilt(prereleaseIndex)).not.toContain('http-equiv="refresh"');
+    }
   });
 
-  test('the live page offers the prerelease channel', () => {
+  test.skipIf(!prerelease)('the live page offers the prerelease channel', () => {
     const content = requireBuilt('docs/zodsharp/index.html');
     expect(content).toContain('/docs/zodsharp/prerelease/');
-    if (live) {
-      expect(content).toContain(channelDisplayLabel(live));
-    }
-    if (prerelease) {
-      expect(content).toContain(channelDisplayLabel(prerelease));
-    }
+    expect(content).toContain(channelDisplayLabel(live!));
+    expect(content).toContain(channelDisplayLabel(prerelease!));
   });
 
-  test('a prerelease page says so and links back to the live channel', () => {
-    const content = requireBuilt('docs/zodsharp/prerelease/index.html');
+  test.skipIf(!prerelease)('a prerelease page says so and links back to the live channel', () => {
+    const content = requireBuilt(prereleaseIndex);
     expect(content).toContain('Prerelease.');
     expect(content).toContain('href="/docs/zodsharp/"');
   });
 
-  test('a published channel is never replaced by a promotion redirect', () => {
-    // The redirect writer must skip URLs that a live channel still owns.
-    const content = requireBuilt('docs/zodsharp/prerelease/index.html');
-    expect(content).not.toContain('http-equiv="refresh"');
-  });
-
-  test('the channel switcher is a drop-down that names each version', () => {
+  test.skipIf(!prerelease)('the channel switcher is a drop-down that names each version', () => {
     const content = requireBuilt('docs/zodsharp/index.html');
     // A native disclosure keeps every version reachable without JavaScript, and
     // each option stays a real link.
     expect(content).toContain('class="doc-channel-menu');
     expect(content).toContain('<summary');
     expect(content).toContain('class="doc-channel-options');
-    if (prerelease) {
-      // The option names the version the branch ships — not the branch — and the
-      // branch stays available as the tooltip.
-      expect(channelDisplayLabel(prerelease)).not.toContain('main');
-      expect(content).toContain(channelDisplayLabel(prerelease));
-      expect(content).toContain(`title="Documentation from ${prerelease.ref}"`);
-    }
+    // The option names the version the branch ships — not the branch — and the
+    // branch stays available as the tooltip.
+    expect(channelDisplayLabel(prerelease!)).not.toContain('main');
+    expect(content).toContain(channelDisplayLabel(prerelease!));
+    expect(content).toContain(`title="Documentation from ${prerelease!.ref}"`);
   });
+
+  test.skipIf(prerelease !== undefined)(
+    'a promoted channel leaves nothing of itself in the UI',
+    () => {
+      // The line shipped, so the channel is withheld: the switcher has to disappear
+      // rather than advertise a version that no longer exists, and the live page
+      // must not link the retired tree.
+      const content = requireBuilt('docs/zodsharp/index.html');
+      expect(content).not.toContain('doc-channel-menu');
+      expect(content).not.toContain('/docs/zodsharp/prerelease/');
+      expect(content).not.toContain('Prerelease ');
+      // One channel means one tree: the sidebar keeps its flat list, and the docs
+      // landing page stops counting versions.
+      expect(content).not.toContain('Live 2');
+      expect(requireBuilt('docs/index.html')).not.toContain('2 versions');
+    },
+  );
+
+  test.skipIf(prerelease !== undefined)(
+    'a promoted channel redirects its retired URLs to the live pages',
+    () => {
+      const redirect = requireBuilt(prereleaseIndex);
+      expect(redirect).toContain('<meta http-equiv="refresh" content="0; url=/docs/zodsharp/"');
+      expect(redirect).toContain('<link rel="canonical" href="https://purview.dev/docs/zodsharp/"');
+      expect(redirect).toContain('<meta name="robots" content="noindex, follow"');
+      expect(redirect).toContain('data-pagefind-ignore');
+      // A deep page keeps its slug, so an old bookmark still lands on that page.
+      expect(requireBuilt('docs/zodsharp/prerelease/core-concepts/index.html')).toContain(
+        'url=/docs/zodsharp/core-concepts/',
+      );
+    },
+  );
 
   test('the single-channel projects keep the canonical layout', () => {
     // Event Sourcing declares no channels, so it must not grow a second tree.
