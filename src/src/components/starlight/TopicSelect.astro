@@ -4,13 +4,27 @@ const { topics, isPageWithTopic } = Astro.locals.starlightSidebarTopics;
 if (!isPageWithTopic) {
   return null;
 }
+
+// A project that publishes more than one documentation version contributes one
+// topic per version, each with the page list for that version — but the versions
+// belong in the page switcher, not in the topic list. Collapse topics that share
+// a label, preferring the one the reader is currently on so its link stays
+// correct. `Map` preserves insertion order, so the catalogue order is unchanged.
+const byLabel = new Map<string, (typeof topics)[number]>();
+for (const topic of topics) {
+  const existing = byLabel.get(topic.label);
+  if (!existing || (topic.isCurrent && !existing.isCurrent)) {
+    byLabel.set(topic.label, topic);
+  }
+}
+const projectTopics = [...byLabel.values()];
 ---
 
 <label class="topic-select">
   <span class="sr-only">Select documentation</span>
   <select onchange="window.location.assign(this.value)">
     {
-      topics.map((topic) => (
+      projectTopics.map((topic) => (
         <option value={topic.link} selected={topic.isCurrent}>
           {topic.label}
         </option>

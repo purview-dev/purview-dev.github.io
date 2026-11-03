@@ -66,17 +66,24 @@ describe('documentation sidebar topics', () => {
     ]);
   });
 
-  test('each published version is its own topic, not a group inside one', () => {
+  test('a versioned project still reads as one project in the sidebar', () => {
     const topics = buildProjectTopics(project!, bothChannels());
-    expect(topics.map((topic) => topic.label)).toEqual([
-      'ZodSharp 2.4.2',
-      'ZodSharp 3.0.0-prerelease.2',
-    ]);
+    // One topic per version internally (each with that version's pages), but
+    // every topic carries the project name: versions never leak into the
+    // sidebar — the page switcher is where a reader chooses one.
+    expect(topics.map((topic) => topic.label)).toEqual(['ZodSharp', 'ZodSharp']);
     expect(topics.map((topic) => topic.link)).toEqual([
       '/docs/zodsharp/',
       '/docs/zodsharp/prerelease/',
     ]);
     expect(topics.map((topic) => topic.id)).toEqual(['zodsharp-live', 'zodsharp-prerelease']);
+  });
+
+  test('the sidebar never names a version', () => {
+    for (const topic of buildProjectTopics(project!, bothChannels())) {
+      expect(topic.label).not.toContain('2.4.2');
+      expect(topic.label).not.toContain('3.0.0');
+    }
   });
 
   test('the two versions never share a page or a group', () => {

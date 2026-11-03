@@ -433,13 +433,13 @@ export function channelDisplayLabel(channel: { id: DocChannelId; label: string }
 }
 
 /**
- * Sidebar topic label for one documentation version.
+ * Version-qualified label for one documentation version.
  *
- * Each channel is a first-class documentation set (ADR 0009), so a project that
- * publishes two channels appears as two topics — `ZodSharp 2.4.2` and
- * `ZodSharp 3.0.0-prerelease.2` — rather than as one topic that groups both
- * versions. The product name stays in front so the pair still reads as the same
- * product, and a single-channel project keeps its historical bare name.
+ * Used where two versions are listed as siblings — the documentation portal and
+ * the root `llms.txt` link list — so `ZodSharp 2.4.2` and
+ * `ZodSharp 3.0.0-prerelease.2` are distinguishable. The sidebar does **not**
+ * use it: there a project appears once, and the page switcher chooses the
+ * version. A single-channel project keeps the bare project name.
  */
 export function channelTopicLabel(
   projectName: string,
