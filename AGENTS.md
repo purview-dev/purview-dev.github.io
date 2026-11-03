@@ -87,9 +87,9 @@ prints advisory observations (which never fail the build) when a project's decla
      pin a project's live and prerelease documentation to refs (`default`, `latest-stable`,
      `latest-prerelease`, or an explicit branch/tag). The default channel owns `/docs/<id>/`, the
      other is served at `/docs/<id>/<channel>/`, and `docsPage` resolves against the default channel.
-     Each channel is a first-class docs set — its own sidebar topic (`<Project> <version>`), its own
-     `/projects/<id>/<channel>/llms*.txt` bundle, and its own entry on the docs portal — because the
-     same product at another version is different documentation.
+     Each channel is a first-class docs set — its own page list (the sidebar lists the project once
+     but follows the version being read), its own `/projects/<id>/<channel>/llms*.txt` bundle, and
+     its own entry on the docs portal. The page switcher, not the sidebar, chooses the version.
      Only `github-path` supports two channels; `wiki`/`readme` have a single version. Promotion is
      automatic: the prerelease channel is withheld once a stable release (GitHub release or NuGet
      version) catches up with the prerelease line, and returns with the next prerelease — never

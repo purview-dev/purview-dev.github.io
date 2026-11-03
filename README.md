@@ -317,11 +317,13 @@ docs:
 
 The `live` channel is the default and keeps the canonical `/docs/<project>/`
 URLs; the `prerelease` channel is served at `/docs/<project>/prerelease/`.
-Versions are first-class: each published channel is its own sidebar topic
-(`ZodSharp 2.4.2`, `ZodSharp 3.0.0-prerelease.2`) with its own page list, its
-own machine-readable bundle, and its own entry on the documentation portal —
-same product, different version, therefore different docs. Every page also
-offers a switcher. Only `github-path` sources support two channels.
+Versions are first-class: each published version has its own page list, its own
+machine-readable bundle, and its own entry on the documentation portal — same
+product, different version, therefore different docs. The sidebar stays
+hierarchical, with one entry per project, and its page list follows the version
+you are reading. The version itself appears only in the page switcher, which is
+shown while two versions are published and names both. Only `github-path`
+sources support two channels.
 
 **Promotion is automatic.** The build publishes the prerelease channel only
 while a prerelease version outranks the newest stable release — comparing GitHub

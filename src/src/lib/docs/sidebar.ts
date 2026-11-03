@@ -1,7 +1,7 @@
 import type { ResolvedProject } from '../manifest/load';
 import type { DocsManifest, DocsManifestChannel } from './aggregate';
 
-import { channelBasePath, channelTopicLabel } from './channels';
+import { channelBasePath } from './channels';
 
 export interface SidebarSlugEntry {
   label?: string;
@@ -53,14 +53,12 @@ export function buildChannelItems(
 /**
  * Build the sidebar topics for a single project's documentation.
  *
- * A channel is a whole documentation set, not a section of one: the same
- * product at a different version has different pages, different links and its
- * own `llms.txt`. Grouping the channels inside one topic would make the sidebar
- * claim a single tree while the pages belong to two, and it would bury the
- * second version behind a collapsed group. Each channel therefore becomes its
- * own topic — `ZodSharp 2.4.2` and `ZodSharp 3.0.0-prerelease.2` — with a flat
- * item list, so switching versions works exactly like switching projects.
- * A single-channel project keeps its historical topic (the bare project name).
+ * A channel is a whole documentation set, so each published version contributes
+ * its own topic and its own page list — the sidebar must describe the version
+ * the reader is on. The versions are **not** shown in the sidebar, though: every
+ * topic for a project carries the project's name, and the topic picker collapses
+ * the duplicates (see `TopicSelect.astro`). Choosing a version is the job of the
+ * page switcher, which only appears while two versions are published.
  */
 export function buildProjectTopics(
   project: ResolvedProject,
@@ -78,7 +76,7 @@ export function buildProjectTopics(
   return ordered
     .map((channel) => ({
       id: channels.length > 1 ? `${project.id}-${channel.id}` : project.id,
-      label: channelTopicLabel(project.name, channel, channels.length),
+      label: project.name,
       link: channelBasePath(project.id, channel.id, channel.default),
       items: buildChannelItems(project.id, channel),
     }))

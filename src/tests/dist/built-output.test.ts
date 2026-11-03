@@ -447,15 +447,27 @@ describe('built documentation channels', () => {
     }
   });
 
-  test.skipIf(!prerelease)('each documentation version is its own sidebar topic', () => {
-    // Versions are distinct sidebar entries, not groups inside one project
-    // topic: the same product, two documentation sets. The topic picker lists
-    // both, each pointing at its own landing page.
+  test.skipIf(!prerelease)('the sidebar lists the project once and hides the versions', () => {
+    // The reader is on the prerelease version: its page list is the sidebar
+    // body, but the topic picker still lists `ZodSharp` exactly once and no
+    // version label appears in any option.
     const content = requireBuilt(prereleaseIndex);
-    expect(content).toContain(`ZodSharp ${live!.label}`);
-    expect(content).toContain(`ZodSharp ${prerelease!.label}`);
-    expect(content).toContain('value="/docs/zodsharp/"');
-    expect(content).toContain('value="/docs/zodsharp/prerelease/"');
+    const optionLabels = [...content.matchAll(/<option[^>]*>([^<]*)<\/option>/g)].map((match) =>
+      (match[1] ?? '').trim(),
+    );
+    expect(optionLabels).toContain('ZodSharp');
+    expect(optionLabels.some((label) => label.includes(live!.label))).toBe(false);
+    expect(optionLabels.some((label) => label.includes(prerelease!.label))).toBe(false);
+    expect((content.match(/value="\/docs\/zodsharp/g) ?? []).length).toBe(1);
+
+    // The page switcher is the only place versions appear, and it shows both.
+    expect(content).toContain(channelDisplayLabel(live!));
+    expect(content).toContain(channelDisplayLabel(prerelease!));
+  });
+
+  test('the version switcher only appears while a second version is published', () => {
+    // A single-channel project has no version to choose.
+    expect(requireBuilt('docs/results/index.html')).not.toContain('doc-channel-menu');
   });
 
   test.skipIf(!prerelease)('each documentation version publishes its own llms bundles', () => {
