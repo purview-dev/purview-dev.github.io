@@ -3,13 +3,19 @@ import { Icon } from '@astrojs/starlight/components';
 
 const { entry } = Astro.locals.starlightRoute;
 const editUrl = entry?.data?.editUrl;
+// A channel pinned to a release tag is immutable, so its link points at the
+// file at that tag and offers to view rather than edit it (ADR 0009).
+const refKind = entry?.data?.docsRefKind;
+const editable = refKind === undefined || refKind === 'branch';
+const ref = entry?.data?.docsRef;
+const label = editable ? Astro.locals.t('page.editLink') : `View source${ref ? ` (${ref})` : ''}`;
 ---
 
 {
   editUrl && (
     <a href={editUrl} class="sl-flex print:hidden pv-link">
-      <Icon name="pencil" size="1.2em" />
-      {Astro.locals.t('page.editLink')}
+      <Icon name={editable ? 'pencil' : 'external'} size="1.2em" />
+      {label}
     </a>
   )
 }

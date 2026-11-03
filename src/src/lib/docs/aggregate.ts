@@ -1,7 +1,9 @@
 import type { ResolvedProject } from '../manifest/load';
+import type { DocChannelId, ChannelLayout, DocRefKind, ResolvedDocChannel } from './channels';
 import type { DocFrontmatter } from './frontmatter';
 import type { DocLinkContext } from './links';
 
+import { createHash } from 'node:crypto';
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
@@ -11,6 +13,7 @@ import { getReleaseIndex } from '../releases/runtime';
 import { metaDescription } from '../seo';
 import { OWNER } from '../site';
 import { convertGithubAlerts } from './alerts';
+import { channelLayout, releaseDateForRef, resolveDocChannels } from './channels';
 import {
   extractDescription,
   extractTitle,
@@ -23,7 +26,14 @@ import { stripMkdocsMarkup } from './mkdocs';
 export const DOCS_OUTPUT_DIR = resolve('src/content/docs');
 export const DOCS_CACHE_DIR = resolve('.cache/docs');
 
-export const DOCS_MANIFEST_SCHEMA = 1;
+/**
+ * Version 2 introduces documentation channels: a project may publish a `live`
+ * channel (the canonical `/docs/<id>/` URLs) and an optional `prerelease`
+ * channel (`/docs/<id>/prerelease/`). An existing cache is treated as absent
+ * (`readDocsManifest` returns null), so a schema bump forces a re-sync instead
+ * of building a sidebar for page paths that no longer exist.
+ */
+export const DOCS_MANIFEST_SCHEMA = 2;
 
 export interface AggregatedPage {
   slug: string;
@@ -33,17 +43,74 @@ export interface AggregatedPage {
   lastReviewed: string;
   sourcePath: string;
   order: number;
+  /** Digest of the source markdown, used to spot a channel that duplicates another. */
+  hash: string;
+}
+
+export interface AggregatedChannel {
+  id: DocChannelId;
+  ref: string;
+  refKind: DocRefKind;
+  version: string | null;
+  label: string;
+  default: boolean;
+  pages: AggregatedPage[];
 }
 
 export interface AggregatedProjectDocs {
   projectId: string;
-  pages: AggregatedPage[];
+  channels: AggregatedChannel[];
+}
+
+export interface DocsManifestPage {
+  slug: string;
+  title: string;
+  order: number;
+  sourcePath: string;
+  hash: string;
+}
+
+export interface DocsManifestChannel {
+  id: DocChannelId;
+  ref: string;
+  refKind: DocRefKind;
+  version: string | null;
+  label: string;
+  default: boolean;
+  pages: DocsManifestPage[];
+}
+
+export interface DocsManifestProject {
+  projectId: string;
+  channels: DocsManifestChannel[];
 }
 
 export interface DocsManifest {
   schema: typeof DOCS_MANIFEST_SCHEMA;
   syncedAt: string;
-  projects: { projectId: string; pages: { slug: string; title: string; order: number }[] }[];
+  projects: DocsManifestProject[];
+}
+
+/** The channel that owns the canonical `/docs/<id>/` URLs. */
+export function defaultDocsChannel(
+  project: DocsManifestProject | undefined,
+): DocsManifestChannel | undefined {
+  return project?.channels.find((channel) => channel.default) ?? project?.channels[0];
+}
+
+/** Pages of one channel; the default channel when `channelId` is omitted. */
+export function docsChannelPages(
+  project: DocsManifestProject | undefined,
+  channelId?: DocChannelId,
+): DocsManifestPage[] {
+  if (!project) {
+    return [];
+  }
+  const channel =
+    channelId === undefined
+      ? defaultDocsChannel(project)
+      : project.channels.find((candidate) => candidate.id === channelId);
+  return channel?.pages ?? [];
 }
 
 export interface RawSourceFile {
@@ -276,7 +343,7 @@ function sourceName(slug: string, raw: RawSourceFile): string {
 
 async function buildPage(
   project: ResolvedProject,
-  branch: string,
+  channel: ResolvedDocChannel,
   sourceDir: string,
   slug: string,
   raw: RawSourceFile,
@@ -285,6 +352,7 @@ async function buildPage(
   headingSlugs: Map<string, Set<string>>,
   slugAliases?: Map<string, string>,
 ): Promise<AggregatedPage> {
+  const branch = channel.ref;
   const imageBase: string | null =
     project.docs?.source === 'wiki'
       ? `https://github.com/${project.repository}/wiki/raw/`
@@ -323,6 +391,9 @@ async function buildPage(
     `${project.name} documentation — open-source .NET tooling from Purview Dev.`,
   );
   const editSourcePath = raw.path.replace(/^\/+/, '');
+  // A branch can be edited in place; a tag is immutable, so the same link is a
+  // "view source" link. `docsRefKind` tells the EditLink override which it is.
+  const editVerb = channel.refKind === 'branch' ? 'edit' : 'blob';
 
   const frontmatter: DocFrontmatter = {
     title,
@@ -335,7 +406,11 @@ async function buildPage(
     sourceRepo: project.repository,
     projectName: project.name,
     sourcePath: editSourcePath,
-    editUrl: `https://github.com/${project.repository}/edit/${branch}/${editSourcePath}`,
+    editUrl: `https://github.com/${project.repository}/${editVerb}/${branch}/${editSourcePath}`,
+    docsChannel: channel.id,
+    docsRef: channel.ref,
+    docsRefKind: channel.refKind,
+    docsVersion: channel.version ?? undefined,
     tags: repoTags.length > 0 ? repoTags : undefined,
     sidebarLabel: title,
     sidebarOrder: order,
@@ -349,29 +424,41 @@ async function buildPage(
     lastReviewed: raw.lastModified,
     sourcePath: editSourcePath,
     order,
+    // Hash the source, not the rendered page: two channels that publish the
+    // same source text are duplicates, even though their front matter (ref,
+    // channel, edit URL) necessarily differs.
+    hash: createHash('sha256').update(`${slug}\n${raw.content}`).digest('hex').slice(0, 16),
   };
 }
 
-async function collectGithubPathDocs(
+async function collectGithubPathChannel(
   project: ResolvedProject,
-  branch: string,
-): Promise<AggregatedProjectDocs> {
-  const config = project.docs;
-  if (!config || config.source !== 'github-path') {
-    return { projectId: project.id, pages: [] };
-  }
-  const files = await listRepositoryFiles(project.repository, branch);
-  const docRoot = config.path.replace(/\/+$/, '');
+  channel: ResolvedDocChannel,
+  layout: ChannelLayout,
+): Promise<AggregatedPage[]> {
+  const ref = channel.ref;
+  const files = await listRepositoryFiles(project.repository, ref);
+  const docRoot = layout.path.replace(/\/+$/, '');
   const docFiles = files
     .filter((path) => path.startsWith(`${docRoot}/`) && path.endsWith('.md'))
-    .filter((path) => !isExcluded(path.split('/').pop() ?? '', config.exclude))
+    .filter((path) => !isExcluded(path.split('/').pop() ?? '', layout.exclude))
     .toSorted();
 
   const rawFiles: RawSourceFile[] = [];
   for (const path of docFiles) {
-    const raw = await fetchRawFile(project.repository, branch, path);
+    const raw = await fetchRawFile(project.repository, ref, path);
     if (raw) {
       rawFiles.push(raw);
+    }
+  }
+
+  // A tag never moves, so a pinned channel dates its pages with the release
+  // instead of the branch's commit feed (which would drift on every commit).
+  const pinnedDate =
+    channel.refKind === 'tag' ? releaseDateForRef(project, getReleaseIndex().data, ref) : null;
+  if (pinnedDate) {
+    for (const raw of rawFiles) {
+      raw.lastModified = pinnedDate;
     }
   }
 
@@ -379,7 +466,7 @@ async function collectGithubPathDocs(
   // It is fetched separately because it is excluded from the rendered pages.
   const sidebarPath = files.find((path) => path.endsWith('_Sidebar.md'));
   const sidebarOrder = sidebarPath
-    ? parseWikiSidebar((await fetchRawFile(project.repository, branch, sidebarPath))?.content)
+    ? parseWikiSidebar((await fetchRawFile(project.repository, ref, sidebarPath))?.content)
     : [];
   const orderBySidebar = new Map<string, number>();
   sidebarOrder.forEach((name, index) => orderBySidebar.set(slugifyDocFile(name), index));
@@ -389,8 +476,8 @@ async function collectGithubPathDocs(
     regular: RawSourceFile[];
     slugAliases: Map<string, string>;
   };
-  if (config.readmeAsIndex) {
-    if (config.rootPage) {
+  if (layout.readmeAsIndex) {
+    if (layout.rootPage) {
       throw new DocsValidationError(
         [
           `Invalid docs configuration for ${project.id}`,
@@ -400,7 +487,7 @@ async function collectGithubPathDocs(
         ].join('\n'),
       );
     }
-    const readme = await fetchRawFile(project.repository, branch, 'README.md');
+    const readme = await fetchRawFile(project.repository, ref, 'README.md');
     if (!readme) {
       throw new DocsValidationError(
         [
@@ -418,7 +505,7 @@ async function collectGithubPathDocs(
       slugAliases: new Map([['readme', 'index']]),
     };
   } else {
-    selectedRoot = selectDocsRootFile(project.id, rawFiles, docRoot, config.rootPage);
+    selectedRoot = selectDocsRootFile(project.id, rawFiles, docRoot, layout.rootPage);
   }
 
   const knownSlugs = new Set<string>(['index']);
@@ -437,8 +524,8 @@ async function collectGithubPathDocs(
   pages.push(
     await buildPage(
       project,
-      branch,
-      config.path,
+      channel,
+      layout.path,
       'index',
       selectedRoot.index,
       -1,
@@ -450,7 +537,7 @@ async function collectGithubPathDocs(
   for (const raw of selectedRoot.regular) {
     const relative = relativeToDocRoot(raw.path, docRoot);
     const slug = slugifyDocFile(relative);
-    const explicitOrder = config.order?.indexOf(slug);
+    const explicitOrder = layout.order?.indexOf(slug);
     const order =
       explicitOrder !== undefined && explicitOrder >= 0
         ? explicitOrder
@@ -458,8 +545,8 @@ async function collectGithubPathDocs(
     pages.push(
       await buildPage(
         project,
-        branch,
-        config.path,
+        channel,
+        layout.path,
         slug,
         raw,
         order,
@@ -471,14 +558,14 @@ async function collectGithubPathDocs(
   }
 
   pages.sort((a, b) => a.order - b.order);
-  return { projectId: project.id, pages };
+  return pages;
 }
 
-async function collectWikiDocs(project: ResolvedProject): Promise<AggregatedProjectDocs> {
-  const config = project.docs;
-  if (!config || config.source !== 'wiki') {
-    return { projectId: project.id, pages: [] };
-  }
+async function collectWikiChannel(
+  project: ResolvedProject,
+  channel: ResolvedDocChannel,
+  layout: ChannelLayout,
+): Promise<AggregatedPage[]> {
   const { files, snapshot } = await cloneWiki(project.repository);
   const sidebarOrder = parseWikiSidebar(files.get('_Sidebar.md'));
   const candidates: { name: string; content: string }[] = [];
@@ -487,7 +574,7 @@ async function collectWikiDocs(project: ResolvedProject): Promise<AggregatedProj
     if (name === '_Sidebar.md' || name === '_Footer.md') {
       continue;
     }
-    if (isExcluded(name, config.exclude)) {
+    if (isExcluded(name, layout.exclude)) {
       continue;
     }
     candidates.push({ name, content });
@@ -501,7 +588,7 @@ async function collectWikiDocs(project: ResolvedProject): Promise<AggregatedProj
     content: candidate.content,
     lastModified: snapshot,
   }));
-  const selectedRoot = selectDocsRootFile(project.id, rawFiles, '', config.rootPage);
+  const selectedRoot = selectDocsRootFile(project.id, rawFiles, '', layout.rootPage);
 
   const knownSlugs = new Set<string>(['index']);
   for (const raw of selectedRoot.regular) {
@@ -518,7 +605,7 @@ async function collectWikiDocs(project: ResolvedProject): Promise<AggregatedProj
   pages.push(
     await buildPage(
       project,
-      'main',
+      channel,
       'docs/wiki',
       'index',
       selectedRoot.index,
@@ -534,7 +621,7 @@ async function collectWikiDocs(project: ResolvedProject): Promise<AggregatedProj
     pages.push(
       await buildPage(
         project,
-        'main',
+        channel,
         'docs/wiki',
         slug,
         raw,
@@ -547,53 +634,111 @@ async function collectWikiDocs(project: ResolvedProject): Promise<AggregatedProj
   }
 
   pages.sort((a, b) => a.order - b.order);
-  return { projectId: project.id, pages };
+  return pages;
 }
 
-async function collectReadmeDocs(project: ResolvedProject): Promise<AggregatedProjectDocs> {
-  const readme = await fetchRawFile(project.repository, 'main', 'README.md');
+async function collectReadmeChannel(
+  project: ResolvedProject,
+  channel: ResolvedDocChannel,
+): Promise<AggregatedPage[]> {
+  const readme = await fetchRawFile(project.repository, channel.ref, 'README.md');
   if (!readme) {
-    return { projectId: project.id, pages: [] };
+    return [];
   }
-  return {
-    projectId: project.id,
-    pages: [
-      await buildPage(
-        project,
-        'main',
-        '',
-        'index',
-        readme,
-        -1,
-        new Set(['index']),
-        new Map([['index', extractHeadingSlugs(stripMkdocsMarkup(readme.content))]]),
-      ),
-    ],
-  };
+  return [
+    await buildPage(
+      project,
+      channel,
+      '',
+      'index',
+      readme,
+      -1,
+      new Set(['index']),
+      new Map([['index', extractHeadingSlugs(stripMkdocsMarkup(readme.content))]]),
+    ),
+  ];
 }
 
-/** Aggregate documentation for all catalogue projects into pages + manifest. */
+/** Collect one channel's pages for a project, whatever its documentation source. */
+async function collectChannelPages(
+  project: ResolvedProject,
+  channel: ResolvedDocChannel,
+): Promise<AggregatedPage[]> {
+  const layout = channelLayout(project, channel);
+  if (!layout) {
+    return [];
+  }
+  switch (project.docs?.source) {
+    case 'github-path':
+      return collectGithubPathChannel(project, channel, layout);
+    case 'wiki':
+      return collectWikiChannel(project, channel, layout);
+    case 'readme':
+      return collectReadmeChannel(project, channel);
+    default:
+      return [];
+  }
+}
+
+/**
+ * Aggregate documentation for all catalogue projects into channel pages + the
+ * manifest. Each project contributes one or two channels; a declared channel
+ * that yields no pages is dropped (a release tag can predate the docs tree),
+ * and the default channel is always kept so a project is never left without
+ * documentation.
+ */
 export async function aggregateDocs(projects: ResolvedProject[]): Promise<AggregatedProjectDocs[]> {
   const results: AggregatedProjectDocs[] = [];
+  const releaseData = getReleaseIndex().data;
   for (const project of projects) {
     if (!project.docs) {
       continue;
     }
     try {
-      let aggregated: AggregatedProjectDocs;
-      switch (project.docs.source) {
-        case 'github-path':
-          aggregated = await collectGithubPathDocs(project, 'main');
-          break;
-        case 'wiki':
-          aggregated = await collectWikiDocs(project);
-          break;
-        case 'readme':
-          aggregated = await collectReadmeDocs(project);
-          break;
+      const { channels, warnings } = resolveDocChannels(project, releaseData);
+      for (const warning of warnings) {
+        console.warn(`  docs ${project.id}: ${warning}`);
       }
-      results.push(aggregated);
-      console.log(`  docs ${project.id}: ${aggregated.pages.length} pages`);
+
+      const aggregatedChannels: AggregatedChannel[] = [];
+      for (const channel of channels) {
+        const pages = await collectChannelPages(project, channel);
+        if (pages.length === 0 && !channel.default) {
+          console.warn(
+            `  docs ${project.id}: "${channel.id}" (${channel.ref}) produced no pages; the channel was skipped.`,
+          );
+          continue;
+        }
+        aggregatedChannels.push({ ...channel, pages });
+      }
+
+      // A channel id is a URL segment, so a page may not shadow one.
+      const reserved = new Set<string>(
+        aggregatedChannels.filter((channel) => !channel.default).map((channel) => channel.id),
+      );
+      for (const channel of aggregatedChannels) {
+        for (const page of channel.pages) {
+          if (reserved.has(page.slug)) {
+            throw new DocsValidationError(
+              [
+                `Invalid docs configuration for ${project.id}`,
+                `  the page "${page.slug}" collides with the "${page.slug}" documentation channel URL.`,
+                '',
+                `Remediation: rename ${page.sourcePath} so its slug is not a channel id (${[...reserved].join(', ')}).`,
+              ].join('\n'),
+            );
+          }
+        }
+      }
+
+      results.push({ projectId: project.id, channels: aggregatedChannels });
+      const summary =
+        aggregatedChannels.length > 1
+          ? aggregatedChannels
+              .map((channel) => `${channel.id}=${channel.label} (${channel.pages.length} pages)`)
+              .join(', ')
+          : `${aggregatedChannels[0]?.pages.length ?? 0} pages`;
+      console.log(`  docs ${project.id}: ${summary}`);
     } catch (error) {
       if (error instanceof DocsValidationError) {
         throw error;
@@ -617,18 +762,34 @@ export function writeDocs(
   };
 
   for (const project of aggregated) {
-    for (const page of project.pages) {
-      // Pages are nested under `docs/` so they are served at `/docs/<project>/<page>/`.
-      const target = resolve(outputDir, 'docs', project.projectId, `${page.slug}.md`);
-      mkdirSync(dirname(target), { recursive: true });
-      writeFileSync(target, page.body, 'utf8');
+    for (const channel of project.channels) {
+      for (const page of channel.pages) {
+        // Pages are nested under `docs/` so they are served at
+        // `/docs/<project>/<page>/`; a non-default channel adds its id as a
+        // path segment (`/docs/<project>/prerelease/<page>/`).
+        const target = channel.default
+          ? resolve(outputDir, 'docs', project.projectId, `${page.slug}.md`)
+          : resolve(outputDir, 'docs', project.projectId, channel.id, `${page.slug}.md`);
+        mkdirSync(dirname(target), { recursive: true });
+        writeFileSync(target, page.body, 'utf8');
+      }
     }
     manifest.projects.push({
       projectId: project.projectId,
-      pages: project.pages.map((page) => ({
-        slug: page.slug,
-        title: page.title,
-        order: page.order,
+      channels: project.channels.map((channel) => ({
+        id: channel.id,
+        ref: channel.ref,
+        refKind: channel.refKind,
+        version: channel.version,
+        label: channel.label,
+        default: channel.default,
+        pages: channel.pages.map((page) => ({
+          slug: page.slug,
+          title: page.title,
+          order: page.order,
+          sourcePath: page.sourcePath,
+          hash: page.hash,
+        })),
       })),
     });
   }

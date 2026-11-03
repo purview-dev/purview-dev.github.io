@@ -24,14 +24,53 @@ const emptyReleaseData: ReleaseCacheData = {
 const context: DiscoveryContext = {
   projects: loadProjects(),
   docsManifest: {
-    schema: 1,
+    schema: 2,
     syncedAt: '2026-01-01T00:00:00.000Z',
     projects: [
       {
         projectId: 'zodsharp',
-        pages: [
-          { slug: 'index', title: 'ZodSharp', order: 0 },
-          { slug: 'core-concepts', title: 'Core concepts', order: 1 },
+        channels: [
+          {
+            id: 'live',
+            ref: 'v2.4.2',
+            refKind: 'tag',
+            version: '2.4.2',
+            label: '2.4.2',
+            default: true,
+            pages: [
+              {
+                slug: 'index',
+                title: 'ZodSharp',
+                order: -1,
+                sourcePath: 'docs/wiki/Getting-Started.md',
+                hash: 'live-index',
+              },
+              {
+                slug: 'core-concepts',
+                title: 'Core concepts',
+                order: 1,
+                sourcePath: 'docs/wiki/Core-Concepts.md',
+                hash: 'live-core',
+              },
+            ],
+          },
+          {
+            id: 'prerelease',
+            ref: 'main',
+            refKind: 'branch',
+            version: null,
+            label: 'main',
+            default: false,
+            pages: [
+              {
+                slug: 'index',
+                title: 'ZodSharp',
+                order: -1,
+                sourcePath: 'docs/wiki/Getting-Started.md',
+                hash: 'next-index',
+              },
+            ],
+          },
         ],
       },
     ],

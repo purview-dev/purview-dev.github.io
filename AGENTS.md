@@ -82,6 +82,14 @@ prints advisory observations (which never fail the build) when a project's decla
    - Every non-archived project needs at least one concrete use case; a use case with `code` must
      also set `language`, and `docsPage` must be a lowercase `[a-z0-9-]` slug that resolves to a real
      aggregated page.
+   - Documentation channels are optional (ADR 0009): `docs.channels.live` / `docs.channels.prerelease`
+     pin a project's live and prerelease documentation to refs (`default`, `latest-stable`,
+     `latest-prerelease`, or an explicit branch/tag). The default channel owns `/docs/<id>/`, the
+     other is served at `/docs/<id>/<channel>/`, and `docsPage` resolves against the default channel.
+     Only `github-path` supports two channels; `wiki`/`readme` have a single version. Promotion is
+     automatic: the prerelease channel is withheld once a stable release (GitHub release or NuGet
+     version) catches up with the prerelease line, and returns with the next prerelease — never
+     delete the declaration to stop publishing it.
    - `order` values are unique and control the catalogue order.
    - `related`, `supersedes`, `supersededBy` must reference known ids.
    - `status` must match reality: an archived repository is `archived`; prerelease-only tooling is

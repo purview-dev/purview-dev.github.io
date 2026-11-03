@@ -299,6 +299,37 @@ Each documentation page shows its owning project, lifecycle status, staleness
 (last review older than 365 days, configurable in
 `src/lib/docs/staleness.ts`), and an edit link to the source repository.
 
+### Live and prerelease documentation
+
+A project whose default branch is ahead of its latest release can publish two
+views of its docs (ADR 0009):
+
+```yaml
+docs:
+  source: github-path
+  path: docs/wiki
+  channels:
+    live:
+      ref: latest-stable   # newest non-prerelease release tag
+    prerelease:
+      ref: default         # the repository's default branch
+```
+
+The `live` channel is the default and keeps the canonical `/docs/<project>/`
+URLs; the `prerelease` channel is served at `/docs/<project>/prerelease/`. The
+sidebar groups pages per channel, and every page offers a switcher. Only
+`github-path` sources support two channels.
+
+**Promotion is automatic.** The build publishes the prerelease channel only
+while a prerelease version outranks the newest stable release — comparing GitHub
+release tags with NuGet versions — so publishing `3.0.0` retires the docs for
+`3.0.0-prerelease.N` on the next deploy with no manifest change. The channel
+returns by itself when the next prerelease is cut. Nothing here requires a
+clone-and-PR step before a deploy. Retired URLs are not left broken: the build
+writes a `noindex` meta-refresh page for each one that points at the live page
+with the same slug (GitHub Pages serves files only, so there is no redirect
+config to declare).
+
 ## Release data
 
 Release data is fetched at build time — never from the visitor's browser.

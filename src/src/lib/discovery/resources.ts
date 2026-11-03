@@ -72,6 +72,10 @@ const LAST_REVIEWED = /^lastReviewed:\s*"?(\d{4}-\d{2}-\d{2})"?/m;
  * mirror's front matter. The mirror is present whenever the site builds, so this
  * gives documentation pages a real `lastmod` without changing the docs manifest
  * schema (which would force a full re-sync of the gitignored mirror).
+ *
+ * Keys are `"<projectId>/<slug>"` for the default channel and
+ * `"<projectId>/<channel>/<slug>"` for an alternative one, matching the URL
+ * path segment `classifyPath` derives for a built page.
  */
 export function readDocsLastReviewed(mirrorRoot = DOCS_OUTPUT_DIR): Map<string, string> {
   const result = new Map<string, string>();
@@ -79,23 +83,33 @@ export function readDocsLastReviewed(mirrorRoot = DOCS_OUTPUT_DIR): Map<string, 
   if (!existsSync(docsRoot)) {
     return result;
   }
-  for (const projectId of readdirSync(docsRoot)) {
-    const projectDir = join(docsRoot, projectId);
-    let files: string[];
+
+  const collect = (directory: string, keyPrefix: string): void => {
+    let entries;
     try {
-      files = readdirSync(projectDir);
+      entries = readdirSync(directory, { withFileTypes: true });
     } catch {
-      continue;
+      return;
     }
-    for (const file of files) {
-      if (!file.endsWith('.md')) {
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        // A channel directory: docs/<id>/<channel>/<slug>.md
+        collect(join(directory, entry.name), `${keyPrefix}/${entry.name}`);
         continue;
       }
-      const content = readFileSync(join(projectDir, file), 'utf8');
-      const match = LAST_REVIEWED.exec(content);
-      if (match?.[1]) {
-        result.set(`${projectId}/${file.replace(/\.md$/, '')}`, match[1]);
+      if (!entry.name.endsWith('.md')) {
+        continue;
       }
+      const match = LAST_REVIEWED.exec(readFileSync(join(directory, entry.name), 'utf8'));
+      if (match?.[1]) {
+        result.set(`${keyPrefix}/${entry.name.replace(/\.md$/, '')}`, match[1]);
+      }
+    }
+  };
+
+  for (const entry of readdirSync(docsRoot, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      collect(join(docsRoot, entry.name), entry.name);
     }
   }
   return result;

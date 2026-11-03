@@ -2,7 +2,7 @@
 import SiteLayout from '~/layouts/SiteLayout.astro';
 import { LLMS_LINK_ATTRS } from '~/lib/llms';
 import { loadProjects } from '~/lib/manifest/load';
-import { readDocsManifest } from '~/lib/docs/aggregate';
+import { defaultDocsChannel, readDocsManifest } from '~/lib/docs/aggregate';
 import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { getReleaseIndex } from '~/lib/releases/runtime';
 import { SITE } from '~/lib/site';
@@ -14,7 +14,7 @@ const projects = loadProjects().filter(
 const releaseIndex = getReleaseIndex();
 const docsManifest = readDocsManifest();
 const pageCount = docsManifest?.projects.reduce(
-  (total, entry) => total + entry.pages.length,
+  (total, entry) => total + entry.channels.reduce((count, channel) => count + channel.pages.length, 0),
   0,
 );
 ---
@@ -37,6 +37,9 @@ const pageCount = docsManifest?.projects.reduce(
       {
         projects.map((project) => {
           const entry = docsManifest?.projects.find((item) => item.projectId === project.id);
+          const live = defaultDocsChannel(entry);
+          const pageTotal = live?.pages.length ?? 0;
+          const versions = entry?.channels.length ?? 0;
           const { tags } = projectRepoEnrichment(project, releaseIndex.data);
           return (
             <a
@@ -55,7 +58,8 @@ const pageCount = docsManifest?.projects.reduce(
                 )
               }
               <p class="mt-auto pt-2 text-sm text-accent">
-                {entry?.pages.length ?? 0} page{(entry?.pages.length ?? 0) === 1 ? '' : 's'} →
+                {versions > 1 ? `${versions} versions · ` : ''}
+                {pageTotal} page{pageTotal === 1 ? '' : 's'} →
               </p>
             </a>
           );
