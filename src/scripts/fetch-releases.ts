@@ -1,7 +1,7 @@
 import type { ReleaseCacheData } from '../src/lib/releases/types';
 
 import { loadProjects } from '../src/lib/manifest/load';
-import { readReleaseCache, writeReleaseCache } from '../src/lib/releases/cache';
+import { readReleaseCache } from '../src/lib/releases/cache';
 import {
   fetchGitHubReleases,
   fetchGitHubRepo,
@@ -9,6 +9,7 @@ import {
   fetchNuGetNuspec,
   fetchNuGetSearch,
 } from '../src/lib/releases/github';
+import { publishReleaseData } from '../src/lib/releases/runtime';
 import { selectVersionForTargetFrameworks } from '../src/lib/releases/target-frameworks';
 import { RELEASE_CACHE_SCHEMA_VERSION } from '../src/lib/releases/types';
 
@@ -127,7 +128,7 @@ export async function fetchReleaseData(): Promise<ReleaseCacheData> {
 
 if (import.meta.main) {
   const data = await fetchReleaseData();
-  writeReleaseCache(data);
+  publishReleaseData(data);
   console.log(
     `Wrote release cache: ${Object.keys(data.repos).length} repositories, ${Object.keys(data.packages).length} packages.`,
   );

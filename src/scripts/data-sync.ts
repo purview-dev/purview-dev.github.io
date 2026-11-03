@@ -1,7 +1,8 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { readReleaseCache, readReleaseFixture, writeReleaseCache } from '../src/lib/releases/cache';
+import { readReleaseCache, readReleaseFixture } from '../src/lib/releases/cache';
+import { publishReleaseData } from '../src/lib/releases/runtime';
 import { fetchReleaseData } from './fetch-releases';
 import { processBranding } from './process-branding';
 import { syncAssets } from './sync-assets';
@@ -40,8 +41,9 @@ async function syncReleases(mode: Mode): Promise<void> {
     return;
   }
   if (mode === 'live') {
-    const data = await fetchReleaseData();
-    writeReleaseCache(data);
+    // `publishReleaseData` also refreshes the memoized index: the fetch resolved
+    // the repository/package list through `loadProjects`, which snapshots it.
+    publishReleaseData(await fetchReleaseData());
     console.log('Releases: fetched live data.');
     return;
   }
@@ -51,8 +53,7 @@ async function syncReleases(mode: Mode): Promise<void> {
     return;
   }
   try {
-    const data = await fetchReleaseData();
-    writeReleaseCache(data);
+    publishReleaseData(await fetchReleaseData());
     console.log('Releases: fetched live data.');
     return;
   } catch (error) {
