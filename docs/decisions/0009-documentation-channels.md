@@ -149,12 +149,12 @@ history has to survive between builds, and an existing page is never overwritten
   while two channels are published: promotion withholds the prerelease channel,
   so the switcher disappears with it and nothing in the UI advertises a version
   that is no longer published (its retired URLs redirect instead).
-- The sidebar treats each channel as a **topic of its own**: `ZodSharp 2.4.2` and
-  `ZodSharp 3.0.0-prerelease.2` are separate entries in the topic picker, each
-  with a flat page list, exactly as two projects would be. A channel is a whole
-  documentation set, not a section of one, so grouping both under a single
-  project topic would claim one tree while the pages belong to two. A
-  single-channel project keeps the bare project name.
+- The sidebar keeps **one entry per project**. Each channel contributes its own
+  topic internally, so the page list always matches the version being read, but
+  every topic for a project carries the project's name and the topic picker
+  collapses the duplicates. A version is chosen with the page switcher and never
+  appears in the sidebar; the switcher exists only while two versions are
+  published.
 - Every published version has its own machine-readable bundle. The default
   channel keeps `/projects/<id>/llms.txt` and `llms-full.txt`; any other channel
   mirrors its documentation URL shape at
