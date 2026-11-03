@@ -20,7 +20,13 @@ import {
   normalizeDocumentHeadings,
   renderFrontmatter,
 } from './frontmatter';
-import { extractHeadingSlugs, rewriteDocMarkdown, resolveDoclinks, slugifyDocFile } from './links';
+import {
+  docSlug,
+  extractHeadingSlugs,
+  isUrlSafeDocSlug,
+  rewriteDocMarkdown,
+  resolveDoclinks,
+} from './links';
 import { stripMkdocsMarkup } from './mkdocs';
 
 export const DOCS_OUTPUT_DIR = resolve('src/content/docs');
@@ -361,7 +367,7 @@ export function selectDocsRootFile(
     );
   }
 
-  const rootSourceSlug = slugifyDocFile(relativeToDocRoot(index.path, docRoot));
+  const rootSourceSlug = docSlug(relativeToDocRoot(index.path, docRoot));
   return {
     index,
     regular: rawFiles.filter((raw) => raw !== index),
@@ -379,11 +385,27 @@ async function buildPage(
   sourceDir: string,
   slug: string,
   raw: RawSourceFile,
+  pagePath: string,
   order: number,
   knownSlugs: Set<string>,
   headingSlugs: Map<string, Set<string>>,
   slugAliases?: Map<string, string>,
 ): Promise<AggregatedPage> {
+  // A slug becomes the published URL, so it must survive as an address verbatim. A folder or file name that reduces
+  // to nothing (`___/Page.md`) leaves an empty path segment, which would otherwise publish a page at a URL nobody can
+  // write down.
+  if (!isUrlSafeDocSlug(slug)) {
+    throw new DocsValidationError(
+      [
+        `Invalid documentation path in ${project.id}`,
+        `  "${raw.path}" produces the slug "${slug}", which cannot be published without encoding.`,
+        '',
+        'Remediation: name the file, and every folder above it, with letters, digits and dashes only, so each path',
+        'segment survives slugification and the published address mirrors the source tree.',
+      ].join('\n'),
+    );
+  }
+
   const branch = channel.ref;
   const imageBase: string | null =
     project.docs?.source === 'wiki'
@@ -398,6 +420,7 @@ async function buildPage(
     branch,
     knownSlugs,
     sourcePath: sourceDir,
+    pagePath,
     imageBase,
     headingSlugs,
     slugAliases,
@@ -501,7 +524,8 @@ async function collectGithubPathChannel(
     ? parseWikiSidebar((await fetchRawFile(project.repository, ref, sidebarPath))?.content)
     : [];
   const orderBySidebar = new Map<string, number>();
-  sidebarOrder.forEach((name, index) => orderBySidebar.set(slugifyDocFile(name), index));
+  // A sidebar entry is a path from the docs root, so it slugifies to the page slug - folders included.
+  sidebarOrder.forEach((name, index) => orderBySidebar.set(docSlug(name), index));
 
   let selectedRoot: {
     index: RawSourceFile;
@@ -542,13 +566,13 @@ async function collectGithubPathChannel(
 
   const knownSlugs = new Set<string>(['index']);
   for (const raw of selectedRoot.regular) {
-    knownSlugs.add(slugifyDocFile(relativeToDocRoot(raw.path, docRoot)));
+    knownSlugs.add(docSlug(relativeToDocRoot(raw.path, docRoot)));
   }
 
   const headingSlugs = new Map<string, Set<string>>();
   for (const raw of [...selectedRoot.regular, selectedRoot.index]) {
     const slug =
-      raw === selectedRoot.index ? 'index' : slugifyDocFile(relativeToDocRoot(raw.path, docRoot));
+      raw === selectedRoot.index ? 'index' : docSlug(relativeToDocRoot(raw.path, docRoot));
     headingSlugs.set(slug, extractHeadingSlugs(stripMkdocsMarkup(raw.content)));
   }
 
@@ -560,6 +584,7 @@ async function collectGithubPathChannel(
       layout.path,
       'index',
       selectedRoot.index,
+      relativeToDocRoot(selectedRoot.index.path, docRoot),
       -1,
       knownSlugs,
       headingSlugs,
@@ -568,7 +593,7 @@ async function collectGithubPathChannel(
   );
   for (const raw of selectedRoot.regular) {
     const relative = relativeToDocRoot(raw.path, docRoot);
-    const slug = slugifyDocFile(relative);
+    const slug = docSlug(relative);
     const explicitOrder = layout.order?.indexOf(slug);
     const order =
       explicitOrder !== undefined && explicitOrder >= 0
@@ -581,6 +606,7 @@ async function collectGithubPathChannel(
         layout.path,
         slug,
         raw,
+        relative,
         order,
         knownSlugs,
         headingSlugs,
@@ -613,7 +639,8 @@ async function collectWikiChannel(
   }
 
   const orderBySidebar = new Map<string, number>();
-  sidebarOrder.forEach((name, index) => orderBySidebar.set(slugifyDocFile(name), index));
+  // A sidebar entry is a path from the docs root, so it slugifies to the page slug - folders included.
+  sidebarOrder.forEach((name, index) => orderBySidebar.set(docSlug(name), index));
 
   const rawFiles: RawSourceFile[] = candidates.map((candidate) => ({
     path: candidate.name,
@@ -624,12 +651,12 @@ async function collectWikiChannel(
 
   const knownSlugs = new Set<string>(['index']);
   for (const raw of selectedRoot.regular) {
-    knownSlugs.add(slugifyDocFile(raw.path));
+    knownSlugs.add(docSlug(raw.path));
   }
 
   const headingSlugs = new Map<string, Set<string>>();
   for (const raw of [...selectedRoot.regular, selectedRoot.index]) {
-    const slug = raw === selectedRoot.index ? 'index' : slugifyDocFile(raw.path);
+    const slug = raw === selectedRoot.index ? 'index' : docSlug(raw.path);
     headingSlugs.set(slug, extractHeadingSlugs(stripMkdocsMarkup(raw.content)));
   }
 
@@ -641,6 +668,7 @@ async function collectWikiChannel(
       'docs/wiki',
       'index',
       selectedRoot.index,
+      selectedRoot.index.path,
       -1,
       knownSlugs,
       headingSlugs,
@@ -648,7 +676,7 @@ async function collectWikiChannel(
     ),
   );
   for (const raw of selectedRoot.regular) {
-    const slug = slugifyDocFile(raw.path);
+    const slug = docSlug(raw.path);
     const order = orderBySidebar.get(slug) ?? 1000;
     pages.push(
       await buildPage(
@@ -657,6 +685,7 @@ async function collectWikiChannel(
         'docs/wiki',
         slug,
         raw,
+        raw.path,
         order,
         knownSlugs,
         headingSlugs,
@@ -684,6 +713,7 @@ async function collectReadmeChannel(
       '',
       'index',
       readme,
+      '',
       -1,
       new Set(['index']),
       new Map([['index', extractHeadingSlugs(stripMkdocsMarkup(readme.content))]]),

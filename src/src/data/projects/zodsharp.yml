@@ -43,6 +43,41 @@ docs:
       ref: latest-stable
     prerelease:
       ref: default
+  # The documentation was reorganised into topic folders, which makes each page's folder part of its published URL.
+  # Every page that moved keeps its old flat URL working: the site writes a meta-refresh redirect for each pair, and
+  # a redirect never shadows a real page, so these entries stay inert while `live` still reads a tag that predates the
+  # move and take effect when the tag that carries it is promoted.
+  redirects:
+    core-concepts: concepts/core-concepts
+    composition-and-transforms: concepts/composition-and-transforms
+    string-validation: schemas/string-validation
+    number-validation: schemas/number-validation
+    object-validation: schemas/object-validation
+    arrays-and-other-schemas: schemas/arrays-and-other-schemas
+    unions-and-discriminated-unions: schemas/unions-and-discriminated-unions
+    validation-rules-reference: schemas/validation-rules-reference
+    custom-rules: schemas/custom-rules
+    value-objects-integration: schemas/value-objects-integration
+    compiled-validators-and-caching: schemas/compiled-validators-and-caching
+    source-generator: generator/source-generator
+    source-generator-dataannotations: generator/source-generator-dataannotations
+    source-generator-diagnostics: generator/source-generator-diagnostics
+    jsonschema-export: serialization/jsonschema-export
+    jsonschema-import: serialization/jsonschema-import
+    systemtextjson-integration: serialization/systemtextjson-integration
+    newtonsoftjson-integration: serialization/newtonsoftjson-integration
+    microsoft-extensions-validation: hosting/microsoft-extensions-validation
+    openapi-integration: hosting/openapi-integration
+    blazor-integration: hosting/blazor-integration
+    http-integration: hosting/http-integration
+    dependency-injection: hosting/dependency-injection
+    localization: hosting/localization
+    guarantees-and-limitations: quality/guarantees-and-limitations
+    performance: quality/performance
+    trimming-and-aot: quality/trimming-and-aot
+    cross-platform-interop: quality/cross-platform-interop
+    contributing: development/contributing
+    release-flow: development/release-flow
 targetFrameworks:
   - net8.0
   - net9.0

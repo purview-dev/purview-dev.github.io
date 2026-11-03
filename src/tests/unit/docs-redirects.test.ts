@@ -7,8 +7,10 @@ import { dirname, join } from 'node:path';
 
 import { DOCS_MANIFEST_SCHEMA } from '../../src/lib/docs/aggregate';
 import {
+  docsPageRedirects,
   renderChannelRedirect,
   retiredChannelRedirects,
+  writeDocsPageRedirects,
   writeRetiredChannelRedirects,
   writeRetiredPageRedirects,
 } from '../../src/lib/docs/redirects';
@@ -129,6 +131,52 @@ describe('retired documentation channel redirects', () => {
 
       // The moved page never overwrites a real page that owns the URL.
       expect(writeRetiredPageRedirects(dist)).toEqual([]);
+    } finally {
+      rmSync(dist, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('moved documentation page redirects', () => {
+  test('every nested page keeps the flat URL it had before the folders', () => {
+    // ZodSharp's documentation moved into topic folders, which made each folder part of the page's URL. The
+    // former flat address of every moved page is its file name alone, so the declared map must cover each one.
+    const zodsharp = projects.find((project) => project.id === 'zodsharp');
+    const moved = zodsharp?.docs?.source === 'github-path' ? (zodsharp.docs.redirects ?? {}) : {};
+    const nested = Object.values(moved).filter((slug) => slug.includes('/'));
+
+    expect(nested.length).toBe(Object.keys(moved).length);
+    expect(moved['performance']).toBe('quality/performance');
+    expect(moved['custom-rules']).toBe('schemas/custom-rules');
+
+    for (const [from, to] of Object.entries(moved)) {
+      // The former slug is the page's file name, slugified.
+      expect(from).toBe(to.slice(to.lastIndexOf('/') + 1));
+    }
+
+    expect(docsPageRedirects(projects)).toContainEqual({
+      from: '/docs/zodsharp/performance/',
+      to: '/docs/zodsharp/quality/performance/',
+      title: 'This documentation page moved…',
+      message: 'The page now lives at its new address.',
+    });
+  });
+
+  test('a moved page is written as a redirect, and an existing page still wins', () => {
+    const dist = mkdtempSync(join(tmpdir(), 'purview-redirects-'));
+    try {
+      const written = writeDocsPageRedirects(dist, projects);
+      expect(written).toContain(join('docs', 'zodsharp', 'performance', 'index.html'));
+
+      const html = readFileSync(
+        join(dist, 'docs', 'zodsharp', 'performance', 'index.html'),
+        'utf8',
+      );
+      expect(html).toContain('url=/docs/zodsharp/quality/performance/');
+      expect(html).toContain('name="robots" content="noindex, follow"');
+
+      // A second run writes nothing: the redirects are created once.
+      expect(writeDocsPageRedirects(dist, projects)).toEqual([]);
     } finally {
       rmSync(dist, { recursive: true, force: true });
     }

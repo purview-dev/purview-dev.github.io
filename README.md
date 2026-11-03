@@ -270,8 +270,15 @@ docs (in-repo `docs/`, GitHub wikis via a shallow clone, or the README), then:
   the conventional `index.md`/`Home.md`/`readme.md`, otherwise the repository
   README when `readmeAsIndex: true`,
 - converts GitHub alert blockquotes to Starlight asides,
-- rewrites relative links and images so they resolve inside the portal,
-- honours `_Sidebar.md` ordering when the source provides it.
+- rewrites relative links and images so they resolve inside the portal, resolving
+  each link against the page that contains it (which is what GitHub does),
+- honours `_Sidebar.md` ordering when the source provides it,
+- derives each page's slug from its path relative to the docs root (ADR 0011), so
+  a topic folder stays a path segment — `schemas/Custom-Rules.md` is published at
+  `/docs/<project>/schemas/custom-rules/` — while a flat corpus keeps the
+  single-segment slug it always had. Each segment is reduced to lower-case
+  letters, digits and dashes, so any folder name publishes a URL that needs no
+  percent-encoding (`API v2 (beta)/` → `api-v2-beta/`).
 
 ### Documentation landing pages
 
@@ -298,6 +305,24 @@ match the file's base name (not its repository path) and accept `*` wildcards.
 Each documentation page shows its owning project, lifecycle status, staleness
 (last review older than 365 days, configurable in
 `src/lib/docs/staleness.ts`), and an edit link to the source repository.
+
+### Moving a documentation page
+
+A page's folder is part of its URL, so reorganising a docs tree changes published
+URLs. Declare the move once in the project catalogue and the build writes a
+meta-refresh redirect from the old slug to the new one:
+
+```yaml
+docs:
+  redirects:
+    custom-rules: schemas/custom-rules
+```
+
+Redirects never overwrite a real page, so an entry is inert while the old slug is
+still published — for example on a `live` channel pinned to a tag from before the
+move — and takes effect at promotion (ADR 0011). `docsPage` deep links are the
+exception: the catalogue keeps them a single path segment, so a page the catalogue
+deep-links either stays at the docs root or moves together with its deep link.
 
 ### Live and prerelease documentation
 
