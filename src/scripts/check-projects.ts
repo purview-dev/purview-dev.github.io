@@ -24,6 +24,7 @@ import {
 } from '../src/lib/releases/target-frameworks';
 import { projectReleaseSummary, projectVersionRollup } from '../src/lib/releases/transform';
 import { OWNER } from '../src/lib/site';
+import { listMirroredSkills } from '../src/lib/skills';
 
 /**
  * Deterministic catalogue guard (ADR 0003).
@@ -289,6 +290,29 @@ function checkDocs(
     });
   }
   return pages;
+}
+
+/**
+ * Declared Agent Skills must be mirrored (ADR 0010). The mirror is what makes a
+ * skill readable at `purview.dev/skills/<project>/<skill>/SKILL.md`, so a
+ * declaration without one is a broken install link.
+ */
+function checkSkills(project: ResolvedProject): void {
+  // Skills are detected from the repository by the sync, so a project with none
+  // is normal. Only an explicit declaration promises a mirror.
+  if (project.skills.length === 0) {
+    return;
+  }
+  if (listMirroredSkills(project.id).length === 0) {
+    fail({
+      project: project.id,
+      field: 'skills',
+      observed: 'no mirrored skills',
+      expected: `at least one skill under public/skills/${project.id}/`,
+      remediation:
+        "run `just data-sync` (live) so the skills are discovered at the project's documentation ref, or check that `skills/` exists in the repository.",
+    });
+  }
 }
 
 /**
@@ -642,22 +666,16 @@ function checkRepoMetadata(project: ResolvedProject, data: ReleaseCacheData): vo
     });
   }
 
+  // Discussions are detected from the repository, so a resolved `true` can only
+  // come from an explicit override that disagrees with the repository.
   if (project.discussions && !repo.hasDiscussions) {
     fail({
       project: project.id,
       field: 'discussions',
-      observed: 'discussions: true',
+      observed: 'discussions: true (explicit override)',
       expected: 'GitHub Discussions enabled on the repository',
-      remediation: 'enable Discussions, or set `discussions: false`.',
-    });
-  }
-  if (!project.discussions && repo.hasDiscussions && project.status !== 'archived') {
-    warn({
-      project: project.id,
-      field: 'discussions',
-      observed: 'repository Discussions enabled, manifest links none',
-      expected: 'consider `discussions: true`',
-      remediation: `set \`discussions: true\` to surface ${project.repository}/discussions.`,
+      remediation:
+        'remove the override so the link is detected automatically, or enable Discussions on the repository.',
     });
   }
 }
@@ -729,6 +747,7 @@ export function checkProjects(): { errors: Finding[]; warnings: Finding[] } {
   for (const project of projects) {
     const docsPages = checkDocs(project, docsManifest, data);
     checkUseCases(project, docsPages);
+    checkSkills(project);
     checkExperimental(project);
     if (data) {
       checkPackages(project, data);

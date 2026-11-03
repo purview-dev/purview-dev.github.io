@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
 import GitHubIcon from '~/components/GitHubIcon.astro';
+import SkillInstall from '~/components/SkillInstall.astro';
 import InstallPanel from '~/components/islands/InstallPanel.tsx';
 import PackageVersions, { type PackageRow } from '~/components/islands/PackageVersions.tsx';
 import StarOnGitHub from '~/components/StarOnGitHub.astro';
@@ -15,6 +16,7 @@ import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { projectReleaseSummary } from '~/lib/releases/transform';
 import { getReleaseIndex } from '~/lib/releases/runtime';
 import { SITE } from '~/lib/site';
+import { listMirroredSkills } from '~/lib/skills';
 import { displayStatus } from '~/lib/status';
 
 import { absoluteUrl, nugetPackageUrl, withBase } from '~/lib/urls';
@@ -54,6 +56,13 @@ const supersededBy =
     loadProjects().find((candidate) => candidate.id === project.supersededBy)
   : undefined;
 const primaryPackage = project.packages.find((pkg) => pkg.primary) ?? project.packages[0];
+// Agent skills (ADR 0010): the catalogue names them, the mirrored SKILL.md
+// supplies the description the CLI shows, and one shared component renders the
+// same install instructions here as on /skills/.
+const skills = listMirroredSkills(project.id).map((skill) => ({
+  name: skill.name,
+  description: skill.description ?? undefined,
+}));
 const docsPath = project.docs ? withBase(`/docs/${project.id}/`) : null;
 // Per-project machine-readable bundles, emitted by the discovery integration at
 // /projects/<id>/llms.txt and /projects/<id>/llms-full.txt (the llms.txt
@@ -444,6 +453,25 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
                     </div>
                   </div>
                 ))}
+              </div>
+            </section>
+          )
+        }
+
+        {
+          skills.length > 0 && (
+            <section>
+              <h2 class="text-xl font-semibold">Agent skills</h2>
+              <p class="mt-2 text-muted">
+                {project.name} authors agent skills for coding agents. They are installed explicitly
+                with the skills CLI and are not part of any NuGet package.
+              </p>
+              <div class="mt-4">
+                <SkillInstall
+                  repository={project.repository}
+                  projectId={project.id}
+                  skills={skills}
+                />
               </div>
             </section>
           )

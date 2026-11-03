@@ -1,0 +1,70 @@
+---
+import { skillEntryPath, skillsInstallCommand } from '~/lib/skills';
+import { withBase } from '~/lib/urls';
+
+interface Props {
+  /** `owner/repository` the skills are published from. */
+  repository: string;
+  projectId: string;
+  skills: { name: string; description?: string }[];
+  /** Render the per-skill "fetch it directly" links (default: true). */
+  showLinks?: boolean;
+}
+
+const { repository, projectId, skills, showLinks = true } = Astro.props;
+
+// One set of instructions for every project that authors skills (ADR 0010).
+// The command, the pinning syntax and the lockfile note are identical wherever
+// this component renders, so a reader never meets two versions of the truth.
+const command = skillsInstallCommand(repository);
+const pinned = `${command}#<ref>`;
+const restore = 'npx skills experimental_install';
+---
+
+<div class="rounded-xl border border-border bg-surface p-5 md:p-6">
+  <p class="text-sm text-muted">
+    Skills are installed explicitly with the
+    <a
+      href="https://github.com/vercel-labs/skills"
+      rel="noopener noreferrer"
+      target="_blank"
+      class="pv-link">skills CLI</a
+    >. Nothing ships them inside a NuGet package, and no build writes into your agent's directories:
+    installation is a decision you make.
+  </p>
+  <pre
+    class="mt-4 overflow-x-auto rounded-lg border border-border bg-black/5 p-3 text-xs dark:bg-white/5"><code
+      >{command}</code
+    ></pre>
+  <ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-muted">
+    <li>
+      Installs at project level by default. Add <code>-g</code> for a user-level install, or
+      <code>-a &lt;agent&gt;</code> to target one agent.
+    </li>
+    <li>
+      To match the release you use, pin a commit or tag: <code>{pinned}</code>.
+    </li>
+    <li>
+      The CLI records what it installed in <code>skills-lock.json</code>; restore it with
+      <code>{restore}</code>.
+    </li>
+  </ul>
+  {
+    showLinks && skills.length > 0 && (
+      <p class="mt-4 text-sm text-muted">
+        Every skill is also published from this site, so a tool or a reviewer can read it without
+        cloning the repository:
+        <span class="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+          {skills.map((skill) => (
+            <a
+              href={withBase(skillEntryPath(projectId, skill.name))}
+              class="pv-link font-mono text-xs"
+            >
+              {skill.name}/SKILL.md
+            </a>
+          ))}
+        </span>
+      </p>
+    )
+  }
+</div>

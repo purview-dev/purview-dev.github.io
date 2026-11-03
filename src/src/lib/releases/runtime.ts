@@ -1,7 +1,7 @@
 import type { DataSource } from './transform';
 import type { ReleaseCacheData } from './types';
 
-import { readReleaseCache, readReleaseFixture } from './cache';
+import { readReleaseCache, readReleaseFixture, writeReleaseCache } from './cache';
 import { RELEASE_CACHE_SCHEMA_VERSION } from './types';
 
 export interface ReleaseIndex {
@@ -10,6 +10,32 @@ export interface ReleaseIndex {
 }
 
 let cached: ReleaseIndex | null = null;
+
+/**
+ * Forget the memoized index so the next call re-reads the cache and fixtures.
+ *
+ * The memo is what makes rendering cheap, but it also snapshots whichever source
+ * existed at the *first* call. During `just data-sync` that first call happens
+ * inside the release fetch itself (`loadProjects` reads repository flags through
+ * this accessor), i.e. before the freshly fetched cache is written — so a process
+ * that only resets on demand would otherwise aggregate documentation from the
+ * committed fixtures while the catalogue guard read the new cache, and every
+ * channel-promotion decision (ADR 0009) would disagree between the two.
+ */
+export function resetReleaseIndex(): void {
+  cached = null;
+}
+
+/**
+ * Publish freshly fetched release data: write the cache and make this process
+ * read it. Every writer must go through here — a bare `writeReleaseCache` leaves
+ * the memo pointing at the previous source.
+ */
+export function publishReleaseData(data: ReleaseCacheData): ReleaseIndex {
+  writeReleaseCache(data);
+  cached = { data, source: 'cache' };
+  return cached;
+}
 
 /**
  * Build-time accessor for release data. Prefers the local cache written by

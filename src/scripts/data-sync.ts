@@ -1,11 +1,13 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { readReleaseCache, readReleaseFixture, writeReleaseCache } from '../src/lib/releases/cache';
+import { readReleaseCache, readReleaseFixture } from '../src/lib/releases/cache';
+import { publishReleaseData } from '../src/lib/releases/runtime';
 import { fetchReleaseData } from './fetch-releases';
 import { processBranding } from './process-branding';
 import { syncAssets } from './sync-assets';
 import { hasCurrentDocsMirror, hasDocsMirror, syncDocs } from './sync-docs';
+import { syncSkills } from './sync-skills';
 
 const RELEASES_CACHE_FILE = resolve('.cache/releases/releases.json');
 
@@ -39,8 +41,9 @@ async function syncReleases(mode: Mode): Promise<void> {
     return;
   }
   if (mode === 'live') {
-    const data = await fetchReleaseData();
-    writeReleaseCache(data);
+    // `publishReleaseData` also refreshes the memoized index: the fetch resolved
+    // the repository/package list through `loadProjects`, which snapshots it.
+    publishReleaseData(await fetchReleaseData());
     console.log('Releases: fetched live data.');
     return;
   }
@@ -50,8 +53,7 @@ async function syncReleases(mode: Mode): Promise<void> {
     return;
   }
   try {
-    const data = await fetchReleaseData();
-    writeReleaseCache(data);
+    publishReleaseData(await fetchReleaseData());
     console.log('Releases: fetched live data.');
     return;
   } catch (error) {
@@ -102,6 +104,7 @@ export async function dataSync(): Promise<void> {
   await syncReleases(mode);
   await syncDocsMirror(mode);
   await syncAssets(mode);
+  await syncSkills(mode);
   if (!existsSync(RELEASES_CACHE_FILE) && !readReleaseFixture('index')) {
     console.warn(
       'Note: release data is unavailable. The releases page will be empty until `just fetch-releases` runs.',

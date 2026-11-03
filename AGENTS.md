@@ -39,6 +39,7 @@ from the repository root and delegated to the package.
 | `src/src/content/docs/**` | Aggregated documentation mirror (gitignored) | `just data-sync` |
 | `src/.cache/docs`, `src/.cache/releases` | Typed docs/release caches (gitignored) | `just data-sync` / `just fetch-releases` |
 | `src/public/schemas/**` | Mirrored project assets declared in `assets:` (gitignored) | `just data-sync` |
+| `src/public/skills/**` | Mirrored Agent Skills declared in `skills:` (gitignored) | `just data-sync` |
 | `src/dist/**` | Production build output (gitignored) | `just build` |
 
 ### Authoritative validation
@@ -90,6 +91,11 @@ prints advisory observations (which never fail the build) when a project's decla
      automatic: the prerelease channel is withheld once a stable release (GitHub release or NuGet
      version) catches up with the prerelease line, and returns with the next prerelease — never
      delete the declaration to stop publishing it.
+   - Agent Skills a project publishes are declared in `skills:` (ADR 0010) at
+     `skills/<name>/SKILL.md`; the sync mirrors the whole directory to
+     `/skills/<id>/<name>/` and every page renders the same install block
+     (`npx skills add <owner>/<repo>`). Never ship a skill in a package or copy it
+     into an agent directory at build time, and never hand-edit `src/public/skills/`.
    - `order` values are unique and control the catalogue order.
    - `related`, `supersedes`, `supersededBy` must reference known ids.
    - `status` must match reality: an archived repository is `archived`; prerelease-only tooling is

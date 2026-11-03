@@ -157,6 +157,47 @@ describe('built docs strip mkdocs markup', () => {
   });
 });
 
+describe('built agent skills', () => {
+  test('the skills page and machine-readable index are published', () => {
+    const page = requireBuilt('skills/index.html');
+    expect(page).toContain('Agent skills');
+
+    const manifest = JSON.parse(requireBuilt('skills.json')) as {
+      projects: {
+        id: string;
+        install: { command: string };
+        skills: { name: string; url: string }[];
+      }[];
+    };
+    const pmSkills = manifest.projects.find((project) => project.id === 'pm-skills');
+    expect(pmSkills?.skills.length).toBe(14);
+    expect(pmSkills?.install.command).toBe('npx skills add purview-dev/pm-skills');
+    expect(pmSkills?.skills[0]?.url).toStartWith('https://purview.dev/skills/pm-skills/');
+  });
+
+  test('every declared skill is served from purview.dev', () => {
+    expect(requireBuilt('skills/pm-skills/pm-park/SKILL.md')).toContain('pm-park');
+    expect(requireBuilt('skills/results/purview-results-core/SKILL.md')).toContain(
+      'purview-results-core',
+    );
+  });
+
+  test('the same install block is shown for every project that authors skills', () => {
+    const skillsPage = requireBuilt('skills/index.html');
+    for (const repository of [
+      'purview-dev/pm-skills',
+      'purview-dev/aspire-resourcekit',
+      'purview-dev/results',
+    ]) {
+      expect(skillsPage).toContain(`npx skills add ${repository}`);
+    }
+    // A product project's own page shows the identical command.
+    expect(requireBuilt('projects/results/index.html')).toContain(
+      'npx skills add purview-dev/results',
+    );
+  });
+});
+
 describe('built use cases', () => {
   test('project pages render a use-case section with concrete code', () => {
     const content = requireBuilt('projects/telemetry-sourcegenerator/index.html');

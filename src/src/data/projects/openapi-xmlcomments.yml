@@ -1,0 +1,123 @@
+$schema: ../../lib/manifest/schema.ts
+
+id: openapi-xmlcomments
+name: OpenAPI XmlComments
+shortDescription: Keeps the ASP.NET Core OpenAPI XML-comment generator working when one documentation ID arrives twice.
+description: >-
+  An MSBuild package for APIs that reference Microsoft.AspNetCore.OpenApi. The XML-comment source
+  generator builds one dictionary from the documentation of every project reference and of the API's
+  own compilation, and de-duplicates neither, so a documented type that arrives from more than one
+  assembly makes /openapi/v1.json answer 500 with "An item with the same key has already been
+  added". This package removes every colliding documentation ID from the referenced XML
+  documentation before compile, and warns (POAX001) about an ID it can only see once the API has
+  been built. The generator stays on, so every XML description stays in the OpenAPI document.
+origin: >-
+  The same 500 appeared in several APIs at once as soon as a source generator started injecting the
+  same attribute into every assembly (dotnet/aspnetcore#67192). The usual workaround — removing the
+  generator — also removed every description from the document, so the fix became two MSBuild
+  targets that filter only what actually collides.
+useWhen: >-
+  Your API references Microsoft.AspNetCore.OpenApi with its XML-comment generator on, and a
+  documented type with the same full name is compiled into more than one of its project references —
+  typically an attribute or polyfill a source generator injects into every assembly.
+avoidWhen: >-
+  The duplicate never passes through AdditionalFiles, or both copies come from the API's own
+  compilation: the package cannot see those, and a type that is genuinely duplicated public API needs
+  one of the declarations renamed rather than filtered.
+repository: purview-dev/openapi-xmlcomments
+category: build-tooling
+status: preview
+order: 65
+docs:
+  source: github-path
+  path: docs/wiki
+  rootPage: Getting-Started.md
+  exclude:
+    - _Sidebar.md
+    - Home.md
+    - index.md
+skills: true
+targetFrameworks:
+  - msbuild
+packages:
+  - id: Purview.OpenAPI.XmlComments
+    description: The deduplication and overlap-check MSBuild tasks, their props and targets, and POAX001; a development dependency with no runtime footprint.
+    primary: true
+    targetFrameworks:
+      - netstandard2.0
+related:
+  - results
+useCases:
+  - audience: developer
+    title: Keep the generator on and filter only what collides
+    scenario: >-
+      /openapi/v1.json answers 500 with "An item with the same key has already been added" because a
+      type your API documents is also documented in more than one referenced project, and the only
+      workaround you have found turns the XML-comment generator off.
+    code: |
+      <!-- the project that calls AddOpenApi() -->
+      <PackageReference Include="Purview.OpenAPI.XmlComments" Version="1.0.0" PrivateAssets="all" />
+    language: xml
+    outcome: >-
+      Every colliding documentation ID is removed from the referenced documentation before compile, the
+      generator runs on the filtered copies, and the description of every other endpoint and schema
+      stays in the document.
+    evidence: >-
+      Every occurrence of a colliding ID goes, not all but the first, because the API usually declares
+      the injected type as well: keeping a reference's copy would still collide with it. A duplicated
+      ID is ambient code rather than API surface, and a copy is only rewritten when its content
+      changes, so a no-change build still skips CoreCompile.
+  - audience: developer
+    title: List every colliding ID rather than the first one
+    scenario: >-
+      The exception names one documentation ID, and the build says nothing about the rest, so you do
+      not know whether one exclude is enough or whether the generator fails again on the next build.
+    code: |
+      pwsh skills/purview-openapi-xmlcomments-duplicates/scripts/find-duplicate-documentation-ids.ps1 `
+        -Project path/to/Api
+    language: powershell
+    outcome: >-
+      The script asks MSBuild for exactly the documentation files the generator reads and reports every
+      colliding ID, where each copy comes from, whether the current configuration already handles it,
+      and the item to add when it does not.
+    evidence: >-
+      Each finding is classified: BetweenReferences is handled automatically by the package, while
+      ReferenceAndProject needs the PurviewOpenAPIXmlCommentExclude item the script prints. It exits 0
+      when nothing would throw, 1 when something would, and 2 when it could not inspect the project.
+    docsPage: troubleshooting
+  - audience: team-lead
+    title: Fail the build on a collision instead of a 500 in production
+    scenario: >-
+      The overlap is only visible after the API compiles, so a warning is easy to ship, and the failure
+      then surfaces as a 500 on the OpenAPI document rather than as a red build.
+    code: |
+      <PropertyGroup>
+        <!-- fail the build instead of leaving the collision to run time -->
+        <MSBuildWarningsAsErrors>$(MSBuildWarningsAsErrors);POAX001</MSBuildWarningsAsErrors>
+      </PropertyGroup>
+    language: xml
+    outcome: >-
+      POAX001 fails the build and names the exact PurviewOpenAPIXmlCommentExclude item to add, so an
+      unhandled collision is a pull-request failure instead of a runtime error.
+    evidence: >-
+      The check runs after CoreCompile and compares the API's fresh documentation file with the filtered
+      reference documentation, which is the one case the before-compile pass cannot see: an ID
+      documented in the API and in exactly one referenced project.
+    docsPage: diagnostics
+  - audience: architect
+    title: One repository-wide reference that costs nothing at run time
+    scenario: >-
+      Several API projects in the same repository reference the same generators, and you do not want
+      per-project wiring or a build fix that becomes a runtime dependency.
+    code: |
+      <!-- Directory.Packages.props: once for every project in the repository -->
+      <GlobalPackageReference Include="Purview.OpenAPI.XmlComments" Version="1.0.0" />
+    language: xml
+    outcome: >-
+      One declaration covers every project and does nothing in a project that does not reference
+      Microsoft.AspNetCore.OpenApi, so libraries in the same repository need no exemption.
+    evidence: >-
+      The package ships only props, targets and a netstandard2.0 task assembly under tasks/; lib/, ref/
+      and runtimes/ are forbidden by pack validation, so it adds no runtime dependency and copies
+      nothing into the consumer's build output.
+    docsPage: configuration

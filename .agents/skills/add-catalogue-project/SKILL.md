@@ -121,7 +121,6 @@ Add the entry as `src/src/data/projects/<id>.yml` (see `project-manifest-referen
         evidence: >-
           <a fact: before/after, count, generated output, measured property>
         docsPage: <slug-of-an-aggregated-page>
-    discussions: false
 ```
 
 Every non-archived project needs at least **one** use case with `code` + `language` and an
@@ -133,7 +132,8 @@ Every non-archived project needs at least **one** use case with `code` + `langua
   `github-repo-metadata` for the exact command and the taxonomy guidance.
 - The repository description must be genuinely descriptive: it backs the `shortDescription`
   fallback and social/`og:` metadata.
-- Only set `discussions: true` once GitHub Discussions is actually enabled on the repository.
+- Leave `discussions` unset: the loader detects it from the repository (`hasDiscussions`). Set
+  `discussions: false` only to opt a repository out, or `true` to force the link.
 
 ## Step 5 — integrate and verify
 

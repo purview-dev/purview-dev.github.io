@@ -134,6 +134,23 @@ const docsSchema = z.discriminatedUnion('source', [
   docsReadmeSchema,
 ]);
 
+/**
+ * An Agent Skill the project publishes from its repository root.
+ *
+ * The ecosystem convention (see the engineering playbook's *Agent Skills
+ * Distribution*) is one directory per skill at `skills/<name>/SKILL.md`, and the
+ * skills CLI is the only delivery route: nothing ships a skill inside a NuGet
+ * package or writes into an agent directory during a build. The catalogue
+ * records the skills so the site can mirror them to stable `purview.dev` URLs
+ * and show the same install instructions everywhere (ADR 0010).
+ */
+const skillSchema = z.object({
+  name: z.string().regex(/^[a-z0-9-]+$/, 'must be a lowercase slug using [a-z0-9-] only'),
+  /** Repository directory holding the skill; defaults to `skills/<name>`. */
+  path: z.string().min(1, 'must be a non-empty repository path').optional(),
+  description: z.string().min(1, 'must be a short description').optional(),
+});
+
 const packageSchema = z.object({
   id: z.string().min(1, 'must be a non-empty NuGet package id'),
   description: z.string().optional(),
@@ -196,18 +213,30 @@ const projectSchema = z
     install: z.enum(INSTALL_KINDS).optional(),
     targetFrameworks: z.array(z.string()).optional(),
     packages: z.array(packageSchema).optional(),
+    skills: z.union([z.boolean(), z.array(skillSchema)]).optional(),
     assets: z.array(assetSchema).optional(),
     related: z.array(z.string()).optional(),
     useCases: z.array(useCaseSchema).optional(),
     acknowledgments: z.array(acknowledgmentSchema).optional(),
     supersedes: z.string().optional(),
     supersededBy: z.string().optional(),
+    /**
+     * Whether the project links its GitHub Discussions. Detected from the
+     * repository (`hasDiscussions` in the release cache); set it only to
+     * override the detection — `false` opts a repository out.
+     */
     discussions: z.boolean().optional(),
   })
   .refine((value) => !(value.experimental === true && value.status === 'archived'), {
     message: 'cannot be true when `status` is archived: an archived project is not an experiment',
     path: ['experimental'],
-  });
+  })
+  .refine(
+    (value) =>
+      !Array.isArray(value.skills) ||
+      new Set(value.skills.map((skill) => skill.name)).size === value.skills.length,
+    { message: 'must not repeat a skill name', path: ['skills'] },
+  );
 
 const externalProjectSchema = z.object({
   id: z.string().regex(/^[a-z0-9-]+$/, 'must be a lowercase slug using [a-z0-9-] only'),
@@ -238,6 +267,7 @@ export type ProjectRecord = z.infer<typeof projectSchema>;
 export type ExternalProjectRecord = z.infer<typeof externalProjectSchema>;
 export type ProjectDocsConfig = z.infer<typeof docsSchema>;
 export type ProjectDocsChannel = z.infer<typeof docsChannelSchema>;
+export type ProjectSkill = z.infer<typeof skillSchema>;
 export type ProjectPackage = z.infer<typeof packageSchema>;
 export type ProjectAsset = z.infer<typeof assetSchema>;
 export type ProjectAcknowledgment = z.infer<typeof acknowledgmentSchema>;
@@ -248,6 +278,7 @@ export const PROJECT_DEFAULTS = {
   featured: false,
   order: 1000,
   packages: [] as ProjectPackage[],
+  skills: [] as ProjectSkill[],
   assets: [] as ProjectAsset[],
   related: [] as string[],
   useCases: [] as ProjectUseCase[],
@@ -259,6 +290,7 @@ export const PROJECT_DEFAULTS = {
   featured: boolean;
   order: number;
   packages: ProjectPackage[];
+  skills: ProjectSkill[];
   assets: ProjectAsset[];
   related: string[];
   useCases: ProjectUseCase[];

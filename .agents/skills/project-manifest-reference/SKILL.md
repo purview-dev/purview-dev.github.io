@@ -51,12 +51,13 @@ Adding a value to any of these lists is a schema change and requires an ADR. `ex
 | `install` | no | Default `nuget` |
 | `targetFrameworks` | no | e.g. `net8.0`, `net9.0`, `net10.0`, `netstandard2.0`; `just check-projects` reports (advisory) when it does not match the union of the runtime packages' published NuGet TFMs |
 | `packages` | no | `{ id, description?, primary?, targetFrameworks? }[]`; defaults to `[]` |
+| `skills` | no | `{ name, path?, description? }[]` — Agent Skills the project publishes from `skills/<name>/SKILL.md` (ADR 0010); mirrored to `/skills/<id>/<name>/` and rendered with the shared install block; defaults to `[]` |
 | `assets` | no | `{ path, output, description? }[]`; repository files mirrored into `public/` at build time (`path` is repo-relative, `output` is site-relative); defaults to `[]` |
 | `related` | no | Known project ids; rendered in the project page aside |
 | `useCases` | no | Default `[]`; at least one required for non-archived projects |
 | `acknowledgments` | no | `{ name, url, description? }[]`; upstream work the project credits |
 | `supersedes` / `supersededBy` | no | Known project ids; used for archived/successor messaging |
-| `discussions` | no | Default `false`; when true the page links to repository Discussions (the repository must have them enabled) |
+| `discussions` | no | **Detected, not authored**: the page links repository Discussions when the repository has them enabled (`hasDiscussions` in the release cache). Set it only to override — `false` opts a repository out |
 
 ## `docs` (a discriminated union on `source`)
 
@@ -127,8 +128,8 @@ docs:
 ## Defaults applied by the loader
 
 `featured: false`, `order: 1000`, `packages: []`, `related: []`, `useCases: []`,
-`acknowledgments: []`, `discussions: false`, `install: 'nuget'`, `experimental: false`. Derived values (`repoOwner`,
-`repoName`, `sourceUrl`, `issuesUrl`, `discussionsUrl`, `changelogUrl`, `releasesUrl`) are computed,
+`acknowledgments: []`, `install: 'nuget'`, `experimental: false`. Derived values (`repoOwner`,
+`repoName`, `sourceUrl`, `issuesUrl`, `discussions`, `discussionsUrl`, `changelogUrl`, `releasesUrl`) are computed,
 never authored.
 
 ## `externalProjects[]` fields

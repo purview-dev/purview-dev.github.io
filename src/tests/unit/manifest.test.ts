@@ -162,6 +162,44 @@ describe('project manifest', () => {
     expect(projects[0]?.experimental).toBe(false);
   });
 
+  test('detects Discussions from the repository instead of the record', () => {
+    const projects = parseManifest({ projects: [makeProject('a')] }, 'fixture.yml', {
+      'purview-dev/a': { hasDiscussions: true },
+    });
+    expect(projects[0]?.discussions).toBe(true);
+    expect(projects[0]?.discussionsUrl).toBe('https://github.com/purview-dev/a/discussions');
+  });
+
+  test('links no Discussions when the repository has none', () => {
+    const projects = parseManifest({ projects: [makeProject('a')] }, 'fixture.yml', {
+      'purview-dev/a': { hasDiscussions: false },
+    });
+    expect(projects[0]?.discussions).toBe(false);
+    expect(projects[0]?.discussionsUrl).toBeNull();
+  });
+
+  test('links no Discussions when the repository has no cache record', () => {
+    const projects = parseManifest({ projects: [makeProject('a')] }, 'fixture.yml', {});
+    expect(projects[0]?.discussions).toBe(false);
+    expect(projects[0]?.discussionsUrl).toBeNull();
+  });
+
+  test('lets a record override the detected Discussions flag', () => {
+    const optedOut = parseManifest(
+      { projects: [{ ...makeProject('a'), discussions: false }] },
+      'fixture.yml',
+      { 'purview-dev/a': { hasDiscussions: true } },
+    );
+    expect(optedOut[0]?.discussionsUrl).toBeNull();
+
+    const forced = parseManifest(
+      { projects: [{ ...makeProject('a'), discussions: true }] },
+      'fixture.yml',
+      {},
+    );
+    expect(forced[0]?.discussionsUrl).toBe('https://github.com/purview-dev/a/discussions');
+  });
+
   test('accepts a project flagged experimental', () => {
     const projects = parseManifest(
       { projects: [{ ...makeProject('a'), experimental: true }] },

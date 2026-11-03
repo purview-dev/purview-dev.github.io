@@ -1,10 +1,12 @@
-import type { ExternalProjectRecord, ProjectManifest, ProjectRecord } from './schema';
+import type { GitHubRepoInfo } from '../releases/types';
+import type { ExternalProjectRecord, ProjectManifest, ProjectRecord, ProjectSkill } from './schema';
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { parse } from 'yaml';
 import { z } from 'zod';
 
+import { getReleaseIndex } from '../releases/runtime';
 import { OWNER } from '../site';
 import { PROJECT_DEFAULTS, manifestSchema } from './schema';
 
@@ -30,6 +32,10 @@ export interface ResolvedProject extends ProjectRecord {
   experimental: boolean;
   order: number;
   packages: NonNullable<ProjectRecord['packages']>;
+  /** True when the catalogue says "publish every skill under `skills/`". */
+  discoverSkills: boolean;
+  /** Explicit skill declarations (overrides/legacy); discovery is preferred. */
+  skills: ProjectSkill[];
   assets: NonNullable<ProjectRecord['assets']>;
   related: NonNullable<ProjectRecord['related']>;
   useCases: NonNullable<ProjectRecord['useCases']>;
@@ -57,26 +63,51 @@ export class ManifestValidationError extends Error {
   }
 }
 
-function withDefaults(record: ProjectRecord): ResolvedProject {
+/** The repository flags the release cache records, keyed by `owner/repository`. */
+type RepositoryFlags = Record<string, Pick<GitHubRepoInfo, 'hasDiscussions'>>;
+
+/**
+ * Resolve whether the project links its GitHub Discussions.
+ *
+ * GitHub already knows, so the catalogue does not carry the setting: the
+ * release cache records `hasDiscussions` for every declared repository. An
+ * explicit value in the record is an override — `false` opts out (a fork, or a
+ * repository whose Discussions should not be surfaced) and `true` links them
+ * even before the repository has a cache record.
+ */
+function resolveDiscussions(
+  record: ProjectRecord,
+  repository: Pick<GitHubRepoInfo, 'hasDiscussions'> | undefined,
+): boolean {
+  if (record.discussions === false) {
+    return false;
+  }
+  return repository?.hasDiscussions ?? record.discussions ?? PROJECT_DEFAULTS.discussions;
+}
+
+function withDefaults(record: ProjectRecord, repositories: RepositoryFlags): ResolvedProject {
   const [repoOwner = OWNER, repoName = ''] = record.repository.split('/');
   const repo = `https://github.com/${record.repository}`;
+  const discussions = resolveDiscussions(record, repositories[record.repository]);
   return {
     ...record,
     featured: record.featured ?? PROJECT_DEFAULTS.featured,
     experimental: record.experimental ?? PROJECT_DEFAULTS.experimental,
     order: record.order ?? PROJECT_DEFAULTS.order,
     packages: record.packages ?? PROJECT_DEFAULTS.packages,
+    skills: Array.isArray(record.skills) ? record.skills : PROJECT_DEFAULTS.skills,
+    discoverSkills: record.skills !== false,
     assets: record.assets ?? PROJECT_DEFAULTS.assets,
     related: record.related ?? PROJECT_DEFAULTS.related,
     useCases: record.useCases ?? PROJECT_DEFAULTS.useCases,
     acknowledgments: record.acknowledgments ?? PROJECT_DEFAULTS.acknowledgments,
-    discussions: record.discussions ?? PROJECT_DEFAULTS.discussions,
+    discussions,
     install: record.install ?? PROJECT_DEFAULTS.install,
     repoOwner,
     repoName,
     sourceUrl: repo,
     issuesUrl: `${repo}/issues`,
-    discussionsUrl: record.discussions ? `${repo}/discussions` : null,
+    discussionsUrl: discussions ? `${repo}/discussions` : null,
     changelogUrl: `${repo}/blob/${'main'}/CHANGELOG.md`,
     releasesUrl: `${repo}/releases`,
   };
@@ -104,8 +135,16 @@ function issuePath(raw: unknown, path: readonly PropertyKey[]): string {
  * Validate a raw manifest object against the typed schema.
  * Throws a ManifestValidationError describing the source file, the invalid
  * property, the expected shape, and how to remediate the record.
+ *
+ * `repositories` feeds the values that are detected from GitHub rather than
+ * authored (today: whether Discussions are enabled); it defaults to the release
+ * cache, so a record never repeats what the repository already says.
  */
-export function parseManifest(raw: unknown, source: string): ResolvedProject[] {
+export function parseManifest(
+  raw: unknown,
+  source: string,
+  repositories: RepositoryFlags = getReleaseIndex().data.repos,
+): ResolvedProject[] {
   let parsed: ProjectManifest;
   try {
     parsed = manifestSchema.parse(raw);
@@ -126,7 +165,7 @@ export function parseManifest(raw: unknown, source: string): ResolvedProject[] {
     throw error;
   }
 
-  const projects = parsed.projects.map(withDefaults);
+  const projects = parsed.projects.map((record) => withDefaults(record, repositories));
   const ids = new Set(projects.map((p) => p.id));
   const packageOwners = new Map<string, string>();
   const assetOutputs = new Map<string, string>();

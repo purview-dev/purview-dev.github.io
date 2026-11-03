@@ -16,6 +16,7 @@ const TARGETS = [
   'public/icon-512.png',
   'public/og',
   'public/schemas',
+  'public/skills',
 ];
 
 if (import.meta.main) {

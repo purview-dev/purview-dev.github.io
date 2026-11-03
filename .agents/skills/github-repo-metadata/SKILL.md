@@ -31,7 +31,7 @@ Everything else in the table below is build-time.
 | Successor/archived messaging | GitHub **archived** flag + `status`/`supersededBy` | |
 | Version numbers, release dates, badges | GitHub releases + NuGet flat-container index | |
 | Downloads / deprecated / listed | NuGet search entry | Rendered on the release tables |
-| Discussions link | manifest `discussions` **and** repository discussion settings | The loader only builds the URL when `discussions: true` |
+| Discussions link | repository discussion settings (detected) | `hasDiscussions` from the cache; a record's `discussions` is only an override |
 
 `search` corpora on `/projects/` deliberately include the topics, so missing topics make a project
 undiscoverable by its domain keywords.

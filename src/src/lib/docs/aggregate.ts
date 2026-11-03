@@ -193,7 +193,7 @@ export async function fetchRawFile(
   return { path, content, lastModified };
 }
 
-async function listRepositoryFiles(repository: string, branch: string): Promise<string[]> {
+export async function listRepositoryFiles(repository: string, branch: string): Promise<string[]> {
   const tree = (await githubJson(`/repos/${repository}/git/trees/${branch}?recursive=1`)) as {
     tree?: { path?: string }[];
   };
