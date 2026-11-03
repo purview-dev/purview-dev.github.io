@@ -3,11 +3,13 @@ import { resolve } from 'node:path';
 
 import {
   aggregateDocs,
+  isMirrorManifestCurrent,
   readDocsManifest,
   writeDocs,
   writeDocsManifest,
 } from '../src/lib/docs/aggregate';
 import { loadProjects } from '../src/lib/manifest/load';
+import { getReleaseIndex } from '../src/lib/releases/runtime';
 
 /** Fetch and write the aggregated documentation mirror. */
 export async function syncDocs(): Promise<{ projects: number; pages: number }> {
@@ -37,13 +39,22 @@ export function hasDocsMirror(): boolean {
 }
 
 /**
- * True when the mirror and its manifest agree with the current schema. A
- * manifest written by an older schema reads as absent (`readDocsManifest`
- * returns null), which is what forces a re-sync after a schema bump instead of
- * building a sidebar for page paths the mirror no longer has.
+ * True when the mirror can be reused: it exists, its manifest was written by the
+ * current schema, and it was aggregated from the release data that is in hand.
+ *
+ * A manifest written by an older schema reads as absent (`readDocsManifest`
+ * returns null), which forces a re-sync instead of building a sidebar for page
+ * paths the mirror no longer has. The vintage check covers the other half: the
+ * schema can be current while the release data is not, and channels are decided
+ * from release data — so a mirror that predates the latest fetch documents a
+ * release line that has since moved on. Reusing it publishes a stale channel
+ * decision, and `check:projects` then reports the missing channel as drift.
  */
 export function hasCurrentDocsMirror(): boolean {
-  return hasDocsMirror() && readDocsManifest() !== null;
+  if (!hasDocsMirror()) {
+    return false;
+  }
+  return isMirrorManifestCurrent(readDocsManifest(), getReleaseIndex().data.retrievedAt);
 }
 
 if (import.meta.main) {

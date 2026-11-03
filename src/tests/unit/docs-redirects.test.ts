@@ -5,6 +5,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
+import { DOCS_MANIFEST_SCHEMA } from '../../src/lib/docs/aggregate';
 import {
   renderChannelRedirect,
   retiredChannelRedirects,
@@ -33,8 +34,9 @@ const PAGES = [
 
 function manifestWith(channelIds: ('live' | 'prerelease')[]): DocsManifest {
   return {
-    schema: 2,
+    schema: DOCS_MANIFEST_SCHEMA,
     syncedAt: '2026-03-11T00:00:00.000Z',
+    releaseRetrievedAt: '2026-03-11T00:00:00.000Z',
     projects: [
       {
         projectId: 'zodsharp',

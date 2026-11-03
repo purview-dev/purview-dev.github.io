@@ -1,9 +1,20 @@
+import type { DocsManifest } from '../../src/lib/docs/aggregate';
 import type { DocFrontmatter } from '../../src/lib/docs/frontmatter';
 import type { DocLinkContext } from '../../src/lib/docs/links';
 
 import { describe, expect, test } from 'bun:test';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
-import { DocsValidationError, isExcluded, selectDocsRootFile } from '../../src/lib/docs/aggregate';
+import {
+  DOCS_MANIFEST_SCHEMA,
+  DocsValidationError,
+  isExcluded,
+  isMirrorManifestCurrent,
+  selectDocsRootFile,
+  writeDocs,
+} from '../../src/lib/docs/aggregate';
 import { convertGithubAlerts, parseGithubAlerts } from '../../src/lib/docs/alerts';
 import {
   extractDescription,
@@ -18,6 +29,7 @@ import {
   rewriteDocMarkdown,
   slugifyDocFile,
 } from '../../src/lib/docs/links';
+import { getReleaseIndex } from '../../src/lib/releases/runtime';
 
 function context(overrides: Partial<DocLinkContext> = {}): DocLinkContext {
   return {
@@ -373,6 +385,39 @@ describe('GitHub alerts', () => {
     expect(converted).toContain(':::tip[Tip title]');
     expect(converted).toContain('tip body');
     expect(converted).toContain(':::');
+  });
+});
+
+function docsManifestFor(releaseRetrievedAt: string): DocsManifest {
+  return {
+    schema: DOCS_MANIFEST_SCHEMA,
+    syncedAt: '2026-11-03T00:00:00.000Z',
+    releaseRetrievedAt,
+    projects: [],
+  };
+}
+
+describe('docs manifest vintage', () => {
+  test('a mirror aggregated from older release data is not current', () => {
+    // The failure this prevents: channels are decided from release data, so a
+    // mirror built before a fetch documents a release line that has since moved
+    // on. Reusing it hides a channel that should exist.
+    const stale = docsManifestFor('2026-08-01T00:00:00.000Z');
+
+    expect(isMirrorManifestCurrent(stale, '2026-11-03T00:00:00.000Z')).toBe(false);
+    expect(isMirrorManifestCurrent(stale, '2026-08-01T00:00:00.000Z')).toBe(true);
+    expect(isMirrorManifestCurrent(null, '2026-11-03T00:00:00.000Z')).toBe(false);
+  });
+
+  test('writeDocs records the release data it aggregated from', () => {
+    const outputDir = mkdtempSync(join(tmpdir(), 'purview-docs-vintage-'));
+    try {
+      const manifest = writeDocs([], outputDir);
+
+      expect(manifest.releaseRetrievedAt).toBe(getReleaseIndex().data.retrievedAt);
+    } finally {
+      rmSync(outputDir, { recursive: true, force: true });
+    }
   });
 });
 

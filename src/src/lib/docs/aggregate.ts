@@ -33,7 +33,17 @@ export const DOCS_CACHE_DIR = resolve('.cache/docs');
  * (`readDocsManifest` returns null), so a schema bump forces a re-sync instead
  * of building a sidebar for page paths that no longer exist.
  */
-export const DOCS_MANIFEST_SCHEMA = 2;
+/**
+ * Version 3 records the release data the mirror was built from. Channels are
+ * decided from release data (`resolveDocChannels`), so a mirror built before a
+ * fetch describes a different release line than the cache now holds — the
+ * `2.1.0`/`2.0.0-prerelease.28` vintage in an August build, say. Comparing
+ * `releaseRetrievedAt` with the current cache is what makes such a mirror read
+ * as stale instead of as "current" with a missing channel. A schema bump also
+ * forces a re-sync, which is why the vintage is part of the schema rather than
+ * an optional extra: a version-2 manifest has no vintage to compare.
+ */
+export const DOCS_MANIFEST_SCHEMA = 3;
 
 export interface AggregatedPage {
   slug: string;
@@ -88,7 +98,29 @@ export interface DocsManifestProject {
 export interface DocsManifest {
   schema: typeof DOCS_MANIFEST_SCHEMA;
   syncedAt: string;
+  /**
+   * The `retrievedAt` of the release data this mirror was aggregated from.
+   * `hasCurrentDocsMirror` compares it with the cache, so a mirror built from an
+   * older release snapshot is rebuilt rather than reused.
+   */
+  releaseRetrievedAt: string;
   projects: DocsManifestProject[];
+}
+
+/**
+ * Whether a written manifest may be reused against the release data now in hand.
+ *
+ * Two things must hold, and they fail differently: a manifest from an older
+ * schema has no usable shape at all, and a manifest from an older release
+ * vintage describes channels that were decided before the line moved on. The
+ * second is the subtle one — the schema is current, every page is present, and
+ * the only symptom is a channel that should exist and does not.
+ */
+export function isMirrorManifestCurrent(
+  manifest: DocsManifest | null,
+  releaseRetrievedAt: string,
+): boolean {
+  return manifest !== null && manifest.releaseRetrievedAt === releaseRetrievedAt;
 }
 
 /** The channel that owns the canonical `/docs/<id>/` URLs. */
@@ -758,6 +790,10 @@ export function writeDocs(
   const manifest: DocsManifest = {
     schema: DOCS_MANIFEST_SCHEMA,
     syncedAt: new Date().toISOString(),
+    // Recorded, not inferred: the channels below were resolved from this snapshot
+    // of release data, so reusing the mirror against a different snapshot would
+    // publish a channel decision nobody made.
+    releaseRetrievedAt: getReleaseIndex().data.retrievedAt,
     projects: [],
   };
 
