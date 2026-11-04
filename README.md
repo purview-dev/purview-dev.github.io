@@ -1,5 +1,9 @@
 # Purview-Dev website
 
+[![Release](https://img.shields.io/github/v/release/purview-dev/purview-dev.github.io.svg)](https://github.com/purview-dev/purview-dev.github.io/releases)
+[![Build](https://img.shields.io/github/actions/workflow/status/purview-dev/purview-dev.github.io/deploy.yml?label=build)](https://github.com/purview-dev/purview-dev.github.io/actions/workflows/deploy.yml)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+
 The public website and unified documentation portal for the
 [Purview-Dev](https://github.com/purview-dev) open-source organisation. It is a
 fully static site that works as both a marketing and project-discovery site and
