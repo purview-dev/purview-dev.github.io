@@ -7,4 +7,9 @@ on:
 jobs:
   build:
     uses: purview-dev/build/.github/workflows/purview-build.yml@main
+    with:
+      # Pin the shared build tool and SDK so the pipeline is reproducible rather
+      # than resolving the latest Purview.Build and .NET SDK at job time.
+      build-version: 0.8.1
+      dotnet-version: 10.0.x
     secrets: inherit

@@ -19,7 +19,7 @@ Two agent tasks recur here, and both have a dedicated agent plus skills under `.
 This is a Bun workspace whose single package (the Astro site) lives in `src/`. Every command is run
 from the repository root and delegated to the package.
 
-- **Runtime / package manager:** Bun 1.4.2 (`packageManager` pinned; `bun.lock` committed).
+- **Runtime / package manager:** Bun 1.4.4 (`packageManager` pinned; `bun.lock` committed).
 - **Framework:** Astro 7 with Starlight 0.42, Tailwind 4, and four small Preact islands. Output is
   static HTML; nothing depends on a server at runtime.
 - **All code is TypeScript.** Linting/formatting use the Oxc toolchain (`oxlint`, `oxfmt`).
