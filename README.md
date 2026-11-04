@@ -82,6 +82,8 @@ and type-checked by `astro check`.
 
 - [Bun](https://bun.sh) 1.4.4 (the version is pinned in `package.json` via
   `packageManager`)
+- [Node.js](https://nodejs.org) 26 LTS (Astro's tooling enforces a minimum Node
+  version; the floor is declared in `engines.node` as `>=26.0.0`)
 - [Just](https://github.com/casey/just) (a command runner; install via
   `winget install casey.just`, `brew install just`, or `cargo install just`)
 - Git
