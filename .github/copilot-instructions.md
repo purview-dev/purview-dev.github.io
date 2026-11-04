@@ -20,12 +20,13 @@ package is `src/`.
   `AGENTS.md` (unique ids/orders/packages, `name` slugifying to `id` for documented projects, at
   least one use case per non-archived project, `code` paired with `language`, resolvable `docsPage`).
 - Keep declared `status` and `targetFrameworks` honest: `just check-projects` prints advisory
-  observations when they disagree with the packages' published NuGet versions and frameworks. Apply
-  the machine-applicable ones with `just fix-projects` (dry run; pass `--write` to edit).
+  observations when they disagree with the packages' published versions and frameworks (NuGet, or
+  npm for a package with `registry: npm`). Apply the machine-applicable ones with `just fix-projects`
+  (dry run; pass `--write` to edit).
 - Keep documentation where it lives (the product repository). This site aggregates it at build time.
-- Keep the NuGet version hydration intact (ADR 0008): the build-time version renders first, the
-  browser only ever raises it, and the result is stored in `localStorage` for six hours. Do not move
-  any other data to the client.
+- Keep the package version hydration intact (ADR 0008, ADR 0012): the build-time version renders
+  first, the browser only ever raises it, and the result is stored in `localStorage` for six hours.
+  Do not move any other data to the client.
 - Use Conventional Commits and keep changes small and reviewable.
 
 ## Never
@@ -37,8 +38,8 @@ package is `src/`.
   `externalProjects:`.
 - Never invent a `category`, `status`, `audience`, or `install` value; the vocabulary lives in
   `src/src/lib/manifest/schema.ts`.
-- Never claim a project is `stable` without a stable NuGet release, or leave a project `stable`
-  while its repository is archived.
+- Never claim a project is `stable` without a stable release on its package registry, or leave a
+  project `stable` while its repository is archived.
 - Never derive a project's displayed status outside `displayStatus()` (`src/src/lib/status.ts`):
   `experimental: true` is an intent flag orthogonal to `status` (ADR 0004) and is invalid with
   `status: archived`.

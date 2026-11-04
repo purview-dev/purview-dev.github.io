@@ -24,7 +24,8 @@ by `src/src/lib/manifest/load.ts`. `$schema: ../lib/manifest/schema.ts` is the f
 | `category` | `application-framework`, `validation`, `observability`, `source-generation`, `aspire`, `build-tooling`, `developer-tooling` |
 | `status` | `stable`, `preview`, `archived` |
 | `experimental` | boolean flag, default `false` — orthogonal to `status` (ADR 0004); invalid with `status: archived` |
-| `install` | `nuget` (default), `msbuild-sdk`, `dotnet-tool` |
+| `install` | `nuget` (default), `msbuild-sdk`, `dotnet-tool` — NuGet packages only |
+| `packages[].registry` | `nuget` (default), `npm` (ADR 0012) |
 | `useCases[].audience` | `developer`, `team-lead`, `architect`, `contributor` (labels: Developer, Team lead, Architect, Contributor) |
 
 Adding a value to any of these lists is a schema change and requires an ADR. `experimental` is a
@@ -48,9 +49,9 @@ Adding a value to any of these lists is a schema change and requires an ADR. `ex
 | `featured` | no | Default `false`; shown prominently on the home page |
 | `order` | no | Default `1000`; projects are sorted ascending; keep values unique |
 | `docs` | no | See below |
-| `install` | no | Default `nuget` |
+| `install` | no | Default `nuget`; how a **NuGet** package is consumed, so it has no meaning for an npm package |
 | `targetFrameworks` | no | e.g. `net8.0`, `net9.0`, `net10.0`, `netstandard2.0`; `just check-projects` reports (advisory) when it does not match the union of the runtime packages' published NuGet TFMs |
-| `packages` | no | `{ id, description?, primary?, targetFrameworks? }[]`; defaults to `[]` |
+| `packages` | no | `{ id, registry?, description?, primary?, targetFrameworks? }[]`; defaults to `[]`. `registry` is `nuget` (default) or `npm`; versions come from that registry and the install panel follows it |
 | `skills` | no | `{ name, path?, description? }[]` — Agent Skills the project publishes from `skills/<name>/SKILL.md` (ADR 0010); mirrored to `/skills/<id>/<name>/` and rendered with the shared install block; defaults to `[]` |
 | `assets` | no | `{ path, output, description? }[]`; repository files mirrored into `public/` at build time (`path` is repo-relative, `output` is site-relative); defaults to `[]` |
 | `related` | no | Known project ids; rendered in the project page aside |
@@ -119,7 +120,8 @@ docs:
 1. Schema validation with remediation text (unknown keys are rejected).
 2. `projects[].repository.split('/')[0]` must equal `purview-dev`.
 3. `related`, `supersedes`, and `supersededBy` must all reference existing project ids.
-4. A NuGet package id may be declared by **exactly one** project.
+4. A package id may be declared by **exactly one** project for its registry (the key is
+   `registry:id`; an absent `registry` means `nuget`).
 5. `experimental: true` is rejected when `status` is `archived` (schema refinement).
 6. An asset `output` path may be declared by **exactly one** project, must be relative, and must
    not contain a `..` segment.

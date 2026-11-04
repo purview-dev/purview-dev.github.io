@@ -1,4 +1,5 @@
 import type { InstallKind, InstallOption, InstallTab } from '~/lib/install';
+import type { PackageRegistry } from '~/lib/manifest/schema';
 
 import { useEffect, useState } from 'preact/hooks';
 
@@ -6,6 +7,7 @@ import { installTabs } from '~/lib/install';
 import {
   isStale,
   latestFromVersions,
+  livePackageKey,
   preferNewer,
   readLiveVersions,
   refreshLiveVersions,
@@ -84,13 +86,21 @@ interface Props {
   tabs: InstallTab[];
   /** The package the snippets install, used to re-check the version live. */
   packageId?: string;
+  /** The registry the package is published to (NuGet or npm). */
+  registry?: PackageRegistry;
   /** How the package is consumed, so the tabs can be rebuilt for a newer version. */
   kind?: InstallKind;
   /** The build-time version baked into the snippets. */
   version?: string | null;
 }
 
-export default function InstallPanel({ tabs, packageId, kind, version = null }: Props) {
+export default function InstallPanel({
+  tabs,
+  packageId,
+  registry = 'nuget',
+  kind,
+  version = null,
+}: Props) {
   const [active, setActive] = useState(0);
   const [resolvedTabs, setResolvedTabs] = useState(tabs);
 
@@ -104,14 +114,14 @@ export default function InstallPanel({ tabs, packageId, kind, version = null }: 
     }
     let cancelled = false;
     const apply = (live: LiveVersions | null) => {
-      const versions = live?.versions[packageId];
+      const versions = live?.versions[livePackageKey({ id: packageId, registry })];
       if (!versions) {
         return;
       }
       const pair = latestFromVersions(versions);
       const next = preferNewer(version, pair.stable ?? pair.prerelease);
       if (next !== null && next !== version) {
-        setResolvedTabs(installTabs(kind, packageId, next));
+        setResolvedTabs(installTabs(registry, kind, packageId, next));
       }
     };
     const stored = readLiveVersions();
@@ -121,7 +131,7 @@ export default function InstallPanel({ tabs, packageId, kind, version = null }: 
         cancelled = true;
       };
     }
-    void refreshLiveVersions([packageId], stored).then((refreshed) => {
+    void refreshLiveVersions([{ id: packageId, registry }], stored).then((refreshed) => {
       if (!cancelled) {
         apply(refreshed);
       }
@@ -129,7 +139,7 @@ export default function InstallPanel({ tabs, packageId, kind, version = null }: 
     return () => {
       cancelled = true;
     };
-  }, [packageId, kind, version]);
+  }, [packageId, registry, kind, version]);
 
   if (resolvedTabs.length === 0) {
     return null;

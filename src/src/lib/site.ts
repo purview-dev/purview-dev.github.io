@@ -8,6 +8,7 @@ export const SITE = {
   githubOrg: 'purview-dev',
   githubUrl: 'https://github.com/purview-dev',
   nugetUrl: 'https://www.nuget.org',
+  npmUrl: 'https://www.npmjs.com',
   description:
     'Open-source .NET tools shaped by real projects — built to remove repetition, catch problems earlier, and make development easier.',
 } as const;

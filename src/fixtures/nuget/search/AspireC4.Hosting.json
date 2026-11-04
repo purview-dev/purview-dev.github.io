@@ -35,7 +35,7 @@
       "owners": [
         "kieronlanning"
       ],
-      "totalDownloads": 1887,
+      "totalDownloads": 3623,
       "verified": false,
       "packageTypes": [
         {
@@ -45,82 +45,82 @@
       "versions": [
         {
           "version": "13.3.1",
-          "downloads": 129,
+          "downloads": 146,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.3.1.json"
         },
         {
           "version": "13.3.2",
-          "downloads": 325,
+          "downloads": 473,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.3.2.json"
         },
         {
           "version": "13.3.3",
-          "downloads": 116,
+          "downloads": 136,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.3.3.json"
         },
         {
           "version": "13.3.5",
-          "downloads": 165,
+          "downloads": 372,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.3.5.json"
         },
         {
           "version": "13.5.3",
-          "downloads": 92,
+          "downloads": 114,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.json"
         },
         {
           "version": "13.5.3.1",
-          "downloads": 90,
+          "downloads": 111,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.1.json"
         },
         {
           "version": "13.5.3.2",
-          "downloads": 97,
+          "downloads": 123,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.2.json"
         },
         {
           "version": "13.5.3.3",
-          "downloads": 52,
+          "downloads": 110,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.3.json"
         },
         {
           "version": "13.5.3.4",
-          "downloads": 56,
+          "downloads": 110,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.4.json"
         },
         {
           "version": "13.5.3.5",
-          "downloads": 44,
+          "downloads": 104,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.5.json"
         },
         {
           "version": "13.5.3.6",
-          "downloads": 45,
+          "downloads": 111,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.6.json"
         },
         {
           "version": "13.5.3.7",
-          "downloads": 46,
+          "downloads": 109,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.7.json"
         },
         {
           "version": "13.5.3.8",
-          "downloads": 23,
+          "downloads": 109,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.8.json"
         },
         {
           "version": "13.5.3.9",
-          "downloads": 0,
+          "downloads": 105,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.9.json"
         },
         {
           "version": "13.5.3.10",
-          "downloads": 0,
+          "downloads": 99,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.10.json"
         },
         {
           "version": "13.5.3.11",
-          "downloads": 0,
+          "downloads": 159,
           "@id": "https://api.nuget.org/v3/registration5-semver1/aspirec4.hosting/13.5.3.11.json"
         }
       ],

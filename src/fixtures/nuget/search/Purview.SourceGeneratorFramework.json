@@ -10,12 +10,12 @@
       "@type": "Package",
       "registration": "https://api.nuget.org/v3/registration5-semver1/purview.sourcegeneratorframework/index.json",
       "id": "Purview.SourceGeneratorFramework",
-      "version": "1.1.1",
+      "version": "1.3.0",
       "description": "Purview SourceGeneratorFramework libraries for building and testing incremental C# source generators.",
       "summary": "",
       "title": "Purview.SourceGeneratorFramework",
-      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.sourcegeneratorframework/1.1.1/icon",
-      "licenseUrl": "https://www.nuget.org/packages/Purview.SourceGeneratorFramework/1.1.1/license",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.sourcegeneratorframework/1.3.0/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.SourceGeneratorFramework/1.3.0/license",
       "projectUrl": "https://purview.dev/projects/sourcegenerator-framework/",
       "tags": [],
       "authors": [
@@ -24,7 +24,7 @@
       "owners": [
         "kieronlanning"
       ],
-      "totalDownloads": 4486,
+      "totalDownloads": 6637,
       "verified": false,
       "packageTypes": [
         {
@@ -34,18 +34,38 @@
       "versions": [
         {
           "version": "1.0.0",
-          "downloads": 0,
+          "downloads": 240,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.sourcegeneratorframework/1.0.0.json"
         },
         {
           "version": "1.1.0",
-          "downloads": 0,
+          "downloads": 184,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.sourcegeneratorframework/1.1.0.json"
         },
         {
           "version": "1.1.1",
-          "downloads": 0,
+          "downloads": 230,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.sourcegeneratorframework/1.1.1.json"
+        },
+        {
+          "version": "1.2.0",
+          "downloads": 239,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.sourcegeneratorframework/1.2.0.json"
+        },
+        {
+          "version": "1.2.1",
+          "downloads": 218,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.sourcegeneratorframework/1.2.1.json"
+        },
+        {
+          "version": "1.2.2",
+          "downloads": 154,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.sourcegeneratorframework/1.2.2.json"
+        },
+        {
+          "version": "1.3.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.sourcegeneratorframework/1.3.0.json"
         }
       ],
       "vulnerabilities": []

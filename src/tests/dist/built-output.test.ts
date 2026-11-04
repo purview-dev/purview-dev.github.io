@@ -84,7 +84,13 @@ describe('built per-project llms outputs', () => {
       expect(summary, `${project.id} llms.txt lacks the project name`).toContain(project.name);
       const full = requireBuilt(`projects/${project.id}/llms-full.txt`);
       expect(full.trim().length, `${project.id} llms-full.txt is empty`).toBeGreaterThan(0);
-      expect(full, `${project.id} llms-full.txt lacks aggregated content`).toContain('Purview');
+      // The full bundle is the header plus every aggregated page, so it must be
+      // longer than the concise index. Asserting a word such as "Purview" only
+      // holds for projects whose documentation happens to mention the
+      // organisation: astroc4 documents an npm package and never does.
+      expect(full.length, `${project.id} llms-full.txt lacks aggregated content`).toBeGreaterThan(
+        summary.length,
+      );
     }
   });
 

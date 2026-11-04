@@ -34,6 +34,7 @@ const emptyReleaseData: ReleaseCacheData = {
   releases: {},
   packages: {},
   packageSearch: {},
+  npmPackages: {},
 };
 
 const docsManifest: DocsManifest = {

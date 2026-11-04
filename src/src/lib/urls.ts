@@ -1,3 +1,5 @@
+import type { PackageRegistry } from './manifest/schema';
+
 import { SITE } from './site';
 
 /**
@@ -39,4 +41,22 @@ export function projectUrl(repository: string): string {
 /** NuGet package page URL. */
 export function nugetPackageUrl(packageId: string, nugetUrl: string = SITE.nugetUrl): string {
   return `${nugetUrl}/packages/${encodeURIComponent(packageId)}`;
+}
+
+/**
+ * npm package page URL. The scope's `@` and `/` stay in the path: npmjs.com
+ * addresses `@scope/name` directly, and percent-encoding them produces a 404.
+ */
+export function npmPackageUrl(packageName: string, npmUrl: string = SITE.npmUrl): string {
+  return `${npmUrl}/package/${packageName}`;
+}
+
+/** The registry page for a package, whichever registry it is published to. */
+export function packagePageUrl(registry: PackageRegistry, packageId: string): string {
+  return registry === 'npm' ? npmPackageUrl(packageId) : nugetPackageUrl(packageId);
+}
+
+/** Human-facing registry name, used beside a package link. */
+export function registryLabel(registry: PackageRegistry): string {
+  return registry === 'npm' ? 'npm' : 'NuGet';
 }

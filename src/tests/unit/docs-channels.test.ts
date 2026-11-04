@@ -86,6 +86,7 @@ function releaseData(
       Object.entries(options.packages ?? {}).map(([id, versions]) => [id, { id, versions }]),
     ),
     packageSearch: {},
+    npmPackages: {},
   };
 }
 

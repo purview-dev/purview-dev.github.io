@@ -1,5 +1,9 @@
 import type { ResolvedProject } from '../../src/lib/manifest/load';
-import type { GitHubReleaseInfo, ReleaseCacheData } from '../../src/lib/releases/types';
+import type {
+  GitHubReleaseInfo,
+  NpmPackageIndex,
+  ReleaseCacheData,
+} from '../../src/lib/releases/types';
 
 import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
@@ -67,7 +71,10 @@ function packageCandidates(
  * A minimal release cache holding only the supplied package version lists.
  * Packages left out have no published releases, which the rollup ignores.
  */
-function cacheFor(packages: Record<string, string[]>): ReleaseCacheData {
+function cacheFor(
+  packages: Record<string, string[]>,
+  npm: Record<string, NpmPackageIndex> = {},
+): ReleaseCacheData {
   return {
     schema: RELEASE_CACHE_SCHEMA_VERSION,
     retrievedAt: '2026-01-01T00:00:00.000Z',
@@ -77,6 +84,7 @@ function cacheFor(packages: Record<string, string[]>): ReleaseCacheData {
       Object.entries(packages).map(([id, versions]) => [id, { id, versions }]),
     ),
     packageSearch: {},
+    npmPackages: npm,
   };
 }
 
@@ -347,7 +355,32 @@ describe('project/package association and release summaries', () => {
     const prerelease = selectPrereleaseVersion(candidates);
     expect(pkg?.latestStable).toBe(stable === null ? null : formatNuGetVersion(stable));
     expect(pkg?.latestPrerelease).toBe(prerelease === null ? null : formatNuGetVersion(prerelease));
-    expect(pkg?.totalDownloads).toBeGreaterThan(0);
+    expect(pkg?.downloads).toBeGreaterThan(0);
+  });
+
+  test('summarises an npm package from the npm registry', () => {
+    const astroc4 = fixtureProject('astroc4');
+    const data = cacheFor(
+      {},
+      {
+        '@purview-dev/astroc4': {
+          name: '@purview-dev/astroc4',
+          versions: ['1.0.0-prerelease.3', '1.0.0-prerelease.4'],
+          distTags: { latest: '1.0.0-prerelease.4', prerelease: '1.0.0-prerelease.4' },
+          publishedAt: null,
+          weeklyDownloads: 12,
+          deprecated: false,
+        },
+      },
+    );
+    const summary = projectReleaseSummary(astroc4, data, 'cache');
+    const pkg = summary.packages[0];
+    expect(pkg?.registry).toBe('npm');
+    expect(pkg?.latestStable).toBeNull();
+    expect(pkg?.latestPrerelease).toBe('1.0.0-prerelease.4');
+    expect(pkg?.downloads).toBe(12);
+    expect(pkg?.downloadsPeriod).toBe('weekly');
+    expect(pkg?.packageUrl).toBe('https://www.npmjs.com/package/@purview-dev/astroc4');
   });
 
   test('flattens release entries across projects', () => {

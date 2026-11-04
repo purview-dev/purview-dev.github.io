@@ -1,17 +1,21 @@
 import type { AstroIntegration } from 'astro';
 
-import { unified } from '@astrojs/markdown-remark';
+import { satteri } from '@astrojs/markdown-satteri';
+import mdx from '@astrojs/mdx';
 import preact from '@astrojs/preact';
+import react from '@astrojs/react';
 import starlight from '@astrojs/starlight';
+import astroc4 from '@purview-dev/astroc4';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
+import { fileURLToPath } from 'node:url';
 import starlightLinksValidator from 'starlight-links-validator';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import starlightSidebarTopics from 'starlight-sidebar-topics';
 
 import discoveryIntegration from './config/discovery-integration';
 import docsRedirectsIntegration from './config/docs-redirects-integration';
-import { remarkMermaid } from './config/remark-mermaid.mjs';
+import { mermaidFences } from './config/satteri-mermaid';
 import { projectChannelLlmsUrl, projectLlmsUrl } from './src/lib/discovery/urls';
 import { readDocsManifest } from './src/lib/docs/aggregate';
 import { channelDisplayLabel, channelTopicLabel } from './src/lib/docs/channels';
@@ -125,12 +129,17 @@ export default defineConfig({
   },
   compressHTML: true,
   markdown: {
-    processor: unified({
-      remarkPlugins: [remarkMermaid],
-    }),
+    // Astro 7.4 made Sätteri the default processor. Astroc4's ```likec4 fence
+    // transform is a Sätteri mdast plugin appended to this processor, and the
+    // Mermaid bridge had to move with it (see config/satteri-mermaid.ts).
+    processor: satteri({ mdastPlugins: [mermaidFences] }),
   },
   integrations: [
-    preact(),
+    // Two JSX renderers are in play: Preact for the site's own islands, React
+    // for astroc4's LikeC4 islands. Without include/exclude each integration
+    // claims every .tsx file and Astro warns that behaviour is undefined.
+    preact({ exclude: ['**/node_modules/**'] }),
+    react({ include: ['**/node_modules/**'] }),
     suppressStarlightSitemap,
     // Registered before discovery so a retired channel's redirect pages exist
     // before the sitemap/llms artifacts are derived (Astro's page list never
@@ -185,6 +194,12 @@ export default defineConfig({
         Sidebar: './src/components/starlight/Sidebar.astro',
       },
       plugins: [
+        // The live astroc4 demo (src/pages/examples/astroc4.mdx) is the site
+        // dogfooding the plugin it catalogues: real fences and real views.
+        astroc4({
+          vitePlugin: { workspace: 'src/likec4' },
+          highlighting: { ref: 'v1.60.0' },
+        }),
         starlightSidebarTopics(sidebarTopics),
         starlightLinksValidator({
           // Relative links between aggregated doc pages (e.g. `../foo/`) are
@@ -263,8 +278,37 @@ export default defineConfig({
       ],
       head: HEAD,
     }),
+    // MDX must come after Starlight: Starlight registers
+    // astro-expressive-code, and the MDX integration has to see it to
+    // highlight code blocks on .mdx pages (the live astroc4 example).
+    mdx(),
   ],
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        // LikeC4's React bundle imports React's CommonJS compiler runtime with
+        // a named `c` export. Vite 8's Rolldown optimiser does not expose that
+        // export from the development build, so the islands fail to hydrate.
+        // The bridge is the same `useMemoCache` call in ESM form.
+        'react/compiler-runtime': fileURLToPath(
+          new URL('./config/react-compiler-runtime.ts', import.meta.url),
+        ),
+      },
+    },
+    optimizeDeps: {
+      // LikeC4 is a dependency added at build time; listing its React entry
+      // and the React runtime means a cold dev start pre-bundles them instead
+      // of serving them raw and producing "504 Outdated Optimize Dep".
+      include: [
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
+        'likec4/react',
+        '@likec4/core',
+      ],
+    },
   },
 });

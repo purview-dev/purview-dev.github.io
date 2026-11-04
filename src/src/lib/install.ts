@@ -1,4 +1,5 @@
 import type { ResolvedProject } from './manifest/load';
+import type { PackageRegistry } from './manifest/schema';
 
 /** How a project's primary NuGet package is consumed. */
 export type InstallKind = 'nuget' | 'msbuild-sdk' | 'dotnet-tool';
@@ -175,15 +176,42 @@ function dotnetToolTabs(packageId: string): InstallTab[] {
   ];
 }
 
+function npmTabs(packageId: string, version: string | null): InstallTab[] {
+  const specifier = version === null ? packageId : `${packageId}@${version}`;
+  return [
+    {
+      label: 'npm',
+      snippets: [{ label: 'npm', code: `npm install ${specifier}` }],
+    },
+    {
+      label: 'bun',
+      snippets: [{ label: 'bun', code: `bun add ${specifier}` }],
+    },
+    {
+      label: 'pnpm',
+      snippets: [{ label: 'pnpm', code: `pnpm add ${specifier}` }],
+    },
+    {
+      label: 'yarn',
+      snippets: [{ label: 'yarn', code: `yarn add ${specifier}` }],
+    },
+  ];
+}
+
 /**
- * Build the ordered list of install tabs for a package of the given kind.
- * The order matches the canonical display order on the project page.
+ * Build the ordered list of install tabs for a package of the given registry and
+ * kind. NuGet kinds select .NET tooling; npm packages are installed by a package
+ * manager, so one tab per manager is the whole panel.
  */
 export function installTabs(
+  registry: PackageRegistry,
   kind: InstallKind,
   packageId: string,
   version: string | null,
 ): InstallTab[] {
+  if (registry === 'npm') {
+    return npmTabs(packageId, version);
+  }
   switch (kind) {
     case 'msbuild-sdk':
       return msbuildSdkTabs(packageId, version);

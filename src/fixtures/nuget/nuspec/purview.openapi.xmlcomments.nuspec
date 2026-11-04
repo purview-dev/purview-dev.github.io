@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>Purview.OpenAPI.XmlComments</id>
+    <version>1.0.0-prerelease.1</version>
+    <title>Purview OpenAPI XML Comments</title>
+    <authors>Kieron Lanning</authors>
+    <developmentDependency>true</developmentDependency>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>purview-logo-light.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://purview.dev/projects/openapi-xmlcomments/</projectUrl>
+    <description>Stops the Microsoft.AspNetCore.OpenApi XML-comment source generator from failing with "An item with the same key has already been added" when the same documentation ID comes from more than one assembly, by removing duplicated members from the referenced XML documentation it reads. Keeps every other description.</description>
+    <copyright>Copyright © 2026 Purview-Dev</copyright>
+    <tags>openapi aspnetcore xml-comments xml-documentation msbuild source-generator purview</tags>
+    <repository type="git" url="https://github.com/purview-dev/openapi-xmlcomments" branch="refs/heads/main" commit="2934a32647185c9e7af37f849e88aa68e910f90e" />
+  </metadata>
+</package>

@@ -223,6 +223,20 @@ const active = projects.filter((project) => project.status !== 'archived');
             </div>
 
             <div class="flex justify-between gap-3">
+              <dt class="text-muted">npm</dt>
+              <dd class="text-right">
+                <a
+                  href={`${SITE.npmUrl}/org/purview-dev`}
+                  class="pv-link"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  npmjs.com
+                </a>
+              </dd>
+            </div>
+
+            <div class="flex justify-between gap-3">
               <dt class="text-muted">Active projects</dt>
               <dd class="text-right">{active.length}</dd>
             </div>

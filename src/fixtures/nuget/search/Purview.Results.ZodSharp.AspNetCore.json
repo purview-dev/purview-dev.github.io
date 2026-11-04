@@ -10,12 +10,12 @@
       "@type": "Package",
       "registration": "https://api.nuget.org/v3/registration5-semver1/purview.results.zodsharp.aspnetcore/index.json",
       "id": "Purview.Results.ZodSharp.AspNetCore",
-      "version": "1.0.2",
+      "version": "1.0.4",
       "description": "Maps Purview result failures that carry ZodSharp validation errors onto ASP.NET Core HttpValidationProblemDetails responses.",
       "summary": "",
       "title": "Purview Results ZodSharp ASP.NET Core",
-      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.results.zodsharp.aspnetcore/1.0.2/icon",
-      "licenseUrl": "https://www.nuget.org/packages/Purview.Results.ZodSharp.AspNetCore/1.0.2/license",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.results.zodsharp.aspnetcore/1.0.4/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.Results.ZodSharp.AspNetCore/1.0.4/license",
       "projectUrl": "https://purview.dev/projects/results/",
       "tags": [
         "results",
@@ -32,7 +32,7 @@
       "owners": [
         "kieronlanning"
       ],
-      "totalDownloads": 0,
+      "totalDownloads": 736,
       "verified": false,
       "packageTypes": [
         {
@@ -42,18 +42,28 @@
       "versions": [
         {
           "version": "1.0.0",
-          "downloads": 0,
+          "downloads": 100,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.results.zodsharp.aspnetcore/1.0.0.json"
         },
         {
           "version": "1.0.0.1",
-          "downloads": 0,
+          "downloads": 125,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.results.zodsharp.aspnetcore/1.0.0.1.json"
         },
         {
           "version": "1.0.2",
-          "downloads": 0,
+          "downloads": 103,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.results.zodsharp.aspnetcore/1.0.2.json"
+        },
+        {
+          "version": "1.0.3",
+          "downloads": 122,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.results.zodsharp.aspnetcore/1.0.3.json"
+        },
+        {
+          "version": "1.0.4",
+          "downloads": 99,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.results.zodsharp.aspnetcore/1.0.4.json"
         }
       ],
       "vulnerabilities": []

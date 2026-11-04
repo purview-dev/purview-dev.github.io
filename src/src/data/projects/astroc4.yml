@@ -1,0 +1,183 @@
+$schema: ../../lib/manifest/schema.ts
+
+id: astroc4
+name: Astroc4
+shortDescription: Interactive LikeC4 architecture diagrams for Astro and Starlight, with fences and syntax highlighting.
+description: >-
+  A Starlight plugin that puts LikeC4 architecture diagrams inside an Astro site. A
+  ```likec4 fence in an .mdx page becomes a laid-out, interactive diagram at build time, an
+  empty fence or <LikeC4View> renders a view of the site's own .c4 model, and Expressive Code
+  gains LikeC4 syntax highlighting derived from the language's Langium grammar rather than a
+  hand-maintained TextMate file. The grammar is resolved while Astro loads its configuration,
+  cached per repo@ref, and can be pinned, run offline from a bundled snapshot, or allowed to
+  degrade to a warning, so a docs build is as reproducible as the package versions beside it.
+origin: >-
+  Documentation about a system drifts from the system as soon as the diagram is a picture that
+  someone has to redraw. LikeC4 keeps the diagram as a model in the repository, but a docs site
+  that embeds it still had to wire the Vite plugin, write a transform for fences, and maintain a
+  community TextMate grammar that fell behind every upstream release. Doing that once in a plugin,
+  and deriving the grammar from the language definition itself, turned three per-site chores into
+  one dependency and made the highlighting follow LikeC4 instead of being updated after it.
+useWhen: >-
+  Your documentation is an Astro/Starlight site and the architecture it describes is already, or
+  should be, a LikeC4 model in the repository: you want the diagram and the prose to be reviewed
+  together, and code fences in the LikeC4 language to be coloured without owning an
+  ec.config.mjs.
+avoidWhen: >-
+  Your site is not Astro/Starlight (the plugin hooks Starlight's config and ships React islands),
+  or the architecture diagram is drawn once and does not need to stay in step with the code — a
+  static image is cheaper than a model, a compiler and a browser island.
+repository: purview-dev/astroc4
+category: developer-tooling
+status: preview
+order: 75
+docs:
+  source: github-path
+  path: docs/wiki
+skills: true
+packages:
+  - id: '@purview-dev/astroc4'
+    registry: npm
+    description: The Starlight plugin, the fence transform, the grammar pipeline and the Astro components.
+    primary: true
+related:
+  - aspirec4
+  - engineering-playbook
+acknowledgments:
+  - name: LikeC4
+    url: https://github.com/likec4/likec4
+    description: >-
+      The C4 modelling language, compiler and renderer the plugin embeds; the highlighting grammar
+      is derived at build time from its Langium language definition.
+useCases:
+  - audience: developer
+    title: A diagram and the prose around it in the same diff
+    scenario: >-
+      A page explains a request path, and the diagram beside it lives in a design tool that nobody
+      updates when the path changes, so the two disagree and a reviewer cannot see it.
+    code: |
+      ````mdx
+      ---
+      title: Request path
+      ---
+
+      ```likec4 title="Request path" height=360
+      specification { element box }
+      model {
+        browser = box 'Browser'
+        api = box 'API'
+        store = box 'Postgres'
+        browser -> api 'GET /orders'
+        api -> store 'select'
+      }
+      views { view index { include * } }
+      ```
+      ````
+    language: mdx
+    outcome: >-
+      The diagram is the page: the fence is compiled and laid out during the build, the layout is
+      passed to the island as serialised JSON, and a change to the model is a line in the pull
+      request a reviewer can read next to the prose.
+    evidence: >-
+      The fence runs LikeC4.fromSource plus layoutedModel at build time, so nothing is laid out in
+      the browser; a typo fails astro build with the file name and parser message rather than
+      shipping a blank frame, and layouts are memoised by a hash of the snippet so a page
+      re-rendered on every dev edit pays for it once. The same fence in a .md page stays a code
+      block deliberately, because Astro cannot put a component there.
+  - audience: developer
+    title: Highlighting that follows LikeC4, with no ec.config.mjs
+    scenario: >-
+      You want ```c4 and ```likec4 fences coloured in your docs, but Shiki has no LikeC4 grammar
+      and the community TextMate file is missing the shapes and keywords upstream added this year.
+    code: |
+      // astro.config.mjs — there is no ec.config.mjs anywhere in the site
+      import { defineConfig } from 'astro/config';
+      import starlight from '@astrojs/starlight';
+      import react from '@astrojs/react';
+      import astroc4 from '@purview-dev/astroc4';
+
+      export default defineConfig({
+        integrations: [
+          starlight({ plugins: [astroc4({ highlighting: { ref: 'v1.60.0' } })] }),
+          react(),
+        ],
+      });
+    language: js
+    outcome: >-
+      The plugin derives a TextMate grammar from likec4/likec4's Langium language definition and
+      injects it into Starlight's Expressive Code options from the config:setup hook, so every
+      LikeC4 fence is coloured and an existing ec.config.mjs keeps its own languages untouched.
+    evidence: >-
+      Only the word lists are generated; the structure (comments, triple-quoted strings, #tag
+      versus #hex, tech:astro icons, -[https]-> connectors) is a curated layer on top. The
+      difference is testable: ElementShape gained agent after v1.59.4, so a build pinned to that
+      tag paints agent as a plain identifier while main paints it as a shape. Expressive Code
+      concatenates shiki.langs, which is why a site with its own grammar ends up with both.
+  - audience: architect
+    title: One model in the repository, many diagram views in the docs
+    scenario: >-
+      Several documentation pages describe different slices of the same system, and you want them
+      to read from one model so a change to a dependency cannot leave three diagrams telling three
+      stories.
+    code: |
+      ```mdx
+      ---
+      title: Deployment
+      ---
+
+      import LikeC4View from '@purview-dev/astroc4/components/LikeC4View.astro';
+
+      <LikeC4View viewId="production" projectId="platform" height={560} />
+      ```
+    language: mdx
+    outcome: >-
+      The .c4 model lives in src/likec4 and each page selects a view of it; the model is compiled
+      once by LikeC4's Vite plugin, and every page hydrates the same islands, so a view cannot
+      describe a system the model does not contain.
+    evidence: >-
+      The plugin compiles every likec4.config.json project under the site root into likec4:model,
+      likec4:icons and likec4:projects virtual modules, and the first project found is the default
+      for a view that omits projectId — which is also the failure mode, since a vendored example
+      model can silently become the default. An unresolvable element kind fails the build instead
+      of rendering a partial diagram.
+  - audience: team-lead
+    title: Prove the diagrams actually hydrate before calling the docs built
+    scenario: >-
+      A static build exits 0 even when every island fails to hydrate, so the pipeline is green and
+      the published page shows empty frames.
+    code: |
+      bun run build
+      bun scripts/smoke.ts http://localhost:4321
+      bun run test:site
+    language: shell
+    outcome: >-
+      The browser smoke test and the packed-consumer build are the evidence: one drives a real
+      page and checks hydration, icons, highlighting and translations, the other installs the
+      tarball into a throwaway Starlight site so publishing mistakes surface before npm does.
+    evidence: >-
+      The smoke test asserts at least four distinct colour variables per highlighted block, counts
+      prerendered pack icons and <img> icons, and fails on a file:// URL in an <img src> — the
+      build-machine path that LikeC4's imageAliases bakes into the bundle. test:site catches the
+      cases the playground cannot see: a file missing from files, an exports subpath pointing at an
+      unpublished file, or an undeclared peer dependency.
+    docsPage: troubleshooting
+  - audience: contributor
+    title: Regenerate the grammar instead of hand-editing it
+    scenario: >-
+      Upstream LikeC4 adds a shape or a keyword, and the highlighting has to follow without someone
+      patching a TextMate JSON file and hoping the next release does not overwrite it.
+    code: |
+      bun run grammar:sync                 # from main
+      bun run grammar:sync --ref v1.60.0   # or pin the tag you ship against
+      bun run grammar:check                # fail if the committed snapshot is stale
+    language: shell
+    outcome: >-
+      The Langium snapshot and the TextMate grammar are generated artefacts: the working tree says
+      so, grammar:check fails when they drift from the pinned ref, and the next upstream addition
+      reaches highlighting without a code change.
+    evidence: >-
+      src/grammar/likec4.tmLanguage.json is re-derived from the committed Langium text on every run
+      (single-digit milliseconds), and snapshot.test.ts re-derives it again and compares, so a
+      change to the derivation that is not followed by a regeneration fails bun run test. Because
+      the icon packs come from LikeC4's LIB_ICON terminal, a pack upstream adds is highlighted and
+      rendered without an edit here either.

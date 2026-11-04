@@ -20,6 +20,7 @@ const emptyReleaseData: ReleaseCacheData = {
   releases: {},
   packages: {},
   packageSearch: {},
+  npmPackages: {},
 };
 
 const context: DiscoveryContext = {

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Purview.Build</id>
-    <version>0.5.4</version>
+    <version>0.8.1</version>
     <authors>Purview Contributors</authors>
     <license type="expression">MIT</license>
     <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
@@ -13,6 +13,6 @@
     <packageTypes>
       <packageType name="DotnetTool" />
     </packageTypes>
-    <repository type="git" url="https://github.com/purview-dev/build" branch="refs/heads/main" commit="17275abd5128f0afc47f73f199b72e283c36facb" />
+    <repository type="git" url="https://github.com/purview-dev/build" branch="refs/heads/main" commit="d00b005dd565f59f5b8641b2b80377d4e6e52c32" />
   </metadata>
 </package>

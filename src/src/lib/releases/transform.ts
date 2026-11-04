@@ -9,7 +9,7 @@ import type {
 
 import { compareNuGetVersions, formatNuGetVersion } from '../nuget-version';
 import { displayStatus } from '../status';
-import { nugetPackageUrl } from '../urls';
+import { packagePageUrl } from '../urls';
 import { rollupPackageVersions, type VersionRollup } from './live';
 import {
   isPrereleaseRelease,
@@ -93,6 +93,30 @@ export function projectReleaseSummary(
   const latestPrerelease = releases.find((release) => isPrereleaseRelease(release)) ?? null;
 
   const packages: PackageReleaseSummary[] = project.packages.map((pkg) => {
+    if (pkg.registry === 'npm') {
+      const index = cache.npmPackages[pkg.id];
+      const versions = index?.versions ?? [];
+      // GitHub release tags fill a gap in the registry list the same way they do
+      // for NuGet: the pipeline tags a release after publishing, so a tag can be
+      // newer than the registry document this build read.
+      const candidateVersions =
+        versions.length > 0 ? reconcileWithGitHubReleases(versions, releases) : versions;
+      const selection = selectVersions(candidateVersions);
+      return {
+        packageId: pkg.id,
+        registry: 'npm',
+        description: pkg.description ?? null,
+        latestStable: formatVersion(selection.stable),
+        latestPrerelease: formatVersion(selection.prerelease),
+        downloads: index?.weeklyDownloads ?? null,
+        downloadsPeriod: 'weekly',
+        deprecated: index?.deprecated ?? false,
+        listed: true,
+        hasAnyRelease: versions.length > 0,
+        packageUrl: packagePageUrl('npm', pkg.id),
+      };
+    }
+
     const index = cache.packages[pkg.id];
     const search = cache.packageSearch[pkg.id] ?? null;
     const versions = index?.versions ?? [];
@@ -108,14 +132,16 @@ export function projectReleaseSummary(
     const selection = selectVersions(candidateVersions);
     return {
       packageId: pkg.id,
+      registry: 'nuget',
       description: pkg.description ?? search?.description ?? null,
       latestStable: formatVersion(selection.stable),
       latestPrerelease: formatVersion(selection.prerelease),
-      totalDownloads: search?.totalDownloads ?? null,
+      downloads: search?.totalDownloads ?? null,
+      downloadsPeriod: 'total',
       deprecated: search?.deprecated ?? false,
       listed: search?.listed ?? true,
       hasAnyRelease: versions.length > 0,
-      nugetUrl: nugetPackageUrl(pkg.id),
+      packageUrl: packagePageUrl('nuget', pkg.id),
     };
   });
 

@@ -1,6 +1,6 @@
 import type { ResolvedProject } from '../manifest/load';
 
-import { nugetPackageUrl } from '../urls';
+import { packagePageUrl } from '../urls';
 import {
   docsChannelUrl,
   docsUrl,
@@ -84,7 +84,8 @@ function resourceLines(project: ResolvedProject, options: ProjectLlmsOptions): s
     `- Full machine-readable content: ${options.fullUrl ?? projectLlmsFullUrl(project.id)}`,
   ];
   if (primary) {
-    lines.splice(1, 0, `- Package: ${nugetPackageUrl(primary.id)}`);
+    const registry = primary.registry === 'npm' ? 'npm package' : 'NuGet package';
+    lines.splice(1, 0, `- ${registry}: ${packagePageUrl(primary.registry, primary.id)}`);
   }
   if (options.summaryUrl) {
     lines.push(`- Concise machine-readable index: ${options.summaryUrl}`);

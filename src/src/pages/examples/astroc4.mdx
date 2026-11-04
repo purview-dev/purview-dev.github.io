@@ -1,0 +1,228 @@
+---
+layout: ../../layouts/SiteLayout.astro
+title: Astroc4 in action — Purview Dev
+description: A live LikeC4 model, an inline fence, a deployment view and LikeC4 syntax highlighting, rendered by astroc4 on this page.
+---
+
+import LikeC4View from '@purview-dev/astroc4/components/LikeC4View.astro';
+import { withBase } from '~/lib/urls';
+
+<div class="pv-container py-12 md:py-16">
+  <div class="max-w-4xl">
+    <nav aria-label="Breadcrumb" class="text-muted mb-6 text-sm">
+      <a href={withBase('/projects/')} class="pv-link">Projects</a>
+      <span aria-hidden="true"> / </span>
+      <a href={withBase('/projects/astroc4/')} class="pv-link">Astroc4</a>
+      <span aria-hidden="true"> / </span>
+      <span class="text-foreground">Live example</span>
+    </nav>
+
+    <div class="max-w-3xl">
+      <p class="pv-chip border-brand/30 bg-brand/5 text-brand mb-4">Live example</p>
+      <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Astroc4 in action</h1>
+      <p class="text-muted mt-4 text-lg">
+        This page is the plugin dogfooding itself. Every diagram below is compiled by
+        <a class="pv-link" href={withBase('/projects/astroc4/')}>astroc4</a> during this site's
+        build, from a real <code>.c4</code> model of purview.dev, and hydrated as a React island in
+        your browser. Nothing here is a screenshot.
+      </p>
+      <div class="mt-6 flex flex-wrap gap-2">
+        <a
+          class="pv-btn pv-btn-primary pv-btn-sm"
+          href={withBase('/docs/astroc4/guide/getting-started/')}
+        >
+          Read the guide
+        </a>
+        <a class="pv-btn pv-btn-secondary pv-btn-sm" href={withBase('/projects/astroc4/')}>
+          Project page
+        </a>
+        <a
+          class="pv-btn pv-btn-secondary pv-btn-sm"
+          href="https://github.com/purview-dev/astroc4"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Source
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-12 space-y-10">
+      <section>
+        <h2 class="text-2xl font-bold tracking-tight">1. One component, the site's own model</h2>
+        <p class="text-muted mt-2">
+          The model lives in <code>src/likec4</code>. Astroc4 compiles it once with LikeC4's Vite
+          plugin, and <code>&lt;LikeC4View&gt;</code> picks a view from it. The view is interactive:
+          hover a node, scroll to zoom, click an element to open its details.
+        </p>
+      </section>
+
+      <LikeC4View
+        viewId="index"
+        title="purview.dev"
+        description="The catalogue and documentation portal, as modelled in the repository."
+        height={520}
+      />
+
+      <section>
+        <p class="text-muted">
+          The page writes one component and the plugin does the rest: the model is compiled at build
+          time, laid out by LikeC4, and the browser only hydrates the resulting JSON.
+        </p>
+      </section>
+
+```mdx
+---
+title: Architecture
+---
+
+import LikeC4View from '@purview-dev/astroc4/components/LikeC4View.astro';
+
+<LikeC4View viewId="index" height={520} />
+```
+
+      <section>
+        <h2 class="text-2xl font-bold tracking-tight">2. A fence whose DSL is the page</h2>
+        <p class="text-muted mt-2">
+          A <code>```likec4</code> fence in an <code>.mdx</code> page is a diagram, not a code
+          block. The DSL in the fence is compiled and laid out during the build, so the diagram is
+          reviewed in the same diff as the prose around it. Below is a small model of the request
+          that produced the page you are reading.
+        </p>
+      </section>
+
+```likec4 title="The request that rendered this page" height=360
+specification { element box }
+model {
+  browser = box 'Browser'
+  cdn = box 'Static host'
+  build = box 'Build runner'
+  browser -> cdn 'GET /examples/astroc4/'
+  cdn -> build 'already built'
+}
+views { view index { include * } }
+```
+
+      <section>
+        <p class="text-muted">
+          A typo in that DSL fails <code>astro build</code> with the fence's file name and the parser
+          message, rather than shipping a blank frame. The layout is memoised by the source text, so
+          a page re-rendered during development pays for each distinct snippet once.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-bold tracking-tight">3. The same model, a different view</h2>
+        <p class="text-muted mt-2">
+          An empty fence names a view instead of carrying DSL. This one renders the deployment view
+          from the same <code>.c4</code> file as the first diagram, so the two can never tell
+          different stories about production.
+        </p>
+      </section>
+
+```likec4 view="production" title="Production" height=360
+
+```
+
+      <section>
+        <h2 class="text-2xl font-bold tracking-tight">
+          4. LikeC4 source, highlighted without config
+        </h2>
+        <p class="text-muted mt-2">
+          Shiki has no LikeC4 grammar, so astroc4 derives one from LikeC4's own Langium language
+          definition and injects it into Starlight's Expressive Code options. There is no
+          <code>ec.config.mjs</code> in this repository. A <code>```c4</code> fence shows the source
+          rather than drawing it.
+        </p>
+      </section>
+
+```c4 title="src/likec4/demo.c4 (excerpt)" height=360
+specification {
+  color brand #8B3DFF
+  element actor { style { shape person } }
+  element system { style { color brand } }
+}
+
+model {
+  reader = actor 'Reader'
+  site = system 'purview.dev' {
+    #public
+    icon tech:astro
+    docs = service 'Documentation portal' {
+      #internal
+      technology 'Astro + Starlight'
+    }
+  }
+  reader -[https]-> docs 'reads'
+}
+```
+
+      <section>
+        <h2 class="text-2xl font-bold tracking-tight">5. The details that make it hold up</h2>
+        <div class="mt-6 grid gap-5 lg:grid-cols-2">
+          <div class="pv-card p-5">
+            <h3 class="font-semibold">Icons from the grammar</h3>
+            <p class="text-muted mt-2 text-sm">
+              <code>tech:astro</code> in the model above is a bundled pack icon. The pack list is
+              read from LikeC4's <code>LIB_ICON</code> terminal, so a pack upstream adds highlights
+              and renders without a change here. Self-hosted icons stay under <code>public/</code>;
+              LikeC4's <code>imageAliases</code> bakes a build-machine <code>file://</code> path into
+              the bundle and is deliberately unsupported.
+            </p>
+          </div>
+          <div class="pv-card p-5">
+            <h3 class="font-semibold">Translated shell</h3>
+            <p class="text-muted mt-2 text-sm">
+              The frame headings, badges and error messages come from Starlight's i18n system. A site
+              that ships a second locale gets the diagram UI in it for free, and any key can be
+              overridden in <code>src/content/i18n/&lt;lang&gt;.json</code>.
+            </p>
+          </div>
+          <div class="pv-card p-5">
+            <h3 class="font-semibold">Reproducible highlighting</h3>
+            <p class="text-muted mt-2 text-sm">
+              This site pins the grammar to <code>v1.60.0</code>. The grammar is fetched once per
+              <code>repo@ref</code>, cached and ETag-revalidated; a build that cannot reach
+              <code>raw.githubusercontent.com</code> fails by default, or falls back to the bundled
+              snapshot with <code>offline: true</code>. <code>ASTROC4_REF</code> overrides the ref
+              from CI without editing the config.
+            </p>
+          </div>
+          <div class="pv-card p-5">
+            <h3 class="font-semibold">Static by default, hydrated on demand</h3>
+            <p class="text-muted mt-2 text-sm">
+              The diagram has no useful server-rendered form, so it is a
+              <code>client:only="react"</code> island with a placeholder that carries the frame
+              height. A static build passes even when islands fail to hydrate, which is why astroc4's
+              own CI runs a browser smoke test rather than trusting the exit code.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-bold tracking-tight">Use it in your own site</h2>
+        <p class="text-muted mt-2">
+          Astroc4 is published to npm. The full set of options — fences, the Vite plugin workspace,
+          highlighting, cache and failure policy — is in the
+          <a class="pv-link" href={withBase('/docs/astroc4/guide/configuration-reference/')}>
+            configuration reference
+          </a>
+          .
+        </p>
+        <div class="mt-6 flex flex-wrap gap-2">
+          <a
+            class="pv-btn pv-btn-primary pv-btn-sm"
+            href={withBase('/docs/astroc4/guide/getting-started/')}
+          >
+            Get started
+          </a>
+          <a class="pv-btn pv-btn-secondary pv-btn-sm" href={withBase('/projects/astroc4/')}>
+            Back to Astroc4
+          </a>
+        </div>
+      </section>
+    </div>
+
+  </div>
+</div>

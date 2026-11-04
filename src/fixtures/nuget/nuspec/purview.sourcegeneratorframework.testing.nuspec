@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>Purview.SourceGeneratorFramework.Testing</id>
-    <version>1.1.1</version>
+    <version>1.3.0</version>
     <authors>Purview Contributors</authors>
     <license type="expression">MIT</license>
     <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
@@ -10,17 +10,24 @@
     <readme>README.md</readme>
     <projectUrl>https://purview.dev/projects/sourcegenerator-framework/</projectUrl>
     <description>Purview SourceGeneratorFramework libraries for building and testing incremental C# source generators.</description>
-    <repository type="git" url="https://github.com/purview-dev/sourcegenerator-framework" branch="refs/heads/main" commit="395ead7ea47fed1682e31086775e93d1c4001e85" />
+    <repository type="git" url="https://github.com/purview-dev/sourcegenerator-framework" branch="refs/heads/main" commit="744343dec62579478bed4d6039edaea21fec18ce" />
     <dependencies>
       <group targetFramework="net10.0">
-        <dependency id="Purview.SourceGeneratorFramework" version="1.1.1" exclude="Build,Analyzers" />
+        <dependency id="Purview.SourceGeneratorFramework" version="1.3.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.CodeAnalysis.CSharp" version="5.9.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="5.9.0" exclude="Build,Analyzers" />
+        <dependency id="System.Reflection.MetadataLoadContext" version="10.0.1" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.CodeAnalysis.Analyzers" version="5.9.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net11.0">
+        <dependency id="Purview.SourceGeneratorFramework" version="1.3.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.CodeAnalysis.CSharp" version="5.9.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="5.9.0" exclude="Build,Analyzers" />
         <dependency id="System.Reflection.MetadataLoadContext" version="10.0.1" exclude="Build,Analyzers" />
         <dependency id="Microsoft.CodeAnalysis.Analyzers" version="5.9.0" exclude="Build,Analyzers" />
       </group>
       <group targetFramework="net8.0">
-        <dependency id="Purview.SourceGeneratorFramework" version="1.1.1" exclude="Build,Analyzers" />
+        <dependency id="Purview.SourceGeneratorFramework" version="1.3.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.CodeAnalysis.CSharp" version="5.9.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="5.9.0" exclude="Build,Analyzers" />
         <dependency id="System.Reflection.MetadataLoadContext" version="10.0.1" exclude="Build,Analyzers" />
@@ -29,7 +36,7 @@
         <dependency id="System.Reflection.Metadata" version="10.0.1" exclude="Build,Analyzers" />
       </group>
       <group targetFramework="net9.0">
-        <dependency id="Purview.SourceGeneratorFramework" version="1.1.1" exclude="Build,Analyzers" />
+        <dependency id="Purview.SourceGeneratorFramework" version="1.3.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.CodeAnalysis.CSharp" version="5.9.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="5.9.0" exclude="Build,Analyzers" />
         <dependency id="System.Reflection.MetadataLoadContext" version="10.0.1" exclude="Build,Analyzers" />
@@ -38,7 +45,7 @@
         <dependency id="System.Reflection.Metadata" version="10.0.1" exclude="Build,Analyzers" />
       </group>
       <group targetFramework=".NETStandard2.0">
-        <dependency id="Purview.SourceGeneratorFramework" version="1.1.1" exclude="Build,Analyzers" />
+        <dependency id="Purview.SourceGeneratorFramework" version="1.3.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.CodeAnalysis.CSharp" version="5.9.0" exclude="Build,Analyzers" />
         <dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="5.9.0" exclude="Build,Analyzers" />
         <dependency id="System.Reflection.MetadataLoadContext" version="10.0.1" exclude="Build,Analyzers" />

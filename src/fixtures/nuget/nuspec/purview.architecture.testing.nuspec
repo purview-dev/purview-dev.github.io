@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>Purview.Architecture.Testing</id>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
     <title>Purview Architecture Testing</title>
     <authors>Kieron Lanning</authors>
     <license type="expression">MIT</license>
@@ -13,12 +13,17 @@
     <description>Enforces a repository's architecture policy as TUnit tests: project and type-level dependency direction, sibling independence, composition boundaries, forbidden packages and framework references, cycles and naming. Ships the policy JSON Schema and a TUnit base class, so a consuming repository adds a policy file and one derived test class.</description>
     <copyright>Copyright © 2026 Purview-Dev</copyright>
     <tags>architecture architecture-tests dependency-rules dependency-matrix type-level-dependencies tunit policy purview dotnet testing</tags>
-    <repository type="git" url="https://github.com/purview-dev/architests.git" branch="refs/heads/main" commit="7054490fbbebbc3afb8ec36ef57d1978d383b111" />
+    <repository type="git" url="https://github.com/purview-dev/architests.git" branch="refs/heads/main" commit="e699ea1db1e31638189c2d193c3a795d5a10ba72" />
     <dependencies>
       <group targetFramework="net10.0">
         <dependency id="JsonSchema.Net" version="9.4.1" exclude="Build,Analyzers" />
-        <dependency id="TUnit.Assertions" version="1.75.0" exclude="Build,Analyzers" />
-        <dependency id="TUnit.Core" version="1.75.0" exclude="Build,Analyzers" />
+        <dependency id="TUnit.Assertions" version="1.76.0" exclude="Build,Analyzers" />
+        <dependency id="TUnit.Core" version="1.76.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net11.0">
+        <dependency id="JsonSchema.Net" version="9.4.1" exclude="Build,Analyzers" />
+        <dependency id="TUnit.Assertions" version="1.76.0" exclude="Build,Analyzers" />
+        <dependency id="TUnit.Core" version="1.76.0" exclude="Build,Analyzers" />
       </group>
     </dependencies>
   </metadata>

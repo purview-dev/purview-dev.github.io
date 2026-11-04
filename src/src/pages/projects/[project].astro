@@ -8,8 +8,7 @@ import PackageVersions, { type PackageRow } from '~/components/islands/PackageVe
 import StarOnGitHub from '~/components/StarOnGitHub.astro';
 import StatusBadge from '~/components/StatusBadge.astro';
 import UseCaseCard from '~/components/UseCaseCard.astro';
-import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '~/lib/badges';
-import { readDocsManifest, type DocsManifestChannel } from '~/lib/docs/aggregate';
+import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '~/lib/badges';import { readDocsManifest, type DocsManifestChannel } from '~/lib/docs/aggregate';
 import { channelBasePath, channelDisplayLabel } from '~/lib/docs/channels';
 import { projectChannelLlmsFullPath, projectChannelLlmsPath } from '~/lib/discovery/urls';
 import { installAnchorId, installKindFor, installTabs } from '~/lib/install';
@@ -23,7 +22,7 @@ import { SITE } from '~/lib/site';
 import { listMirroredSkills } from '~/lib/skills';
 import { displayStatus } from '~/lib/status';
 
-import { absoluteUrl, nugetPackageUrl, withBase } from '~/lib/urls';
+import { absoluteUrl, packagePageUrl, withBase } from '~/lib/urls';
 
 export function getStaticPaths() {
   return loadProjects().map((project) => ({
@@ -71,6 +70,13 @@ const skills = listMirroredSkills(project.id).map((skill) => ({
   files: skill.files.length,
 }));
 const docsPath = project.docs ? withBase(`/docs/${project.id}/`) : null;
+// A live example is a site page at /examples/<id>/, discovered rather than
+// declared: the page exists, so the project page links it.
+const demoHref = Object.keys(import.meta.glob('/src/pages/examples/*.mdx')).some((path) =>
+  path.endsWith(`/${project.id}.mdx`),
+)
+  ? withBase(`/examples/${project.id}/`)
+  : null;
 // Every published documentation version is its own docs set with its own
 // machine-readable bundle (ADR 0009): same product, different version, different
 // docs. The default channel keeps /projects/<id>/llms*.txt; the others live
@@ -117,11 +123,17 @@ const structuredData: Record<string, unknown> = {
       description: project.shortDescription,
       url: absoluteUrl(`/projects/${project.id}/`),
       codeRepository: project.sourceUrl,
-      programmingLanguage: 'C#',
+      // A NuGet package is a .NET claim. A project that publishes none (astroc4
+      // is an npm package) may be written in another language, so the field is
+      // omitted rather than asserted.
+      ...(primaryPackage?.registry === 'nuget' ? { programmingLanguage: 'C#' } : {}),
       license: 'https://opensource.org/licenses/MIT',
       ...(tags.length > 0 ? { keywords: tags.join(', ') } : {}),
       ...(primaryPackage ?
-        { sameAs: nugetPackageUrl(primaryPackage.id), identifier: primaryPackage.id }
+        {
+          sameAs: packagePageUrl(primaryPackage.registry, primaryPackage.id),
+          identifier: primaryPackage.id,
+        }
       : {}),
       ...(releases.latestRelease?.tagName ? { softwareVersion: releases.latestRelease.tagName } : {}),
     },
@@ -156,8 +168,9 @@ const installSections =
       return {
         packageId: pkg.id,
         primary: pkg.primary ?? false,
+        registry: pkg.registry,
         version,
-        tabs: installTabs(installKind, pkg.id, version),
+        tabs: installTabs(pkg.registry, installKind, pkg.id, version),
       };
     })
   : [];
@@ -168,12 +181,14 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
   projectName: project.name,
   projectUrl,
   packageId: pkg.packageId,
+  registry: pkg.registry,
   latestStable: pkg.latestStable,
   // Only surface a prerelease that outranks the stable release, so a trailing
   // prerelease never sits beside a newer stable version in the table.
   latestPrerelease: effectivePrerelease(pkg.latestStable, pkg.latestPrerelease),
-  totalDownloads: pkg.totalDownloads,
-  nugetUrl: pkg.nugetUrl,
+  downloads: pkg.downloads,
+  downloadsPeriod: pkg.downloadsPeriod,
+  packageUrl: pkg.packageUrl,
   deprecated: pkg.deprecated,
   installAnchor: hasInstallSections ? `#${installAnchorId(pkg.packageId)}` : undefined,
 }));
@@ -236,6 +251,36 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
             packaging can change between prereleases, and there is no production support guarantee.
             Read the documentation before adopting it.
           </div>
+        )
+      }
+
+      {
+        demoHref && (
+          <a
+            href={demoHref}
+            class="pv-card pv-fit-panel pv-card-interactive mt-6 flex items-center gap-4 p-4 no-underline"
+          >
+            <span
+              class="bg-brand grid h-11 w-11 shrink-0 place-items-center rounded-full text-white"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M8 5.14v13.72a1 1 0 0 0 1.54.84l10.29-6.86a1 1 0 0 0 0-1.68L9.54 4.3A1 1 0 0 0 8 5.14Z" />
+              </svg>
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="text-foreground block font-semibold">
+                Live example
+                <span class="text-muted font-normal">— see {project.name} in action</span>
+              </span>
+              <span class="text-muted mt-1 block text-sm">
+                A working example built and rendered by this site, not a screenshot.
+              </span>
+            </span>
+            <span class="text-brand-emphasis text-lg" aria-hidden="true">
+              →
+            </span>
+          </a>
         )
       }
 
@@ -321,10 +366,10 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
         {
           project.status !== 'archived' && (
             <>
-              {primaryPackage && (
+              {primaryPackage?.registry === 'nuget' && (
                 <>
                   <a
-                    href={nugetPackageUrl(primaryPackage.id)}
+                    href={packagePageUrl('nuget', primaryPackage.id)}
                     rel="noopener noreferrer"
                     target="_blank"
                     class="inline-flex"
@@ -337,7 +382,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
                     />
                   </a>
                   <a
-                    href={nugetPackageUrl(primaryPackage.id)}
+                    href={packagePageUrl('nuget', primaryPackage.id)}
                     rel="noopener noreferrer"
                     target="_blank"
                     class="inline-flex"
@@ -491,6 +536,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
                         client:idle
                         tabs={install.tabs}
                         packageId={install.packageId}
+                        registry={install.registry}
                         kind={installKind}
                         version={install.version}
                       />
@@ -508,7 +554,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
               <h2 class="text-xl font-semibold">Agent skills</h2>
               <p class="mt-2 text-muted">
                 {project.name} authors agent skills for coding agents. They are installed explicitly
-                with the skills CLI and are not part of any NuGet package.
+                with the skills CLI and are not part of any package.
               </p>
               <div class="mt-4">
                 <SkillInstall

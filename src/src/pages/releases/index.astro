@@ -30,12 +30,14 @@ const packageRows: PackageRow[] = summaries
       projectId: summary.projectId,
       projectName: summary.projectName,
       packageId: pkg.packageId,
+      registry: pkg.registry,
       latestStable: pkg.latestStable,
       // Only surface a prerelease that outranks the stable release, so a
       // trailing prerelease never sits beside a newer stable version.
       latestPrerelease: effectivePrerelease(pkg.latestStable, pkg.latestPrerelease),
-      totalDownloads: pkg.totalDownloads,
-      nugetUrl: pkg.nugetUrl,
+      downloads: pkg.downloads,
+      downloadsPeriod: pkg.downloadsPeriod,
+      packageUrl: pkg.packageUrl,
       projectUrl: withBase(`/projects/${summary.projectId}/`),
       deprecated: pkg.deprecated,
     })),
@@ -58,7 +60,7 @@ function formatDate(value: string | null): string {
 
 <SiteLayout
   title={`Releases — ${SITE.fullName}`}
-  description="Current GitHub releases and NuGet package versions across Purview's .NET projects."
+  description="Current GitHub releases and package versions across Purview's projects, on NuGet and npm."
 >
   <div class="pv-container py-12 md:py-16">
     <div class="max-w-3xl">
@@ -66,7 +68,7 @@ function formatDate(value: string | null): string {
       <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Releases</h1>
       <p class="mt-4 text-lg text-muted">
         Follow what is changing across Purview, from recent GitHub releases to the latest stable
-        and prerelease version of each NuGet package.
+        and prerelease version of each package on NuGet and npm.
       </p>
     </div>
 
@@ -159,7 +161,7 @@ function formatDate(value: string | null): string {
     <section class="mt-16" aria-labelledby="package-versions-heading">
       <h2 id="package-versions-heading" class="text-xl font-semibold">Package versions</h2>
       <p class="mt-2 max-w-2xl text-muted">
-        A package-level view sourced from NuGet at build time. Search the list, group packages by
+        A package-level view sourced from NuGet and npm at build time. Search the list, group packages by
         project, or sort a column to compare versions and downloads.
       </p>
       <div class="mt-6">
