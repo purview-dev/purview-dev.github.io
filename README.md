@@ -55,9 +55,9 @@ See `docs/decisions/` for the architectural decision records.
 
 | Area                      | Tool                                   | Version |
 | ------------------------- | -------------------------------------- | ------- |
-| Runtime / package manager | Bun                                    | 1.4.2   |
-| Framework                 | Astro                                  | 7.3.2   |
-| Documentation theme       | Starlight                              | 0.42.1  |
+| Runtime / package manager | Bun                                    | 1.4.4   |
+| Framework                 | Astro                                  | 7.4.5   |
+| Documentation theme       | Starlight                              | 0.42.8  |
 | Styling                   | Tailwind CSS                           | 4.3.3   |
 | Islands                   | Preact                                 | 10.29.8 |
 | Syntax highlighting       | Shiki (Astro built-in `<Code>`)        | 4.4.3   |
@@ -76,7 +76,7 @@ and type-checked by `astro check`.
 
 ## Prerequisites
 
-- [Bun](https://bun.sh) 1.4.2 (the version is pinned in `package.json` via
+- [Bun](https://bun.sh) 1.4.4 (the version is pinned in `package.json` via
   `packageManager`)
 - [Just](https://github.com/casey/just) (a command runner; install via
   `winget install casey.just`, `brew install just`, or `cargo install just`)

@@ -35,8 +35,8 @@
     "typecheck": "bun run --cwd src typecheck"
   },
   "engines": {
-    "bun": ">=1.4.2",
-    "node": ">=22.12.0"
+    "bun": ">=1.4.4",
+    "node": ">=26.0.0"
   },
-  "packageManager": "bun@1.4.2"
+  "packageManager": "bun@1.4.4"
 }

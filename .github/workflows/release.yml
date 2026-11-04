@@ -15,6 +15,10 @@ jobs:
   release:
     uses: purview-dev/build/.github/workflows/purview-release.yml@main
     with:
+      # Pin the shared build tool and SDK so the release is reproducible rather
+      # than resolving the latest Purview.Build and .NET SDK at job time.
+      build-version: 0.8.1
+      dotnet-version: 10.0.x
       # The site publishes no NuGet package; tag + GitHub release (with the dist zip attached) only.
       release-mode: GitHubRelease
       upload-artifacts: true
