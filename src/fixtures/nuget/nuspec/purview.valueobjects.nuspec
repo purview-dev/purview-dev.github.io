@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Purview.ValueObjects</id>
-    <version>1.1.0</version>
+    <version>1.2.3</version>
     <title>Purview Value Objects</title>
     <authors>Kieron Lanning</authors>
     <license type="expression">MIT</license>
@@ -13,7 +13,7 @@
     <description>Source-generated scalar and complex value objects for .NET. Brings F#-style single-case types to C# with Create/Hydrate factories, normalization, validation, equality, comparison, implicit conversions, JSON serialization, and the underlying value's formatting and parsing interfaces for DTOs, Entity Framework, and domain models.</description>
     <copyright>Copyright © 2026 Purview-Dev</copyright>
     <tags>purview dotnet value-objects value-object scalar source-generator domain-driven-design dto serialization json entity-framework formatting parsing</tags>
-    <repository type="git" url="https://github.com/purview-dev/value-objects.git" branch="refs/heads/main" commit="510bb853e13cd2ee06a4d5410bc12aafb8162d00" />
+    <repository type="git" url="https://github.com/purview-dev/value-objects.git" branch="refs/heads/main" commit="92a4d6c3f8d68de650062d138e696c519494d477" />
     <dependencies>
       <group targetFramework="net10.0" />
       <group targetFramework="net11.0" />

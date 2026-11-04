@@ -10,12 +10,12 @@
       "@type": "Package",
       "registration": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/index.json",
       "id": "Purview.Telemetry.SourceGenerator",
-      "version": "5.0.4",
+      "version": "5.2.0",
       "description": ".NET Source Generator for interface-based telemetry generating tracing, logs, and metrics.",
       "summary": "",
       "title": "Purview Telemetry Source Generator",
-      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.telemetry.sourcegenerator/5.0.4/icon",
-      "licenseUrl": "https://www.nuget.org/packages/Purview.Telemetry.SourceGenerator/5.0.4/license",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.telemetry.sourcegenerator/5.2.0/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.Telemetry.SourceGenerator/5.2.0/license",
       "projectUrl": "https://purview.dev/projects/telemetry-sourcegenerator/",
       "tags": [
         "logs",
@@ -48,7 +48,7 @@
       "owners": [
         "kieronlanning"
       ],
-      "totalDownloads": 17495,
+      "totalDownloads": 20419,
       "verified": false,
       "packageTypes": [
         {
@@ -58,153 +58,173 @@
       "versions": [
         {
           "version": "1.0.0",
-          "downloads": 270,
+          "downloads": 275,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.0.0.json"
         },
         {
           "version": "1.0.1",
-          "downloads": 226,
+          "downloads": 233,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.0.1.json"
         },
         {
           "version": "1.0.2",
-          "downloads": 236,
+          "downloads": 242,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.0.2.json"
         },
         {
           "version": "1.0.3",
-          "downloads": 446,
+          "downloads": 451,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.0.3.json"
         },
         {
           "version": "1.0.4",
-          "downloads": 227,
+          "downloads": 232,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.0.4.json"
         },
         {
           "version": "1.0.5",
-          "downloads": 256,
+          "downloads": 262,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.0.5.json"
         },
         {
           "version": "1.0.6",
-          "downloads": 248,
+          "downloads": 254,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.0.6.json"
         },
         {
           "version": "1.0.7",
-          "downloads": 218,
+          "downloads": 223,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.0.7.json"
         },
         {
           "version": "1.0.8",
-          "downloads": 238,
+          "downloads": 243,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.0.8.json"
         },
         {
           "version": "1.0.9",
-          "downloads": 228,
+          "downloads": 234,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.0.9.json"
         },
         {
           "version": "1.0.10",
-          "downloads": 205,
+          "downloads": 210,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.0.10.json"
         },
         {
           "version": "1.0.11",
-          "downloads": 287,
+          "downloads": 293,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.0.11.json"
         },
         {
           "version": "1.0.12",
-          "downloads": 266,
+          "downloads": 275,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.0.12.json"
         },
         {
           "version": "1.1.0",
-          "downloads": 228,
+          "downloads": 233,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/1.1.0.json"
         },
         {
           "version": "2.0.0",
-          "downloads": 234,
+          "downloads": 242,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/2.0.0.json"
         },
         {
           "version": "2.0.1",
-          "downloads": 218,
+          "downloads": 224,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/2.0.1.json"
         },
         {
           "version": "3.0.0",
-          "downloads": 262,
+          "downloads": 272,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/3.0.0.json"
         },
         {
           "version": "3.1.0",
-          "downloads": 293,
+          "downloads": 302,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/3.1.0.json"
         },
         {
           "version": "3.2.0",
-          "downloads": 452,
+          "downloads": 460,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/3.2.0.json"
         },
         {
           "version": "3.2.3",
-          "downloads": 218,
+          "downloads": 227,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/3.2.3.json"
         },
         {
           "version": "3.2.4",
-          "downloads": 4852,
+          "downloads": 5660,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/3.2.4.json"
         },
         {
           "version": "4.0.0",
-          "downloads": 188,
+          "downloads": 202,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/4.0.0.json"
         },
         {
           "version": "4.1.0",
-          "downloads": 558,
+          "downloads": 582,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/4.1.0.json"
         },
         {
           "version": "4.2.0",
-          "downloads": 502,
+          "downloads": 519,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/4.2.0.json"
         },
         {
           "version": "4.4.0",
-          "downloads": 669,
+          "downloads": 805,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/4.4.0.json"
         },
         {
           "version": "5.0.0",
-          "downloads": 0,
+          "downloads": 169,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/5.0.0.json"
         },
         {
           "version": "5.0.1",
-          "downloads": 0,
+          "downloads": 123,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/5.0.1.json"
         },
         {
           "version": "5.0.2",
-          "downloads": 0,
+          "downloads": 112,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/5.0.2.json"
         },
         {
           "version": "5.0.3",
-          "downloads": 0,
+          "downloads": 96,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/5.0.3.json"
         },
         {
           "version": "5.0.4",
-          "downloads": 0,
+          "downloads": 132,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/5.0.4.json"
+        },
+        {
+          "version": "5.0.5",
+          "downloads": 198,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/5.0.5.json"
+        },
+        {
+          "version": "5.0.6",
+          "downloads": 123,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/5.0.6.json"
+        },
+        {
+          "version": "5.1.0",
+          "downloads": 112,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/5.1.0.json"
+        },
+        {
+          "version": "5.2.0",
+          "downloads": 0,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.telemetry.sourcegenerator/5.2.0.json"
         }
       ],
       "vulnerabilities": []

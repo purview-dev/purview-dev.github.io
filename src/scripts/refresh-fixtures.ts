@@ -12,13 +12,20 @@ import {
   fetchNuGetSearchRaw,
   parseNuGetNuspec,
 } from '../src/lib/releases/github';
+import { fetchNpmPackage } from '../src/lib/releases/npm';
 import { selectVersionForTargetFrameworks } from '../src/lib/releases/target-frameworks';
 import { RELEASE_CACHE_SCHEMA_VERSION } from '../src/lib/releases/types';
 
 const GITHUB_FIXTURES = resolve('fixtures', 'github');
 const NUGET_FIXTURES = resolve('fixtures', 'nuget');
 const NUGET_NUSPEC_FIXTURES = resolve(NUGET_FIXTURES, 'nuspec');
+const NPM_FIXTURES = resolve('fixtures', 'npm');
 const RELEASE_FIXTURES = resolve('fixtures', 'releases');
+
+/** A package name safe for a fixture file name (`@scope/name` → `scope-name`). */
+function fixtureName(packageName: string): string {
+  return packageName.replace(/^@/, '').replace(/[\\/]/g, '-');
+}
 
 function writeJson(file: string, data: unknown): void {
   mkdirSync(dirname(file), { recursive: true });
@@ -48,6 +55,7 @@ async function main(): Promise<void> {
     releases: {},
     packages: {},
     packageSearch: {},
+    npmPackages: {},
   };
 
   for (const project of projects) {
@@ -85,6 +93,26 @@ async function main(): Promise<void> {
     }
 
     for (const pkg of project.packages) {
+      if (pkg.registry === 'npm') {
+        try {
+          const index = await fetchNpmPackage(pkg.id);
+          writeJson(resolve(NPM_FIXTURES, `${fixtureName(pkg.id)}.json`), index);
+          data.npmPackages[pkg.id] = index;
+          console.log(`  npm ${pkg.id}: ${index.versions.length} versions`);
+        } catch (error) {
+          console.warn(`  npm ${pkg.id}: ${(error as Error).message}`);
+          data.npmPackages[pkg.id] = {
+            name: pkg.id,
+            versions: [],
+            distTags: {},
+            publishedAt: null,
+            weeklyDownloads: null,
+            deprecated: false,
+          };
+        }
+        continue;
+      }
+
       try {
         const indexRaw = await fetchNuGetIndexRaw(pkg.id);
         writeJson(resolve(NUGET_FIXTURES, `${pkg.id.toLowerCase()}.json`), indexRaw);

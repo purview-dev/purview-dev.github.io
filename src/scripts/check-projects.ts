@@ -353,7 +353,23 @@ function checkExperimental(project: ResolvedProject): void {
   });
 }
 
-/** Package declarations must resolve to published NuGet versions. */
+/** The published versions of a declared package, or null when the cache has no entry. */
+function packageVersions(
+  pkg: { id: string; registry: 'nuget' | 'npm' },
+  data: ReleaseCacheData,
+): string[] | null {
+  if (pkg.registry === 'npm') {
+    return data.npmPackages[pkg.id]?.versions ?? null;
+  }
+  return data.packages[pkg.id]?.versions ?? null;
+}
+
+/** Human-facing registry name for findings and remediation text. */
+function registryName(pkg: { registry: 'nuget' | 'npm' }): string {
+  return pkg.registry === 'npm' ? 'npm' : 'NuGet';
+}
+
+/** Package declarations must resolve to published versions on their registry. */
 function checkPackages(project: ResolvedProject, data: ReleaseCacheData): void {
   if (project.packages.length > 1) {
     const primaries = project.packages.filter((pkg) => pkg.primary === true);
@@ -369,23 +385,23 @@ function checkPackages(project: ResolvedProject, data: ReleaseCacheData): void {
   }
 
   for (const pkg of project.packages) {
-    const index = data.packages[pkg.id];
-    if (!index) {
+    const versions = packageVersions(pkg, data);
+    if (versions === null) {
       warn({
         project: project.id,
         field: `packages["${pkg.id}"]`,
         observed: 'no release data',
-        expected: 'a NuGet index entry',
+        expected: `an ${registryName(pkg)} index entry`,
         remediation: 'run `just fetch-releases` (or `just refresh-fixtures`) to cover the package.',
       });
       continue;
     }
-    if (index.versions.length === 0) {
+    if (versions.length === 0) {
       fail({
         project: project.id,
         field: `packages["${pkg.id}"]`,
         observed: describeVersions(0),
-        expected: 'at least one published version on NuGet',
+        expected: `at least one published version on ${registryName(pkg)}`,
         remediation:
           'publish the package before declaring it, or correct the package id in the project file.',
       });
@@ -394,14 +410,14 @@ function checkPackages(project: ResolvedProject, data: ReleaseCacheData): void {
 
   if (project.status === 'stable' && project.packages.length > 0) {
     const hasStable = project.packages.some(
-      (pkg) => selectStableVersion(data.packages[pkg.id]?.versions ?? []) !== null,
+      (pkg) => selectStableVersion(packageVersions(pkg, data) ?? []) !== null,
     );
     if (!hasStable) {
       fail({
         project: project.id,
         field: 'status',
         observed: 'stable',
-        expected: 'a stable (non-prerelease) NuGet version',
+        expected: 'a stable (non-prerelease) version on the package registry',
         remediation: 'set `status: preview` until a stable release ships.',
       });
     }
@@ -434,13 +450,13 @@ export function versionConsistencyFindings(
 
   if (project.status === 'preview' && !project.experimental) {
     const stablePackage = project.packages.find(
-      (pkg) => selectStableVersion(data.packages[pkg.id]?.versions ?? []) !== null,
+      (pkg) => selectStableVersion(packageVersions(pkg, data) ?? []) !== null,
     );
     if (stablePackage) {
       findings.push({
         project: project.id,
         field: 'status',
-        observed: `preview while a stable NuGet version of ${stablePackage.id} exists`,
+        observed: `preview while a stable ${registryName(stablePackage)} version of ${stablePackage.id} exists`,
         expected: 'status: stable once a stable release ships',
         remediation:
           'confirm the channel: set `status: stable` if the release is supported, or keep `preview` and record why.',
@@ -450,6 +466,18 @@ export function versionConsistencyFindings(
   }
 
   for (const pkg of project.packages) {
+    if (pkg.registry === 'npm') {
+      if (data.npmPackages[pkg.id]?.deprecated) {
+        findings.push({
+          project: project.id,
+          field: `packages["${pkg.id}"]`,
+          observed: 'deprecated on npm',
+          expected: 'a package that is still recommended',
+          remediation: 'replace the deprecated package or mark the project archived/superseded.',
+        });
+      }
+      continue;
+    }
     const search = data.packageSearch[pkg.id];
     if (search?.deprecated) {
       findings.push({

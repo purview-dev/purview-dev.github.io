@@ -10,12 +10,12 @@
       "@type": "Package",
       "registration": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.newtonsoftjson/index.json",
       "id": "Purview.ZodSharp.NewtonsoftJson",
-      "version": "2.1.0",
+      "version": "2.4.2",
       "description": "A high-performance C# port of Zod schema validation library. Features zero-allocation validation, struct-based rules, fluent API, and source generator support for maximum performance.",
       "summary": "",
       "title": "Purview.ZodSharp.NewtonsoftJson",
-      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.zodsharp.newtonsoftjson/2.1.0/icon",
-      "licenseUrl": "https://www.nuget.org/packages/Purview.ZodSharp.NewtonsoftJson/2.1.0/license",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.zodsharp.newtonsoftjson/2.4.2/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.ZodSharp.NewtonsoftJson/2.4.2/license",
       "projectUrl": "https://purview.dev/projects/zodsharp/",
       "tags": [
         "zod",
@@ -29,7 +29,7 @@
       "owners": [
         "kieronlanning"
       ],
-      "totalDownloads": 1395,
+      "totalDownloads": 3329,
       "verified": false,
       "packageTypes": [
         {
@@ -39,28 +39,53 @@
       "versions": [
         {
           "version": "2.0.0",
-          "downloads": 0,
+          "downloads": 96,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.newtonsoftjson/2.0.0.json"
         },
         {
           "version": "2.0.1",
-          "downloads": 0,
+          "downloads": 101,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.newtonsoftjson/2.0.1.json"
         },
         {
           "version": "2.0.1.1",
-          "downloads": 0,
+          "downloads": 104,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.newtonsoftjson/2.0.1.1.json"
         },
         {
           "version": "2.0.2",
-          "downloads": 0,
+          "downloads": 123,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.newtonsoftjson/2.0.2.json"
         },
         {
           "version": "2.1.0",
-          "downloads": 0,
+          "downloads": 98,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.newtonsoftjson/2.1.0.json"
+        },
+        {
+          "version": "2.2.0",
+          "downloads": 113,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.newtonsoftjson/2.2.0.json"
+        },
+        {
+          "version": "2.3.0",
+          "downloads": 95,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.newtonsoftjson/2.3.0.json"
+        },
+        {
+          "version": "2.4.0",
+          "downloads": 273,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.newtonsoftjson/2.4.0.json"
+        },
+        {
+          "version": "2.4.1",
+          "downloads": 94,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.newtonsoftjson/2.4.1.json"
+        },
+        {
+          "version": "2.4.2",
+          "downloads": 126,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.newtonsoftjson/2.4.2.json"
         }
       ],
       "vulnerabilities": []

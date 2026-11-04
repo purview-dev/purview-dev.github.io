@@ -1,13 +1,17 @@
+import type { PackageRegistry } from '~/lib/manifest/schema';
+
 import { useEffect, useMemo, useState } from 'preact/hooks';
 
 import { compareNuGetVersions } from '~/lib/nuget-version';
 import {
   isStale,
   latestFromVersions,
+  livePackageKey,
   mergeVersionPair,
   readLiveVersions,
   refreshLiveVersions,
   versionStatusMessage,
+  type LivePackageRef,
   type LiveVersions,
 } from '~/lib/releases/live';
 
@@ -15,10 +19,12 @@ export interface PackageRow {
   projectId: string;
   projectName: string;
   packageId: string;
+  registry: PackageRegistry;
   latestStable: string | null;
   latestPrerelease: string | null;
-  totalDownloads: number | null;
-  nugetUrl: string;
+  downloads: number | null;
+  downloadsPeriod: 'total' | 'weekly';
+  packageUrl: string;
   projectUrl: string;
   deprecated?: boolean;
   /** Hash link to this package's install section, e.g. "#install-purview-foo". */
@@ -53,6 +59,15 @@ function formatDownloads(value: number | null): string {
   return value == null ? '—' : value.toLocaleString('en-US');
 }
 
+function downloadsTitle(row: PackageRow): string | undefined {
+  if (row.downloads == null) {
+    return row.registry === 'npm'
+      ? 'The npm downloads API has not reported this package yet'
+      : 'Not yet indexed by NuGet search';
+  }
+  return row.downloadsPeriod === 'weekly' ? 'Weekly downloads (npm)' : 'Total downloads (NuGet)';
+}
+
 function VersionBadge({
   version,
   tone,
@@ -85,11 +100,14 @@ export default function PackageVersions({ packages, showProject = true }: Props)
   const [live, setLive] = useState<LiveVersions | null>(null);
   const [status, setStatus] = useState<RefreshStatus>('idle');
 
-  const packageIds = useMemo(() => packages.map((row) => row.packageId), [packages]);
+  const packageRefs = useMemo<LivePackageRef[]>(
+    () => packages.map((row) => ({ id: row.packageId, registry: row.registry })),
+    [packages],
+  );
 
   // The build-time versions render first (the table is server-rendered). On
-  // mount we apply the stored copy instantly, then re-check NuGet only when the
-  // stored copy is missing or older than the TTL (ADR 0008).
+  // mount we apply the stored copy instantly, then re-check the registries only
+  // when the stored copy is missing or older than the TTL (ADR 0008, ADR 0012).
   useEffect(() => {
     let cancelled = false;
     const stored = readLiveVersions();
@@ -103,7 +121,7 @@ export default function PackageVersions({ packages, showProject = true }: Props)
       };
     }
     setStatus('checking');
-    void refreshLiveVersions(packageIds, stored).then((refreshed) => {
+    void refreshLiveVersions(packageRefs, stored).then((refreshed) => {
       if (cancelled) {
         return;
       }
@@ -117,17 +135,17 @@ export default function PackageVersions({ packages, showProject = true }: Props)
     return () => {
       cancelled = true;
     };
-  }, [packageIds]);
+  }, [packageRefs]);
 
   // A live version only ever replaces a build-time one when it is higher, so a
-  // NuGet index that trails the build's release-tag reconciliation cannot make
+  // registry that trails the build's release-tag reconciliation cannot make
   // the table go backwards.
   const resolvedPackages = useMemo(() => {
     if (!live) {
       return packages;
     }
     return packages.map((row) => {
-      const versions = live.versions[row.packageId];
+      const versions = live.versions[livePackageKey({ id: row.packageId, registry: row.registry })];
       if (!versions) {
         return row;
       }
@@ -150,7 +168,11 @@ export default function PackageVersions({ packages, showProject = true }: Props)
       : []),
     { key: 'stable', label: 'Stable', title: 'Sort by latest stable version' },
     { key: 'prerelease', label: 'Prerelease', title: 'Sort by latest prerelease version' },
-    { key: 'downloads', label: 'Downloads', title: 'Sort by total downloads' },
+    {
+      key: 'downloads',
+      label: 'Downloads',
+      title: 'Sort by downloads (total on NuGet, weekly on npm)',
+    },
   ];
 
   const rows = resolvedPackages
@@ -183,7 +205,7 @@ export default function PackageVersions({ packages, showProject = true }: Props)
           return (aNull - bNull || compareVersions(a.latestPrerelease, b.latestPrerelease)) * dir;
         }
         case 'downloads':
-          return ((a.totalDownloads ?? -1) - (b.totalDownloads ?? -1)) * dir;
+          return ((a.downloads ?? -1) - (b.downloads ?? -1)) * dir;
       }
     });
 
@@ -226,13 +248,17 @@ export default function PackageVersions({ packages, showProject = true }: Props)
       <tr key={row.packageId} class="border-border hover:bg-surface/60 border-b last:border-0">
         <td class="px-4 py-3">
           <a
-            href={row.nugetUrl}
+            href={row.packageUrl}
             rel="noopener noreferrer"
             target="_blank"
             class="pv-link break-all"
+            title={`${row.packageId} on ${row.registry === 'npm' ? 'npm' : 'NuGet'}`}
           >
             {row.packageId}
           </a>
+          <span class="text-muted border-border ml-2 rounded-full border px-2 py-0.5 text-[0.65rem] tracking-wide uppercase">
+            {row.registry}
+          </span>
           {row.deprecated && (
             <span class="border-warning/40 bg-warning/10 text-warning ml-2 rounded-full border px-2 py-0.5 text-xs">
               deprecated
@@ -257,11 +283,8 @@ export default function PackageVersions({ packages, showProject = true }: Props)
         <td class="px-4 py-3">
           <VersionBadge version={row.latestPrerelease} tone="prerelease" />
         </td>
-        <td
-          class="text-muted px-4 py-3 text-xs"
-          title={row.totalDownloads == null ? 'Not yet indexed by NuGet search' : undefined}
-        >
-          {formatDownloads(row.totalDownloads)}
+        <td class="text-muted px-4 py-3 text-xs" title={downloadsTitle(row)}>
+          {formatDownloads(row.downloads)}
         </td>
       </tr>
     );
@@ -349,10 +372,10 @@ export default function PackageVersions({ packages, showProject = true }: Props)
             {groups
               ? groups.map((group) => {
                   const subtotal = group.rows.reduce(
-                    (sum, row) => (row.totalDownloads == null ? sum : sum + row.totalDownloads),
+                    (sum, row) => (row.downloads == null ? sum : sum + row.downloads),
                     0,
                   );
-                  const hasAnyDownloads = group.rows.some((row) => row.totalDownloads != null);
+                  const hasAnyDownloads = group.rows.some((row) => row.downloads != null);
                   return (
                     <>
                       <tr

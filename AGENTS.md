@@ -26,11 +26,12 @@ from the repository root and delegated to the package.
   `oxfmt` does **not** support `.astro` yet (oxc-project/oxc#15665) — format those by hand and rely
   on `astro check` + oxlint.
 - **Task runner:** Just (`justfile`; switches to pwsh on Windows).
-- **All external data is fetched at build time**, never by the visitor's browser: GitHub/NuGet
-  release data, the documentation mirror, and any `assets:` a project mirrors into `public/`, cached
-  under `src/.cache/` with committed fixtures as the offline fallback. The one exception is the NuGet
-  **version numbers** the page already displays: the browser re-checks them against the NuGet
-  flat-container index, applies any higher version, and stores it (ADR 0008).
+- **All external data is fetched at build time**, never by the visitor's browser: GitHub releases,
+  NuGet and npm registry data, the documentation mirror, and any `assets:` a project mirrors into
+  `public/`, cached under `src/.cache/` with committed fixtures as the offline fallback. The one
+  exception is the package **version numbers** the page already displays: the browser re-checks them
+  against the registry that publishes the package (NuGet or npm), applies any higher version, and
+  stores it (ADR 0008, ADR 0012).
 
 ### Generated outputs — never edit by hand
 
@@ -65,7 +66,8 @@ prints advisory observations (which never fail the build) when a project's decla
 - Documentation stays in the product repository and is aggregated at build time into
   `/docs/<project-id>/`. **Tag chips are not authored in the manifest** — they come from the GitHub
   repository's *topics*, read through the release cache.
-- Versions and release dates come from GitHub releases plus the NuGet flat-container index.
+- Versions and release dates come from GitHub releases plus the registry that publishes each
+  package: the NuGet flat-container index, or npm's registry document.
 
 ## Mandatory rules
 
@@ -78,7 +80,8 @@ prints advisory observations (which never fail the build) when a project's decla
      `purview-dev/*` for `projects:` entries.
    - For any project with `docs`, the display `name` must slugify to exactly `id` (so the display
      name and the `/projects/<id>/` and `/docs/<id>/` URLs agree).
-   - NuGet package ids are unique across the whole catalogue; when a project has more than one
+   - Package ids are unique across the whole catalogue for their registry (`registry:id`; an absent
+      `registry` means `nuget`, ADR 0012); when a project has more than one
      package, exactly one must be `primary: true`.
    - Every non-archived project needs at least one concrete use case; a use case with `code` must
      also set `language`, and `docsPage` must be a lowercase `[a-z0-9-]` slug that resolves to a real
@@ -114,9 +117,9 @@ prints advisory observations (which never fail the build) when a project's decla
    - `order` values are unique and control the catalogue order.
    - `related`, `supersedes`, `supersededBy` must reference known ids.
    - `status` must match reality: an archived repository is `archived`; prerelease-only tooling is
-     `preview`; a project with a stable release is `stable`.
-   - Declared versions and frameworks must agree with what the packages publish: a stable NuGet
-     version on a `preview` project, a deprecated or unlisted package, packages that trail the family
+     `preview`; a project with a stable release on its package registry is `stable`.
+   - Declared versions and frameworks must agree with what the packages publish: a stable package
+     version on a `preview` project, a deprecated or unlisted NuGet package, packages that trail the family
      version, and a `targetFrameworks` set (project- or package-level) that does not match the
      packages' NuGet metadata are reported as advisory observations by `just check-projects`. They
      never fail the build, but they are catalogue drift and should be fixed or explicitly accepted.
@@ -165,5 +168,6 @@ Do not assume this file contains everything; consult `.agents/` while planning.
 | Release data | `src/src/lib/releases/*`, `src/scripts/fetch-releases.ts` |
 | Mirrored project assets | `src/scripts/sync-assets.ts` (`assets:` in the manifest) |
 | Pages | `src/src/pages/{index,about,use-cases,docs,projects,releases}/` |
+| Live examples | `src/src/pages/examples/<project-id>.mdx` (linked from the project page automatically) |
 | Validation | `justfile`, `src/scripts/{check-links,check-generated,check-assets,check-projects}.ts` |
 | Architecture decisions | `docs/decisions/*.md` |

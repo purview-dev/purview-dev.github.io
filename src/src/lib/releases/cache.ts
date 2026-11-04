@@ -33,6 +33,9 @@ export function isReleaseCache(data: unknown): data is ReleaseCacheData {
   if (typeof candidate.packageSearch !== 'object' || candidate.packageSearch === null) {
     return false;
   }
+  if (typeof candidate.npmPackages !== 'object' || candidate.npmPackages === null) {
+    return false;
+  }
   return true;
 }
 

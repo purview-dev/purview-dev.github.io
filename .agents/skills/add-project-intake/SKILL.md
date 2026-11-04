@@ -32,7 +32,7 @@ Never ask a question whose answer is in the repository. Fetch it, show the evide
 | --- | --- |
 | Owner, description, topics, archived, default branch, discussions, homepage | `gh api repos/<owner>/<repo>` |
 | Docs layout and the landing-page candidates | `gh api "repos/<owner>/<repo>/git/trees/main?recursive=1"` |
-| Package ids and the release channel | `curl https://api.nuget.org/v3-flatcontainer/<id>/index.json` |
+| Package ids and the release channel | `curl https://api.nuget.org/v3-flatcontainer/<id>/index.json`, or the npm registry document for `registry: npm` |
 | `install` kind, target frameworks, the reader-facing package set | the nuspec / `.config/purview-build.json` |
 
 The commands and the evidence to record are listed in `add-catalogue-project` (Step 1). Recon first
@@ -57,7 +57,7 @@ decides. "Required" means stop and ask; "confirm" means propose a value and let 
 | # | Question | Decides | Default / rule |
 | --- | --- | --- | --- |
 | 4 | Which `category`? **Required when the project straddles two** (for example architecture tests: `developer-tooling` — a tool you add to a repository — or `validation` — the input/data-validation bucket, currently ZodSharp). | `category` | Exactly one of the seven vocabulary values; never a new label. |
-| 5 | `status` follows the release channel: an archived repository is `archived`, prerelease-only tooling is `preview`, a project with a stable (non-prerelease) NuGet version is `stable`. **Ask only when the channel and the intent disagree** — a stable package for a project that is not yet recommended (keep `preview` and record why), or a package that is not published yet. | `status` | Derived from GitHub `archived` + the NuGet index; never "stable" without a stable version. |
+| 5 | `status` follows the release channel: an archived repository is `archived`, prerelease-only tooling is `preview`, a project with a stable (non-prerelease) version on its registry is `stable`. **Ask only when the channel and the intent disagree** — a stable package for a project that is not yet recommended (keep `preview` and record why), or a package that is not published yet. | `status` | Derived from GitHub `archived` + the package registry; never "stable" without a stable version. |
 | 6 | Is this an **experiment** — the API, defaults and packaging may change between prereleases and there is no production support guarantee? **Ask; it is orthogonal to `status`** and invalid on an archived project. | `experimental` | `false`. `true` adds a warning badge to the catalogue and every aggregated docs page (ADR 0004). |
 
 ### Documentation (recon decides; ask only on a failure mode)
@@ -74,7 +74,7 @@ decides. "Required" means stop and ask; "confirm" means propose a value and let 
 | --- | --- | --- | --- |
 | 10 | When there is more than one package: **which one should a reader install first?** | `packages[].primary` | Exactly one `primary: true` when there are two or more packages. |
 | 11 | Is any declared package internal-only (an abstractions or runtime companion) rather than something a consumer installs? | `packages[].description` | Declare it anyway with a description; only one is primary. |
-| 12 | How is the primary package consumed — a plain NuGet reference, an MSBuild SDK, or a `dotnet` tool? | `install` | `nuget`; recon from the nuspec / `purview-build.json`. |
+| 12 | How is the primary package consumed — a plain NuGet reference, an MSBuild SDK, or a `dotnet` tool? (For an npm package, skip this: the registry decides the install tabs.) | `install` | `nuget`; recon from the nuspec / `purview-build.json`. |
 | 13 | *(Do not ask.)* Which target frameworks does it publish? | `targetFrameworks` | Read from the nuspec; the guard compares it and `just fix-projects` can rewrite it. |
 
 ### Curation and relationships (only the human knows these)
@@ -158,7 +158,7 @@ report — no check will catch them.
 | `category`, `experimental`, use-case prose | not machine-checkable → **judgement; record it** |
 | `status` | archived vs active repo, stable vs stable package → **fail**; preview with a stable package → **observation** |
 | `docs` | no pages, non-`main` branch → **fail**; no landing page → **observation** |
-| `packages` | duplicate id, >1 `primary`, unpublished package → **fail** |
+| `packages` | duplicate `registry:id`, >1 `primary`, unpublished package → **fail** |
 | `targetFrameworks` | mismatch with the published nuspec → **observation** (`just fix-projects`) |
 | `related`/`supersedes`/`supersededBy` | unknown id → **fail** (loader) |
 | topics | none set → **fail** |

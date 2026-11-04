@@ -1,5 +1,9 @@
-import type { ResolvedProject } from '../../src/lib/manifest/load';
-import type { NuGetSearchEntry, ReleaseCacheData } from '../../src/lib/releases/types';
+import type { ResolvedPackage, ResolvedProject } from '../../src/lib/manifest/load';
+import type {
+  NpmPackageIndex,
+  NuGetSearchEntry,
+  ReleaseCacheData,
+} from '../../src/lib/releases/types';
 
 import { describe, expect, test } from 'bun:test';
 import { existsSync } from 'node:fs';
@@ -30,8 +34,20 @@ function fixtureProject(id: string): ResolvedProject {
   return found;
 }
 
-function project(overrides: Partial<ResolvedProject>): ResolvedProject {
-  return { ...fixtureProject('zodsharp'), ...overrides };
+type PackageOverride = Partial<ResolvedPackage> & { id: string };
+type ProjectOverrides = Partial<Omit<ResolvedProject, 'packages'>> & {
+  packages?: PackageOverride[];
+};
+
+function project(overrides: ProjectOverrides): ResolvedProject {
+  const base = fixtureProject('zodsharp');
+  return {
+    ...base,
+    ...overrides,
+    packages: (overrides.packages ?? base.packages).map((pkg) =>
+      Object.assign({}, pkg, { registry: pkg.registry ?? 'nuget' }),
+    ),
+  } as ResolvedProject;
 }
 
 interface PackageInput {
@@ -42,6 +58,7 @@ interface PackageInput {
 function cache(
   packages: Record<string, PackageInput>,
   search: Record<string, NuGetSearchEntry | null> = {},
+  npm: Record<string, NpmPackageIndex> = {},
 ): ReleaseCacheData {
   return {
     schema: RELEASE_CACHE_SCHEMA_VERSION,
@@ -52,6 +69,19 @@ function cache(
       Object.entries(packages).map(([id, value]) => [id, { id, ...value }]),
     ),
     packageSearch: search,
+    npmPackages: npm,
+  };
+}
+
+function npmIndex(overrides: Partial<NpmPackageIndex> = {}): NpmPackageIndex {
+  return {
+    name: '@purview-dev/example',
+    versions: ['1.0.0'],
+    distTags: { latest: '1.0.0' },
+    publishedAt: null,
+    weeklyDownloads: null,
+    deprecated: false,
+    ...overrides,
   };
 }
 
@@ -116,6 +146,53 @@ describe('version consistency findings', () => {
     const observed = findings.map((finding) => finding.observed);
     expect(observed).toContain('deprecated on NuGet');
     expect(observed).toContain('unlisted on NuGet');
+  });
+
+  test('flags a preview project that already ships a stable npm version', () => {
+    const findings = versionConsistencyFindings(
+      project({
+        status: 'preview',
+        experimental: false,
+        packages: [{ id: '@purview-dev/example', registry: 'npm' }],
+      }),
+      cache({}, {}, { '@purview-dev/example': npmIndex({ versions: ['1.0.0'] }) }),
+    );
+    expect(findings.map((finding) => finding.field)).toContain('status');
+    expect(findings.map((finding) => finding.observed)).toContain(
+      'preview while a stable npm version of @purview-dev/example exists',
+    );
+  });
+
+  test('an npm prerelease leaves a preview project alone', () => {
+    const findings = versionConsistencyFindings(
+      project({
+        status: 'preview',
+        experimental: false,
+        packages: [{ id: '@purview-dev/example', registry: 'npm' }],
+      }),
+      cache(
+        {},
+        {},
+        {
+          '@purview-dev/example': npmIndex({
+            versions: ['1.0.0-prerelease.4'],
+            distTags: { latest: '1.0.0-prerelease.4' },
+          }),
+        },
+      ),
+    );
+    expect(findings).toEqual([]);
+  });
+
+  test('flags a deprecated npm package', () => {
+    const findings = versionConsistencyFindings(
+      project({
+        status: 'stable',
+        packages: [{ id: '@purview-dev/example', registry: 'npm' }],
+      }),
+      cache({}, {}, { '@purview-dev/example': npmIndex({ deprecated: true }) }),
+    );
+    expect(findings.map((finding) => finding.observed)).toContain('deprecated on npm');
   });
 
   test('ignores archived projects', () => {

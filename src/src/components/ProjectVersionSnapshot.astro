@@ -9,7 +9,7 @@ import type { ProjectVersionRollup } from '~/lib/releases/transform';
 import { withBase } from '~/lib/urls';
 
 interface Props {
-  /** One row per active project, rolled up from that project's NuGet packages. */
+  /** One row per active project, rolled up from that project's packages. */
   rows: ProjectVersionRollup[];
   /** The build-time versions behind each row, so the browser can recompute it live (ADR 0008). */
   packages: ProjectPackageVersions[];
@@ -33,7 +33,12 @@ const livePayload = {
     projectId: row.projectId,
     packages: packages
       .filter((pkg) => pkg.projectId === row.projectId)
-      .map((pkg) => ({ id: pkg.packageId, stable: pkg.stable, prerelease: pkg.prerelease })),
+      .map((pkg) => ({
+        id: pkg.packageId,
+        registry: pkg.registry,
+        stable: pkg.stable,
+        prerelease: pkg.prerelease,
+      })),
   })),
 };
 ---
@@ -133,9 +138,11 @@ const livePayload = {
 <script type="application/json" id="pv-version-data" set:html={JSON.stringify(livePayload).replace(/</g, '\\u003c')} />
 
 <script>
+  import type { PackageRegistry } from '~/lib/manifest/schema';
   import {
     isStale,
     latestFromVersions,
+    livePackageKey,
     mergeVersionPair,
     prereleaseTooltip,
     projectTooltip,
@@ -148,6 +155,7 @@ const livePayload = {
 
   interface SnapshotPackage {
     id: string;
+    registry: PackageRegistry;
     stable: string | null;
     prerelease: string | null;
   }
@@ -195,7 +203,8 @@ const livePayload = {
         }
         const pairs = project.packages.map((pkg) => {
           const current = { stable: pkg.stable, prerelease: pkg.prerelease };
-          const versions = live?.versions[pkg.id];
+          const versions =
+            live?.versions[livePackageKey({ id: pkg.id, registry: pkg.registry })];
           return versions ? mergeVersionPair(current, latestFromVersions(versions)) : current;
         });
         const rollup = rollupPackageVersions(pairs);
@@ -217,9 +226,9 @@ const livePayload = {
       statusElement.hidden = statusElement.textContent === '';
     };
 
-    const packageIds = [
-      ...new Set(payload.projects.flatMap((project) => project.packages.map((pkg) => pkg.id))),
-    ];
+    const packageRefs = payload.projects.flatMap((project) =>
+      project.packages.map((pkg) => ({ id: pkg.id, registry: pkg.registry })),
+    );
 
     const stored = readLiveVersions();
     apply(stored);
@@ -227,7 +236,7 @@ const livePayload = {
       showStatus('stored', stored);
     } else {
       showStatus('checking', null);
-      void refreshLiveVersions(packageIds, stored).then((refreshed) => {
+      void refreshLiveVersions(packageRefs, stored).then((refreshed) => {
         if (refreshed) {
           apply(refreshed);
           showStatus('live', refreshed);

@@ -10,12 +10,12 @@
       "@type": "Package",
       "registration": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/index.json",
       "id": "Purview.ZodSharp.SystemTextJson",
-      "version": "2.1.0",
+      "version": "2.4.2",
       "description": "A high-performance C# port of Zod schema validation library. Features zero-allocation validation, struct-based rules, fluent API, and source generator support for maximum performance.",
       "summary": "",
       "title": "Purview.ZodSharp.SystemTextJson",
-      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.zodsharp.systemtextjson/2.1.0/icon",
-      "licenseUrl": "https://www.nuget.org/packages/Purview.ZodSharp.SystemTextJson/2.1.0/license",
+      "iconUrl": "https://api.nuget.org/v3-flatcontainer/purview.zodsharp.systemtextjson/2.4.2/icon",
+      "licenseUrl": "https://www.nuget.org/packages/Purview.ZodSharp.SystemTextJson/2.4.2/license",
       "projectUrl": "https://purview.dev/projects/zodsharp/",
       "tags": [
         "zod",
@@ -29,7 +29,7 @@
       "owners": [
         "kieronlanning"
       ],
-      "totalDownloads": 1512,
+      "totalDownloads": 3465,
       "verified": false,
       "packageTypes": [
         {
@@ -39,28 +39,53 @@
       "versions": [
         {
           "version": "2.0.0",
-          "downloads": 0,
+          "downloads": 105,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/2.0.0.json"
         },
         {
           "version": "2.0.1",
-          "downloads": 0,
+          "downloads": 103,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/2.0.1.json"
         },
         {
           "version": "2.0.1.1",
-          "downloads": 0,
+          "downloads": 105,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/2.0.1.1.json"
         },
         {
           "version": "2.0.2",
-          "downloads": 0,
+          "downloads": 121,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/2.0.2.json"
         },
         {
           "version": "2.1.0",
-          "downloads": 0,
+          "downloads": 100,
           "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/2.1.0.json"
+        },
+        {
+          "version": "2.2.0",
+          "downloads": 110,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/2.2.0.json"
+        },
+        {
+          "version": "2.3.0",
+          "downloads": 100,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/2.3.0.json"
+        },
+        {
+          "version": "2.4.0",
+          "downloads": 270,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/2.4.0.json"
+        },
+        {
+          "version": "2.4.1",
+          "downloads": 139,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/2.4.1.json"
+        },
+        {
+          "version": "2.4.2",
+          "downloads": 152,
+          "@id": "https://api.nuget.org/v3/registration5-semver1/purview.zodsharp.systemtextjson/2.4.2.json"
         }
       ],
       "vulnerabilities": []

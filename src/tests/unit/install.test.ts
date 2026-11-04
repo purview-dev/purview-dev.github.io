@@ -12,7 +12,7 @@ describe('installKindFor', () => {
 
 describe('installTabs — nuget', () => {
   test('renders every tab in canonical order with the latest version', () => {
-    const tabs = installTabs('nuget', 'Purview.EventSourcing', '2.0.0-prerelease.32');
+    const tabs = installTabs('nuget', 'nuget', 'Purview.EventSourcing', '2.0.0-prerelease.32');
     expect(tabs.map((tab) => tab.label)).toEqual([
       '.NET CLI',
       'CPM',
@@ -47,7 +47,7 @@ describe('installTabs — nuget', () => {
   });
 
   test('falls back to a version placeholder when no version is known', () => {
-    const tabs = installTabs('nuget', 'Purview.Foo', null);
+    const tabs = installTabs('nuget', 'nuget', 'Purview.Foo', null);
     expect(tabs[1]?.snippets[0]?.code).toBe(
       '<PackageVersion Include="Purview.Foo" Version="<version>" />',
     );
@@ -56,9 +56,27 @@ describe('installTabs — nuget', () => {
   });
 });
 
+describe('installTabs — npm', () => {
+  test('offers one tab per package manager and pins the version', () => {
+    const tabs = installTabs('npm', 'nuget', '@purview-dev/astroc4', '1.0.0-prerelease.4');
+    expect(tabs.map((tab) => tab.label)).toEqual(['npm', 'bun', 'pnpm', 'yarn']);
+    expect(tabs.map((tab) => tab.snippets[0]?.code)).toEqual([
+      'npm install @purview-dev/astroc4@1.0.0-prerelease.4',
+      'bun add @purview-dev/astroc4@1.0.0-prerelease.4',
+      'pnpm add @purview-dev/astroc4@1.0.0-prerelease.4',
+      'yarn add @purview-dev/astroc4@1.0.0-prerelease.4',
+    ]);
+  });
+
+  test('omits the version specifier when none is known', () => {
+    const tabs = installTabs('npm', 'nuget', '@purview-dev/astroc4', null);
+    expect(tabs[0]?.snippets[0]?.code).toBe('npm install @purview-dev/astroc4');
+  });
+});
+
 describe('installTabs — msbuild-sdk', () => {
   test('renders the SDK tabs with version interpolation', () => {
-    const tabs = installTabs('msbuild-sdk', 'Purview.BuildSdk', '1.0.0-prerelease.56');
+    const tabs = installTabs('nuget', 'msbuild-sdk', 'Purview.BuildSdk', '1.0.0-prerelease.56');
     expect(tabs.map((tab) => tab.label)).toEqual(['global.json', 'SDK', 'File-Based Apps']);
     expect(tabs[0]?.snippets[0]?.code).toBe(
       '{\n  "msbuild-sdks": {\n    "Purview.BuildSdk": "1.0.0-prerelease.56"\n  }\n}',
@@ -72,7 +90,7 @@ describe('installTabs — msbuild-sdk', () => {
 
 describe('installTabs — dotnet-tool', () => {
   test('renders global and local tool tabs with grouped local steps', () => {
-    const tabs = installTabs('dotnet-tool', 'Purview.Build', '0.2.4');
+    const tabs = installTabs('nuget', 'dotnet-tool', 'Purview.Build', '0.2.4');
     expect(tabs.map((tab) => tab.label)).toEqual(['Global tool', 'Local tool']);
     expect(tabs[0]?.snippets[0]?.code).toBe('dotnet tool install --global Purview.Build');
 

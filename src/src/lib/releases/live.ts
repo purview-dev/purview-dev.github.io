@@ -1,14 +1,17 @@
+import type { PackageRegistry } from '../manifest/schema';
+
 import { compareNuGetVersions, formatNuGetVersion } from '../nuget-version';
 import { effectivePrerelease, selectVersions } from './normalize';
 
 /**
- * Live NuGet version resolution for the browser (ADR 0008).
+ * Live version resolution for the browser (ADR 0008, ADR 0012).
  *
  * The site is static: every version it shows is baked in at build time. A
  * package published after a deploy would otherwise stay invisible until the next
  * deploy, so the browser re-checks the packages a page already displays against
- * the NuGet flat-container index, applies any newer version, and stores the
- * result so the next visit is instant.
+ * the registry that publishes them — NuGet's flat-container index or the npm
+ * registry — applies any newer version, and stores the result so the next visit
+ * is instant.
  *
  * The build-time value always renders first and is never downgraded: a live
  * version only replaces it when it is strictly higher. That keeps the page
@@ -21,22 +24,37 @@ import { effectivePrerelease, selectVersions } from './normalize';
  * of anything that would pull server-only modules into the client bundle.
  */
 
-export const LIVE_VERSIONS_STORAGE_KEY = 'purview.live-nuget-versions.v1';
+export const LIVE_VERSIONS_STORAGE_KEY = 'purview.live-package-versions.v1';
 
 /** Bump to invalidate every stored copy when the payload shape changes. */
-export const LIVE_VERSIONS_SCHEMA = 1;
+export const LIVE_VERSIONS_SCHEMA = 2;
 
-/** How long a stored copy is trusted before the browser re-checks NuGet. */
+/** How long a stored copy is trusted before the browser re-checks the registries. */
 export const LIVE_VERSIONS_TTL_MS = 6 * 60 * 60 * 1000;
 
 const FLAT_CONTAINER = 'https://api.nuget.org/v3-flatcontainer';
+const NPM_REGISTRY = 'https://registry.npmjs.org';
 
-/** A stored set of live versions, keyed by the package id as declared in the catalogue. */
+/** A package as the browser needs to identify it: its registry and its id/name. */
+export interface LivePackageRef {
+  id: string;
+  registry: PackageRegistry;
+}
+
+/**
+ * Storage key for a package. The registry is part of the key because the same
+ * name could exist on both registries and their version lists must not merge.
+ */
+export function livePackageKey(ref: LivePackageRef): string {
+  return `${ref.registry}:${ref.id}`;
+}
+
+/** A stored set of live versions, keyed by `registry:id`. */
 export interface LiveVersions {
   schema: number;
   /** ISO timestamp of the last successful fetch. */
   fetchedAt: string;
-  /** Package id → published versions, newest last, exactly as NuGet reports them. */
+  /** Package key → published versions, newest last, exactly as the registry reports them. */
   versions: Record<string, string[]>;
 }
 
@@ -50,6 +68,7 @@ export interface PackageVersionPair {
 export interface ProjectPackageVersions {
   projectId: string;
   packageId: string;
+  registry: PackageRegistry;
   stable: string | null;
   prerelease: string | null;
 }
@@ -211,17 +230,17 @@ export function formatCheckedAt(fetchedAt: string): string {
 export function versionStatusMessage(status: string, live: LiveVersions | null): string {
   switch (status) {
     case 'checking':
-      return 'Checking NuGet for newer versions…';
+      return 'Checking the package registries for newer versions…';
     case 'live':
       return live
-        ? `Versions checked against NuGet at ${formatCheckedAt(live.fetchedAt)}.`
-        : 'Versions checked against NuGet.';
+        ? `Versions checked against the package registries at ${formatCheckedAt(live.fetchedAt)}.`
+        : 'Versions checked against the package registries.';
     case 'stored':
       return live
-        ? `Versions last checked against NuGet at ${formatCheckedAt(live.fetchedAt)}.`
+        ? `Versions last checked against the package registries at ${formatCheckedAt(live.fetchedAt)}.`
         : 'Showing the versions stored from a previous visit.';
     case 'unavailable':
-      return 'NuGet could not be reached; showing the versions from the last build.';
+      return 'The package registries could not be reached; showing the versions from the last build.';
     default:
       return '';
   }
@@ -279,37 +298,62 @@ export function mergeVersionPair(
 /** Concurrent islands on one page share a single request per package set. */
 const inflight = new Map<string, Promise<Record<string, string[]>>>();
 
-async function fetchPackageVersions(packageId: string): Promise<[string, string[]]> {
-  const url = `${FLAT_CONTAINER}/${encodeURIComponent(packageId.toLowerCase())}/index.json`;
+async function fetchNuGetVersions(name: string): Promise<string[]> {
+  const url = `${FLAT_CONTAINER}/${encodeURIComponent(name.toLowerCase())}/index.json`;
   const response = await fetch(url, { headers: { Accept: 'application/json' } });
   if (!response.ok) {
-    throw new Error(`NuGet returned ${response.status} for ${packageId}`);
+    throw new Error(`NuGet returned ${response.status} for ${name}`);
   }
   const body = (await response.json()) as { versions?: unknown };
-  const versions = Array.isArray(body.versions)
+  return Array.isArray(body.versions)
     ? body.versions.filter((version): version is string => typeof version === 'string')
     : [];
-  return [packageId, versions];
+}
+
+async function fetchNpmVersions(name: string): Promise<string[]> {
+  const response = await fetch(`${NPM_REGISTRY}/${encodeURIComponent(name)}`, {
+    headers: { Accept: 'application/vnd.npm.install-v1+json' },
+  });
+  if (!response.ok) {
+    throw new Error(`npm returned ${response.status} for ${name}`);
+  }
+  const body = (await response.json()) as { versions?: unknown };
+  return typeof body.versions === 'object' && body.versions !== null
+    ? Object.keys(body.versions as Record<string, unknown>)
+    : [];
+}
+
+async function fetchPackageVersions(ref: LivePackageRef): Promise<[string, string[]]> {
+  const versions =
+    ref.registry === 'npm' ? await fetchNpmVersions(ref.id) : await fetchNuGetVersions(ref.id);
+  return [livePackageKey(ref), versions];
 }
 
 /**
  * Fetch the published versions for each package. A package that fails (offline,
  * unpublished, rate-limited) is simply absent from the result, so one bad id
- * never discards the others.
+ * never discards the others. NuGet and npm packages are fetched from their own
+ * registries; the result is keyed by `registry:id`.
  */
 export function fetchLiveVersions(
-  packageIds: readonly string[],
+  packages: readonly LivePackageRef[],
 ): Promise<Record<string, string[]>> {
-  const ids = [...new Set(packageIds)].filter((id) => id.trim() !== '');
-  if (ids.length === 0) {
+  const refs = [
+    ...new Map(
+      packages
+        .filter((ref) => ref.id.trim() !== '')
+        .map((ref) => [livePackageKey(ref), ref] as const),
+    ).values(),
+  ];
+  if (refs.length === 0) {
     return Promise.resolve({});
   }
-  const key = [...ids].toSorted().join('\u0000');
+  const key = refs.map(livePackageKey).toSorted().join('\u0000');
   const existing = inflight.get(key);
   if (existing) {
     return existing;
   }
-  const request = Promise.allSettled(ids.map(fetchPackageVersions))
+  const request = Promise.allSettled(refs.map(fetchPackageVersions))
     .then((results) => {
       const versions: Record<string, string[]> = {};
       for (const result of results) {
@@ -332,10 +376,10 @@ export function fetchLiveVersions(
  * Returns the previous record when nothing could be fetched.
  */
 export async function refreshLiveVersions(
-  packageIds: readonly string[],
+  packages: readonly LivePackageRef[],
   previous: LiveVersions | null,
 ): Promise<LiveVersions | null> {
-  const fetched = await fetchLiveVersions(packageIds);
+  const fetched = await fetchLiveVersions(packages);
   if (Object.keys(fetched).length === 0) {
     return previous;
   }

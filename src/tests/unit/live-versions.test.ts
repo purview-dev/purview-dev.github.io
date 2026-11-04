@@ -310,8 +310,8 @@ describe('live fetch', () => {
       seen.push(url);
       return { ok: true, body: { versions: ['1.0.0', '1.1.0'] } };
     });
-    const versions = await fetchLiveVersions(['Purview.ZodSharp']);
-    expect(versions).toEqual({ 'Purview.ZodSharp': ['1.0.0', '1.1.0'] });
+    const versions = await fetchLiveVersions([{ id: 'Purview.ZodSharp', registry: 'nuget' }]);
+    expect(versions).toEqual({ 'nuget:Purview.ZodSharp': ['1.0.0', '1.1.0'] });
     expect(seen[0]).toContain('/purview.zodsharp/index.json');
   });
 
@@ -321,8 +321,11 @@ describe('live fetch', () => {
         ? { ok: false, status: 404 }
         : { ok: true, body: { versions: ['1.0.0'] } },
     );
-    const versions = await fetchLiveVersions(['Broken.Package', 'Good.Package']);
-    expect(versions).toEqual({ 'Good.Package': ['1.0.0'] });
+    const versions = await fetchLiveVersions([
+      { id: 'Broken.Package', registry: 'nuget' },
+      { id: 'Good.Package', registry: 'nuget' },
+    ]);
+    expect(versions).toEqual({ 'nuget:Good.Package': ['1.0.0'] });
   });
 
   test('shares one request across concurrent callers', async () => {
@@ -331,21 +334,33 @@ describe('live fetch', () => {
       calls += 1;
       return { ok: true, body: { versions: ['1.0.0'] } };
     });
-    await Promise.all([fetchLiveVersions(['A.B']), fetchLiveVersions(['A.B'])]);
+    await Promise.all([
+      fetchLiveVersions([{ id: 'A.B', registry: 'nuget' }]),
+      fetchLiveVersions([{ id: 'A.B', registry: 'nuget' }]),
+    ]);
     expect(calls).toBe(1);
   });
 
   test('refreshes over the stored copy and stores the merge', async () => {
     const storage = new MemoryStorage();
     useWindow(storage);
-    const previous = writeLiveVersions({ 'A.B': ['1.0.0'], 'C.D': ['2.0.0'] });
+    const previous = writeLiveVersions({ 'nuget:A.B': ['1.0.0'], 'nuget:C.D': ['2.0.0'] });
     stubFetch((url) =>
       url.includes('a.b')
         ? { ok: true, body: { versions: ['1.0.0', '1.1.0'] } }
         : { ok: false, status: 503 },
     );
-    const refreshed = await refreshLiveVersions(['A.B', 'C.D'], previous);
-    expect(refreshed?.versions).toEqual({ 'A.B': ['1.0.0', '1.1.0'], 'C.D': ['2.0.0'] });
+    const refreshed = await refreshLiveVersions(
+      [
+        { id: 'A.B', registry: 'nuget' },
+        { id: 'C.D', registry: 'nuget' },
+      ],
+      previous,
+    );
+    expect(refreshed?.versions).toEqual({
+      'nuget:A.B': ['1.0.0', '1.1.0'],
+      'nuget:C.D': ['2.0.0'],
+    });
     expect(readLiveVersions()?.versions).toEqual(refreshed?.versions);
   });
 
@@ -353,10 +368,12 @@ describe('live fetch', () => {
     const previous: LiveVersions = {
       schema: LIVE_VERSIONS_SCHEMA,
       fetchedAt: new Date().toISOString(),
-      versions: { 'A.B': ['1.0.0'] },
+      versions: { 'nuget:A.B': ['1.0.0'] },
     };
     stubFetch(() => ({ ok: false, status: 500 }));
-    expect(await refreshLiveVersions(['A.B'], previous)).toEqual(previous);
+    expect(await refreshLiveVersions([{ id: 'A.B', registry: 'nuget' }], previous)).toEqual(
+      previous,
+    );
   });
 });
 
@@ -368,9 +385,11 @@ describe('status messages', () => {
   };
 
   test('name the state of the check', () => {
-    expect(versionStatusMessage('checking', null)).toContain('Checking NuGet');
-    expect(versionStatusMessage('live', live)).toContain('checked against NuGet');
-    expect(versionStatusMessage('stored', live)).toContain('last checked against NuGet');
+    expect(versionStatusMessage('checking', null)).toContain('Checking the package registries');
+    expect(versionStatusMessage('live', live)).toContain('checked against the package registries');
+    expect(versionStatusMessage('stored', live)).toContain(
+      'last checked against the package registries',
+    );
     expect(versionStatusMessage('unavailable', null)).toContain('could not be reached');
     expect(versionStatusMessage('idle', null)).toBe('');
   });

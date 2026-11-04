@@ -16,7 +16,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     readonly status: number,
-    readonly source: 'github' | 'nuget',
+    readonly source: 'github' | 'nuget' | 'npm',
   ) {
     super(message);
     this.name = 'ApiError';

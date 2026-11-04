@@ -97,7 +97,6 @@ useCases:
       The reference implementation's Architecture.UnitTests project asserts four rules against three real
       assemblies and is built by the same pipeline as everything else. The page also records the two traps
       found by writing it, including a source generator that emits public types into its own namespace.
-    docsPage: architecture-as-tests
   - audience: team-lead
     title: A verification gate that stays credible
     scenario: >-
@@ -121,7 +120,6 @@ useCases:
       The verification model page documents the shared workflow's inputs, the configuration probe order, and
       the two ways a repository and the shared workflow quietly disagree about what a green build means — and
       names the repository that runs its container-backed suites as a second job on the same runner.
-    docsPage: verification-model
   - audience: developer
     title: One builder for every test's domain content
     scenario: >-
@@ -147,7 +145,6 @@ useCases:
       TestBuilder lives in a shared testing project the SDK references from every test project
       automatically. The page also explains the two SDK rules that shaped its flat, ungrouped shape, and the
       value-object exception where a test must name the rejected input itself.
-    docsPage: testing-and-test-data
   - audience: contributor
     title: A repository an agent can work in without hand-holding
     scenario: >-
@@ -168,7 +165,6 @@ useCases:
       The agent enablement page documents the layout of the agent folder, why the SDK's mirror writes a
       generated .gitignore that lists exactly the files it owns, and why the guidance that makes a repository
       obvious to an agent is the same guidance that makes it obvious to a new joiner.
-    docsPage: agent-enablement
   - audience: architect
     title: Take only the part of the playbook that fits
     scenario: >-
@@ -182,7 +178,6 @@ useCases:
     evidence: >-
       The playbook also documents what not to adopt early, with the reason each one is more expensive out of
       order, and a migration order for an existing repository that keeps each step cheap and the build green.
-    docsPage: adopting-this-at-your-scale
   - audience: team-lead
     title: Data that crosses a boundary once, and is trusted after that
     scenario: >-
@@ -205,7 +200,6 @@ useCases:
       The contracts page names the three public repositories that implement the rules — source-generated
       value objects, result types with union errors, and a schema layer that also exports and imports JSON
       Schema — and shows how a validation result is read rather than parsed.
-    docsPage: contracts-and-data-exchange
   - audience: contributor
     title: Extend the playbook without turning it into a second source of truth
     scenario: >-
@@ -219,4 +213,3 @@ useCases:
       The contributing page also sets the expectations for changing an existing rule — update every page that
       states it, check the reference implementation still demonstrates it, and re-check whether the
       enforcement moved between the build and review.
-    docsPage: contributing

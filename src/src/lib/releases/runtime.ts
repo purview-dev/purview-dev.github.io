@@ -67,6 +67,7 @@ export function getReleaseIndex(): ReleaseIndex {
       releases: {},
       packages: {},
       packageSearch: {},
+      npmPackages: {},
     },
     source: 'fixture',
   };

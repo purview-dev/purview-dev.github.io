@@ -1,5 +1,12 @@
 import type { GitHubRepoInfo } from '../releases/types';
-import type { ExternalProjectRecord, ProjectManifest, ProjectRecord, ProjectSkill } from './schema';
+import type {
+  ExternalProjectRecord,
+  PackageRegistry,
+  ProjectManifest,
+  ProjectPackage,
+  ProjectRecord,
+  ProjectSkill,
+} from './schema';
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -20,6 +27,9 @@ import { PROJECT_DEFAULTS, manifestSchema } from './schema';
 export const DEFAULT_PROJECTS_DIR = resolve('src/data/projects');
 export const DEFAULT_EXTERNAL_PROJECTS_PATH = resolve('src/data/external-projects.yml');
 
+/** A declared package with the registry its versions are read from resolved. */
+export type ResolvedPackage = ProjectPackage & { registry: PackageRegistry };
+
 export interface ResolvedProject extends ProjectRecord {
   repoOwner: string;
   repoName: string;
@@ -31,7 +41,7 @@ export interface ResolvedProject extends ProjectRecord {
   featured: boolean;
   experimental: boolean;
   order: number;
-  packages: NonNullable<ProjectRecord['packages']>;
+  packages: ResolvedPackage[];
   /** True when the catalogue says "publish every skill under `skills/`". */
   discoverSkills: boolean;
   /** Explicit skill declarations (overrides/legacy); discovery is preferred. */
@@ -94,7 +104,9 @@ function withDefaults(record: ProjectRecord, repositories: RepositoryFlags): Res
     featured: record.featured ?? PROJECT_DEFAULTS.featured,
     experimental: record.experimental ?? PROJECT_DEFAULTS.experimental,
     order: record.order ?? PROJECT_DEFAULTS.order,
-    packages: record.packages ?? PROJECT_DEFAULTS.packages,
+    packages: (record.packages ?? PROJECT_DEFAULTS.packages).map((pkg) =>
+      Object.assign({}, pkg, { registry: pkg.registry ?? 'nuget' }),
+    ),
     skills: Array.isArray(record.skills) ? record.skills : PROJECT_DEFAULTS.skills,
     discoverSkills: record.skills !== false,
     assets: record.assets ?? PROJECT_DEFAULTS.assets,
@@ -198,19 +210,20 @@ export function parseManifest(
         );
       }
     }
-    for (const pkg of project.packages ?? []) {
-      const existing = packageOwners.get(pkg.id);
+    for (const pkg of project.packages) {
+      const key = `${pkg.registry}:${pkg.id}`;
+      const existing = packageOwners.get(key);
       if (existing !== undefined) {
         throw new ManifestValidationError(
           [
             `Invalid project manifest: ${source}`,
-            `  projects[${project.id}].packages: NuGet package "${pkg.id}" is also declared by "${existing}".`,
+            `  projects[${project.id}].packages: Package "${pkg.id}" (${pkg.registry}) is also declared by "${existing}".`,
             '',
-            `Remediation: associate each NuGet package with exactly one project.`,
+            `Remediation: associate each package with exactly one project.`,
           ].join('\n'),
         );
       }
-      packageOwners.set(pkg.id, project.id);
+      packageOwners.set(key, project.id);
     }
     for (const asset of project.assets) {
       const existing = assetOutputs.get(asset.output);

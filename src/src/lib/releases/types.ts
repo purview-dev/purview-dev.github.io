@@ -1,4 +1,6 @@
-export const RELEASE_CACHE_SCHEMA_VERSION = 2;
+import type { PackageRegistry } from '../manifest/schema';
+
+export const RELEASE_CACHE_SCHEMA_VERSION = 3;
 
 export interface GitHubRepoInfo {
   name: string;
@@ -49,6 +51,28 @@ export interface NuGetSearchEntry {
   listed: boolean;
 }
 
+/**
+ * The npm registry's view of a package: every published version (the keys of
+ * the registry document), the dist-tags that name the release channels, the
+ * publish date of the newest version and its weekly downloads.
+ *
+ * npm has no flat-container equivalent, so the version list and the channel
+ * tags come from one document. `distTags` is what makes `latest` meaningful:
+ * a package can publish `1.0.0-prerelease.4` while `latest` still resolves an
+ * older stable version, and the catalogue must not call that stable.
+ */
+export interface NpmPackageIndex {
+  name: string;
+  versions: string[];
+  distTags: Record<string, string>;
+  /** Publish date of the newest version, when the registry reports one. */
+  publishedAt: string | null;
+  /** Weekly downloads, or null when the downloads API could not be read. */
+  weeklyDownloads: number | null;
+  /** True when npm marks the version `latest` resolves as deprecated. */
+  deprecated: boolean;
+}
+
 export interface ReleaseCacheData {
   schema: typeof RELEASE_CACHE_SCHEMA_VERSION;
   retrievedAt: string;
@@ -56,6 +80,7 @@ export interface ReleaseCacheData {
   releases: Record<string, GitHubReleaseInfo[]>;
   packages: Record<string, NuGetVersionIndex>;
   packageSearch: Record<string, NuGetSearchEntry | null>;
+  npmPackages: Record<string, NpmPackageIndex>;
 }
 
 export type VersionSelection = {
@@ -65,14 +90,19 @@ export type VersionSelection = {
 
 export interface PackageReleaseSummary {
   packageId: string;
+  /** The registry the versions and the package page come from. */
+  registry: PackageRegistry;
   description: string | null;
   latestStable: string | null;
   latestPrerelease: string | null;
-  totalDownloads: number | null;
+  /** Total downloads (NuGet) or weekly downloads (npm). */
+  downloads: number | null;
+  downloadsPeriod: 'total' | 'weekly';
   deprecated: boolean;
   listed: boolean;
   hasAnyRelease: boolean;
-  nugetUrl: string;
+  /** The registry's page for the package (nuget.org or npmjs.com). */
+  packageUrl: string;
 }
 
 export interface ProjectReleaseSummary {

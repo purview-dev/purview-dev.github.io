@@ -9,6 +9,7 @@ import {
   fetchNuGetNuspec,
   fetchNuGetSearch,
 } from '../src/lib/releases/github';
+import { fetchNpmPackage } from '../src/lib/releases/npm';
 import { publishReleaseData } from '../src/lib/releases/runtime';
 import { selectVersionForTargetFrameworks } from '../src/lib/releases/target-frameworks';
 import { RELEASE_CACHE_SCHEMA_VERSION } from '../src/lib/releases/types';
@@ -60,10 +61,12 @@ export async function fetchReleaseData(): Promise<ReleaseCacheData> {
     releases: {},
     packages: {},
     packageSearch: {},
+    npmPackages: {},
   };
 
   let githubRefreshed = 0;
   let nugetRefreshed = 0;
+  let npmRefreshed = 0;
 
   for (const project of projects) {
     const repository = project.repository;
@@ -95,6 +98,27 @@ export async function fetchReleaseData(): Promise<ReleaseCacheData> {
     }
 
     for (const pkg of project.packages) {
+      if (pkg.registry === 'npm') {
+        try {
+          const index = await fetchNpmPackage(pkg.id);
+          data.npmPackages[pkg.id] = index;
+          npmRefreshed += 1;
+          console.log(`  npm ${pkg.id}: ${index.versions.length} versions`);
+        } catch (error) {
+          const previous = existing?.npmPackages[pkg.id];
+          console.warn(`  npm ${pkg.id}: ${(error as Error).message}`);
+          data.npmPackages[pkg.id] = previous ?? {
+            name: pkg.id,
+            versions: [],
+            distTags: {},
+            publishedAt: null,
+            weeklyDownloads: null,
+            deprecated: false,
+          };
+        }
+        continue;
+      }
+
       try {
         const index = await fetchNuGetIndex(pkg.id);
         data.packages[pkg.id] = index;
@@ -130,6 +154,8 @@ if (import.meta.main) {
   const data = await fetchReleaseData();
   publishReleaseData(data);
   console.log(
-    `Wrote release cache: ${Object.keys(data.repos).length} repositories, ${Object.keys(data.packages).length} packages.`,
+    `Wrote release cache: ${Object.keys(data.repos).length} repositories, ` +
+      `${Object.keys(data.packages).length} NuGet packages, ` +
+      `${Object.keys(data.npmPackages).length} npm packages.`,
   );
 }

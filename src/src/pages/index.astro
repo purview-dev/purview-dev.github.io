@@ -35,11 +35,12 @@ const versionRows = summaries.map(({ project, summary }) =>
   projectVersionRollup(project, summary),
 );
 // The build-time package versions behind each row, so the browser can recompute
-// the rollup from live NuGet data without a redeploy (ADR 0008).
+// the rollup from live registry data without a redeploy (ADR 0008, ADR 0012).
 const snapshotPackages: ProjectPackageVersions[] = summaries.flatMap(({ project, summary }) =>
   summary.packages.map((pkg) => ({
     projectId: project.id,
     packageId: pkg.packageId,
+    registry: pkg.registry,
     stable: pkg.latestStable,
     prerelease: effectivePrerelease(pkg.latestStable, pkg.latestPrerelease),
   })),
@@ -54,7 +55,11 @@ const organizationStructuredData = {
       url: SITE.url,
       logo: absoluteUrl('/branding/icon-light-512.png'),
       description: SITE.description,
-      sameAs: [SITE.githubUrl, `${SITE.nugetUrl}/packages?q=purview+kieronlanning`],
+      sameAs: [
+        SITE.githubUrl,
+        `${SITE.nugetUrl}/packages?q=purview+kieronlanning`,
+        `${SITE.npmUrl}/org/purview-dev`,
+      ],
     },
     {
       '@type': 'WebSite',

@@ -49,6 +49,8 @@ gh api "repos/<owner>/<repo>/releases?per_page=10" --jq '.[] | {tag_name, prerel
 
 # Packages: confirm each id exists and see its channel (replace the id)
 curl.exe -s "https://api.nuget.org/v3-flatcontainer/<packageid>/index.json"
+# npm packages (skip the NuGet index): the registry document carries versions + dist-tags
+curl.exe -s "https://registry.npmjs.org/<scope>%2F<name>"
 ```
 
 Record, as evidence for the record you are about to write: where the docs live, the exact markdown
@@ -61,7 +63,7 @@ description/topics.
   `source-generation`, `aspire`, `build-tooling`, `developer-tooling`.
 - `status`:
   - `archived` when the repository is archived (GitHub `archived: true`).
-  - `preview` when there is no stable NuGet release.
+  - `preview` when there is no stable release on the registry the project publishes to.
   - `stable` only when a stable (non-prerelease) release exists and is recommended for use.
 - `experimental: true` (a flag, not a status value) when the tooling is explicitly an experiment:
   no compatibility promise, no production support guarantee. Keep `status` as the honest release
@@ -98,9 +100,10 @@ Add the entry as `src/src/data/projects/<id>.yml` (see `project-manifest-referen
       rootPage: Getting-Started.md   # optional; see docs-aggregation-rules
       exclude: [ _Sidebar.md, index.md ]
     targetFrameworks: [ net8.0, net9.0 ]
-    install: nuget | msbuild-sdk | dotnet-tool   # only when not a plain NuGet package
+    install: nuget | msbuild-sdk | dotnet-tool   # NuGet packages only; omit for npm
     packages:
-      - id: <NuGet.Package.Id>
+      - id: <Package.Id.Or.Npm.Name>
+        registry: nuget | npm                   # optional; defaults to nuget (ADR 0012)
         description: <what this package is for>
         primary: true
     related: [ <known-project-id> ]
@@ -153,7 +156,9 @@ Confirm each surface actually lights up:
 4. `/projects/<id>/llms.txt` and `/projects/<id>/llms-full.txt` are emitted and linked from
    `/llms.txt`.
 5. `/use-cases/` lists the new use cases under the right audiences.
-6. `/releases/` shows GitHub/NuGet versions for the declared packages.
+6. `/releases/` shows GitHub and registry versions (NuGet or npm) for the declared packages.
+7. If a live example page exists at `src/src/pages/examples/<id>.mdx`, `/projects/<id>/` links it as
+   **Live example** (the page is discovered, not declared).
 
 ## Step 6 — report
 

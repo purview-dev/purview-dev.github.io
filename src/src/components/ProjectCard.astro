@@ -6,7 +6,7 @@ import { getReleaseIndex } from '~/lib/releases/runtime';
 import type { ResolvedProject } from '~/lib/manifest/load';
 import { listMirroredSkills } from '~/lib/skills';
 import { displayStatus } from '~/lib/status';
-import { nugetPackageUrl, withBase } from '~/lib/urls';
+import { packagePageUrl, withBase } from '~/lib/urls';
 
 interface Props {
   project: ResolvedProject;
@@ -23,15 +23,15 @@ const badges =
   status === 'archived' ?
     []
   : [
-      ...(primaryPackage ?
+      ...(primaryPackage?.registry === 'nuget' ?
         [
           {
-            href: nugetPackageUrl(primaryPackage.id),
+            href: packagePageUrl('nuget', primaryPackage.id),
             src: nugetVersionBadge(primaryPackage.id),
             alt: `NuGet version of ${primaryPackage.id}`,
           },
           {
-            href: nugetPackageUrl(primaryPackage.id),
+            href: packagePageUrl('nuget', primaryPackage.id),
             src: nugetDownloadsBadge(primaryPackage.id),
             alt: `NuGet downloads of ${primaryPackage.id}`,
           },

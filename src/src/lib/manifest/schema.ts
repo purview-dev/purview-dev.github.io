@@ -19,6 +19,16 @@ export type ProjectStatus = (typeof STATUSES)[number];
 export const INSTALL_KINDS = ['nuget', 'msbuild-sdk', 'dotnet-tool'] as const;
 
 /**
+ * The package registry a catalogue package is published to. The registry decides
+ * where versions come from (NuGet flat-container/search, or the npm registry)
+ * and which install snippets a reader sees. Defaults to `nuget`.
+ */
+export const PACKAGE_REGISTRIES = ['nuget', 'npm'] as const;
+
+/** The registry a declared package is published to. */
+export type PackageRegistry = (typeof PACKAGE_REGISTRIES)[number];
+
+/**
  * Who a concrete use case speaks to. The vocabulary is deliberately small so
  * the same project can be framed for the person adopting a package, the person
  * approving its adoption, and the person extending it.
@@ -162,7 +172,9 @@ const skillSchema = z.object({
 });
 
 const packageSchema = z.object({
-  id: z.string().min(1, 'must be a non-empty NuGet package id'),
+  id: z.string().min(1, 'must be a non-empty package id'),
+  /** The registry the package is published to; absent means `nuget`. */
+  registry: z.enum(PACKAGE_REGISTRIES).optional(),
   description: z.string().optional(),
   primary: z.boolean().optional(),
   targetFrameworks: z.array(z.string()).optional(),

@@ -1,0 +1,107 @@
+// The model behind the live astroc4 demo (/examples/astroc4/).
+// It is a real model of this site, so the diagrams on that page are not
+// decoration: change the model and the demo changes with it.
+
+specification {
+  color brand #8B3DFF
+
+  element actor {
+    style {
+      shape person
+    }
+  }
+  element system {
+    style {
+      color brand
+    }
+  }
+  element service
+  element store {
+    style {
+      shape storage
+    }
+  }
+
+  deploymentNode cloud
+  deploymentNode node
+
+  tag public
+  tag internal
+
+  relationship https {
+    title 'HTTPS'
+  }
+}
+
+model {
+  reader = actor 'Reader' {
+    description 'Someone reading the catalogue or the documentation.'
+  }
+
+  site = system 'purview.dev' {
+    #public
+    icon tech:astro
+    description '''
+    The Astro and Starlight site that publishes the catalogue and the
+    aggregated documentation.
+    '''
+
+    docs = service 'Documentation portal' {
+      #internal
+      icon tech:nginx
+      technology 'Astro + Starlight'
+    }
+
+    catalogue = service 'Catalogue' {
+      #internal
+      technology 'TypeScript'
+    }
+
+    output = store 'Generated output' {
+      #internal
+      technology 'static HTML'
+    }
+  }
+
+  reader -[https]-> docs 'reads'
+  docs -> catalogue 'resolves projects'
+  catalogue -> output 'reads caches'
+}
+
+deployment {
+  prod = cloud 'GitHub Pages' {
+    web = node 'static host' {
+      instanceOf docs
+    }
+    build = node 'build runner' {
+      instanceOf catalogue
+    }
+    dist = node 'artifact' {
+      instanceOf output
+    }
+  }
+}
+
+views {
+  view index {
+    title 'Overview'
+    include *
+  }
+
+  view internals of site {
+    title 'Inside the portal'
+    include site.**
+  }
+
+  dynamic view pageLoad {
+    title 'A page load'
+    reader -> docs 'GET /projects/astroc4/'
+    docs -> catalogue 'project + release data'
+    catalogue -> output 'reads the generated mirror'
+  }
+
+  deployment view production {
+    title 'Production'
+    include prod, prod.**
+  }
+}

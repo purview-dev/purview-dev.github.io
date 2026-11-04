@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>Purview.Containers.PostgreSql</id>
-    <version>1.0.0-prerelease.6</version>
+    <version>1.0.0-prerelease.11</version>
     <authors>Purview</authors>
     <license type="expression">MIT</license>
     <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
@@ -11,11 +11,11 @@
     <projectUrl>https://github.com/purview-dev/containers</projectUrl>
     <description>PostgreSQL module for Purview.Containers: throwaway PostgreSQL databases on WSL Containers or Docker.</description>
     <tags>wsl containers docker postgresql postgres testing integration</tags>
-    <repository type="git" url="https://github.com/purview-dev/containers" branch="refs/heads/main" commit="49a9746e8465558f46ebe8aa54ac2a9a22c9ee50" />
+    <repository type="git" url="https://github.com/purview-dev/containers" branch="refs/heads/release/pv-11" commit="a0fac5502d5d543c5a1f3bb99a441cc2093bf232" />
     <dependencies>
       <group targetFramework="net10.0">
-        <dependency id="Purview.Containers.Core" version="1.0.0-prerelease.6" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.Telemetry.Abstractions" version="10.10.0" exclude="Build,Analyzers" />
+        <dependency id="Purview.Containers.Core" version="1.0.0-prerelease.11" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.Telemetry.Abstractions" version="10.11.0" exclude="Build,Analyzers" />
         <dependency id="Npgsql" version="10.0.3" exclude="Build,Analyzers" />
       </group>
     </dependencies>

@@ -52,7 +52,7 @@ deterministic). It fails the build on:
 Beyond those blockers, the guard prints **advisory observations** (they never fail the build) when a
 project disagrees with the versions and frameworks its packages have published:
 
-- a `preview` project whose packages already publish a stable NuGet version (unless `experimental`);
+- a `preview` project whose packages already publish a stable version on their registry (unless `experimental`);
 - a NuGet package that is deprecated or unlisted;
 - packages that trail the project's headline version;
 - `targetFrameworks` that do not match the packages' NuGet nuspec metadata. Project-level frameworks
@@ -74,7 +74,7 @@ or judgement calls such as replacing a deprecated package.
 `DATA_MODE` (`src/.env.example`) controls how docs/release data is obtained:
 
 - `auto` (default) — use the cache if present, else fetch live, else fall back to committed fixtures.
-- `live` — always fetch from GitHub/NuGet (`just live-data-sync`).
+- `live` — always fetch from GitHub and the package registries (`just live-data-sync`).
 - `cache` — only use the existing cache (fails if missing).
 - `fixture` — only use `src/fixtures/**` (fully offline, deterministic).
 
@@ -86,7 +86,7 @@ missing schema never silently ships a broken URL.
 `DATA_FALLBACK_TO_FIXTURES=false` makes `auto` fail loudly instead of silently using fixtures. Set
 `GITHUB_TOKEN` (or `gh auth token`) to avoid unauthenticated rate limits.
 
-The one thing the **browser** fetches is the NuGet **version numbers** a page already displays
+The one thing the **browser** fetches is the package **version numbers** a page already displays
 (ADR 0008, `src/src/lib/releases/live.ts`): the build-time value renders first, a strictly higher
 live version replaces it, and the result is stored in `localStorage` for six hours. The home-page
 snapshot, the package tables on `/releases/` and project pages, and the version pinned in the
