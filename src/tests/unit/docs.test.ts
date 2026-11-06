@@ -81,6 +81,18 @@ describe('docSlug', () => {
     expect(docSlug('Ünïcode/Page.md')).toBe('n-code/page');
     expect(docSlug('API v2 (beta)/Page.md')).toBe('api-v2-beta/page');
   });
+
+  test("publishes a folder's README at the folder's own address", () => {
+    expect(docSlug('guide/README.md')).toBe('guide/index');
+    expect(docSlug('contributing/readme.md')).toBe('contributing/index');
+    expect(docSlug('a/b/README.mdx')).toBe('a/b/index');
+  });
+
+  test('keeps the docs root README distinguishable from a folder index', () => {
+    // Root selection maps the `readme` slug to `index`; a folder README is
+    // already an index, so the two never collide.
+    expect(docSlug('README.md')).toBe('readme');
+  });
 });
 
 describe('isUrlSafeDocSlug', () => {
@@ -363,6 +375,19 @@ describe('link rewriting inside a topic folder', () => {
     expect(rewriteDocMarkdown('[Source](../../../src/src/Z.cs)', nested())).toBe(
       '[Source](https://github.com/purview-dev/demo/blob/main/src/src/Z.cs)',
     );
+  });
+
+  test("resolves links from a folder's README index like any sibling page", () => {
+    // `guides/README.md` becomes `guides/index`, so a link beside it is a sibling.
+    const fromIndex = nested({
+      pagePath: 'guides/README.md',
+      knownSlugs: new Set(['index', 'guides/index', 'guides/plain-astro']),
+      slugAliases: new Map([['readme', 'index']]),
+    });
+    expect(rewriteDocMarkdown('[Plain Astro](Plain-Astro.md)', fromIndex)).toBe(
+      '[Plain Astro](<doclink:guides/plain-astro>)',
+    );
+    expect(rewriteDocMarkdown('[Home](../README.md)', fromIndex)).toBe('[Home](<doclink:index>)');
   });
 });
 
