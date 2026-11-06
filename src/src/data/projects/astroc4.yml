@@ -4,13 +4,16 @@ id: astroc4
 name: Astroc4
 shortDescription: Interactive LikeC4 architecture diagrams for Astro and Starlight, with fences and syntax highlighting.
 description: >-
-  A Starlight plugin that puts LikeC4 architecture diagrams inside an Astro site. A
-  ```likec4 fence in an .mdx page becomes a laid-out, interactive diagram at build time, an
-  empty fence or <LikeC4View> renders a view of the site's own .c4 model, and Expressive Code
-  gains LikeC4 syntax highlighting derived from the language's Langium grammar rather than a
-  hand-maintained TextMate file. The grammar is resolved while Astro loads its configuration,
-  cached per repo@ref, and can be pinned, run offline from a bundled snapshot, or allowed to
-  degrade to a warning, so a docs build is as reproducible as the package versions beside it.
+  A Starlight plugin and a plain-Astro integration that put LikeC4 architecture diagrams inside
+  an Astro site. A ```likec4 fence in an .mdx page becomes a laid-out, interactive diagram at
+  build time, an empty fence or <LikeC4View> renders a view of the site's own .c4 model, and
+  Expressive Code gains LikeC4 syntax highlighting derived from the language's Langium grammar
+  rather than a hand-maintained TextMate file. The Starlight entry point also injects the
+  component UI strings through Starlight's i18n; the plain-Astro entry point supplies the same
+  compiler and fence transform without Starlight. The grammar is resolved while Astro loads its
+  configuration, cached per repo@ref, and can be pinned, run offline from a bundled snapshot, or
+  allowed to degrade to a warning, so a docs build is as reproducible as the package versions
+  beside it.
 origin: >-
   Documentation about a system drifts from the system as soon as the diagram is a picture that
   someone has to redraw. LikeC4 keeps the diagram as a model in the repository, but a docs site
@@ -24,9 +27,9 @@ useWhen: >-
   together, and code fences in the LikeC4 language to be coloured without owning an
   ec.config.mjs.
 avoidWhen: >-
-  Your site is not Astro/Starlight (the plugin hooks Starlight's config and ships React islands),
-  or the architecture diagram is drawn once and does not need to stay in step with the code — a
-  static image is cheaper than a model, a compiler and a browser island.
+  Your site is not Astro (both entry points compile the model through LikeC4's Vite plugin and
+  ship React islands), or the architecture diagram is drawn once and does not need to stay in
+  step with the code — a static image is cheaper than a model, a compiler and a browser island.
 repository: purview-dev/astroc4
 category: developer-tooling
 status: preview
@@ -34,11 +37,25 @@ order: 75
 docs:
   source: github-path
   path: docs/wiki
+  # The guide pages moved into a topic folder, so their published URLs gain a
+  # `guide/` segment. The old flat addresses keep working through a meta-refresh
+  # redirect, written only once the destination page is published (ADR 0011).
+  redirects:
+    architecture: contributing/architecture
+    components: guide/components
+    configuration-reference: guide/configuration-reference
+    fences: guide/fences
+    getting-started: guide/getting-started
+    icons: guide/icons
+    internationalization: guide/internationalization
+    local-development: contributing/local-development
+    repository-ci-cd: contributing/repository-ci-cd
+    syntax-highlighting: guide/syntax-highlighting
 skills: true
 packages:
   - id: '@purview-dev/astroc4'
     registry: npm
-    description: The Starlight plugin, the fence transform, the grammar pipeline and the Astro components.
+    description: The Starlight plugin, the plain-Astro integration, the fence transform, the grammar pipeline and the Astro components.
     primary: true
 related:
   - aspirec4
@@ -84,6 +101,36 @@ useCases:
       shipping a blank frame, and layouts are memoised by a hash of the snippet so a page
       re-rendered on every dev edit pays for it once. The same fence in a .md page stays a code
       block deliberately, because Astro cannot put a component there.
+  - audience: developer
+    title: The same diagrams in a plain Astro site, without Starlight
+    scenario: >-
+      The documentation site is plain Astro rather than Starlight, so a Starlight plugin would be
+      inert there and the diagrams have no way to reach the page.
+    code: |
+      // astro.config.mjs
+      import { defineConfig } from 'astro/config';
+      import mdx from '@astrojs/mdx';
+      import expressiveCode from 'astro-expressive-code';
+      import astroc4 from '@purview-dev/astroc4/integration';
+
+      export default defineConfig({
+        integrations: [astroc4(), expressiveCode(), mdx()],
+      });
+    language: js
+    outcome: >-
+      The same <LikeC4View> component and ```likec4 fences work without Starlight: the integration
+      compiles the site's .c4 model, appends the fence transform to the Markdown processor, and
+      pre-bundles what the React island needs. The site keeps the parts that are its own decision —
+      @astrojs/mdx and, when it wants ```c4 highlighting, Expressive Code with an ec.config.mjs
+      that registers likec4Language.
+    evidence: >-
+      Both entry points call the same likec4Integration(): the plain-Astro example in the
+      repository builds with astro check and astro build, and its dev server is driven in a browser
+      to prove the island hydrates. @astrojs/react is the one integration astroc4 adds itself when
+      the site has not — the islands are client:only="react" — and React is not added twice when
+      the site already configures it. What a plain site gives up is documented: Astro.locals.t is
+      Starlight's, so the components render English, and the highlighting option exists only on
+      the Starlight plugin.
   - audience: developer
     title: Highlighting that follows LikeC4, with no ec.config.mjs
     scenario: >-
