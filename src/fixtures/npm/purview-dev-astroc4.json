@@ -5,13 +5,14 @@
     "1.0.0-prerelease.1",
     "1.0.0-prerelease.2",
     "1.0.0-prerelease.3",
-    "1.0.0-prerelease.4"
+    "1.0.0-prerelease.4",
+    "1.0.0-prerelease.5"
   ],
   "distTags": {
-    "latest": "1.0.0-prerelease.4",
-    "prerelease": "1.0.0-prerelease.4"
+    "latest": "1.0.0-prerelease.5",
+    "prerelease": "1.0.0-prerelease.5"
   },
-  "publishedAt": "2026-11-04T07:35:57.303Z",
-  "weeklyDownloads": null,
+  "publishedAt": "2026-11-06T10:26:34.324Z",
+  "weeklyDownloads": 803,
   "deprecated": false
 }

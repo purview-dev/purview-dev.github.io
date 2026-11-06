@@ -95,7 +95,8 @@ address disagrees with. So the display follows the slug:
   appears and absorbs its later pages, so a folder is listed once and the sync's
   reading order (`docs.order` / `_Sidebar.md`) survives.
 - Nesting is recursive, because a slug is a path: `guides/getting-started/install`
-  is a group inside a group. A folder's index file (`schemas/index.md`) is
+  is a group inside a group. A folder's index file (`schemas/index.md`, or a
+  nested `README.md` — the file GitHub renders as the folder's landing page) is
   published at the folder's own address, so its sidebar entry links the folder.
 - A flat corpus has no folder in any slug, so it produces no group and no code
   path changes for the projects that never nested.

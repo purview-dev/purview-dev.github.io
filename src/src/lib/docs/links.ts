@@ -38,15 +38,26 @@ export function slugifyDocFile(fileName: string): string {
  * is reduced to lower-case ASCII letters, digits and inner dashes, and only the
  * file's own `.md`/`.mdx` extension is dropped. `isUrlSafeDocSlug` is the contract
  * a slug has to satisfy before it is published.
+ *
+ * A nested `README.md` is its folder's index page, the way GitHub renders it, so
+ * `guide/README.md` publishes at the folder's own address (`guide/index`). The
+ * docs root's own README keeps the `readme` slug, because root selection maps it
+ * to the project landing page (`index`).
  */
 export function docSlug(relativePath: string): string {
   const segments = relativePath
     .split(/[/\\]/)
     .filter((segment) => segment !== '' && segment !== '.');
   return segments
-    .map((segment, index) =>
-      reduceSegment(index === segments.length - 1 ? segment.replace(/\.(md|mdx)$/i, '') : segment),
-    )
+    .map((segment, index) => {
+      if (index < segments.length - 1) {
+        return reduceSegment(segment);
+      }
+      const fileName = segment.replace(/\.(md|mdx)$/i, '');
+      return segments.length > 1 && fileName.toLowerCase() === 'readme'
+        ? 'index'
+        : reduceSegment(fileName);
+    })
     .join('/');
 }
 

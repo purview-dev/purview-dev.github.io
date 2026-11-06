@@ -8,7 +8,6 @@ import starlight from '@astrojs/starlight';
 import astroc4 from '@purview-dev/astroc4';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
-import { fileURLToPath } from 'node:url';
 import starlightLinksValidator from 'starlight-links-validator';
 import starlightLlmsTxt from 'starlight-llms-txt';
 import starlightSidebarTopics from 'starlight-sidebar-topics';
@@ -196,6 +195,10 @@ export default defineConfig({
       plugins: [
         // The live astroc4 demo (src/pages/examples/astroc4.mdx) is the site
         // dogfooding the plugin it catalogues: real fences and real views.
+        //
+        // This is the Starlight entry point, so it belongs in `plugins` — the
+        // plain-Astro `@purview-dev/astroc4/integration` shape in `integrations`
+        // would render diagrams but skip the translated UI and the highlighting.
         astroc4({
           vitePlugin: { workspace: 'src/likec4' },
           highlighting: { ref: 'v1.60.0' },
@@ -285,21 +288,14 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
-    resolve: {
-      alias: {
-        // LikeC4's React bundle imports React's CommonJS compiler runtime with
-        // a named `c` export. Vite 8's Rolldown optimiser does not expose that
-        // export from the development build, so the islands fail to hydrate.
-        // The bridge is the same `useMemoCache` call in ESM form.
-        'react/compiler-runtime': fileURLToPath(
-          new URL('./config/react-compiler-runtime.ts', import.meta.url),
-        ),
-      },
-    },
     optimizeDeps: {
       // LikeC4 is a dependency added at build time; listing its React entry
       // and the React runtime means a cold dev start pre-bundles them instead
       // of serving them raw and producing "504 Outdated Optimize Dep".
+      //
+      // `react/compiler-runtime` is deliberately absent: astroc4 1.0.0-prerelease.5
+      // adds it to this list itself (only when the site has not), which is what
+      // keeps the LikeC4 islands hydrating in `astro dev`.
       include: [
         'react',
         'react-dom',

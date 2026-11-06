@@ -1,6 +1,6 @@
 {
   "schema": 3,
-  "retrievedAt": "2026-11-04T09:09:11.026Z",
+  "retrievedAt": "2026-11-06T13:25:51.228Z",
   "repos": {
     "purview-dev/telemetry-sourcegenerator": {
       "name": "telemetry-sourcegenerator",
@@ -350,7 +350,7 @@
       "stargazersCount": 1,
       "openIssuesCount": 0,
       "defaultBranch": "main",
-      "updatedAt": "2026-11-04T08:50:48Z",
+      "updatedAt": "2026-11-06T13:22:37Z",
       "hasDiscussions": false
     },
     "purview-dev/dotnet-logging-source-generators": {
@@ -2894,6 +2894,15 @@
     ],
     "purview-dev/astroc4": [
       {
+        "tagName": "v1.0.0-prerelease.5",
+        "name": "v1.0.0-prerelease.5",
+        "body": "## What's Changed\n* docs: record the dist-tag and publish-order follow-ups by @kieronlanning in https://github.com/purview-dev/astroc4/pull/7\n* ci: publish without an approval prompt by @kieronlanning in https://github.com/purview-dev/astroc4/pull/8\n* docs: fold the wiki into guide/ and contributing/, and drop mkdocs by @kieronlanning in https://github.com/purview-dev/astroc4/pull/9\n* docs: describe the removal without naming the tools by @kieronlanning in https://github.com/purview-dev/astroc4/pull/10\n* docs: point the skills and the guide at the LikeC4 DSL skill by @kieronlanning in https://github.com/purview-dev/astroc4/pull/11\n* docs: describe the grammar cache without a build path by @kieronlanning in https://github.com/purview-dev/astroc4/pull/12\n* docs: install LikeC4's skill from likec4.dev, not its GitHub mirror by @kieronlanning in https://github.com/purview-dev/astroc4/pull/13\n* docs: removed old roadmap by @kieronlanning in https://github.com/purview-dev/astroc4/pull/14\n* docs: added version badge to readme.md by @kieronlanning in https://github.com/purview-dev/astroc4/pull/15\n* fix: npm version badge by @kieronlanning in https://github.com/purview-dev/astroc4/pull/16\n* feat: plain Astro support, and the smoke suite run against the packed package by @kieronlanning in https://github.com/purview-dev/astroc4/pull/17\n\n\n**Full Changelog**: https://github.com/purview-dev/astroc4/compare/v1.0.0-prerelease.4...v1.0.0-prerelease.5",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-11-06T10:26:09Z",
+        "htmlUrl": "https://github.com/purview-dev/astroc4/releases/tag/v1.0.0-prerelease.5"
+      },
+      {
         "tagName": "v1.0.0-prerelease.4",
         "name": "v1.0.0-prerelease.4",
         "body": "## What's Changed\n* fix: publish a package that actually contains dist/ by @kieronlanning in https://github.com/purview-dev/astroc4/pull/6\n\n\n**Full Changelog**: https://github.com/purview-dev/astroc4/compare/v1.0.0-prerelease.3...v1.0.0-prerelease.4",
@@ -4756,14 +4765,15 @@
         "1.0.0-prerelease.1",
         "1.0.0-prerelease.2",
         "1.0.0-prerelease.3",
-        "1.0.0-prerelease.4"
+        "1.0.0-prerelease.4",
+        "1.0.0-prerelease.5"
       ],
       "distTags": {
-        "latest": "1.0.0-prerelease.4",
-        "prerelease": "1.0.0-prerelease.4"
+        "latest": "1.0.0-prerelease.5",
+        "prerelease": "1.0.0-prerelease.5"
       },
-      "publishedAt": "2026-11-04T07:35:57.303Z",
-      "weeklyDownloads": null,
+      "publishedAt": "2026-11-06T10:26:34.324Z",
+      "weeklyDownloads": 803,
       "deprecated": false
     }
   }

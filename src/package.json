@@ -36,7 +36,7 @@
     "@astrojs/react": "7.1.2",
     "@likec4/core": "1.60.0",
     "@pagefind/default-ui": "1.5.2",
-    "@purview-dev/astroc4": "1.0.0-prerelease.4",
+    "@purview-dev/astroc4": "1.0.0-prerelease.5",
     "likec4": "1.60.0",
     "preact": "10.29.8",
     "react": "19.3.1",

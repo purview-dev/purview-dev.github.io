@@ -112,8 +112,10 @@ The wikis of several product repositories are mirrored into `docs/wiki`, so the 
 - A page's slug is its path from the docs root (ADR 0011): a flat corpus keeps the single-segment
   slug (`Getting-Started.md` → `getting-started`, served at `/docs/<id>/getting-started/`), and a
   topic folder stays a path segment (`schemas/Custom-Rules.md` →
-  `/docs/<id>/schemas/custom-rules/`). A `docsPage` in a use case must use a slug that still resolves
-  in the **default** channel, which is why it stays a single segment.
+  `/docs/<id>/schemas/custom-rules/`). A nested `README.md` is the folder's index, so
+  `guide/README.md` publishes at `/docs/<id>/guide/` (the root `README.md` stays the landing page).
+  A `docsPage` in a use case must use a slug that still resolves in the **default** channel, which
+  is why it stays a single segment.
 
 ## Injected front matter (per page)
 
@@ -134,8 +136,9 @@ H1s are demoted to keep one title per document.
 - The sidebar mirrors the published tree (ADR 0011): every folder in a slug becomes a nested
   `starlight` group labelled with the folder's name spelled out (`schemas` → `Schemas`), placed where
   its first page appears and holding all of that folder's pages in channel order. Nesting is
-  recursive, a folder's `index.md` links the folder's own address, and a flat corpus renders exactly
-  the flat list it always did (`buildChannelItems` in `src/lib/docs/sidebar.ts`).
+  recursive, a folder's `index.md` or nested `README.md` links the folder's own address, and a flat
+  corpus renders exactly the flat list it always did (`buildChannelItems` in
+  `src/lib/docs/sidebar.ts`).
 - Each aggregated page also names the folders above it, above the title, in the same spelling as the
   sidebar (`PageTitle.astro` + `docSectionTrail`).
 - Archived projects are excluded from the docs portal, the sidebar topics, and per-project LLM

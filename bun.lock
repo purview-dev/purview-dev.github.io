@@ -14,7 +14,7 @@
         "@astrojs/react": "7.1.2",
         "@likec4/core": "1.60.0",
         "@pagefind/default-ui": "1.5.2",
-        "@purview-dev/astroc4": "1.0.0-prerelease.4",
+        "@purview-dev/astroc4": "1.0.0-prerelease.5",
         "likec4": "1.60.0",
         "preact": "10.29.8",
         "react": "19.3.1",
@@ -452,7 +452,7 @@
 
     "@prefresh/vite": ["@prefresh/vite@2.4.12", "", { "dependencies": { "@babel/core": "^7.22.1", "@prefresh/babel-plugin": "^0.5.2", "@prefresh/core": "^1.5.0", "@prefresh/utils": "^1.2.0", "@rollup/pluginutils": "^4.2.1" }, "peerDependencies": { "preact": "^10.4.0 || ^11.0.0-0", "vite": ">=2.0.0" } }, "sha512-FY1fzXpUjiuosznMV0YM7XAOPZjB5FIdWS0W24+XnlxYkt9hNAwwsiKYn+cuTEoMtD/ZVazS5QVssBr9YhpCQA=="],
 
-    "@purview-dev/astroc4": ["@purview-dev/astroc4@1.0.0-prerelease.4", "", { "peerDependencies": { "@astrojs/markdown-satteri": ">=0.4.6", "@astrojs/react": ">=7.1.2", "@astrojs/starlight": ">=0.42.8", "@likec4/core": ">=1.59.4", "astro": ">=7.4.4", "likec4": ">=1.59.4", "react": ">=19.0.0", "react-dom": ">=19.0.0", "shiki": ">=1.0.0" } }, "sha512-rUSpRZ6alP90NIhNHDmsVUfQcG00xBHvwf58jTYojknecTIfGoOHBk7XX92kPWxs8ou26zLBNOWCzCrzlk4l8w=="],
+    "@purview-dev/astroc4": ["@purview-dev/astroc4@1.0.0-prerelease.5", "", { "peerDependencies": { "@astrojs/markdown-satteri": ">=0.4.6", "@astrojs/react": ">=7.1.2", "@astrojs/starlight": ">=0.42.8", "@likec4/core": ">=1.59.4", "astro": ">=7.4.4", "likec4": ">=1.59.4", "react": ">=19.0.0", "react-dom": ">=19.0.0", "shiki": ">=1.0.0" }, "optionalPeers": ["@astrojs/starlight"] }, "sha512-2BiIPzpQcBw7rd5pdmCqXHsiHGd/FXDgBy1xeSlh5neb2VIm6eiICOwe8tl57cHzNXM+pMwZ+JK0zvWhbvHRfw=="],
 
     "@purview-dev/website": ["@purview-dev/website@workspace:src"],
 
