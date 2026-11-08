@@ -111,6 +111,16 @@ site configuration. So the pattern for a wiki is:
 overriding it, and nothing has to be excluded for it to win. Exclude only the files the repository
 actually ships.
 
+While a repository still carries a site file, `just data-sync` reports it once and **never fails**:
+
+    docs containers: mkdocs.yml is a repository site configuration and the portal ignores it — the
+    catalogue entry alone decides what is published, so the repository can drop the file.
+
+That is an advisory (`findLegacySiteConfig` in `src/lib/docs/aggregate.ts`), not a gate. The
+aggregation keeps stripping the Material markup such a file stands for (`./mkdocs`), so the file can
+be deleted upstream in its own time and on its own pull request; when it is gone the advisory simply
+stops appearing.
+
 ## Exclusions and ordering
 
 - `exclude` matches the **base file name** (`index.md`, `_Sidebar.md`) with `*` wildcards; it is

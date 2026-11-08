@@ -10,6 +10,7 @@ import { join } from 'node:path';
 import {
   DOCS_MANIFEST_SCHEMA,
   DocsValidationError,
+  findLegacySiteConfig,
   isExcluded,
   isMirrorManifestCurrent,
   selectDocsRootFile,
@@ -516,6 +517,32 @@ describe('docs exclude matching', () => {
       'docs/wiki/foundations/Dependency-Versions.md',
     ]);
     expect(selected.slugAliases.get('home')).toBe('index');
+  });
+});
+
+describe('legacy site configuration', () => {
+  test('finds a repository site config file at any depth', () => {
+    expect(findLegacySiteConfig(['README.md', 'mkdocs.yml', 'docs/index.md'])).toBe('mkdocs.yml');
+    expect(findLegacySiteConfig(['docs/mkdocs.yaml'])).toBe('docs/mkdocs.yaml');
+    expect(findLegacySiteConfig(['MKDOCS.YML'])).toBe('MKDOCS.YML');
+  });
+
+  test('a plain-Markdown wiki has none', () => {
+    // The engineering playbook's tree: `Home.md` is the hub, `_Sidebar.md` is
+    // the navigation, and the repository carries no site configuration at all.
+    expect(
+      findLegacySiteConfig([
+        'docs/wiki/Home.md',
+        'docs/wiki/_Sidebar.md',
+        'docs/wiki/foundations/Dependency-Versions.md',
+        'skills/purview-architecture/SKILL.md',
+      ]),
+    ).toBeNull();
+  });
+
+  test('does not match a file that merely mentions the name', () => {
+    expect(findLegacySiteConfig(['docs/mkdocs-notes.md', 'mkdocs.yml.bak'])).toBeNull();
+    expect(findLegacySiteConfig([])).toBeNull();
   });
 });
 
