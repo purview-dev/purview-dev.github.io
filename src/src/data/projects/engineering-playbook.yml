@@ -36,9 +36,11 @@ docs:
   source: github-path
   path: docs/wiki
   rootPage: Home.md
+  # `_Sidebar.md` is the wiki's navigation, not a page. Nothing else is
+  # excluded: the wiki is plain Markdown with no site configuration, so
+  # `Home.md` is the hub (`rootPage` above) and is published as the landing page.
   exclude:
     - _Sidebar.md
-    - index.md
 related:
   - build-sdk
   - containers
@@ -54,8 +56,8 @@ useCases:
       at a time.
     code: |
       {
-        "sdk": { "allowPrerelease": false },
-        "msbuild-sdks": { "Purview.BuildSdk": "1.0.4" },
+        "sdk": { "version": "LATEST", "allowPrerelease": false },
+        "msbuild-sdks": { "Purview.BuildSdk": "LATEST" },
         "test": { "runner": "Microsoft.Testing.Platform" }
       }
     language: json
@@ -63,7 +65,9 @@ useCases:
       A pinned SDK plus a `Directory.Build.props` that sets one namespace prefix is the whole of the
       repository's build configuration. Every project beneath it inherits the target framework, language
       version, nullable context, analyzers and assembly identity, so a project file is two lines and a test
-      project file is empty.
+      project file is empty. `LATEST` is the playbook's own placeholder for the newest version the runtime
+      supports — the file requires a number, so the snippet shows a lookup rather than a claim that expires
+      with the next release.
     evidence: >-
       Getting Started walks the steps in the order you would create the files, and every repository-level
       file has a copy-paste version in the templates folder with a comment explaining the one thing about it
