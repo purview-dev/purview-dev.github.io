@@ -97,8 +97,8 @@ Add the entry as `src/src/data/projects/<id>.yml` (see `project-manifest-referen
     docs:
       source: github-path | wiki | readme
       path: docs            # github-path only
-      rootPage: Getting-Started.md   # optional; see docs-aggregation-rules
-      exclude: [ _Sidebar.md, index.md ]
+      rootPage: Home.md      # optional; see docs-aggregation-rules
+      exclude: [ _Sidebar.md ]       # only files the repository actually ships
     targetFrameworks: [ net8.0, net9.0 ]
     install: nuget | msbuild-sdk | dotnet-tool   # NuGet packages only; omit for npm
     packages:
@@ -169,9 +169,11 @@ docs not yet in a `docs/` folder, no stable release yet).
 ## Pitfalls
 
 - `docs.path` must be a **repository path** (`docs`, `docs/wiki`), never a URL.
-- A repository whose wiki is mirrored into `docs/wiki` usually needs
-  `exclude: [_Sidebar.md, Home.md, index.md]` plus `rootPage: Getting-Started.md`, otherwise the
-  aggregation raises `DocsValidationError`. See `docs-aggregation-rules`.
+- A repository whose wiki is mirrored into `docs/wiki` is plain Markdown: `Home.md` is the hub and
+  `_Sidebar.md` (the navigation) is the only file that has to be excluded. A wiki that keeps a
+  different first page keeps `rootPage`; only a page the repository does **not** ship needs excluding,
+  and a stale pattern (an `index.md` the upstream deleted) is a silent no-op rather than an error.
+  See `docs-aggregation-rules`.
 - Aggregation reads branch `main`. If the repository's default branch is `master`/`develop`, docs
   aggregation silently yields nothing — rename or report it.
 - The `README.md`-as-index mode (`readme:`) publishes exactly one page and cannot be combined with

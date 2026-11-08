@@ -305,6 +305,65 @@ function isIndexFile(baseName: string): boolean {
   return ['home.md', 'index.md', 'readme.md'].includes(baseName.toLowerCase());
 }
 
+/**
+ * Site-configuration files a repository may still carry beside its Markdown.
+ *
+ * The portal never reads them: the catalogue entry's `docs` block — `path`,
+ * `rootPage`, `exclude` and the `_Sidebar.md` order — is the only thing that
+ * decides what is published, so the file is dead weight in the product
+ * repository. `mkdocs.yml` is the reason a page can arrive with Material
+ * markup at all (see `./mkdocs`), which is why the aggregation still strips it
+ * while the upstream repositories catch up.
+ */
+const LEGACY_SITE_CONFIG_FILES = new Set(['mkdocs.yml', 'mkdocs.yaml']);
+
+/**
+ * The site-configuration file present in a repository tree, or null.
+ *
+ * Matched on the base name at any depth, so a repository that keeps its config
+ * inside `docs/` is reported too. Pure and exported so the advisory below is
+ * testable without a network.
+ */
+export function findLegacySiteConfig(paths: readonly string[]): string | null {
+  const match = paths.find((path) =>
+    LEGACY_SITE_CONFIG_FILES.has((path.split('/').pop() ?? '').toLowerCase()),
+  );
+  return match ?? null;
+}
+
+const warnedLegacySiteConfig = new Set<string>();
+
+/** True when the sync is running inside GitHub Actions, where a workflow command draws an annotation. */
+function inGithubActions(): boolean {
+  return process.env.GITHUB_ACTIONS === 'true';
+}
+
+/**
+ * Advisory, never a gate: a repository that still ships a site configuration is
+ * reported once per sync so it can be deleted upstream in its own time. Nothing
+ * here fails the build (ADR 0001 — fix the data, never weaken a check, and never
+ * turn an upstream tidy-up into a blocked release).
+ *
+ * The line goes to stdout rather than stderr because the pipeline captures
+ * stdout into the build log: an advisory nobody can see cannot be acted on.
+ * Inside GitHub Actions it is additionally emitted as a `::warning` workflow
+ * command, which annotates the run without failing it.
+ */
+function warnLegacySiteConfig(projectId: string, paths: readonly string[]): void {
+  const file = findLegacySiteConfig(paths);
+  if (!file || warnedLegacySiteConfig.has(projectId)) {
+    return;
+  }
+  warnedLegacySiteConfig.add(projectId);
+  const message =
+    `${file} is a repository site configuration and the portal ignores it — ` +
+    'the catalogue entry alone decides what is published, so the repository can drop the file.';
+  console.log(`  docs ${projectId}: ${message}`);
+  if (inGithubActions()) {
+    console.log(`::warning title=Documentation site configuration::${projectId}: ${message}`);
+  }
+}
+
 function normalizeRootPage(path: string): string {
   return path.replace(/\\/g, '/').replace(/^\.\//, '').replace(/^\/+/, '').replace(/\/+$/, '');
 }
@@ -493,6 +552,9 @@ async function collectGithubPathChannel(
 ): Promise<AggregatedPage[]> {
   const ref = channel.ref;
   const files = await listRepositoryFiles(project.repository, ref);
+  // The tree is already in hand, so noticing a repository site configuration
+  // costs nothing — and it is reported, never enforced.
+  warnLegacySiteConfig(project.id, files);
   const docRoot = layout.path.replace(/\/+$/, '');
   const docFiles = files
     .filter((path) => path.startsWith(`${docRoot}/`) && path.endsWith('.md'))

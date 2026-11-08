@@ -70,8 +70,13 @@ Adding a value to any of these lists is a schema change and requires an ADR. `ex
 
 - `rootPage` names the markdown file that becomes the landing page (`index`). It may only select a
   non-index page when the conventional root page is removed via `exclude` (the aggregation otherwise
-  raises `DocsValidationError`).
-- `exclude` matches the **base file name** (not the repository path) and supports `*` wildcards.
+  raises `DocsValidationError`). A product wiki mirrored from `docs/wiki` uses `rootPage: Home.md`: the
+  wiki is plain Markdown with `Home.md` as its hub and `_Sidebar.md` as the whole navigation, and it
+  carries no site configuration — a repository that still ships one is a deviation the portal ignores,
+  not a requirement.
+- `exclude` matches the **base file name** (not the repository path) and supports `*` wildcards. It is a
+  filter over the files the repository ships, so a pattern naming a file that has since been deleted is a
+  no-op, never a warning or a failure.
 - `readmeAsIndex` uses the repository `README.md` as the landing page and cannot be combined with
   `rootPage`; it aliases `readme` to `index`.
 - `order` is an explicit list of page slugs, applied before the `_Sidebar.md` order.
