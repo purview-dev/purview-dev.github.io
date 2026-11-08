@@ -308,6 +308,30 @@ describe('link rewriting', () => {
     );
   });
 
+  test('keeps an absolute badge image beside a relative one', () => {
+    // A page shows the current version as a registry badge rather than stating
+    // a number. The badge URL is absolute, so the aggregator must neither
+    // prefix it with the image base nor mistake it for a repository path; the
+    // relative screenshot in the same table still resolves to the image base.
+    const output = rewriteDocMarkdown(
+      '| Purview.BuildSdk | ![Purview.BuildSdk](https://img.shields.io/nuget/v/Purview.BuildSdk) |\n' +
+        '| Traces | ![Traces](AspireTracesView.png) |',
+      context(),
+    );
+    expect(output).toBe(
+      '| Purview.BuildSdk | ![Purview.BuildSdk](https://img.shields.io/nuget/v/Purview.BuildSdk) |\n' +
+        '| Traces | ![Traces](https://github.com/purview-dev/demo/raw/main/docs/AspireTracesView.png) |',
+    );
+  });
+
+  test('keeps a scoped npm badge image unchanged', () => {
+    const output = rewriteDocMarkdown(
+      '![astroc4](https://img.shields.io/npm/v/@purview-dev/astroc4)',
+      context(),
+    );
+    expect(output).toBe('![astroc4](https://img.shields.io/npm/v/@purview-dev/astroc4)');
+  });
+
   test('keeps external URLs unchanged', () => {
     const output = rewriteDocMarkdown('[GitHub](https://github.com/purview-dev)', context());
     expect(output).toBe('[GitHub](https://github.com/purview-dev)');
@@ -466,6 +490,32 @@ describe('docs exclude matching', () => {
     expect(isExcluded('_Sidebar.md', ['*.md'])).toBe(true);
     expect(isExcluded('Getting-Started.md', ['index.md', '_Sidebar.md'])).toBe(false);
     expect(isExcluded('index.md', undefined)).toBe(false);
+  });
+
+  test('a pattern for a file the repository no longer ships is a no-op', () => {
+    // `exclude` is a filter over the files the repository has, not a promise
+    // about them: a wiki that dropped its `index.md` in favour of a `Home.md`
+    // hub keeps working while the stale pattern is still declared. The root
+    // page resolves to real files only, so nothing fails and nothing warns.
+    const exclude = ['_Sidebar.md', 'index.md'];
+    const sourceFiles = [
+      rawDoc('docs/wiki/Home.md'),
+      rawDoc('docs/wiki/_Sidebar.md'),
+      rawDoc('docs/wiki/foundations/Dependency-Versions.md'),
+    ].filter((file) => !isExcluded(file.path.split('/').pop() ?? '', exclude));
+
+    const selected = selectDocsRootFile(
+      'engineering-playbook',
+      sourceFiles,
+      'docs/wiki',
+      'Home.md',
+    );
+
+    expect(selected.index.path).toBe('docs/wiki/Home.md');
+    expect(selected.regular.map((file) => file.path)).toEqual([
+      'docs/wiki/foundations/Dependency-Versions.md',
+    ]);
+    expect(selected.slugAliases.get('home')).toBe('index');
   });
 });
 
