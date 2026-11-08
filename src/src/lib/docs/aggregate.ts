@@ -333,11 +333,21 @@ export function findLegacySiteConfig(paths: readonly string[]): string | null {
 
 const warnedLegacySiteConfig = new Set<string>();
 
+/** True when the sync is running inside GitHub Actions, where a workflow command draws an annotation. */
+function inGithubActions(): boolean {
+  return process.env.GITHUB_ACTIONS === 'true';
+}
+
 /**
  * Advisory, never a gate: a repository that still ships a site configuration is
  * reported once per sync so it can be deleted upstream in its own time. Nothing
  * here fails the build (ADR 0001 — fix the data, never weaken a check, and never
  * turn an upstream tidy-up into a blocked release).
+ *
+ * The line goes to stdout rather than stderr because the pipeline captures
+ * stdout into the build log: an advisory nobody can see cannot be acted on.
+ * Inside GitHub Actions it is additionally emitted as a `::warning` workflow
+ * command, which annotates the run without failing it.
  */
 function warnLegacySiteConfig(projectId: string, paths: readonly string[]): void {
   const file = findLegacySiteConfig(paths);
@@ -345,10 +355,13 @@ function warnLegacySiteConfig(projectId: string, paths: readonly string[]): void
     return;
   }
   warnedLegacySiteConfig.add(projectId);
-  console.warn(
-    `  docs ${projectId}: ${file} is a repository site configuration and the portal ignores it — ` +
-      'the catalogue entry alone decides what is published, so the repository can drop the file.',
-  );
+  const message =
+    `${file} is a repository site configuration and the portal ignores it — ` +
+    'the catalogue entry alone decides what is published, so the repository can drop the file.';
+  console.log(`  docs ${projectId}: ${message}`);
+  if (inGithubActions()) {
+    console.log(`::warning title=Documentation site configuration::${projectId}: ${message}`);
+  }
 }
 
 function normalizeRootPage(path: string): string {

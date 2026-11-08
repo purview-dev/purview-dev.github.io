@@ -116,10 +116,11 @@ While a repository still carries a site file, `just data-sync` reports it once a
     docs containers: mkdocs.yml is a repository site configuration and the portal ignores it — the
     catalogue entry alone decides what is published, so the repository can drop the file.
 
-That is an advisory (`findLegacySiteConfig` in `src/lib/docs/aggregate.ts`), not a gate. The
-aggregation keeps stripping the Material markup such a file stands for (`./mkdocs`), so the file can
-be deleted upstream in its own time and on its own pull request; when it is gone the advisory simply
-stops appearing.
+That is an advisory (`findLegacySiteConfig` in `src/lib/docs/aggregate.ts`), not a gate, and it is
+printed on stdout so it survives into the build log; on GitHub Actions the same text is repeated as a
+`::warning` annotation on the run. The aggregation keeps stripping the Material markup such a file
+stands for (`./mkdocs`), so the file can be deleted upstream in its own time and on its own pull
+request; when it is gone the advisory simply stops appearing.
 
 ## Exclusions and ordering
 
