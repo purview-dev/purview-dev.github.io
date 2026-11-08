@@ -92,20 +92,33 @@ A project may publish two views of its documentation:
 4. If `rootPage` names a file that does not exist, aggregation raises
    *"docs.rootPage: ... does not exist"*.
 
-The wikis of several product repositories are mirrored into `docs/wiki`, so the working pattern is:
+The product wikis are mirrored into `docs/wiki` and are **plain Markdown**: `Home.md` is the hub,
+`_Sidebar.md` is the whole navigation, and the repository carries no site configuration at all — the
+engineering playbook deleted its `mkdocs.yml` and its TechDocs `index.md`, and no repository needs to
+add them back. A repository that still ships a site file (`mkdocs.yml`) or a generated `index.md` is a
+**deviation this portal ignores**: aggregation reads `docs.path` and this entry's `exclude`, never the
+site configuration. So the pattern for a wiki is:
 
 ```yaml
     docs:
       source: github-path
       path: docs/wiki
-      rootPage: Getting-Started.md
-      exclude: [ _Sidebar.md, Home.md, index.md ]
+      rootPage: Home.md
+      exclude: [ _Sidebar.md ]
 ```
+
+`Home.md` is itself a conventional root page, so `rootPage` restates the default rather than
+overriding it, and nothing has to be excluded for it to win. Exclude only the files the repository
+actually ships.
 
 ## Exclusions and ordering
 
 - `exclude` matches the **base file name** (`index.md`, `_Sidebar.md`) with `*` wildcards; it is
   applied **before** the root page is selected (that is what makes rule 2 work).
+- A pattern that matches nothing is a **no-op**: excluding `index.md` from a wiki that has since
+  replaced it with `Home.md` neither warns nor fails, so a stale pattern cannot block the build while
+  the upstream repository is mid-reorganisation. Remove it when you notice, but it is not drift the
+  guard reports.
 - Page order comes from, in priority: `docs.order` (explicit slug list) → a `_Sidebar.md` link order
   (both for `wiki` and for a mirrored wiki under `github-path`) → `1000`.
 - The landing page is always `order: -1`, so it heads the sidebar as "Overview".
@@ -126,8 +139,11 @@ the catalogue flags the project, ADR 0004), `lastReviewed`, `sourceProject`,
 absent when there are none), and `sidebar.label`/`sidebar.order`.
 
 Additional transformations: GitHub alert blockquotes become Starlight asides; relative links between
-documents are rewritten to portal URLs; images are rewritten to GitHub raw URLs; duplicate top-level
-H1s are demoted to keep one title per document.
+documents are rewritten to portal URLs; **relative** images are rewritten to GitHub raw URLs while
+**absolute** image URLs pass through untouched — a registry badge such as
+`![Purview.BuildSdk](https://img.shields.io/nuget/v/Purview.BuildSdk)` keeps its own URL, so a page can
+show a live version without stating a number that rots; duplicate top-level H1s are demoted to keep one
+title per document.
 
 ## What the site does with it
 
@@ -159,3 +175,7 @@ just build && just check-generated  # asserts the mirror matches the manifest
 A reorganised tree is verified in the built output: the old flat slug must be a meta-refresh page
 pointing at the new address, on every channel that publishes the tree (`/docs/<id>/<old>/` and
 `/docs/<id>/prerelease/<old>/`), and the sidebar of a nested channel must contain a `group-label`.
+
+A page that shows a registry badge instead of a version is verified the same way: the badge URL must
+appear verbatim in the built page (`dist/docs/<id>/<page>/index.html`), not rewritten to a
+`raw.githubusercontent.com` address. `docs.test.ts` covers an absolute badge URL beside a relative one.

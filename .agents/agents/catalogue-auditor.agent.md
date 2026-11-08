@@ -51,7 +51,8 @@ Load and apply these skills:
    packages, relationships, `order` sorting).
 2. **Deterministic guard** — `just check-projects` passes.
 3. **Documentation** — each `docs` config points at a path that exists, a root page that resolves,
-   exclusions that cover `_Sidebar.md`/`index.md` stubs, and a non-zero aggregated page count.
+   exclusions that keep the navigation files (`_Sidebar.md`, `_Footer.md`) out of the page list, and a
+   non-zero aggregated page count.
 4. **Stability** — `status` matches the repository `archived` flag and the NuGet release channel.
 5. **Metadata and tags** — repository description present and useful, topics non-empty (they are the
    site's tag chips), homepage/link targets correct, and `discussions` left unset (it is detected

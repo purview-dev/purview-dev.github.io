@@ -48,8 +48,12 @@ Related: `project-manifest-reference` (fields and vocabularies), `docs-aggregati
 - `docs.source` matches reality: `github-path` when the repository has a docs folder,
   `wiki` when the content lives in the wiki, `readme` only for single-page projects.
 - `docs.path` exists **on branch `main`** and contains `.md` files.
-- A `rootPage` either names the conventional index or is paired with an `exclude` that removes it.
-- `exclude` covers `_Sidebar.md` (and `Home.md`/`index.md` stubs) so they do not appear as pages.
+- `rootPage` names a page that exists under `docs.path`; when it names a non-index page and a
+  conventional root page (`index.md`/`Home.md`/`readme.md`) also exists, that conventional page must be
+  listed in `exclude`.
+- `exclude` keeps the navigation files out of the page list: `_Sidebar.md` (and `_Footer.md` for a
+  `wiki` source). It is a filter over the files the repository ships, so a pattern naming a file that
+  no longer exists is a no-op, not a warning or a failure.
 - The aggregated page count is non-zero and the landing page is the page a reader should land on.
 - Archived projects that still declare `docs` are intentional (they are excluded from the portal).
 - Documentation is not duplicated here: this repository only holds the mirror.
