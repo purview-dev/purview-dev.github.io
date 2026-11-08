@@ -41,6 +41,13 @@ docs:
   # `Home.md` is the hub (`rootPage` above) and is published as the landing page.
   exclude:
     - _Sidebar.md
+  # A page's folder is part of its URL (ADR 0011), so `Dependency-Versions.md`
+  # publishes at `/docs/engineering-playbook/foundations/dependency-versions/`.
+  # The flat address is kept as an alias for anyone who looks for that page at
+  # the docs root: the build writes a meta-refresh redirect there, and only once
+  # the nested page it forwards to actually exists.
+  redirects:
+    dependency-versions: foundations/dependency-versions
 related:
   - build-sdk
   - containers
