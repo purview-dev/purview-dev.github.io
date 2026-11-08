@@ -197,6 +197,20 @@ describe('moved documentation page redirects', () => {
     ).toEqual([['/docs/zodsharp/performance/', '/docs/zodsharp/quality/performance/']]);
   });
 
+  test('the playbook keeps its docs-root dependency-versions address', () => {
+    // The page lives under its topic folder, which makes the folder part of the
+    // URL (ADR 0011), so the catalogue declares the docs-root address as an
+    // alias: a reader or a link that looks for `dependency-versions` at the
+    // project root lands on the page instead of a 404. The pair is only written
+    // while the nested page it forwards to is published.
+    expect(docsPageRedirects(projects)).toContainEqual({
+      from: '/docs/engineering-playbook/dependency-versions/',
+      to: '/docs/engineering-playbook/foundations/dependency-versions/',
+      title: 'This documentation page moved…',
+      message: 'The page now lives at its new address.',
+    });
+  });
+
   test('a moved page is written as a redirect once its new address is published', () => {
     const dist = mkdtempSync(join(tmpdir(), 'purview-redirects-'));
     try {
