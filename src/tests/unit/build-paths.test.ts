@@ -20,8 +20,8 @@ describe('build-output safety patterns', () => {
     String.raw`C:\hostedtoolcache\windows\dotnet\10.0.0`,
     '/Users/bob/source/repo',
     '/home/runner/work/purview-dev/purview-dev',
-    'src/.cache/docs/index.json',
-    'node_modules/astro/package.json',
+    '/opt/build/.cache/docs/index.json',
+    String.raw`D:\build\node_modules\astro\package.json`,
   ];
 
   const documentation = [
@@ -29,6 +29,12 @@ describe('build-output safety patterns', () => {
     String.raw`StoragePath = @"D:\wslc-images",`,
     String.raw`%LOCALAPPDATA%\Purview\WslContainers\images`,
     '/mnt/d/wslc-images',
+    // Relative cache/dependency locations are instructions, not machine paths.
+    'node_modules/.cache/astroc4',
+    'node_modules/astro/package.json',
+    'src/.cache/docs/index.json',
+    'LikeC4 ignores **/node_modules/**',
+    'cache at **/.cache/**',
   ];
 
   test('flags build-machine paths', () => {

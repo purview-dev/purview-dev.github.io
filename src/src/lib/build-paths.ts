@@ -33,8 +33,11 @@ export const LOCAL_PATH_PATTERNS: readonly RegExp[] = [
   /[A-Za-z]:\\(?:actions-runner|hostedtoolcache|runneradmin)\\/i, // CI runner dirs
   /\/Users\/[^\s"']+/, // macOS home paths (case-sensitive)
   /\/home\/[A-Za-z0-9._-]+\//, // Linux home paths
-  /\.cache[/\\]/,
-  /node_modules[/\\]/,
+  // A cache/dependency directory is only machine-identifying when it sits on
+  // an absolute path. Aggregated documentation legitimately names
+  // `node_modules/.cache/<tool>` as a location relative to the consumer's
+  // project, and that names no machine, so it must not fail the scan.
+  /(?:[A-Za-z]:[\\/]|(?<![\w:/\\*?])\/)[^\s"']*(?:\.cache|node_modules)[\\/]/i,
 ];
 
 /** The first pattern that matches `content`, or null when none does. */
