@@ -304,11 +304,15 @@ describe('built package versions', () => {
     const pkg = summary.packages.find((entry) => entry.packageId === 'Purview.ZodSharp.Http');
     expect(pkg).toBeDefined();
     expect(pkg?.latestStable).toBeNull();
-    expect(pkg?.latestPrerelease).toBe('3.0.0-prerelease.2');
+    // The package line keeps moving, so the expectation comes from the release
+    // data the site was built with rather than a pinned version. Otherwise every
+    // new prerelease turns a green build red without a product regression.
+    const latestPrerelease = pkg?.latestPrerelease;
+    expect(latestPrerelease).not.toBeNull();
 
     const content = requireBuilt('projects/zodsharp/index.html');
     expect(content).toContain('Purview.ZodSharp.Http');
-    expect(content).toContain('3.0.0-prerelease.2');
+    expect(content).toContain(latestPrerelease!);
   });
 });
 
