@@ -174,6 +174,13 @@ title per document.
   from `/llms.txt` and from the project page.
 - Staleness: a page is flagged when `lastReviewed` is older than 365 days
   (`src/src/lib/docs/staleness.ts`).
+- A ```` ```likec4 ```` fence in a mirrored page stays **source**, not a diagram:
+  the whole `docs` collection is relaxed through astroc4's `validation:
+  { collections: ['docs'] }` (`astro.config.ts`). Such a page was written for
+  another renderer, so its fence is often a partial snippet; astroc4 logs a
+  warning and leaves it as a highlighted code block instead of failing the build.
+  Pages the site authors (`src/pages/**`) are not in the collection, so they keep
+  strict validation.
 
 ## Verifying
 
