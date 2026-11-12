@@ -41,6 +41,8 @@ docs:
 targetFrameworks:
   - net10.0
   - net10.0-windows10.0.19041.0
+  - net11.0
+  - net11.0-windows10.0.19041.0
 packages:
   - id: Purview.Containers
     description: The umbrella — references the abstractions and both backends, so one reference runs the same tests on WSLC on Windows and Docker elsewhere.
@@ -52,6 +54,8 @@ packages:
     targetFrameworks:
       - net10.0
       - net10.0-windows10.0.19041.0
+      - net11.0
+      - net11.0-windows10.0.19041.0
   - id: Purview.Containers.Docker
     description: Docker backend — the same containers on any reachable Docker daemon, driven by Testcontainers.
   - id: Purview.Containers.PostgreSql

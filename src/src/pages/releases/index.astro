@@ -1,12 +1,18 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
 import ReleaseFilter from '~/components/islands/ReleaseFilter.tsx';
+import ReleaseOverview, {
+  type ReleaseOverviewRow,
+} from '~/components/islands/ReleaseOverview.tsx';
 import PackageVersions, { type PackageRow } from '~/components/islands/PackageVersions.tsx';
 import { loadProjects } from '~/lib/manifest/load';
 import { effectivePrerelease } from '~/lib/releases/normalize';
+import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { flattenReleases, projectReleaseSummary } from '~/lib/releases/transform';
 import { getReleaseIndex } from '~/lib/releases/runtime';
+import { listMirroredSkills } from '~/lib/skills';
 import { SITE } from '~/lib/site';
+import { displayStatus } from '~/lib/status';
 import { withBase } from '~/lib/urls';
 
 const projects = loadProjects();
@@ -43,6 +49,53 @@ const packageRows: PackageRow[] = summaries
     })),
   );
 
+// The releases quick view: one card per active project, in catalogue order, with
+// the build-time package versions behind each row so the browser can re-check
+// them against NuGet/npm (ADR 0008, ADR 0012).
+const summaryById = new Map(summaries.map((summary) => [summary.projectId, summary]));
+const overviewRows: ReleaseOverviewRow[] = projects
+  .filter((project) => project.status !== 'archived')
+  .map((project) => {
+    const packages = summaryById.get(project.id)?.packages ?? [];
+    const periods = new Set(packages.map((pkg) => pkg.downloadsPeriod));
+    const downloads = packages.reduce(
+      (sum, pkg) => (pkg.downloads == null ? sum : sum + pkg.downloads),
+      0,
+    );
+    const hasDownloads = packages.some((pkg) => pkg.downloads != null);
+    const latestRelease = summaryById.get(project.id)?.latestRelease ?? null;
+    return {
+      projectId: project.id,
+      projectName: project.name,
+      projectUrl: withBase(`/projects/${project.id}/`),
+      docsUrl: project.docs ? withBase(`/docs/${project.id}/`) : null,
+      repositoryUrl: project.sourceUrl,
+      status: displayStatus(project),
+      category: project.category,
+      packageCount: packages.length,
+      skillCount: listMirroredSkills(project.id).length,
+      packages: packages.map((pkg) => ({
+        id: pkg.packageId,
+        registry: pkg.registry,
+        stable: pkg.latestStable,
+        prerelease: effectivePrerelease(pkg.latestStable, pkg.latestPrerelease),
+      })),
+      latestRelease:
+        latestRelease === null
+          ? null
+          : {
+              tagName: latestRelease.tagName,
+              url: latestRelease.htmlUrl,
+              publishedAt: latestRelease.publishedAt,
+            },
+      // Only mix download counts from one registry: NuGet reports totals, npm
+      // reports a weekly figure, so a sum across both would be meaningless.
+      downloads: hasDownloads && periods.size === 1 ? downloads : null,
+      downloadsPeriod: periods.size === 1 ? [...periods][0]! : 'total',
+      tags: projectRepoEnrichment(project, releaseIndex.data).tags,
+    };
+  });
+
 function formatDate(value: string | null): string {
   if (!value) {
     return 'Unknown date';
@@ -67,20 +120,41 @@ function formatDate(value: string | null): string {
       <p class="pv-chip mb-4 border-brand/30 bg-brand/5 text-brand">Releases</p>
       <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Releases</h1>
       <p class="mt-4 text-lg text-muted">
-        Follow what is changing across Purview, from recent GitHub releases to the latest stable
-        and prerelease version of each package on NuGet and npm.
+        Every Purview project on one page: the versions it publishes today, re-checked against NuGet
+        and npm in your browser, with the recent GitHub releases and the package-level detail below.
       </p>
     </div>
 
-    <section class="mt-10" aria-labelledby="recent-releases-heading">
+    <section class="mt-10" aria-labelledby="project-versions-heading">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 id="project-versions-heading" class="text-2xl font-bold tracking-tight md:text-3xl">
+            Project versions
+          </h2>
+          <p class="mt-2 max-w-2xl text-muted">
+            One card per project, rolled up from its packages. The versions re-check the package
+            registries in your browser, so a release published after this build still shows up.
+          </p>
+        </div>
+        <p class="text-muted shrink-0 text-xs">
+          Data retrieved {releaseIndex.data.retrievedAt.slice(0, 10)} ({releaseIndex.source} source).
+        </p>
+      </div>
+
+      <div class="mt-6">
+        <ReleaseOverview client:visible rows={overviewRows} />
+      </div>
+    </section>
+
+    <section class="mt-16" aria-labelledby="recent-releases-heading">
       <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 id="recent-releases-heading" class="text-2xl font-bold tracking-tight md:text-3xl">
-            Recent releases
+            Latest GitHub releases
           </h2>
           <p class="mt-2 max-w-2xl text-muted">
-            The latest published work, with enough project context to find the release that matters
-            to you.
+            The newest published GitHub release per project, with enough context to find the release
+            that matters to you.
           </p>
         </div>
         <ReleaseFilter client:visible projects={projectOptions} />

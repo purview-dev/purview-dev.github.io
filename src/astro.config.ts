@@ -14,6 +14,7 @@ import starlightSidebarTopics from 'starlight-sidebar-topics';
 
 import discoveryIntegration from './config/discovery-integration';
 import docsRedirectsIntegration from './config/docs-redirects-integration';
+import { siteLanguages } from './config/expressive-code-languages';
 import { mermaidFences } from './config/satteri-mermaid';
 import { projectChannelLlmsUrl, projectLlmsUrl } from './src/lib/discovery/urls';
 import { readDocsManifest } from './src/lib/docs/aggregate';
@@ -168,6 +169,10 @@ export default defineConfig({
       customCss: ['./src/styles/global.css'],
       expressiveCode: {
         themes: ['starlight-light', 'starlight-dark'],
+        // Languages Shiki does not bundle, which the mirrored documentation
+        // uses anyway (see config/expressive-code-languages.ts). astroc4 appends
+        // its LikeC4 grammar to this list rather than replacing it.
+        shiki: { langs: [...siteLanguages] },
         styleOverrides: {
           borderRadius: '0.75rem',
           codeFontFamily: 'var(--font-mono)',
@@ -202,6 +207,14 @@ export default defineConfig({
         astroc4({
           vitePlugin: { workspace: 'src/likec4' },
           highlighting: { ref: 'v1.60.0' },
+          // The `docs` collection is the aggregated mirror of other repositories'
+          // Markdown (see .agents/skills/docs-aggregation-rules). Those pages were
+          // written for GitHub or mkdocs, so a ```likec4 fence there is often a
+          // partial snippet rather than a diagram: relax validation for the
+          // collection so one cannot fail this site's build — astroc4 warns and
+          // leaves the fence as a highlighted code block. Pages the site authors
+          // are not in the collection, so they keep strict validation.
+          validation: { collections: ['docs'] },
         }),
         starlightSidebarTopics(sidebarTopics),
         starlightLinksValidator({

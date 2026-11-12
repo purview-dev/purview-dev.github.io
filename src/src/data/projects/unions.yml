@@ -1,0 +1,153 @@
+$schema: ../../lib/manifest/schema.ts
+
+id: unions
+name: Unions
+shortDescription: Dependency-free C# 15 unions that do not box value-type cases.
+description: >-
+  The C# 15 `union` keyword lowers to a single `object?` field, so every
+  value-type case is boxed on entry. Purview.Unions generates the language's
+  non-boxing custom-union shape instead: each case gets its own typed field, a
+  public constructor, and a `TryGetValue` that never allocates. The compiler
+  still sees a union — implicit conversions, exhaustive `switch`, and `is`/`null`
+  patterns all work — plus a hand-written `Union<T1, T2>` for the two-case shape.
+origin: >-
+  Discriminated unions were needed for error modelling and optional values, and
+  the language's own `union` declaration boxes every value-type case on entry.
+  The compiler already exposes the custom-union contract the boxing-free shape
+  needs, so the generator that emits it became a shared package instead of a
+  hand-written type in each project.
+useWhen: >-
+  You model a closed set of cases — expected errors, optional results, a
+  small state machine — and either the value-type cases are allocation-sensitive
+  or you want one type the whole team matches on exhaustively.
+avoidWhen: >-
+  You target a runtime below .NET 11 with C# 15, or a single shape with two
+  reference-type cases is enough: the built-in `union` declaration is simpler
+  and the boxing cost does not apply to reference types.
+repository: purview-dev/unions
+category: source-generation
+status: preview
+order: 25
+docs:
+  source: github-path
+  path: docs/wiki
+  rootPage: Getting-Started.md
+  exclude:
+    - _Sidebar.md
+    - Home.md
+    - index.md
+targetFrameworks:
+  - net10.0
+  - net11.0
+packages:
+  - id: Purview.Unions
+    description: The [GenerateUnion] attribute, the source generator with its code fixes, and the hand-written Union<T1, T2>.
+    primary: true
+skills: true
+related:
+  - results
+  - zodsharp
+  - sourcegenerator-framework
+useCases:
+  - audience: developer
+    title: Match a value-type union without boxing a case
+    scenario: >-
+      A method returns one of a handful of value-type outcomes, and the caller must
+      branch on which one it received — but the `union` keyword boxes every
+      value-type case on entry and again while matching.
+    code: |
+      [GenerateUnion(typeof(int), typeof(string))]
+      public readonly partial struct IntOrString;
+
+      IntOrString value = 42;
+
+      var message = value switch
+      {
+          int number => $"int {number}",
+          string text => $"string {text}",
+          null => "empty",
+      };
+    language: csharp
+    outcome: >-
+      The compiler treats the generated type as a union, so implicit conversions,
+      exhaustive `switch` and `is`/`null` patterns all work, while construction,
+      `TryGetValue`, `is` and `switch` never allocate.
+    evidence: >-
+      The committed BenchmarkDotNet suite measures construction, both
+      `TryGetValue` directions, the miss path, `HasValue`, `is` and both `switch`
+      shapes at 0 B; only reading `Value` allocates the 24-byte box for the `int`
+      case, which is inherent to the union contract.
+    docsPage: performance
+  - audience: developer
+    title: Declare a union whose cases are type parameters
+    scenario: >-
+      You want a generic option or outcome type, but `typeof(T)` is not a legal
+      attribute argument, so an ordinary `[GenerateUnion(typeof(…))]` list cannot
+      name a type parameter.
+    code: |
+      [GenerateUnion]
+      public readonly partial struct Option<T>
+      {
+          internal static partial Option<T> Some(Some<T> value);
+          internal static partial Option<T> None(None value);
+      }
+    language: csharp
+    outcome: >-
+      Each partial factory signature names a case, the generator supplies the
+      bodies and derives the public constructors from them, and the compiler reports
+      `CS0416` only if you try to use a `typeof(T)` list instead.
+    evidence: >-
+      A generic union must name its cases in source because `CS0416` rejects
+      `typeof(T)` in an attribute; a `typeof` list on a generic union is reported
+      as `UNI0011`.
+    docsPage: union-design
+  - audience: architect
+    title: Let a second source generator see the union's cases
+    scenario: >-
+      Another Purview generator — Results, or the telemetry generator unwrapping a
+      parameter — must read the case list, but Roslyn generators never see each
+      other's generated output.
+    code: |
+      [GenerateUnion]
+      public readonly partial struct Outcome<T> : Outcome<T>.IUnionMembers
+      {
+          public interface IUnionMembers
+          {
+              static Outcome<T> Create(T? value) => Outcome<T>.CreateCase0(value);
+              static Outcome<T> Create(Exception? error) => Outcome<T>.CreateCase1(error);
+
+              bool TryGetValue(out T value);
+              bool TryGetValue(out Exception value);
+          }
+      }
+    language: csharp
+    outcome: >-
+      A public nested `IUnionMembers` provider exposes the case list in the source
+      the other generator compiles against, while this generator still emits the
+      storage and `CreateCaseN` methods.
+    evidence: >-
+      `Purview.Telemetry.SourceGenerator` 6.0.0 reads the source-visible case list in
+      the same order as this package, and a `[GenerateUnion]` target with no
+      source-visible case list is reported as `UNI0003` rather than unwrapped.
+    docsPage: interop
+  - audience: contributor
+    title: Fail fast on a malformed union declaration
+    scenario: >-
+      A union is declared without `partial`, with a duplicate case, or with a case
+      type less accessible than the union, and the generated shape cannot be emitted
+      coherently.
+    code: |
+      error UNI0001: The union declaration is not partial
+      error UNI0004: Duplicate case type
+      error UNI0005: A case type is less accessible than the union
+    language: plaintext
+    outcome: >-
+      Every error blocks its union's output rather than emitting a partial shape,
+      and the package ships code fixes for the common declarations — add `partial`
+      (`UNI0001`), widen an inaccessible case type (`UNI0005`), add `[Union]` on the
+      fallback path (`UNI0007`).
+    evidence: >-
+      `UNI0015` (a single-case union) is the only warning; every other `UNI` rule
+      blocks emission, so a malformed union fails the build instead of producing
+      half a type.
+    docsPage: diagnostics

@@ -12,7 +12,13 @@ import { loadProjects } from '../../src/lib/manifest/load';
 import { compareNuGetVersions } from '../../src/lib/nuget-version';
 import { getReleaseIndex } from '../../src/lib/releases/runtime';
 import { projectReleaseSummary } from '../../src/lib/releases/transform';
-import { listMirroredSkills } from '../../src/lib/skills';
+import {
+  listMirroredSkills,
+  skillEntryPath,
+  skillSitePath,
+  skillsInstallCommands,
+} from '../../src/lib/skills';
+import { absoluteUrl } from '../../src/lib/urls';
 
 const DIST = resolve('dist');
 
@@ -167,76 +173,124 @@ describe('built docs strip mkdocs markup', () => {
 });
 
 describe('built agent skills', () => {
+  /**
+   * The published skill set is data, not site content: `just data-sync`
+   * discovers each project's skills from its own repository at the ref its
+   * documentation follows, so an upstream skill that is added, renamed or
+   * retired is an upstream change rather than a red build. Every case below
+   * reads the mirror — the set the sync actually published — and the catalogue,
+   * and never names a skill.
+   */
+  const publishers = loadProjects()
+    .filter((project) => project.status !== 'archived')
+    .map((project) => ({ project, skills: listMirroredSkills(project.id) }))
+    .filter(({ skills }) => skills.length > 0);
+
   test('skills live with their project, and the old list page redirects', () => {
     // `/skills/` was a site-wide list out of context; each project page now owns
     // its skills, so the old URL forwards to the catalogue instead of 404ing.
     const redirect = requireBuilt('skills/index.html');
     expect(redirect).toContain('http-equiv="refresh" content="0; url=/projects/"');
     expect(redirect).toContain('name="robots" content="noindex, follow"');
+    expect(publishers.length).toBeGreaterThan(0);
+  });
 
+  test('the machine-readable index describes exactly what was mirrored', () => {
     const manifest = JSON.parse(requireBuilt('skills.json')) as {
       schema: number;
       projects: {
         id: string;
+        repository: string;
         install: { command: string; commands: { id: string; command: string }[] };
-        skills: { name: string; description: string | null; url: string }[];
+        skills: { name: string; description: string | null; directory: string; url: string }[];
       }[];
     };
     expect(manifest.schema).toBe(2);
-    const pmSkills = manifest.projects.find((project) => project.id === 'pm-skills');
-    // Compare with the mirror rather than a hard-coded count: a new skill in the
-    // repository is a data change, not a test failure. This still catches a
-    // manifest that truncates or omits the mirrored set.
-    const mirroredPmSkills = listMirroredSkills('pm-skills');
-    expect(mirroredPmSkills.length).toBeGreaterThan(0);
-    expect(pmSkills?.skills.length).toBe(mirroredPmSkills.length);
-    expect(pmSkills?.install.command).toBe('npx skills add purview-dev/pm-skills');
-    expect(pmSkills?.install.commands.map((command) => command.id)).toEqual([
-      'npm',
-      'bun',
-      'pnpm',
-      'yarn',
-    ]);
-    expect(pmSkills?.skills[0]?.url).toStartWith('https://purview.dev/skills/pm-skills/');
 
-    // A folded (`description: >-`) skill still reports its prose description.
-    const zodsharp = manifest.projects.find((project) => project.id === 'zodsharp');
-    expect(zodsharp?.skills.length).toBeGreaterThan(0);
-    expect(
-      zodsharp?.skills.every((skill) => skill.description !== null && skill.description !== '>-'),
-    ).toBe(true);
+    // No more (a project that stopped publishing skills) and no less (a
+    // truncated set): the index describes the mirror, project for project and
+    // skill for skill.
+    expect(manifest.projects.map((entry) => entry.id)).toEqual(
+      publishers.map(({ project }) => project.id),
+    );
+    for (const { project, skills } of publishers) {
+      const entry = manifest.projects.find((candidate) => candidate.id === project.id);
+      expect(entry, `${project.id} is missing from skills.json`).toBeDefined();
+      expect(entry!.repository).toBe(project.repository);
+      expect(entry!.skills.map((skill) => skill.name)).toEqual(skills.map((skill) => skill.name));
+
+      const commands = skillsInstallCommands(project.repository);
+      expect(entry!.install.command).toBe(commands[0]!.command);
+      expect(entry!.install.commands.map((command) => command.id)).toEqual(
+        commands.map((command) => command.id),
+      );
+
+      for (const skill of entry!.skills) {
+        expect(skill.directory).toBe(absoluteUrl(skillSitePath(project.id, skill.name)));
+        expect(skill.url).toBe(absoluteUrl(skillEntryPath(project.id, skill.name)));
+        // The description is the skill's own `description:` front matter, which
+        // the CLI requires — and a folded (`description: >-`) one must reach the
+        // index as its prose, never as the raw marker.
+        expect(skill.description, `${project.id}/${skill.name} has no description`).toBeTruthy();
+        expect(skill.description).not.toBe('>-');
+      }
+    }
   });
 
-  test('every declared skill is served from purview.dev', () => {
-    expect(requireBuilt('skills/pm-skills/pm-park/SKILL.md')).toContain('pm-park');
-    expect(requireBuilt('skills/results/purview-results-core/SKILL.md')).toContain(
-      'purview-results-core',
-    );
+  test('every mirrored skill is served from purview.dev', () => {
+    // The build copies `public/skills/**` verbatim, so this asserts the mirror
+    // and the build agree: every skill the sync published — and every file
+    // inside it, templates included — answers at its stable URL.
+    let served = 0;
+    for (const { project, skills } of publishers) {
+      for (const skill of skills) {
+        const entry = requireBuilt(`skills/${project.id}/${skill.name}/SKILL.md`);
+        expect(entry, `${project.id}/${skill.name} does not name itself`).toContain(skill.name);
+        for (const file of skill.files) {
+          expect(
+            existsSync(resolve(DIST, 'skills', project.id, skill.name, file.path)),
+            `${project.id}/${skill.name}/${file.path} is not served`,
+          ).toBe(true);
+        }
+        served += skill.files.length;
+      }
+    }
+    // Guard against the loop silently doing nothing if the mirror disappears.
+    expect(served).toBeGreaterThan(0);
   });
 
   test('the project page lists its skills with descriptions', () => {
-    const page = requireBuilt('projects/results/index.html');
+    // `results` publishes a documentation tree and skills together, so its page
+    // is the one that renders them; the names come from the mirror.
+    const publisher = publishers.find(({ project }) => project.id === 'results');
+    expect(publisher).toBeDefined();
+    const page = requireBuilt(`projects/${publisher!.project.id}/index.html`);
     expect(page).toContain('id="agent-skills"');
-    expect(page).toContain('purview-results-core');
-    // The description comes from the skill's own front matter.
-    expect(page).toMatch(/purview-results-core[\s\S]{0,400}text-muted/);
+    // Every listed name is followed by its own description, which is the same
+    // text the front matter carries.
+    const section = page.slice(page.indexOf('id="agent-skills"'));
+    for (const skill of publisher!.skills) {
+      const at = section.indexOf(skill.name);
+      expect(at, `${skill.name} is not listed on the page`).toBeGreaterThan(-1);
+      expect(section.slice(at, at + 400), `${skill.name} has no description`).toContain(
+        'text-muted',
+      );
+    }
   });
 
   test('every package manager is shown as copyable Expressive Code', () => {
-    const page = requireBuilt('projects/results/index.html');
-    for (const command of [
-      'npx skills add purview-dev/results',
-      'bunx skills add purview-dev/results',
-      'pnpm dlx skills add purview-dev/results',
-      'yarn dlx skills add purview-dev/results',
-    ]) {
+    const publisher = publishers.find(({ project }) => project.id === 'results');
+    expect(publisher).toBeDefined();
+    const page = requireBuilt(`projects/${publisher!.project.id}/index.html`);
+    const commands = skillsInstallCommands(publisher!.project.repository);
+    expect(commands.length).toBeGreaterThan(1);
+    for (const { command } of commands) {
       expect(page).toContain(command);
+      // Expressive Code renders a copy button per command, so the reader pastes
+      // instead of retyping. `data-code` is the exact text it copies.
+      expect(page).toContain(`data-code="${command}"`);
     }
-    // Expressive Code renders a copy button per command, so the reader pastes
-    // instead of retyping. `data-code` is the exact text it copies.
     expect(page).toContain('title="Copy to clipboard"');
-    expect(page).toContain('data-code="bunx skills add purview-dev/results"');
-    expect(page).toContain('data-code="pnpm dlx skills add purview-dev/results"');
   });
 });
 

@@ -1,17 +1,43 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
 import MermaidDiagram from '~/components/MermaidDiagram.astro';
+import StatusBadge from '~/components/StatusBadge.astro';
 import { loadProjects } from '~/lib/manifest/load';
 import { SITE } from '~/lib/site';
+import { displayStatus } from '~/lib/status';
 import { withBase } from '~/lib/urls';
 
 const projects = loadProjects();
 const active = projects.filter((project) => project.status !== 'archived');
+
+// The person behind Purview. Kept in one place so the page, the aside card and
+// the Person structured data never disagree about where to find me.
+const AUTHOR = {
+  name: 'Kieron Lanning',
+  role: 'Software engineer and application architect',
+  homepage: 'https://kieronlanning.dev/',
+  github: 'https://github.com/kieronlanning',
+  linkedin: 'https://www.linkedin.com/in/kieronlanning',
+  bluesky: 'https://bsky.app/profile/kieronlanning.dev',
+} as const;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: AUTHOR.name,
+  jobTitle: AUTHOR.role,
+  url: AUTHOR.homepage,
+  description: `Creator of ${SITE.orgName} — open-source .NET developer tooling.`,
+  worksFor: { '@type': 'Organization', name: SITE.orgName, url: SITE.url },
+  knowsAbout: active.map((project) => project.name),
+  sameAs: [AUTHOR.homepage, AUTHOR.github, AUTHOR.linkedin, AUTHOR.bluesky],
+};
 ---
 
 <SiteLayout
   title={`About — ${SITE.fullName}`}
   description="About Purview Development, the ideas and principles behind the Purview-Dev .NET developer tooling family."
+  structuredData={structuredData}
 >
   <div class="pv-container py-12 md:py-16">
     <div class="max-w-3xl">
@@ -25,6 +51,14 @@ const active = projects.filter((project) => project.status !== 'archived');
         {SITE.tagline} Purview is where I build open-source tools focused on improving the .NET developer
         experience — removing repetitive work, catching problems earlier, and automating the things that
         shouldn't need continual attention.
+      </p>
+
+      <p class="mt-4 leading-relaxed text-muted">
+        Purview is created and maintained by <strong class="font-medium text-default">{AUTHOR.name}</strong>,
+        who writes about developer experience and application architecture at{' '}
+        <a href={AUTHOR.homepage} class="pv-link" rel="noopener noreferrer" target="_blank">
+          kieronlanning.dev
+        </a>.
       </p>
     </div>
 
@@ -185,9 +219,64 @@ const active = projects.filter((project) => project.status !== 'archived');
             projects that originally inspired them.
           </p>
         </section>
+
+        <section class="pv-measure">
+          <h2 class="text-xl font-semibold">Projects I build</h2>
+
+          <p class="mt-4 leading-relaxed text-muted">
+            Purview currently spans {active.length} active projects. Each one below links to its project
+            page, where you will find the documentation, use cases, packages and install instructions.
+          </p>
+
+          <div class="mt-6 grid gap-2 sm:grid-cols-2">
+            {
+              active.map((project) => (
+                <a
+                  href={withBase(`/projects/${project.id}/`)}
+                  class="border-border bg-surface hover:border-brand/40 flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm no-underline transition-colors"
+                >
+                  <span class="font-medium">{project.name}</span>
+                  <StatusBadge status={displayStatus(project)} />
+                </a>
+              ))
+            }
+          </div>
+        </section>
       </div>
 
       <aside class="space-y-6">
+        <div class="rounded-xl border border-border bg-surface p-5">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-muted">Author</h2>
+
+          <p class="mt-4 text-sm text-muted">
+            {AUTHOR.name} — {AUTHOR.role}. Purview-Dev is where I take the problems I keep meeting in
+            real .NET projects and turn them into focused, reusable tools.
+          </p>
+
+          <ul class="mt-4 list-none space-y-2 text-sm">
+            <li>
+              <a href={AUTHOR.homepage} class="pv-link" rel="noopener noreferrer" target="_blank">
+                kieronlanning.dev
+              </a>
+            </li>
+            <li>
+              <a href={AUTHOR.github} class="pv-link" rel="noopener noreferrer" target="_blank">
+                GitHub
+              </a>
+            </li>
+            <li>
+              <a href={AUTHOR.linkedin} class="pv-link" rel="noopener noreferrer" target="_blank">
+                LinkedIn
+              </a>
+            </li>
+            <li>
+              <a href={AUTHOR.bluesky} class="pv-link" rel="noopener noreferrer" target="_blank">
+                Bluesky
+              </a>
+            </li>
+          </ul>
+        </div>
+
         <div class="rounded-xl border border-border bg-surface p-5">
           <h2 class="text-sm font-semibold uppercase tracking-wider text-muted">Organisation</h2>
 

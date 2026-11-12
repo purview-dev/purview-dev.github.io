@@ -67,6 +67,38 @@
       "updatedAt": "2026-11-02T23:13:45Z",
       "hasDiscussions": false
     },
+    "purview-dev/unions": {
+      "name": "unions",
+      "fullName": "purview-dev/unions",
+      "description": "Dependency-free C# 15 unions that do not box value-type cases - a source generator emits the non-boxing custom-union shape with typed storage, TryGetValue, exhaustive switch and UNI diagnostics, plus a hand-written Union<T1, T2>.",
+      "archived": false,
+      "homepage": "https://purview.dev/projects/unions/",
+      "topics": [
+        "boxing",
+        "c-sharp",
+        "code-generation",
+        "csharp",
+        "csharp-15",
+        "discriminated-unions",
+        "dotnet",
+        "net10",
+        "net11",
+        "nuget",
+        "performance",
+        "roslyn",
+        "source-generator",
+        "union",
+        "union-types",
+        "unions",
+        "value-types",
+        "zero-allocation"
+      ],
+      "stargazersCount": 1,
+      "openIssuesCount": 0,
+      "defaultBranch": "main",
+      "updatedAt": "2026-11-11T17:15:01Z",
+      "hasDiscussions": false
+    },
     "purview-dev/zodsharp": {
       "name": "zodsharp",
       "fullName": "purview-dev/zodsharp",
@@ -964,6 +996,17 @@
         "draft": false,
         "publishedAt": "2026-04-17T11:02:03Z",
         "htmlUrl": "https://github.com/purview-dev/event-sourcing/releases/tag/v1.0.0"
+      }
+    ],
+    "purview-dev/unions": [
+      {
+        "tagName": "v1.0.0-prerelease.1",
+        "name": "v1.0.0-prerelease.1",
+        "body": "## What's Changed\n* Net11 update by @kieronlanning in https://github.com/purview-dev/unions/pull/1\n\n## New Contributors\n* @kieronlanning made their first contribution in https://github.com/purview-dev/unions/pull/1\n\n**Full Changelog**: https://github.com/purview-dev/unions/commits/v1.0.0-prerelease.1",
+        "prerelease": true,
+        "draft": false,
+        "publishedAt": "2026-11-11T17:14:20Z",
+        "htmlUrl": "https://github.com/purview-dev/unions/releases/tag/v1.0.0-prerelease.1"
       }
     ],
     "purview-dev/zodsharp": [
@@ -3474,6 +3517,17 @@
       ],
       "targetFrameworksVersion": "2.0.0-prerelease.39"
     },
+    "Purview.Unions": {
+      "id": "Purview.Unions",
+      "versions": [
+        "1.0.0-prerelease.1"
+      ],
+      "targetFrameworks": [
+        "net10.0",
+        "net11.0"
+      ],
+      "targetFrameworksVersion": "1.0.0-prerelease.1"
+    },
     "Purview.ZodSharp": {
       "id": "Purview.ZodSharp",
       "versions": [
@@ -4467,6 +4521,7 @@
     "Purview.EventSourcing.InMemory": null,
     "Purview.EventSourcing.Validation.FluentValidation": null,
     "Purview.EventSourcing.Validation.ZodSharp": null,
+    "Purview.Unions": null,
     "Purview.ZodSharp": {
       "id": "Purview.ZodSharp",
       "version": "2.4.2",
