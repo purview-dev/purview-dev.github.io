@@ -32,7 +32,11 @@ category: developer-tooling
 status: stable
 order: 100
 docs:
-  source: readme
+  source: github-path
+  path: docs/wiki
+  rootPage: Home.md
+  exclude:
+    - _Sidebar.md
 related:
   - engineering-playbook
 acknowledgments:
