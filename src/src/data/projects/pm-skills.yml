@@ -4,13 +4,13 @@ id: pm-skills
 name: PM Skills
 shortDescription: Project-management skills that decide which feature an AI coding agent works on next.
 description: >-
-  Fourteen agent skills that give a solo developer a parking lot, challenged shaping, strategy, a
-  roadmap, a task board, and memory across sessions — installed above a development workflow skill
-  set such as Superpowers. They decide which feature is worked on; the workflow skills decide how it
-  is built. Ideas are captured in one line at any time, shaped into a brief whose ramifications are
-  challenged before they reach the roadmap, and every decision is written to a file as it is made so
-  a compacted session can resume from it. The skills write only to the configured planning directory
-  and never to specs, plans, branches, or git state.
+  Twenty-four agent skills that give a solo developer a parking lot, challenged shaping, strategy, a
+  roadmap, a task board, a risk register, and memory across sessions — installed above a development
+  workflow skill set such as Superpowers. They decide which feature is worked on; the workflow skills
+  decide how it is built. Ideas are captured in one line at any time, shaped into a brief whose
+  ramifications are challenged before they reach the roadmap, and every decision is written to a file
+  as it is made so a compacted session can resume from it. The skills write only to the configured
+  planning directory, commit only that directory, and create no branch except the item's own.
 origin: >-
   The bottleneck on a solo project driven by a coding agent was not the code but the decision about
   what to build next: ideas arrived mid-task and were lost, a half-formed feature reached the roadmap
@@ -32,7 +32,11 @@ category: developer-tooling
 status: stable
 order: 100
 docs:
-  source: readme
+  source: github-path
+  path: docs/wiki
+  rootPage: Home.md
+  exclude:
+    - _Sidebar.md
 related:
   - engineering-playbook
 acknowledgments:
@@ -52,12 +56,13 @@ useCases:
     language: plaintext
     outcome: >-
       One inbox file is written under the configured planning directory and the reply is a single
-      line, so the agent resumes the step it was on. pm-park is the only PM skill allowed to run
-      during an active workflow, so nothing else interrupts the build.
+      line, so the agent resumes the step it was on. Only capture (pm-park, pm-risk) and checkpoint
+      writes may run during an active workflow, so nothing else interrupts the build.
     evidence: >-
       pm-park writes in the main worktree rather than the current feature worktree, and its Output
       section allows exactly one line plus — only when no workflow is active — a single choice
-      question, "Shape it now, or keep it parked?".
+      question, `Shape "<title>" now, or keep it parked?`, whose recommended answer is to keep it
+      parked.
   - audience: team-lead
     title: A board and a roadmap that come from the same files
     scenario: >-
@@ -73,9 +78,9 @@ useCases:
       | Done | R-006 | Tenant model | agent | M | 2026-10-28 |
     language: markdown
     outcome: >-
-      pm-status renders the task board, a milestone roadmap, or just your own queue from the same
-      state files the agent works from, and it is read-only: asking for status never changes the
-      plan.
+      pm-board, pm-roadmap, and pm-status render the task board, the milestone roadmap, or just your
+      own queue from the same state files the agent works from, and viewing is read-only: asking for
+      the board or the status never changes the plan.
     evidence: >-
       The board's "For you" column is every Owner: user item in Next plus the open questions, and
       "Waiting" names the blocking item — the same roadmap items pm-next claims work from, so the
