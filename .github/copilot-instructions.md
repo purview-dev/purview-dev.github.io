@@ -24,6 +24,11 @@ package is `src/`.
   npm for a package with `registry: npm`). Apply the machine-applicable ones with `just fix-projects`
   (dry run; pass `--write` to edit).
 - Keep documentation where it lives (the product repository). This site aggregates it at build time.
+  Product repositories own their diagram pairs (`purview:likec4` blocks) and their page moves
+  (`_redirects.yml` in the docs root) — ADR 0013.
+- `skills/` at the root is for **product repositories** (`npx skills add purview-dev/purview-dev`);
+  `.agents/` is for work on this site. When the docs rules in `src/src/lib/docs/` change, update
+  `skills/purview-site-docs` and `skills/purview-site-assessment/scripts/assess.mjs` with them.
 - Keep the package version hydration intact (ADR 0008, ADR 0012): the build-time version renders
   first, the browser only ever raises it, and the result is stored in `localStorage` for six hours.
   Do not move any other data to the client.
@@ -51,5 +56,6 @@ package is `src/`.
   `.agents/skills/add-catalogue-project/SKILL.md` (the procedure).
 - Auditing/fixing the catalogue → `.agents/agents/catalogue-auditor.agent.md` and
   `.agents/skills/audit-catalogue-projects/SKILL.md`.
+- Assessing a product repository's integration → `skills/purview-site-assessment/SKILL.md`.
 - Any other change → `.agents/` holds the manifest reference, docs-aggregation rules, use-case
   authoring rules, repo-metadata guidance, and the validation loop.

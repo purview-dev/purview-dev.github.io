@@ -33,6 +33,7 @@ purview-dev/                  # workspace root
 ├── justfile                  # task runner (runs in the src/ package)
 ├── AGENTS.md                 # repository context and agent rules (ADR 0003)
 ├── .agents/                  # agents, skills, and prompts for catalogue/docs work
+├── skills/                   # skills product repositories install (npx skills add purview-dev/purview-dev)
 ├── docs/decisions/           # architectural decision records
 └── src/                      # the Astro site package (@purview-dev/website)
     ├── assets/branding/      # approved branding sources (never modified)
@@ -396,6 +397,21 @@ skills:
 
 `just check-projects` fails when a declared skill has no mirror, and
 `just check-generated` fails when one is missing from the build.
+
+### Skills for product repositories
+
+This repository also publishes skills, from `skills/` at its root, for agents
+working in the product repositories (ADR 0013):
+
+```shell
+npx skills add purview-dev/purview-dev
+```
+
+| Skill | Use it to |
+| --- | --- |
+| `purview-site-integration` | make a repository readable by the site, and prepare its catalogue entry |
+| `purview-site-docs` | lay out documentation hierarchically, pair LikeC4 and Mermaid diagrams, record moves in `_redirects.yml` |
+| `purview-site-assessment` | run `scripts/assess.mjs` over a checkout and get a prioritised report with fixes |
 
 ## Release data
 

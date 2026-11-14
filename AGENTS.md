@@ -164,13 +164,21 @@ Do not assume this file contains everything; consult `.agents/` while planning.
 - `.agents/skills/site-validation-loop/SKILL.md` — the checks, and how to reproduce failures.
 - `.agents/prompts/add-project.prompt.md`, `.agents/prompts/audit-projects.prompt.md`.
 
+`skills/` (repository root) is different: it holds the **consumer** skills that product repositories
+install with `npx skills add purview-dev/purview-dev` — `purview-site-integration`,
+`purview-site-docs` and `purview-site-assessment` (ADR 0013). They restate the docs-aggregation rules
+for authors; change them in the same pull request as `src/src/lib/docs/`. When onboarding or auditing a
+project, run `node skills/purview-site-assessment/scripts/assess.mjs <checkout> --catalogue
+src/src/data/projects/<id>.yml` against a clone of its repository.
+
 ## Key entry points
 
 | Concern | Location |
 | --- | --- |
 | Catalogue manifest | `src/src/data/projects/<id>.yml` (one per project) + `src/src/data/external-projects.yml` |
 | Manifest schema / loader | `src/src/lib/manifest/{schema,load}.ts` |
-| Docs aggregation | `src/src/lib/docs/aggregate.ts` (+ `frontmatter`, `links`, `sidebar`, `staleness`) |
+| Docs aggregation | `src/src/lib/docs/aggregate.ts` (+ `frontmatter`, `links`, `sidebar`, `staleness`, `diagrams`, `redirect-file`) |
+| Consumer skills for product repositories | `skills/purview-site-{integration,docs,assessment}/` |
 | Release data | `src/src/lib/releases/*`, `src/scripts/fetch-releases.ts` |
 | Mirrored project assets | `src/scripts/sync-assets.ts` (`assets:` in the manifest) |
 | Pages | `src/src/pages/{index,about,use-cases,docs,projects,releases}/` |
