@@ -106,7 +106,13 @@ prints advisory observations (which never fail the build) when a project's decla
      old→new slug in `docs.redirects`, which the build turns into redirects on **every** channel that
      publishes the tree — the default channel at `/docs/<id>/` and the prerelease one at
      `/docs/<id>/prerelease/`, each pair written only once its destination exists; a redirect never
-     shadows a real page.
+     shadows a real page. A repository may instead record its own moves in `_redirects.yml` at its
+     docs root (ADR 0013); the sync reads it per channel and the catalogue's `docs.redirects` wins on
+     a conflict. An unreadable `_redirects.yml` fails the sync — fix it upstream, never ignore it.
+   - Diagrams in product docs are **pairs** (ADR 0013): a ```` ```mermaid ```` fence for GitHub inside
+     `<!-- purview:likec4 file="…" view="…" -->` … `<!-- /purview:likec4 -->`. The sync replaces the
+     block with a ```` ```likec4 ```` fence built from the repository's `.c4` file; a missing model or
+     view keeps the Mermaid and is logged, never a failure.
    - Agent Skills a project publishes are declared in `skills:` (ADR 0010) at
      `skills/<name>/SKILL.md`; the sync mirrors the whole directory to
      `/skills/<id>/<name>/` and each project page renders the same install block

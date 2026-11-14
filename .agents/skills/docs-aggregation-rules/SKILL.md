@@ -175,13 +175,50 @@ so each page shows its title once.
   from `/llms.txt` and from the project page.
 - Staleness: a page is flagged when `lastReviewed` is older than 365 days
   (`src/src/lib/docs/staleness.ts`).
-- A ```` ```likec4 ```` fence in a mirrored page stays **source**, not a diagram:
-  the whole `docs` collection is relaxed through astroc4's `validation:
-  { collections: ['docs'] }` (`astro.config.ts`). Such a page was written for
-  another renderer, so its fence is often a partial snippet; astroc4 logs a
-  warning and leaves it as a highlighted code block instead of failing the build.
-  Pages the site authors (`src/pages/**`) are not in the collection, so they keep
-  strict validation.
+- A ```` ```likec4 ```` fence in a mirrored page is rendered when it compiles, and
+  stays **source** when it does not: the whole `docs` collection is relaxed through
+  astroc4's `validation: { collections: ['docs'] }` (`astro.config.ts`). Such a page
+  was written for another renderer, so its fence is often a partial snippet; astroc4
+  logs a warning and leaves it as a highlighted code block instead of failing the
+  build. Pages the site authors (`src/pages/**`) are not in the collection, so they
+  keep strict validation.
+
+## Diagram pairs (ADR 0013)
+
+A product page pairs a GitHub rendering with a LikeC4 view:
+
+````markdown
+<!-- purview:likec4 file="./diagrams/the-loop.c4" view="theLoop" title="The loop" -->
+```mermaid
+flowchart LR
+  resume --> next
+```
+[LikeC4 model](./diagrams/the-loop.c4)
+<!-- /purview:likec4 -->
+````
+
+`buildPage` runs `applyDiagramBlocks` (`src/lib/docs/diagrams.ts`) on the raw source before anything
+else: the `.c4` file is read from the repository at the channel's ref (resolved relative to the page,
+or `/`-rooted at the repository root), and the whole block becomes a ```` ```likec4 ```` fence holding
+the model, with `view`, `project`, `title`, `description`, `height`, `collapsible` and `defaultOpen`
+passed through. A missing model, an undeclared view or a malformed marker keeps the Mermaid and logs
+`docs <id>: <page> line <n>: …`. Markers inside code fences are ignored.
+
+## Repository redirects (`_redirects.yml`, ADR 0013)
+
+`<docs root>/_redirects.yml` (the wiki root for `source: wiki`) holds `previous: current` pairs, either
+under `redirects:` or as a bare map; each side is a slug or a Markdown path, reduced with `docSlug`.
+It is read per channel and stored as `channels[].redirects` in `src/.cache/docs/index.json`;
+`docsPageRedirects(projects, manifest)` writes each channel's pairs from that channel's base, after the
+catalogue's `docs.redirects` (which wins on a conflict). An invalid file is a `DocsValidationError`; a
+destination that is not a page, or a source that still is, is an advisory line in the sync log.
+
+## Consumer skills
+
+`skills/` at the repository root is what product repositories install
+(`npx skills add purview-dev/purview-dev`): `purview-site-integration`, `purview-site-docs` and
+`purview-site-assessment` (with `scripts/assess.mjs`). They restate these rules for authors, so a change
+to slugs, diagram pairs or redirects here changes them in the same pull request.
 
 ## Verifying
 
