@@ -1,4 +1,5 @@
 ---
+import InlineProse from '~/components/InlineProse.astro';
 import { skillEntryPath } from '~/lib/skills';
 import { withBase } from '~/lib/urls';
 
@@ -22,7 +23,9 @@ const { projectId, skills } = Astro.props;
             {skill.name}
           </a>
           {skill.description && (
-            <p class="mt-1 max-w-2xl text-sm text-muted">{skill.description}</p>
+            <p class="mt-1 max-w-2xl text-sm text-muted">
+              <InlineProse text={skill.description} />
+            </p>
           )}
         </div>
         <span class="shrink-0 text-xs text-muted">

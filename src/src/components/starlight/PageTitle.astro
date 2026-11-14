@@ -1,5 +1,6 @@
 ---
 import GitHubIcon from '~/components/GitHubIcon.astro';
+import InlineProse from '~/components/InlineProse.astro';
 import StarOnGitHub from '~/components/StarOnGitHub.astro';
 import StatusBadge from '~/components/StatusBadge.astro';
 import { readDocsManifest } from '~/lib/docs/aggregate';
@@ -104,7 +105,7 @@ const starCount =
   )
 }
 
-<h1 id="_top">{data?.title}</h1>
+<h1 id="_top"><InlineProse text={data?.title ?? ''} /></h1>
 
 {
   showChannelSwitcher && activeChannel && (

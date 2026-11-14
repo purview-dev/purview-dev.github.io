@@ -1,0 +1,14 @@
+---
+import { parseInlineCode, type ProseInline } from '~/lib/prose';
+
+interface Props {
+  /** Single-line manifest text; `code` spans render as inline code. */
+  text?: string;
+  /** Pre-parsed segments, when the caller already split a paragraph. */
+  inlines?: ProseInline[];
+}
+
+const { text = '', inlines = parseInlineCode(text) } = Astro.props;
+---
+
+{inlines.map((part) => (part.code ? <code class="pv-inline-code">{part.text}</code> : part.text))}

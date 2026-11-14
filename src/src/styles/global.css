@@ -296,6 +296,23 @@
     padding-left: 0.75rem;
   }
 
+  /* Manifest prose (`<Prose>`): paragraphs and fenced code blocks stacked with
+   * a consistent gap, and `inline code` spans that match the Markdown the
+   * fields are written in. */
+  .pv-prose > * + * {
+    margin-top: 0.75rem;
+  }
+
+  .pv-inline-code {
+    border-radius: 0.25rem;
+    background-color: var(--color-code-bg);
+    padding: 0.0625rem 0.3125rem;
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    color: var(--color-foreground);
+    overflow-wrap: anywhere;
+  }
+
   /* Chips are single-line labels: a squeezed flex row must shrink the content
    * beside a chip, never wrap the chip's own label onto a second line (which
    * made the status chip grow two lines tall next to a card title). */

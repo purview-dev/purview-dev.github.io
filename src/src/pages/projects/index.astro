@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
+import InlineProse from '~/components/InlineProse.astro';
 import ProjectCard from '~/components/ProjectCard.astro';
 import ProjectFilter from '~/components/islands/ProjectFilter.tsx';
 import StatusBadge from '~/components/StatusBadge.astro';
@@ -73,7 +74,9 @@ const statuses = ['stable', 'preview', 'experimental'];
                   <h3 class="text-lg font-semibold leading-snug">{project.name}</h3>
                   {project.status && <StatusBadge status={project.status} />}
                 </div>
-                <p class="text-sm text-muted">{project.shortDescription}</p>
+                <p class="text-sm text-muted">
+                  <InlineProse text={project.shortDescription} />
+                </p>
                 <div class="mt-auto flex flex-wrap items-center gap-2 pt-2">
                   <span class="pv-chip">{project.category}</span>
                   <span class="pv-chip">External ↗</span>
