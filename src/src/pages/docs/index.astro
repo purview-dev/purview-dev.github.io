@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
+import InlineProse from '~/components/InlineProse.astro';
 import { LLMS_LINK_ATTRS } from '~/lib/llms';
 import { loadProjects } from '~/lib/manifest/load';
 import { defaultDocsChannel, readDocsManifest } from '~/lib/docs/aggregate';
@@ -57,7 +58,9 @@ const pageCount = docsManifest?.projects.reduce(
               class="pv-card pv-card-interactive flex flex-col gap-3 p-5 no-underline"
             >
               <h2 class="text-lg font-semibold leading-snug">{project.name}</h2>
-              <p class="text-sm text-muted">{project.shortDescription}</p>
+              <p class="text-sm text-muted">
+                <InlineProse text={project.shortDescription} />
+              </p>
               {
                 tags.length > 0 && (
                   <div class="flex flex-wrap gap-1.5">

@@ -64,7 +64,7 @@ Adding a value to any of these lists is a schema change and requires an ADR. `ex
 
 | `source` | Fields | Behaviour |
 | --- | --- | --- |
-| `github-path` | `path` (required), plus `rootPage`, `readmeAsIndex`, `order`, `exclude`, `channels` | Walks `<path>/**/*.md` at each channel's ref (default branch when no `channels`) |
+| `github-path` | `path` (required), plus `rootPage`, `readmeAsIndex`, `order`, `exclude`, `channels`, `redirects` | Walks `<path>/**/*.md` at each channel's ref (default branch when no `channels`) |
 | `wiki` | `rootPage`, `readmeAsIndex`, `order`, `exclude` | Shallow-clones `<repo>.wiki.git`; `_Sidebar.md` orders pages, `_Footer.md` is skipped. Single channel only |
 | `readme` | none | Publishes `README.md` alone as `/docs/<id>/`. Single channel only |
 
@@ -80,6 +80,9 @@ Adding a value to any of these lists is a schema change and requires an ADR. `ex
 - `readmeAsIndex` uses the repository `README.md` as the landing page and cannot be combined with
   `rootPage`; it aliases `readme` to `index`.
 - `order` is an explicit list of page slugs, applied before the `_Sidebar.md` order.
+- `redirects` maps moved slugs (`previous: current`) to keep old URLs alive on every channel that
+  publishes the tree. Prefer the repository's own `_redirects.yml` in its docs root (ADR 0013), which
+  lands with the move and is read per channel; the catalogue's pairs win when both name a slug.
 - If `docs` is set but the aggregation yields no pages, `just data-sync` fails loudly.
 
 ## `docs.channels` — live and prerelease documentation (ADR 0009)

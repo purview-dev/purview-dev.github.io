@@ -172,6 +172,30 @@ describe('built docs strip mkdocs markup', () => {
   });
 });
 
+describe('built docs titles', () => {
+  // The aggregated Markdown's own `# Title` used to stay in the body under the
+  // page header that renders the same title, so every page showed it twice.
+  test('every aggregated page has exactly one h1', () => {
+    const offenders: string[] = [];
+    for (const project of readDocsManifest()?.projects ?? []) {
+      for (const channel of project.channels) {
+        const base = channel.default
+          ? ['docs', project.projectId]
+          : ['docs', project.projectId, channel.id];
+        for (const page of channel.pages) {
+          const slug = page.slug === 'index' ? '' : page.slug.replace(/\/index$/, '');
+          const file = [...base, slug, 'index.html'].filter(Boolean).join('/');
+          const count = (requireBuilt(file).match(/<h1[\s>]/g) ?? []).length;
+          if (count !== 1) {
+            offenders.push(`${file} (${count})`);
+          }
+        }
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+});
+
 describe('built agent skills', () => {
   /**
    * The published skill set is data, not site content: `just data-sync`

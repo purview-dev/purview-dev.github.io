@@ -106,7 +106,13 @@ prints advisory observations (which never fail the build) when a project's decla
      old→new slug in `docs.redirects`, which the build turns into redirects on **every** channel that
      publishes the tree — the default channel at `/docs/<id>/` and the prerelease one at
      `/docs/<id>/prerelease/`, each pair written only once its destination exists; a redirect never
-     shadows a real page.
+     shadows a real page. A repository may instead record its own moves in `_redirects.yml` at its
+     docs root (ADR 0013); the sync reads it per channel and the catalogue's `docs.redirects` wins on
+     a conflict. An unreadable `_redirects.yml` fails the sync — fix it upstream, never ignore it.
+   - Diagrams in product docs are **pairs** (ADR 0013): a ```` ```mermaid ```` fence for GitHub inside
+     `<!-- purview:likec4 file="…" view="…" -->` … `<!-- /purview:likec4 -->`. The sync replaces the
+     block with a ```` ```likec4 ```` fence built from the repository's `.c4` file; a missing model or
+     view keeps the Mermaid and is logged, never a failure.
    - Agent Skills a project publishes are declared in `skills:` (ADR 0010) at
      `skills/<name>/SKILL.md`; the sync mirrors the whole directory to
      `/skills/<id>/<name>/` and each project page renders the same install block
@@ -158,16 +164,25 @@ Do not assume this file contains everything; consult `.agents/` while planning.
 - `.agents/skills/site-validation-loop/SKILL.md` — the checks, and how to reproduce failures.
 - `.agents/prompts/add-project.prompt.md`, `.agents/prompts/audit-projects.prompt.md`.
 
+`skills/` (repository root) is different: it holds the **consumer** skills that product repositories
+install with `npx skills add purview-dev/purview-dev` — `purview-site-integration`,
+`purview-site-docs` and `purview-site-assessment` (ADR 0013). They restate the docs-aggregation rules
+for authors; change them in the same pull request as `src/src/lib/docs/`. When onboarding or auditing a
+project, run `node skills/purview-site-assessment/scripts/assess.mjs <checkout> --catalogue
+src/src/data/projects/<id>.yml` against a clone of its repository.
+
 ## Key entry points
 
 | Concern | Location |
 | --- | --- |
 | Catalogue manifest | `src/src/data/projects/<id>.yml` (one per project) + `src/src/data/external-projects.yml` |
 | Manifest schema / loader | `src/src/lib/manifest/{schema,load}.ts` |
-| Docs aggregation | `src/src/lib/docs/aggregate.ts` (+ `frontmatter`, `links`, `sidebar`, `staleness`) |
+| Docs aggregation | `src/src/lib/docs/aggregate.ts` (+ `frontmatter`, `links`, `sidebar`, `staleness`, `diagrams`, `redirect-file`) |
+| Consumer skills for product repositories | `skills/purview-site-{integration,docs,assessment}/` |
 | Release data | `src/src/lib/releases/*`, `src/scripts/fetch-releases.ts` |
 | Mirrored project assets | `src/scripts/sync-assets.ts` (`assets:` in the manifest) |
 | Pages | `src/src/pages/{index,about,use-cases,docs,projects,releases}/` |
 | Live examples | `src/src/pages/examples/<project-id>.mdx` (linked from the project page automatically) |
 | Validation | `justfile`, `src/scripts/{check-links,check-generated,check-assets,check-projects}.ts` |
+| Upstream-triggered rebuilds | `.github/workflows/upstream-refresh.yml`, `src/scripts/upstream-state.ts`, `src/src/lib/upstream.ts` (ADR 0014) |
 | Architecture decisions | `docs/decisions/*.md` |

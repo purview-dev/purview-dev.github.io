@@ -28,7 +28,8 @@
     "refresh:fixtures": "bun run scripts/refresh-fixtures.ts",
     "test": "bun test tests/unit",
     "test:dist": "bun test tests/dist",
-    "typecheck": "astro check"
+    "typecheck": "astro check",
+    "upstream:state": "bun run scripts/upstream-state.ts"
   },
   "dependencies": {
     "@astrojs/markdown-satteri": "0.4.9",

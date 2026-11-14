@@ -14,6 +14,7 @@ import { metaDescription } from '../seo';
 import { OWNER } from '../site';
 import { convertGithubAlerts } from './alerts';
 import { channelLayout, releaseDateForRef, resolveDocChannels } from './channels';
+import { applyDiagramBlocks, diagramModelPaths } from './diagrams';
 import {
   extractDescription,
   extractTitle,
@@ -28,6 +29,7 @@ import {
   resolveDoclinks,
 } from './links';
 import { stripMkdocsMarkup } from './mkdocs';
+import { parseRedirectFile, REDIRECTS_FILE } from './redirect-file';
 
 export const DOCS_OUTPUT_DIR = resolve('src/content/docs');
 export const DOCS_CACHE_DIR = resolve('.cache/docs');
@@ -71,6 +73,8 @@ export interface AggregatedChannel {
   label: string;
   default: boolean;
   pages: AggregatedPage[];
+  /** Moves the repository recorded in its docs root `_redirects.yml` at this channel's ref (ADR 0013). */
+  redirects?: Record<string, string>;
 }
 
 export interface AggregatedProjectDocs {
@@ -94,6 +98,8 @@ export interface DocsManifestChannel {
   label: string;
   default: boolean;
   pages: DocsManifestPage[];
+  /** `previous: current` slugs from the repository's `_redirects.yml`; absent when it has none. */
+  redirects?: Record<string, string>;
 }
 
 export interface DocsManifestProject {
@@ -231,6 +237,15 @@ export async function fetchRawFile(
   return { path, content, lastModified };
 }
 
+/** A repository file's text at a ref, or null when it cannot be read. No commit date is looked up. */
+async function fetchRawText(repository: string, ref: string, path: string): Promise<string | null> {
+  const response = await fetch(`https://raw.githubusercontent.com/${repository}/${ref}/${path}`);
+  return response.ok ? response.text() : null;
+}
+
+/** Reads a repository file for the page being built (a diagram's `.c4` model, ADR 0013). */
+type SourceFileReader = (path: string) => Promise<string | null>;
+
 export async function listRepositoryFiles(repository: string, branch: string): Promise<string[]> {
   const tree = (await githubJson(`/repos/${repository}/git/trees/${branch}?recursive=1`)) as {
     tree?: { path?: string }[];
@@ -240,7 +255,7 @@ export async function listRepositoryFiles(repository: string, branch: string): P
 
 async function cloneWiki(
   repository: string,
-): Promise<{ files: Map<string, string>; snapshot: string }> {
+): Promise<{ files: Map<string, string>; assets: Map<string, string>; snapshot: string }> {
   const target = resolve(tmpdir(), `purview-wiki-${repository.replace('/', '-')}`);
   rmSync(target, { recursive: true, force: true });
   const process = Bun.spawnSync([
@@ -255,16 +270,29 @@ async function cloneWiki(
     throw new Error(`Failed to clone wiki for ${repository}: ${process.stderr.toString()}`);
   }
   const files = new Map<string, string>();
-  for (const entry of readdirSync(target, { withFileTypes: true })) {
-    if (!entry.isFile() || !entry.name.endsWith('.md')) {
+  const assets = new Map<string, string>();
+  for (const entry of readdirSync(target, { withFileTypes: true, recursive: true })) {
+    if (!entry.isFile()) {
       continue;
     }
-    files.set(entry.name, readFileSync(join(target, entry.name), 'utf8'));
+    const path = join(entry.parentPath, entry.name)
+      .slice(target.length + 1)
+      .replace(/\\/g, '/');
+    if (path.startsWith('.git/')) {
+      continue;
+    }
+    // Pages are the top-level Markdown files, as a wiki publishes them. Diagram
+    // models and the redirects file are read for those pages (ADR 0013).
+    if (!path.includes('/') && path.endsWith('.md')) {
+      files.set(path, readFileSync(join(target, path), 'utf8'));
+    } else if (path.endsWith('.c4') || path === REDIRECTS_FILE) {
+      assets.set(path, readFileSync(join(target, path), 'utf8'));
+    }
   }
   const headDate = Bun.spawnSync(['git', '-C', target, 'log', '-1', '--format=%cs']);
   const snapshot = headDate.stdout.toString().trim() || new Date().toISOString().slice(0, 10);
   rmSync(target, { recursive: true, force: true });
-  return { files, snapshot };
+  return { files, assets, snapshot };
 }
 
 function parseWikiSidebar(sidebar: string | undefined): string[] {
@@ -448,6 +476,7 @@ async function buildPage(
   order: number,
   knownSlugs: Set<string>,
   headingSlugs: Map<string, Set<string>>,
+  readSourceFile: SourceFileReader,
   slugAliases?: Map<string, string>,
 ): Promise<AggregatedPage> {
   // A slug becomes the published URL, so it must survive as an address verbatim. A folder or file name that reduces
@@ -485,10 +514,21 @@ async function buildPage(
     slugAliases,
   };
 
+  // A diagram pair is Mermaid on GitHub and LikeC4 here (ADR 0013): swap each
+  // marked block for its model before any other transform reads the page.
+  const models = new Map<string, string | null>();
+  for (const path of diagramModelPaths(raw.content, raw.path)) {
+    models.set(path, await readSourceFile(path));
+  }
+  const diagrams = applyDiagramBlocks(raw.content, raw.path, models);
+  for (const warning of diagrams.warnings) {
+    console.warn(`  docs ${project.id}: ${warning}`);
+  }
+
   // Strip mkdocs-only markup (Material attr_list buttons, TechDocs/Jinja
   // macros, admonitions) before anything else reads the source, so the title,
   // description, and rendered body all agree.
-  const cleaned = stripMkdocsMarkup(raw.content);
+  const cleaned = stripMkdocsMarkup(diagrams.markdown);
   const converted = convertGithubAlerts(cleaned);
   const rewritten = rewriteDocMarkdown(converted, linkContext);
   const content = normalizeDocumentHeadings(resolveDoclinks(rewritten, slug));
@@ -545,13 +585,51 @@ async function buildPage(
   };
 }
 
+/** One channel's pages and the moves its repository recorded for them. */
+interface CollectedChannel {
+  pages: AggregatedPage[];
+  redirects?: Record<string, string>;
+}
+
+/**
+ * Read a docs root `_redirects.yml` (ADR 0013). A file that cannot be used fails
+ * the sync like any other invalid documentation path: a reorganised tree whose
+ * redirects silently vanished would 404 every bookmark it was meant to keep.
+ */
+function readRedirectFile(
+  project: ResolvedProject,
+  channel: ResolvedDocChannel,
+  path: string,
+  source: string | null | undefined,
+): Record<string, string> | undefined {
+  if (source === null || source === undefined) {
+    return undefined;
+  }
+  const { redirects, errors } = parseRedirectFile(source);
+  if (errors.length > 0) {
+    throw new DocsValidationError(
+      [
+        `Invalid redirects file in ${project.id} (${channel.ref})`,
+        ...errors.map((error) => `  ${path}: ${error}`),
+        '',
+        'Remediation: make the file a map of `previous: current` page slugs (or Markdown paths from the docs root),',
+        'for example `getting-started: guide/getting-started`.',
+      ].join('\n'),
+    );
+  }
+  return Object.keys(redirects).length > 0 ? redirects : undefined;
+}
+
 async function collectGithubPathChannel(
   project: ResolvedProject,
   channel: ResolvedDocChannel,
   layout: ChannelLayout,
-): Promise<AggregatedPage[]> {
+): Promise<CollectedChannel> {
   const ref = channel.ref;
   const files = await listRepositoryFiles(project.repository, ref);
+  const tree = new Set(files);
+  const readSourceFile: SourceFileReader = (path) =>
+    tree.has(path) ? fetchRawText(project.repository, ref, path) : Promise.resolve(null);
   // The tree is already in hand, so noticing a repository site configuration
   // costs nothing — and it is reported, never enforced.
   warnLegacySiteConfig(project.id, files);
@@ -650,6 +728,7 @@ async function collectGithubPathChannel(
       -1,
       knownSlugs,
       headingSlugs,
+      readSourceFile,
       selectedRoot.slugAliases,
     ),
   );
@@ -672,21 +751,27 @@ async function collectGithubPathChannel(
         order,
         knownSlugs,
         headingSlugs,
+        readSourceFile,
         selectedRoot.slugAliases,
       ),
     );
   }
 
   pages.sort((a, b) => a.order - b.order);
-  return pages;
+  const redirectsPath = `${docRoot}/${REDIRECTS_FILE}`;
+  const redirects = tree.has(redirectsPath)
+    ? readRedirectFile(project, channel, redirectsPath, await readSourceFile(redirectsPath))
+    : undefined;
+  return { pages, redirects };
 }
 
 async function collectWikiChannel(
   project: ResolvedProject,
   channel: ResolvedDocChannel,
   layout: ChannelLayout,
-): Promise<AggregatedPage[]> {
-  const { files, snapshot } = await cloneWiki(project.repository);
+): Promise<CollectedChannel> {
+  const { files, assets, snapshot } = await cloneWiki(project.repository);
+  const readSourceFile: SourceFileReader = (path) => Promise.resolve(assets.get(path) ?? null);
   const sidebarOrder = parseWikiSidebar(files.get('_Sidebar.md'));
   const candidates: { name: string; content: string }[] = [];
 
@@ -734,6 +819,7 @@ async function collectWikiChannel(
       -1,
       knownSlugs,
       headingSlugs,
+      readSourceFile,
       selectedRoot.slugAliases,
     ),
   );
@@ -751,46 +837,55 @@ async function collectWikiChannel(
         order,
         knownSlugs,
         headingSlugs,
+        readSourceFile,
         selectedRoot.slugAliases,
       ),
     );
   }
 
   pages.sort((a, b) => a.order - b.order);
-  return pages;
+  const redirects = readRedirectFile(project, channel, REDIRECTS_FILE, assets.get(REDIRECTS_FILE));
+  return { pages, redirects };
 }
 
 async function collectReadmeChannel(
   project: ResolvedProject,
   channel: ResolvedDocChannel,
-): Promise<AggregatedPage[]> {
+): Promise<CollectedChannel> {
   const readme = await fetchRawFile(project.repository, channel.ref, 'README.md');
   if (!readme) {
-    return [];
+    return { pages: [] };
   }
-  return [
-    await buildPage(
-      project,
-      channel,
-      '',
-      'index',
-      readme,
-      '',
-      -1,
-      new Set(['index']),
-      new Map([['index', extractHeadingSlugs(stripMkdocsMarkup(readme.content))]]),
-    ),
-  ];
+  // A README is one page, so it has nothing to redirect, but it can still pair a
+  // diagram with a model elsewhere in the repository.
+  const readSourceFile: SourceFileReader = (path) =>
+    fetchRawText(project.repository, channel.ref, path);
+  return {
+    pages: [
+      await buildPage(
+        project,
+        channel,
+        '',
+        'index',
+        readme,
+        '',
+        -1,
+        new Set(['index']),
+        new Map([['index', extractHeadingSlugs(stripMkdocsMarkup(readme.content))]]),
+        readSourceFile,
+      ),
+    ],
+  };
 }
 
 /** Collect one channel's pages for a project, whatever its documentation source. */
 async function collectChannelPages(
   project: ResolvedProject,
   channel: ResolvedDocChannel,
-): Promise<AggregatedPage[]> {
+): Promise<CollectedChannel> {
   const layout = channelLayout(project, channel);
   if (!layout) {
-    return [];
+    return { pages: [] };
   }
   switch (project.docs?.source) {
     case 'github-path':
@@ -800,8 +895,30 @@ async function collectChannelPages(
     case 'readme':
       return collectReadmeChannel(project, channel);
     default:
-      return [];
+      return { pages: [] };
   }
+}
+
+/**
+ * Advisories for a channel's `_redirects.yml`: a move whose destination is not
+ * a page here, or whose source is still a page (the build never shadows a real
+ * page, so that pair is inert until the old page goes).
+ */
+export function redirectFileWarnings(
+  redirects: Record<string, string> | undefined,
+  pageSlugs: ReadonlySet<string>,
+): string[] {
+  const warnings: string[] = [];
+  for (const [from, to] of Object.entries(redirects ?? {})) {
+    if (!pageSlugs.has(to)) {
+      warnings.push(`${REDIRECTS_FILE}: "${from}" points at "${to}", which is not a page.`);
+    } else if (pageSlugs.has(from)) {
+      warnings.push(
+        `${REDIRECTS_FILE}: "${from}" is still a page, so its redirect is not written.`,
+      );
+    }
+  }
+  return warnings;
 }
 
 /**
@@ -826,14 +943,18 @@ export async function aggregateDocs(projects: ResolvedProject[]): Promise<Aggreg
 
       const aggregatedChannels: AggregatedChannel[] = [];
       for (const channel of channels) {
-        const pages = await collectChannelPages(project, channel);
+        const { pages, redirects } = await collectChannelPages(project, channel);
         if (pages.length === 0 && !channel.default) {
           console.warn(
             `  docs ${project.id}: "${channel.id}" (${channel.ref}) produced no pages; the channel was skipped.`,
           );
           continue;
         }
-        aggregatedChannels.push({ ...channel, pages });
+        const slugs = new Set(pages.map((page) => page.slug));
+        for (const warning of redirectFileWarnings(redirects, slugs)) {
+          console.warn(`  docs ${project.id} (${channel.id}): ${warning}`);
+        }
+        aggregatedChannels.push({ ...channel, pages, ...(redirects ? { redirects } : {}) });
       }
 
       // A channel id is a URL segment, so a page may not shadow one.
@@ -918,6 +1039,8 @@ export function writeDocs(
           sourcePath: page.sourcePath,
           hash: page.hash,
         })),
+        // Absent when the repository has no `_redirects.yml`; JSON drops an undefined key.
+        redirects: channel.redirects,
       })),
     });
   }

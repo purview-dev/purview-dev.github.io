@@ -57,6 +57,10 @@ Related: `project-manifest-reference` (fields and vocabularies), `docs-aggregati
 - The aggregated page count is non-zero and the landing page is the page a reader should land on.
 - Archived projects that still declare `docs` are intentional (they are excluded from the portal).
 - Documentation is not duplicated here: this repository only holds the mirror.
+- Pages moved in the repository's history have a redirect — in its `_redirects.yml` or the entry's
+  `docs.redirects` (ADR 0013). Diagrams are LikeC4/Mermaid pairs, not ASCII art or Mermaid in a
+  `text` fence. The consumer assessment script reports both against a clone (below); file the
+  repository-side fixes as `upstream` items, since they belong in the product repository.
 
 ### Stability
 
@@ -111,6 +115,10 @@ gh api repos/purview-dev/<repo> --jq '{description, topics, archived, default_br
 gh api "repos/purview-dev/<repo>/git/trees/main?recursive=1" --jq '[.tree[].path | select(endswith(".md"))]'
 gh api "repos/purview-dev/<repo>/releases?per_page=10" --jq '.[] | {tag_name, prerelease}'
 curl.exe -s "https://api.nuget.org/v3-flatcontainer/<packageid>/index.json"
+
+# Repository-side integration (docs layout, diagrams, redirects, skills) against a fresh clone
+git clone --depth 300 https://github.com/purview-dev/<repo>.git <scratch>/<repo>
+node skills/purview-site-assessment/scripts/assess.mjs <scratch>/<repo> --catalogue src/src/data/projects/<id>.yml
 
 # Aggregated result
 node -e "const m=require('./src/.cache/docs/index.json');for(const p of m.projects)console.log(p.projectId,p.pages.length)"

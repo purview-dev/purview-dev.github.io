@@ -1,6 +1,8 @@
 ---
 import SiteLayout from '~/layouts/SiteLayout.astro';
 import GitHubIcon from '~/components/GitHubIcon.astro';
+import InlineProse from '~/components/InlineProse.astro';
+import Prose from '~/components/Prose.astro';
 import SkillInstall from '~/components/SkillInstall.astro';
 import SkillList from '~/components/SkillList.astro';
 import InstallPanel from '~/components/islands/InstallPanel.tsx';
@@ -212,7 +214,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
         <h1 class="text-3xl font-bold tracking-tight md:text-4xl">{project.name}</h1>
         <StatusBadge status={status} />
       </div>
-      <p class="mt-4 text-lg text-muted">{project.shortDescription}</p>
+      <p class="mt-4 text-lg text-muted"><InlineProse text={project.shortDescription} /></p>
 
       {
         tags.length > 0 && (
@@ -419,7 +421,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
       <div class="min-w-0 space-y-12">
         <section class="pv-measure">
           <h2 class="text-xl font-semibold">The problem</h2>
-          <p class="mt-4 leading-relaxed text-muted">{project.description}</p>
+          <Prose text={project.description} class="mt-4 leading-relaxed text-muted" />
           {
             supplementalRepoDescription && (
               <blockquote class="mt-6 border-l-2 border-brand pl-4">
@@ -436,7 +438,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
 
         <section class="pv-measure">
           <h2 class="text-xl font-semibold">Why it became a project</h2>
-          <p class="mt-4 leading-relaxed text-muted">{project.origin}</p>
+          <Prose text={project.origin} class="mt-4 leading-relaxed text-muted" />
         </section>
 
         {
@@ -458,9 +460,10 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
                       {acknowledgment.name}
                     </a>
                     {acknowledgment.description && (
-                      <p class="mt-1 text-sm leading-relaxed text-muted">
-                        {acknowledgment.description}
-                      </p>
+                      <Prose
+                        text={acknowledgment.description}
+                        class="mt-1 text-sm leading-relaxed text-muted"
+                      />
                     )}
                   </li>
                 ))}
@@ -474,11 +477,11 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
           <div class="mt-4 grid gap-4 sm:grid-cols-2">
             <div class="pv-fit-panel rounded-xl p-5">
               <h3 class="pv-fit-panel-title font-semibold">Use it when</h3>
-              <p class="mt-2 text-sm leading-relaxed text-muted">{project.useWhen}</p>
+              <Prose text={project.useWhen} class="mt-2 text-sm leading-relaxed text-muted" />
             </div>
             <div class="pv-avoid-panel rounded-xl p-5">
               <h3 class="pv-avoid-panel-title font-semibold">It may not fit when</h3>
-              <p class="mt-2 text-sm leading-relaxed text-muted">{project.avoidWhen}</p>
+              <Prose text={project.avoidWhen} class="mt-2 text-sm leading-relaxed text-muted" />
             </div>
           </div>
         </section>

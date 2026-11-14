@@ -48,30 +48,38 @@ export function extractTitle(markdown: string, fileName: string): string {
     .join(' ');
 }
 
-/** Keep one document title while preserving later source headings as sections. */
+/**
+ * Remove the document title and keep later source headings as sections.
+ *
+ * The first `# ` heading is the page title: it is written to the front matter
+ * (`extractTitle`) and the page header renders it, so leaving it in the body
+ * showed every aggregated page's title twice. Any later `# ` heading is demoted
+ * to `##` so the page keeps exactly one H1.
+ */
 export function normalizeDocumentHeadings(markdown: string): string {
   let foundTitle = false;
   let fence: '```' | '~~~' | null = null;
+  const output: string[] = [];
 
-  return markdown
-    .split(/\r?\n/)
-    .map((line) => {
-      const fenceMatch = /^(\s*)(```|~~~)/.exec(line);
-      if (fenceMatch?.[2]) {
-        const marker = fenceMatch[2] as '```' | '~~~';
-        fence = fence === marker ? null : (fence ?? marker);
-        return line;
-      }
-      if (fence || !/^#\s+\S/.test(line)) {
-        return line;
-      }
-      if (!foundTitle) {
-        foundTitle = true;
-        return line;
-      }
-      return `#${line}`;
-    })
-    .join('\n');
+  for (const line of markdown.split(/\r?\n/)) {
+    const fenceMatch = /^(\s*)(```|~~~)/.exec(line);
+    if (fenceMatch?.[2]) {
+      const marker = fenceMatch[2] as '```' | '~~~';
+      fence = fence === marker ? null : (fence ?? marker);
+      output.push(line);
+      continue;
+    }
+    if (fence || !/^#\s+\S/.test(line)) {
+      output.push(line);
+      continue;
+    }
+    if (!foundTitle) {
+      foundTitle = true;
+      continue;
+    }
+    output.push(`#${line}`);
+  }
+  return output.join('\n').replace(/^\s*\n/, '');
 }
 
 const FRONTMATTER_PATTERN = /^---\s*\r?\n[\s\S]*?\r?\n---\s*(?:\r?\n|$)/;

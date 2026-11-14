@@ -114,33 +114,64 @@ export function retiredChannelRedirects(
  * URLs that change at the same moment. Whether a pair is real is decided by the
  * write guards exactly as for the default channel, so a withheld channel writes
  * nothing here (its URLs are retired-channel redirects instead).
+ *
+ * A repository may also record its own moves in `_redirects.yml` (ADR 0013).
+ * That file is read at each channel's ref, so its pairs apply to that channel's
+ * base only — the prerelease tree can move before the live one does. When the
+ * catalogue and the file both name the same old slug, the catalogue wins: it is
+ * the reviewed record on this side.
  */
-export function docsPageRedirects(projects: readonly ResolvedProject[]): DocChannelRedirect[] {
+export function docsPageRedirects(
+  projects: readonly ResolvedProject[],
+  manifest?: DocsManifest | null,
+): DocChannelRedirect[] {
   const redirects: DocChannelRedirect[] = [];
+  const seen = new Set<string>();
+  const add = (base: string, from: string, to: string) => {
+    const redirect = {
+      from: pagePath(base, from),
+      to: pagePath(base, to),
+      title: 'This documentation page moved…',
+      message: 'The page now lives at its new address.',
+    };
+    if (!seen.has(redirect.from)) {
+      seen.add(redirect.from);
+      redirects.push(redirect);
+    }
+  };
   for (const project of projects) {
-    if (project.docs?.source !== 'github-path' || project.status === 'archived') {
+    if (!project.docs || project.docs.source === 'readme' || project.status === 'archived') {
       continue;
     }
-    const moved = project.docs.redirects ?? {};
-    const bases = [`/docs/${project.id}`];
-    // `prerelease` is only a second channel when `live` is declared with it;
-    // on its own it would be the default channel and own the canonical URLs.
-    const declared = project.docs.channels;
-    if (declared?.live !== undefined && declared.prerelease !== undefined) {
-      bases.push(`/docs/${project.id}/prerelease`);
+    if (project.docs.source === 'github-path') {
+      const moved = project.docs.redirects ?? {};
+      const bases = [`/docs/${project.id}`];
+      // `prerelease` is only a second channel when `live` is declared with it;
+      // on its own it would be the default channel and own the canonical URLs.
+      const declared = project.docs.channels;
+      if (declared?.live !== undefined && declared.prerelease !== undefined) {
+        bases.push(`/docs/${project.id}/prerelease`);
+      }
+      for (const [from, to] of Object.entries(moved)) {
+        for (const base of bases) {
+          add(base, from, to);
+        }
+      }
     }
-    for (const [from, to] of Object.entries(moved)) {
-      for (const base of bases) {
-        redirects.push({
-          from: `${base}/${from}/`,
-          to: `${base}/${to}/`,
-          title: 'This documentation page moved…',
-          message: 'The page now lives at its new address.',
-        });
+    const entry = manifest?.projects.find((candidate) => candidate.projectId === project.id);
+    for (const channel of entry?.channels ?? []) {
+      const base = channel.default ? `/docs/${project.id}` : `/docs/${project.id}/${channel.id}`;
+      for (const [from, to] of Object.entries(channel.redirects ?? {})) {
+        add(base, from, to);
       }
     }
   }
   return redirects;
+}
+
+/** Site path of a page slug under a docs base; `index` is the base itself. */
+function pagePath(base: string, slug: string): string {
+  return slug === 'index' ? `${base}/` : `${base}/${slug.replace(/\/index$/, '')}/`;
 }
 
 /**
@@ -157,9 +188,10 @@ export function docsPageRedirects(projects: readonly ResolvedProject[]): DocChan
 export function writeDocsPageRedirects(
   dist: string,
   projects: readonly ResolvedProject[],
+  manifest?: DocsManifest | null,
 ): string[] {
   const written: string[] = [];
-  for (const redirect of docsPageRedirects(projects)) {
+  for (const redirect of docsPageRedirects(projects, manifest)) {
     if (!isPublished(dist, redirect.to)) {
       continue;
     }

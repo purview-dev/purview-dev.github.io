@@ -95,6 +95,10 @@ fix-projects *ARGS:
 discovery-validate:
     bun run discovery:validate
 
+# Compare the upstream repositories and packages with what the deployed site was built from (ADR 0014).
+upstream-check:
+    bun run upstream:state --compare https://purview.dev/_discovery/upstream.json
+
 # Regenerate discovery artifacts in dist/ from the current caches (no full build).
 discovery-manifest:
     bun run discovery:manifest

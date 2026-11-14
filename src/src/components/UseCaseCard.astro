@@ -1,5 +1,7 @@
 ---
 import CodeSample from '~/components/CodeSample.astro';
+import InlineProse from '~/components/InlineProse.astro';
+import Prose from '~/components/Prose.astro';
 import { AUDIENCE_LABELS, type ProjectUseCase } from '~/lib/manifest/schema';
 
 interface Props {
@@ -28,19 +30,19 @@ const docsLink =
     {showProject && <span class="pv-chip">{projectName}</span>}
   </div>
 
-  <h3 class="text-lg font-semibold leading-snug">{useCase.title}</h3>
+  <h3 class="text-lg font-semibold leading-snug"><InlineProse text={useCase.title} /></h3>
 
-  <p class="text-sm leading-relaxed text-muted">{useCase.scenario}</p>
+  <Prose text={useCase.scenario} class="text-sm leading-relaxed text-muted" />
 
   {useCase.code && <CodeSample code={useCase.code} language={useCase.language} />}
 
-  <p class="text-sm leading-relaxed text-muted">
-    <span class="font-medium text-default">What you get: </span>{useCase.outcome}
-  </p>
+  <Prose text={useCase.outcome} class="text-sm leading-relaxed text-muted">
+    <span slot="lead" class="font-medium text-default">What you get: </span>
+  </Prose>
 
   {
     useCase.evidence && (
-      <p class="pv-evidence text-sm leading-relaxed">{useCase.evidence}</p>
+      <Prose text={useCase.evidence} class="pv-evidence text-sm leading-relaxed" />
     )
   }
 

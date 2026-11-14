@@ -16,7 +16,8 @@ import { loadProjects } from '../src/lib/manifest/load';
  *
  * A project's `prerelease` channel is withheld automatically once a stable
  * release catches up with it, a project may declare the slugs a reorganisation
- * moved (`docs.redirects`), and `/skills/` moved to the project pages, so none of
+ * moved (`docs.redirects`, or its own `_redirects.yml`, ADR 0013), and `/skills/`
+ * moved to the project pages, so none of
  * those URLs may 404. purview.dev is served from GitHub Pages, which only serves
  * files, so each retired URL is written as a meta-refresh page pointing at its new
  * home.
@@ -34,8 +35,9 @@ export default function docsRedirectsIntegration(): AstroIntegration {
       'astro:build:done': ({ dir, logger }) => {
         const dist = fileURLToPath(dir);
         const projects = loadProjects();
-        const retired = writeRetiredChannelRedirects(dist, projects, readDocsManifest());
-        const moved = writeDocsPageRedirects(dist, projects);
+        const manifest = readDocsManifest();
+        const retired = writeRetiredChannelRedirects(dist, projects, manifest);
+        const moved = writeDocsPageRedirects(dist, projects, manifest);
         const relocated = writeRetiredPageRedirects(dist);
         if (retired.length + moved.length + relocated.length > 0) {
           logger.info(

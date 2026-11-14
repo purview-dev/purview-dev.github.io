@@ -1,0 +1,85 @@
+name: Refresh from upstream projects
+
+# Rebuilds and redeploys the site when a catalogue project changed upstream —
+# a commit on its default branch, a new tag, or a new package version — and
+# not otherwise (ADR 0014). The catalogue projects are only read: nothing here
+# needs a workflow, secret or setting in their repositories.
+#
+# - Nightly, the upstream state is compared with the state the deployed site
+#   recorded at build time (/_discovery/upstream.json).
+# - A `purview-site-rebuild` repository dispatch (sent by a release workflow
+#   elsewhere, see the README) starts the same check after a 15-minute settle
+#   period, so the packages that release published are indexed before the build
+#   reads them. A newer dispatch cancels a run that is still settling, so a burst
+#   of releases produces one build.
+
+on:
+  schedule:
+    - cron: "23 2 * * *"
+  repository_dispatch:
+    types: [purview-site-rebuild]
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Rebuild even when nothing changed upstream.
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  settle:
+    runs-on: ubuntu-latest
+    # Only one run may wait at a time; a newer trigger cancels the waiting one
+    # (and with it that run's check and build), so the newest event wins.
+    concurrency:
+      group: upstream-refresh-settle
+      cancel-in-progress: true
+    steps:
+      - name: Wait for upstream publishing to settle
+        if: github.event_name == 'repository_dispatch'
+        env:
+          SOURCE: ${{ github.event.client_payload.repository }}
+          VERSION: ${{ github.event.client_payload.version }}
+        run: |
+          echo "Rebuild requested by ${SOURCE:-an upstream repository} ${VERSION}; waiting 15 minutes for package publishing."
+          sleep 900
+
+  check:
+    needs: settle
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.compare.outputs.changed }}
+    steps:
+      - name: Checkout
+        # actions/checkout v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Install Bun
+        # oven-sh/setup-bun v2.2.0
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+        with:
+          bun-version: 1.4.4
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Compare upstream with the deployed build
+        id: compare
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          ORIGIN="${SITE_URL:-https://purview.dev}"
+          bun run upstream:state --compare "$ORIGIN/_discovery/upstream.json"
+
+  deploy:
+    needs: check
+    if: needs.check.outputs.changed == 'true' || inputs.force == true
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit

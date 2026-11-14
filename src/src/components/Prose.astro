@@ -1,0 +1,32 @@
+---
+import CodeSample from '~/components/CodeSample.astro';
+import InlineProse from '~/components/InlineProse.astro';
+import { parseProse } from '~/lib/prose';
+
+interface Props {
+  /** Manifest prose: paragraphs, `inline code` and fenced code blocks. */
+  text: string;
+  class?: string;
+}
+
+const { text, class: className } = Astro.props;
+const blocks = parseProse(text);
+// The optional `lead` slot (e.g. "What you get:") opens the first paragraph so
+// it reads as part of the sentence; it gets its own line if prose opens with code.
+const hasLead = Astro.slots.has('lead');
+const leadInline = hasLead && blocks[0]?.kind === 'paragraph';
+---
+
+<div class:list={['pv-prose', className]}>
+  {hasLead && !leadInline && <p><slot name="lead" /></p>}
+  {
+    blocks.map((block, index) =>
+      block.kind === 'code' ?
+        <CodeSample code={block.code} language={block.language} />
+      : <p>
+          {index === 0 && leadInline && <slot name="lead" />}
+          <InlineProse inlines={block.inlines} />
+        </p>,
+    )
+  }
+</div>

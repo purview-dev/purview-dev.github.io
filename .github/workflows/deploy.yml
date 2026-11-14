@@ -12,13 +12,20 @@ on:
         required: false
         type: string
         default: ""
+  # Called by upstream-refresh.yml when a catalogue project's repository or
+  # packages changed since the deployed build (ADR 0014). That workflow also
+  # owns the `purview-site-rebuild` repository dispatch, so a release elsewhere
+  # waits for its packages to publish before this runs.
+  workflow_call:
+    inputs:
+      pages-base:
+        required: false
+        type: string
+        default: ""
   schedule:
-    # Weekly refresh of release information from GitHub and NuGet.
+    # Weekly refresh of release information from GitHub and NuGet (download
+    # counts and other figures the nightly upstream check does not compare).
     - cron: "17 4 * * 1"
-  repository_dispatch:
-    # Fired by a release workflow in another purview-dev repository. The
-    # expected payload contract is documented in the README.
-    types: [purview-site-rebuild]
 
 permissions:
   contents: read
@@ -144,6 +151,12 @@ jobs:
         run: |
           mkdir -p src/dist/_discovery
           cp .discovery-capture/previous.json src/dist/_discovery/previous.json
+
+      - name: Record the upstream state this build was made from
+        # Published as /_discovery/upstream.json. The nightly upstream check
+        # compares the catalogue repositories and packages with it and skips the
+        # rebuild when nothing moved (ADR 0014).
+        run: bun run upstream:state --write dist/_discovery/upstream.json
 
       - name: Configure Pages
         # actions/configure-pages v6.0.0

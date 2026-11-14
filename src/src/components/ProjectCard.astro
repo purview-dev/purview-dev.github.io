@@ -1,4 +1,5 @@
 ---
+import InlineProse from '~/components/InlineProse.astro';
 import StatusBadge from '~/components/StatusBadge.astro';
 import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '~/lib/badges';
 import { projectRepoEnrichment } from '~/lib/releases/repo';
@@ -51,7 +52,7 @@ const badges =
       <h3 class="min-w-0 text-lg font-semibold leading-snug">{project.name}</h3>
       <StatusBadge status={status} class="shrink-0" />
     </div>
-    <p class="text-sm text-muted">{project.shortDescription}</p>
+    <p class="text-sm text-muted"><InlineProse text={project.shortDescription} /></p>
     <div class="mt-auto flex flex-wrap items-center gap-2 pt-2">
       <span class="pv-chip">{project.category}</span>
       {

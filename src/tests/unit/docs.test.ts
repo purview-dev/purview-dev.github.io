@@ -190,10 +190,16 @@ describe('front matter', () => {
     ).toBe('The guide starts here.');
   });
 
-  test('demotes additional top-level headings without touching fenced examples', () => {
+  test('drops the title (the page header renders it) and demotes later top-level headings', () => {
     const source = '# POC-001\n\n## Context\n\n# Outcome\n\n```md\n# Example\n```';
     expect(normalizeDocumentHeadings(source)).toBe(
-      '# POC-001\n\n## Context\n\n## Outcome\n\n```md\n# Example\n```',
+      '## Context\n\n## Outcome\n\n```md\n# Example\n```',
+    );
+  });
+
+  test('drops a title that follows a badge line, keeping the badge', () => {
+    expect(normalizeDocumentHeadings('[![badge](b.svg)](x)\n\n# Title\n\nBody.')).toBe(
+      '[![badge](b.svg)](x)\n\n\nBody.',
     );
   });
 

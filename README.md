@@ -33,6 +33,7 @@ purview-dev/                  # workspace root
 ├── justfile                  # task runner (runs in the src/ package)
 ├── AGENTS.md                 # repository context and agent rules (ADR 0003)
 ├── .agents/                  # agents, skills, and prompts for catalogue/docs work
+├── skills/                   # skills product repositories install (npx skills add purview-dev/purview-dev)
 ├── docs/decisions/           # architectural decision records
 └── src/                      # the Astro site package (@purview-dev/website)
     ├── assets/branding/      # approved branding sources (never modified)
@@ -397,6 +398,21 @@ skills:
 `just check-projects` fails when a declared skill has no mirror, and
 `just check-generated` fails when one is missing from the build.
 
+### Skills for product repositories
+
+This repository also publishes skills, from `skills/` at its root, for agents
+working in the product repositories (ADR 0013):
+
+```shell
+npx skills add purview-dev/purview-dev
+```
+
+| Skill | Use it to |
+| --- | --- |
+| `purview-site-integration` | make a repository readable by the site, and prepare its catalogue entry |
+| `purview-site-docs` | lay out documentation hierarchically, pair LikeC4 and Mermaid diagrams, record moves in `_redirects.yml` |
+| `purview-site-assessment` | run `scripts/assess.mjs` over a checkout and get a prioritised report with fixes |
+
 ## Release data
 
 Release data is fetched at build time — never from the visitor's browser.
@@ -552,15 +568,26 @@ granting that repository any secrets. In that repository's release workflow,
 call:
 
 ```shell
-gh api repos/purview-dev/purview-dev.github.io/dispatches \
+gh api repos/purview-dev/purview-dev/dispatches \
   -f event_type=purview-site-rebuild \
   -f "client_payload[repository]=purview-dev/<repo>" \
   -f "client_payload[version]=<v1.2.3>"
 ```
 
-The deploy workflow listens for `repository_dispatch` with type
-`purview-site-rebuild`. The payload is informational and is not required for
-the rebuild to succeed; the build always fetches fresh data itself.
+`upstream-refresh.yml` listens for `repository_dispatch` with type
+`purview-site-rebuild`. It waits 15 minutes so the release's packages finish
+publishing (a newer dispatch cancels a run that is still waiting, so a burst of
+releases builds once), then rebuilds only if something changed upstream. The
+payload is informational; the build always fetches fresh data itself.
+
+### Nightly upstream refresh
+
+No product repository needs the dispatch. Every night `upstream-refresh.yml`
+compares each catalogue project's default-branch head, tags and package versions
+with the state the deployed site recorded at build time
+(`/_discovery/upstream.json`), and calls `deploy.yml` only when something moved
+(ADR 0014). Run it by hand from the Actions tab (`force` rebuilds regardless), or
+locally with `just upstream-check`.
 
 The release workflow is intentionally scoped to root `package.json` changes so
 content refreshes do not get blocked by an unchanged version or an existing
