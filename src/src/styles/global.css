@@ -143,6 +143,15 @@
     *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
+    }
+
+    /* SVG content is excluded: Mermaid sets its diagram geometry and measures
+     * it in the same frame, so a non-zero transition on every SVG element makes
+     * it read the pre-transition values and lay the diagram out thousands of
+     * pixels wide, shrinking the rendered nodes to specks. */
+    :where(*:not(svg, svg *)),
+    :where(*:not(svg *))::before,
+    :where(*:not(svg *))::after {
       transition-duration: 0.01ms !important;
     }
   }
