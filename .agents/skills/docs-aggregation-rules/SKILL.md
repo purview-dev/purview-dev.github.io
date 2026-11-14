@@ -153,8 +153,9 @@ Additional transformations: GitHub alert blockquotes become Starlight asides; re
 documents are rewritten to portal URLs; **relative** images are rewritten to GitHub raw URLs while
 **absolute** image URLs pass through untouched — a registry badge such as
 `![Purview.BuildSdk](https://img.shields.io/nuget/v/Purview.BuildSdk)` keeps its own URL, so a page can
-show a live version without stating a number that rots; duplicate top-level H1s are demoted to keep one
-title per document.
+show a live version without stating a number that rots; the first top-level H1 is removed from the body
+(it becomes the front-matter `title`, which the page header renders) and any later H1 is demoted to `##`,
+so each page shows its title once.
 
 ## What the site does with it
 

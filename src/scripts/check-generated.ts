@@ -146,9 +146,16 @@ function validateMirrorPage(file: string, relativePath: string): void {
   if (!extractDescription(body)) {
     fail(`Generated Markdown has no readable prose: ${relativePath}.`);
   }
+  // The title lives in the front matter and the page header renders it; an H1
+  // left in the body is the same title shown twice.
   const { titleCount, unclosedFence } = inspectMarkdownStructure(body);
-  if (titleCount !== 1) {
-    fail(`Generated Markdown must contain exactly one H1: ${relativePath} (${titleCount}).`);
+  if (!String(frontmatter.title ?? '').trim()) {
+    fail(`Generated Markdown has no title in its front matter: ${relativePath}.`);
+  }
+  if (titleCount !== 0) {
+    fail(
+      `Generated Markdown must not repeat its title as an H1 in the body: ${relativePath} (${titleCount}).`,
+    );
   }
   if (unclosedFence) {
     fail(`Generated Markdown has an unclosed fenced block: ${relativePath}.`);
