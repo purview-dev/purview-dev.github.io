@@ -184,4 +184,5 @@ src/src/data/projects/<id>.yml` against a clone of its repository.
 | Pages | `src/src/pages/{index,about,use-cases,docs,projects,releases}/` |
 | Live examples | `src/src/pages/examples/<project-id>.mdx` (linked from the project page automatically) |
 | Validation | `justfile`, `src/scripts/{check-links,check-generated,check-assets,check-projects}.ts` |
+| Upstream-triggered rebuilds | `.github/workflows/upstream-refresh.yml`, `src/scripts/upstream-state.ts`, `src/src/lib/upstream.ts` (ADR 0014) |
 | Architecture decisions | `docs/decisions/*.md` |

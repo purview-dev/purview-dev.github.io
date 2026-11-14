@@ -32,7 +32,8 @@
     "refresh:fixtures": "bun run --cwd src refresh:fixtures",
     "test": "bun run --cwd src test",
     "test:dist": "bun run --cwd src test:dist",
-    "typecheck": "bun run --cwd src typecheck"
+    "typecheck": "bun run --cwd src typecheck",
+    "upstream:state": "bun run --cwd src upstream:state"
   },
   "engines": {
     "bun": ">=1.4.4",

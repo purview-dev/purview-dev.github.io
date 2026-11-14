@@ -568,15 +568,26 @@ granting that repository any secrets. In that repository's release workflow,
 call:
 
 ```shell
-gh api repos/purview-dev/purview-dev.github.io/dispatches \
+gh api repos/purview-dev/purview-dev/dispatches \
   -f event_type=purview-site-rebuild \
   -f "client_payload[repository]=purview-dev/<repo>" \
   -f "client_payload[version]=<v1.2.3>"
 ```
 
-The deploy workflow listens for `repository_dispatch` with type
-`purview-site-rebuild`. The payload is informational and is not required for
-the rebuild to succeed; the build always fetches fresh data itself.
+`upstream-refresh.yml` listens for `repository_dispatch` with type
+`purview-site-rebuild`. It waits 15 minutes so the release's packages finish
+publishing (a newer dispatch cancels a run that is still waiting, so a burst of
+releases builds once), then rebuilds only if something changed upstream. The
+payload is informational; the build always fetches fresh data itself.
+
+### Nightly upstream refresh
+
+No product repository needs the dispatch. Every night `upstream-refresh.yml`
+compares each catalogue project's default-branch head, tags and package versions
+with the state the deployed site recorded at build time
+(`/_discovery/upstream.json`), and calls `deploy.yml` only when something moved
+(ADR 0014). Run it by hand from the Actions tab (`force` rebuilds regardless), or
+locally with `just upstream-check`.
 
 The release workflow is intentionally scoped to root `package.json` changes so
 content refreshes do not get blocked by an unchanged version or an existing
