@@ -6,7 +6,7 @@ This repository builds the Purview-Dev public website: a fully static Astro + St
 both the project catalogue/release browser and the unified documentation portal for the Purview .NET
 product family (production URL: https://purview.dev).
 
-Two agent tasks recur here, and both have a dedicated agent plus skills under `.agents/`:
+Two agent tasks recur here, and both have a dedicated agent under `.agents/` and their skills in `skills/`:
 
 1. **Add a project** — given a `purview-dev/<repo>` (or a collaboration repository), build its
    documentation, use cases, tags and metadata so it is fully integrated into the site.
@@ -158,15 +158,15 @@ Do not assume this file contains everything; consult `.agents/` while planning.
 - `.github/copilot-instructions.md` — the condensed always-on rules for Copilot.
 - `.agents/agents/catalogue-onboarder.agent.md` — add and integrate a project end-to-end.
 - `.agents/agents/catalogue-auditor.agent.md` — audit (and repair) the whole catalogue.
-- `.agents/skills/add-catalogue-project/SKILL.md` — the ordered onboarding procedure.
-- `.agents/skills/add-project-intake/SKILL.md` — the intake interview: the questions to ask, what
+- `skills/add-catalogue-project/SKILL.md` — the ordered onboarding procedure.
+- `skills/add-project-intake/SKILL.md` — the intake interview: the questions to ask, what
   recon answers instead, and the field each answer decides.
-- `.agents/skills/audit-catalogue-projects/SKILL.md` — the audit procedure and report format.
-- `.agents/skills/project-manifest-reference/SKILL.md` — every manifest field and rule.
-- `.agents/skills/docs-aggregation-rules/SKILL.md` — how repository docs become `/docs/<id>/`.
-- `.agents/skills/use-case-authoring/SKILL.md` — concrete, audience-tagged use cases (ADR 0002).
-- `.agents/skills/github-repo-metadata/SKILL.md` — topics, descriptions, stability signals.
-- `.agents/skills/site-validation-loop/SKILL.md` — the checks, and how to reproduce failures.
+- `skills/audit-catalogue-projects/SKILL.md` — the audit procedure and report format.
+- `skills/project-manifest-reference/SKILL.md` — every manifest field and rule.
+- `skills/docs-aggregation-rules/SKILL.md` — how repository docs become `/docs/<id>/`.
+- `skills/use-case-authoring/SKILL.md` — concrete, audience-tagged use cases (ADR 0002).
+- `skills/github-repo-metadata/SKILL.md` — topics, descriptions, stability signals.
+- `skills/site-validation-loop/SKILL.md` — the checks, and how to reproduce failures.
 - `.agents/prompts/add-project.prompt.md`, `.agents/prompts/audit-projects.prompt.md`.
 
 `skills/` (repository root) is different: it holds the **consumer** skills that product repositories

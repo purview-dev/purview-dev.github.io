@@ -13,12 +13,12 @@ Scope (fill in before running):
 
 ## Instructions
 
-1. Read `.agents/skills/audit-catalogue-projects/SKILL.md` and follow its method and report format.
-2. Load `.agents/skills/project-manifest-reference/SKILL.md`,
-   `.agents/skills/docs-aggregation-rules/SKILL.md`,
-   `.agents/skills/use-case-authoring/SKILL.md`, and
-   `.agents/skills/github-repo-metadata/SKILL.md` as the reference for the checks.
-3. Load `.agents/skills/site-validation-loop/SKILL.md` for the commands and their meaning.
+1. Read `skills/audit-catalogue-projects/SKILL.md` and follow its method and report format.
+2. Load `skills/project-manifest-reference/SKILL.md`,
+   `skills/docs-aggregation-rules/SKILL.md`,
+   `skills/use-case-authoring/SKILL.md`, and
+   `skills/github-repo-metadata/SKILL.md` as the reference for the checks.
+3. Load `skills/site-validation-loop/SKILL.md` for the commands and their meaning.
 
 Use the `catalogue-auditor` agent if it is available.
 
