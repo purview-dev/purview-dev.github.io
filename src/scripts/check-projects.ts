@@ -697,7 +697,7 @@ function checkRepoMetadata(project: ResolvedProject, data: ReleaseCacheData): vo
       field: 'repository topics',
       observed: 'none',
       expected: 'topics that describe the project (they are the site tag chips)',
-      remediation: `set topics on ${project.repository} — see .agents/skills/github-repo-metadata/SKILL.md.`,
+      remediation: `set topics on ${project.repository} — see skills/github-repo-metadata/SKILL.md.`,
     });
   }
 

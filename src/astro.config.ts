@@ -208,7 +208,7 @@ export default defineConfig({
           vitePlugin: { workspace: 'src/likec4' },
           highlighting: { ref: 'v1.60.0' },
           // The `docs` collection is the aggregated mirror of other repositories'
-          // Markdown (see .agents/skills/docs-aggregation-rules). Those pages were
+          // Markdown (see skills/docs-aggregation-rules). Those pages were
           // written for GitHub or mkdocs, so a ```likec4 fence there is often a
           // partial snippet rather than a diagram: relax validation for the
           // collection so one cannot fail this site's build — astroc4 warns and

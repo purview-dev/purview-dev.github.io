@@ -52,10 +52,10 @@ package is `src/`.
 ## Task routing
 
 - Adding a project → `.agents/agents/catalogue-onboarder.agent.md` and
-  `.agents/skills/add-project-intake/SKILL.md` (the questions to ask) then
-  `.agents/skills/add-catalogue-project/SKILL.md` (the procedure).
+  `skills/add-project-intake/SKILL.md` (the questions to ask) then
+  `skills/add-catalogue-project/SKILL.md` (the procedure).
 - Auditing/fixing the catalogue → `.agents/agents/catalogue-auditor.agent.md` and
-  `.agents/skills/audit-catalogue-projects/SKILL.md`.
+  `skills/audit-catalogue-projects/SKILL.md`.
 - Assessing a product repository's integration → `skills/purview-site-assessment/SKILL.md`.
 - Any other change → `.agents/` holds the manifest reference, docs-aggregation rules, use-case
   authoring rules, repo-metadata guidance, and the validation loop.
