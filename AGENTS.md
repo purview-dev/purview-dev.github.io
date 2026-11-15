@@ -10,9 +10,10 @@ Two agent tasks recur here, and both have a dedicated agent plus skills under `.
 
 1. **Add a project** — given a `purview-dev/<repo>` (or a collaboration repository), build its
    documentation, use cases, tags and metadata so it is fully integrated into the site.
-2. **Audit the catalogue** — prove that every project defined in `src/src/data/projects/` (one file per project, plus
-   `external-projects.yml` for collaborations) is
-   correct: documentation configuration, lifecycle stability, metadata and relationships.
+2. **Audit the catalogue** — prove that every project record is correct: the ones the project
+   repositories own at `.config/purview-docs.yml` (ADR 0013) and the ones still here under
+   `src/src/data/projects/`, plus `src/src/data/external-projects.yml` for collaborations —
+   documentation configuration, lifecycle stability, metadata and relationships.
 
 ## Technology and tooling context
 
@@ -26,9 +27,10 @@ from the repository root and delegated to the package.
   `oxfmt` does **not** support `.astro` yet (oxc-project/oxc#15665) — format those by hand and rely
   on `astro check` + oxlint.
 - **Task runner:** Just (`justfile`; switches to pwsh on Windows).
-- **All external data is fetched at build time**, never by the visitor's browser: GitHub releases,
-  NuGet and npm registry data, the documentation mirror, and any `assets:` a project mirrors into
-  `public/`, cached under `src/.cache/` with committed fixtures as the offline fallback. The one
+- **All external data is fetched at build time**, never by the visitor's browser: the project-owned
+  catalogue records (ADR 0013), GitHub releases, NuGet and npm registry data, the documentation
+  mirror, and any `assets:` a project mirrors into `public/`, cached under `src/.cache/` with
+  committed fixtures as the offline fallback. The one
   exception is the package **version numbers** the page already displays: the browser re-checks them
   against the registry that publishes the package (NuGet or npm), applies any higher version, and
   stores it (ADR 0008, ADR 0012).
@@ -39,6 +41,7 @@ from the repository root and delegated to the package.
 | --- | --- | --- |
 | `src/src/content/docs/**` | Aggregated documentation mirror (gitignored) | `just data-sync` |
 | `src/.cache/docs`, `src/.cache/releases` | Typed docs/release caches (gitignored) | `just data-sync` / `just fetch-releases` |
+| `src/.cache/manifests` | Project-owned catalogue records fetched from their repositories (gitignored) | `just data-sync` / `just refresh-fixtures` |
 | `src/public/schemas/**` | Mirrored project assets declared in `assets:` (gitignored) | `just data-sync` |
 | `src/public/skills/**` | Mirrored Agent Skills declared in `skills:` (gitignored) | `just data-sync` |
 | `src/dist/**` | Production build output (gitignored) | `just build` |
@@ -58,8 +61,10 @@ prints advisory observations (which never fail the build) when a project's decla
 
 ## Ecosystem model — what "a project" means here
 
-- `projects:` entries — one file per project under `src/src/data/projects/` — are Purview-owned catalogue entries. Their `repository`
-  **must** be `purview-dev/<repo>` (enforced by the loader).
+- `projects:` records — the ones under `src/src/data/projects/` here and the ones a project publishes
+  at `.config/purview-docs.yml` (ADR 0013) — are Purview-owned catalogue entries. Their `repository`
+  **must** be `purview-dev/<repo>` (enforced by the loader). A record declared in both places is
+  reported by `just check-projects`: the project's own copy wins, and the local one is deleted.
 - `externalProjects:` are collaborations the organisation contributes to but does not own (for
   example `likec4/likec4`). They link out to their own site/repository: no documentation
   aggregation, no NuGet packages, no `/projects/<id>/` page.
@@ -175,7 +180,8 @@ src/src/data/projects/<id>.yml` against a clone of its repository.
 
 | Concern | Location |
 | --- | --- |
-| Catalogue manifest | `src/src/data/projects/<id>.yml` (one per project) + `src/src/data/external-projects.yml` |
+| Catalogue records | `.config/purview-docs.yml` in each project repository (ADR 0013), plus `src/src/data/projects/<id>.yml` for projects that have not moved, plus `src/src/data/external-projects.yml` for collaborations |
+| Manifest fetch and cache | `src/src/lib/manifest/{remote,runtime}.ts`, `src/scripts/sync-manifests.ts` |
 | Manifest schema / loader | `src/src/lib/manifest/{schema,load}.ts` |
 | Docs aggregation | `src/src/lib/docs/aggregate.ts` (+ `frontmatter`, `links`, `sidebar`, `staleness`, `diagrams`, `redirect-file`) |
 | Consumer skills for product repositories | `skills/purview-site-{integration,docs,assessment}/` |

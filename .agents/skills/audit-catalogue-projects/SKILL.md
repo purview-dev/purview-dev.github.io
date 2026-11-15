@@ -1,6 +1,6 @@
 ---
 name: audit-catalogue-projects
-description: Use when auditing or repairing the catalogue records under src/src/data/ — the invariant checklist for documentation, stability, metadata, tags, packages, relationships, use cases and ordering, plus the findings report format.
+description: Use when auditing or repairing the catalogue records — each project's own .config/purview-docs.yml (ADR 0013) and the ones still under src/src/data/ — the invariant checklist for documentation, stability, metadata, tags, packages, relationships, use cases and ordering, plus the findings report format.
 category: purview-dev-website
 roles:
     - catalogue

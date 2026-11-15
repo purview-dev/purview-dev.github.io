@@ -1,12 +1,14 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
+import { readManifestCache, readManifestFixture } from '../src/lib/manifest/remote';
 import { readReleaseCache, readReleaseFixture } from '../src/lib/releases/cache';
 import { publishReleaseData } from '../src/lib/releases/runtime';
 import { fetchReleaseData } from './fetch-releases';
 import { processBranding } from './process-branding';
 import { syncAssets } from './sync-assets';
 import { hasCurrentDocsMirror, hasDocsMirror, syncDocs } from './sync-docs';
+import { syncManifests } from './sync-manifests';
 import { syncSkills } from './sync-skills';
 
 const RELEASES_CACHE_FILE = resolve('.cache/releases/releases.json');
@@ -68,6 +70,59 @@ async function syncReleases(mode: Mode): Promise<void> {
   );
 }
 
+/**
+ * Prepare the project-owned catalogue records (ADR 0013) before anything reads
+ * the catalogue: releases, documentation, skills and assets all iterate the
+ * projects, so a record that is not in hand yet is a project that is missing.
+ *
+ * The modes mirror the release data exactly: `fixture` and `cache` never touch
+ * the network, `live` always fetches, and `auto` prefers the cache and only
+ * fetches when there is none.
+ */
+async function syncManifestRecords(mode: Mode): Promise<void> {
+  if (mode === 'fixture') {
+    if (!readManifestFixture('index')) {
+      throw new Error(
+        'DATA_MODE=fixture but no manifest fixture exists at fixtures/manifests/index.json',
+      );
+    }
+    console.log('Manifests: using committed fixtures.');
+    return;
+  }
+  if (mode === 'cache') {
+    if (!readManifestCache()) {
+      throw new Error(
+        'DATA_MODE=cache but no manifest cache exists. Run `just data-sync` (live) first.',
+      );
+    }
+    console.log('Manifests: using existing cache.');
+    return;
+  }
+  if (mode === 'live') {
+    await syncManifests();
+    return;
+  }
+  // auto: cache-first, then live, then committed fixtures.
+  if (readManifestCache()) {
+    console.log('Manifests: using existing cache.');
+    return;
+  }
+  try {
+    await syncManifests();
+    return;
+  } catch (error) {
+    console.warn(`Manifests: live fetch failed (${(error as Error).message}).`);
+  }
+  if (readManifestFixture('index')) {
+    console.warn('Manifests: falling back to committed fixtures.');
+    return;
+  }
+  throw new Error(
+    'No project-owned catalogue records available: the cache is missing, the live fetch failed, ' +
+      'and no fixtures are present. Check GitHub access and retry.',
+  );
+}
+
 async function syncDocsMirror(mode: Mode): Promise<void> {
   const current = hasCurrentDocsMirror();
   if (mode === 'cache' || mode === 'fixture') {
@@ -99,7 +154,10 @@ export async function dataSync(): Promise<void> {
   const mode = resolveMode();
   console.log(`Data sync (mode=${mode})`);
   await processBranding();
-  // Releases are fetched first so the docs aggregation can enrich content with
+  // Project-owned catalogue records come first: every later step iterates the
+  // catalogue, so it has to be complete before releases are fetched.
+  await syncManifestRecords(mode);
+  // Releases are fetched next so the docs aggregation can enrich content with
   // repository descriptions and topics (tags) from the release cache.
   await syncReleases(mode);
   await syncDocsMirror(mode);

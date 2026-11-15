@@ -1,0 +1,1530 @@
+{
+  "schema": 1,
+  "retrievedAt": "2026-11-15T10:12:08.054Z",
+  "manifests": [
+    {
+      "repository": "purview-dev/architests",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "architests",
+        "name": "Architests",
+        "shortDescription": "Enforce a repository's architecture policy as TUnit tests.",
+        "description": "Architecture tests for .NET. A repository declares its responsibilities and the dependency directions they may and may not use in a policy file, then derives one test class from PurviewArchitectureTests and gets the standard rule set as separate TUnit tests. The project-level rules read declared ProjectReferences; the type-level rule reads the compiled assemblies' metadata, so a reference that only arrives transitively or through a package is caught too, and nothing is loaded or executed. The set covers dependency direction, sibling independence, composition boundaries, forbidden packages and framework references, cycles, test references and project naming, with reviewed per-project waivers and an extension point for bespoke rules.",
+        "origin": "The standard architecture checks were being written into each repository's own test project, so the same dependency-direction and forbidden-reference rules existed in several places and drifted apart. Defining them once — the policy as data, the rule set as a package — means a repository states its architecture rather than re-deriving the tests, and the schema and the rules version together.",
+        "useWhen": "You have an agreed layering — domain, application, infrastructure, composition — and want it held by the build rather than by review: at the project-reference level and at the type level, including dependencies that arrive transitively or through a package.",
+        "avoidWhen": "Your architecture is still moving or the layering is not agreed, so a failing dependency rule would be noise rather than a decision — or you need a single repository-specific assertion that a few lines in a test express more directly than a policy file.",
+        "repository": "purview-dev/architests",
+        "category": "developer-tooling",
+        "status": "stable",
+        "order": 85,
+        "docs": {
+          "source": "github-path",
+          "path": "docs"
+        },
+        "targetFrameworks": [
+          "net10.0",
+          "net11.0"
+        ],
+        "packages": [
+          {
+            "id": "Purview.Architecture.Testing",
+            "description": "The policy reader, project and assembly graph, rule evaluator, and the TUnit base class.",
+            "primary": true
+          }
+        ],
+        "related": [
+          "engineering-playbook",
+          "build-sdk"
+        ],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "The whole rule set from a policy file and one derived class",
+            "scenario": "You want your layering enforced by the build, but you do not want to hand-write the same dependency-direction and forbidden-reference tests in every repository.",
+            "code": "// .config/architecture-policy.json declares the responsibilities.\n// This is the entire test suite.\n[InheritsTests]\npublic sealed class ArchitectureTests : PurviewArchitectureTests;\n",
+            "language": "csharp",
+            "outcome": "One policy file plus one derived test class is the whole suite. Each rule is a separate test, so a failure names the rule rather than collapsing the set into one assertion.",
+            "evidence": "The base class ships twelve rule ids as separate [Test]s — graph discovery, naming, discouraged name, dependency matrix, assembly matrix, sibling independence, composition boundary, forbidden package, forbidden framework, cycle, test reference and waiver integrity — plus a schema-validation test that runs first. [InheritsTests] is required: without it TUnit discovers nothing, the run is green and nothing is enforced, which TUnit's own analyzer reports as TUnit0030.",
+            "docsPage": "getting-started"
+          },
+          {
+            "audience": "developer",
+            "title": "Catch a type-level dependency a ProjectReference never shows",
+            "scenario": "A project file only shows declared ProjectReferences. A type that arrives transitively through another project, or through a package, is invisible to a project-level check.",
+            "code": "\"assemblyRules\": {\n  \"enabled\": true,\n  \"assemblyRoots\": [],\n  \"assemblyGlobs\": [\"*.dll\"]\n}\n",
+            "language": "json",
+            "outcome": "The same mayDependOn/mustNotDependOn matrix is applied to the types each compiled assembly actually references. An empty assemblyRoots scans the test output directory, which already holds every project the test project references.",
+            "evidence": "The reader opens each assembly with System.Reflection.Metadata and walks the TypeReference table — nothing is loaded, executed, or resolved through a probing path, so a type initialiser never runs. Enabling the rule with no production assemblies found is a failure, not a silent pass.",
+            "docsPage": "type-level-rules"
+          },
+          {
+            "audience": "architect",
+            "title": "A dependency the policy is silent about is a violation, not permission",
+            "scenario": "Your layering is agreed and documented, and you want a reference that points the wrong way to fail the build rather than erode the design one reasonable-looking reference at a time.",
+            "code": "{\n  \"version\": 2,\n  \"sourceRoots\": [\"src\"],\n  \"responsibilities\": [\n    {\n      \"name\": \"Domain\",\n      \"category\": \"domain\",\n      \"purpose\": \"The domain model, its invariants and its rules.\",\n      \"mayDependOn\": [],\n      \"mustNotDependOn\": [\"Application\", \"Persistence\", \"Composition\"]\n    }\n  ]\n}\n",
+            "language": "json",
+            "outcome": "The matrix is applied three ways: the same responsibility is always allowed, mustNotDependOn is a violation, and a reference the matrix neither permits nor forbids is also a violation — so a gap in the policy is surfaced instead of passing.",
+            "evidence": "A project name is classified by its first segment only, so Persistence.SqlServer and Persistence follow the same rules and qualification is a naming choice rather than a different set of rules.",
+            "docsPage": "policy-reference"
+          },
+          {
+            "audience": "team-lead",
+            "title": "A reviewed waiver instead of switching a rule off",
+            "scenario": "One project legitimately departs from the architecture policy, and you do not want to answer that by disabling the rule for the whole repository.",
+            "code": "{\n  \"waivers\": [\n    {\n      \"project\": \"Persistence.Legacy\",\n      \"mapsTo\": \"Persistence\",\n      \"rules\": [\"forbiddenPackage\"],\n      \"reason\": \"The legacy EF6 store is being replaced and still needs EntityFramework.\",\n      \"reviewedOn\": \"2026-10-16\"\n    }\n  ]\n}\n",
+            "language": "json",
+            "outcome": "The departure is per project, carries a reason and a review date, keeps every other rule in force, and is itself checked. SkipRule opts a whole repository out with no record, so a waiver is the narrower choice.",
+            "evidence": "Any rule id may be waived, including siblingIndependence and assemblyDependencyMatrix, but an unknown id is a waiverIntegrity failure — a typo cannot silently excuse nothing — and only graphDiscovery and waiverIntegrity are not waivable.",
+            "docsPage": "policy-reference"
+          },
+          {
+            "audience": "contributor",
+            "title": "Add a bespoke rule to the same reporting and waiver model",
+            "scenario": "You need a repository-specific check — a banned API, a required convention — and do not want a second architecture framework to maintain alongside the standard set.",
+            "code": "[InheritsTests]\npublic sealed class ArchitectureTests : PurviewArchitectureTests\n{\n    protected override IReadOnlyList<IArchitectureRule> AdditionalRules => [new NoConsoleLoggingRule()];\n\n    sealed class NoConsoleLoggingRule : IArchitectureRule\n    {\n        public string Rule => \"noConsoleLogging\";\n\n        public IReadOnlyList<ArchitectureViolation> Evaluate(ArchitectureContext context) =>\n            context.Projects.Values\n                .Where(project => !project.IsTestProject)\n                .Select(project => new ArchitectureViolation(Rule, project.Name, \"Console logging is banned here.\"))\n                .ToArray();\n    }\n}\n",
+            "language": "csharp",
+            "outcome": "An additional rule runs as its own test, honours SkipRule by its rule id, and is excused by a matching waiver without any extra plumbing — the same reporting the built-in rules use.",
+            "evidence": "The evaluator takes the parsed policy, the project graph and the assemblies as constructor arguments, so a rule is testable as a small in-memory fixture rather than a repository on disk — which is how the package's own rules are tested.",
+            "docsPage": "extending"
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/aspire-resourcekit",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "aspire-resourcekit",
+        "name": "Aspire ResourceKit",
+        "shortDescription": "Strongly typed, source-generated resource kits for .NET Aspire.",
+        "description": "A source-generator-powered framework for structuring .NET Aspire AppHost resource composition as strongly typed, test-friendly classes. Generated host wiring, typed options, and enablement toggles keep large AppHosts maintainable and discoverable.",
+        "origin": "Large Aspire AppHosts repeatedly accumulated procedural resource wiring and configuration, creating a need for a typed, testable way to package those conventions.",
+        "useWhen": "Your Aspire AppHost has reusable resource groups, configuration, or enablement rules that should be strongly typed, discoverable, and testable.",
+        "avoidWhen": "Your AppHost is small and direct resource declarations remain clearer than introducing a resource-kit abstraction.",
+        "repository": "purview-dev/aspire-resourcekit",
+        "category": "aspire",
+        "status": "stable",
+        "order": 50,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "rootPage": "Getting-Started.md",
+          "exclude": [
+            "_Sidebar.md",
+            "Home.md",
+            "index.md"
+          ]
+        },
+        "targetFrameworks": [
+          "net10.0"
+        ],
+        "packages": [
+          {
+            "id": "Purview.Aspire.ResourceKit",
+            "description": "Runtime and source generator for resource kits.",
+            "primary": true
+          }
+        ],
+        "useCases": [
+          {
+            "audience": "architect",
+            "title": "Typed, testable resource groups in a large AppHost",
+            "scenario": "A large Aspire AppHost accumulates procedural resource wiring and configuration that is hard to test and easy to misconfigure.",
+            "code": "[HostKit]\npartial class ShopHostKit;\n\n[ResourceDefinition<Projects.Example_Service>(\"api\")]\npartial class ApiResourceKit\n{\n    protected override IResourceBuilder<ProjectResource> BuildResource(\n        IDistributedApplicationBuilder builder)\n        => builder.AddProject<Projects.Example_Service>(Name);\n}\n",
+            "language": "csharp",
+            "outcome": "Resource definitions become strongly typed, source-generated classes with generated host wiring and typed options.",
+            "evidence": "One [HostKit] plus one [ResourceDefinition] per resource replaces procedural AppHost code, and the analyzer validates the wiring at compile time.",
+            "docsPage": "examples"
+          },
+          {
+            "audience": "team-lead",
+            "title": "Configure and toggle resources without editing the AppHost",
+            "scenario": "You want enablement rules and configuration to be declarative and discoverable instead of buried in the AppHost entry point.",
+            "outcome": "Typed options and enablement toggles are generated for each resource kit, so behaviour is configured rather than coded.",
+            "evidence": "Resource kits can be unit tested with the testing helpers, independent of a running AppHost.",
+            "docsPage": "configuration-and-options"
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/aspirec4",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "aspirec4",
+        "name": "AspireC4",
+        "shortDescription": "Live LikeC4 architecture diagrams from the Aspire resource graph.",
+        "description": "An Aspire extension that generates live LikeC4 architectural diagrams from the Aspire resource graph, with a Roslyn source generator for compile-time validation of tags, kinds, groups, and metadata.",
+        "origin": "Aspire already holds a useful model of a distributed application, so manually maintaining a separate architecture diagram was repetition that could be removed.",
+        "useWhen": "You use .NET Aspire and want live LikeC4 diagrams derived from the resource graph, with compile-time checks for architectural metadata.",
+        "avoidWhen": "You do not use Aspire, need a manually curated architecture model, or require diagrams that intentionally differ from the running application topology.",
+        "repository": "purview-dev/aspirec4",
+        "category": "aspire",
+        "status": "stable",
+        "order": 55,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "rootPage": "Getting-Started.md",
+          "exclude": [
+            "_Sidebar.md",
+            "Home.md",
+            "index.md"
+          ]
+        },
+        "targetFrameworks": [
+          "net8.0"
+        ],
+        "packages": [
+          {
+            "id": "AspireC4.Hosting",
+            "description": "Aspire hosting extension for the AspireC4 plugin, generating a dynamic LikeC4 architecture diagram for your Aspire application.",
+            "primary": true
+          }
+        ],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "A live architecture diagram with three lines of code",
+            "scenario": "You already describe your distributed application in Aspire and do not want to maintain a separate architecture diagram that drifts from reality.",
+            "code": "var builder = DistributedApplication.CreateBuilder(args);\n\nbuilder.AddAspireC4();\n\nbuilder.Build().Run();\n",
+            "language": "csharp",
+            "outcome": "AspireC4 writes the generated LikeC4 model, starts the LikeC4 sidecar, and refreshes the diagram whenever the Aspire application changes.",
+            "evidence": "The diagram is derived from the running resource graph, so it cannot silently fall out of date the way a hand-drawn one can.",
+            "docsPage": "dashboard-integration"
+          },
+          {
+            "audience": "architect",
+            "title": "Validate architectural metadata at compile time",
+            "scenario": "You want tags, kinds, groups, and metadata in your architecture model checked before the application even runs.",
+            "outcome": "A Roslyn source generator validates the architectural metadata while the AppHost compiles.",
+            "evidence": "Architectural metadata mistakes fail the build instead of surfacing in a diagram nobody reads.",
+            "docsPage": "generated-output"
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/astroc4",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "astroc4",
+        "name": "Astroc4",
+        "shortDescription": "Interactive LikeC4 architecture diagrams for Astro and Starlight, with fences and syntax highlighting.",
+        "description": "A Starlight plugin and a plain-Astro integration that put LikeC4 architecture diagrams inside an Astro site. A ```likec4 fence in an .mdx page becomes a laid-out, interactive diagram at build time, an empty fence or <LikeC4View> renders a view of the site's own .c4 model, and Expressive Code gains LikeC4 syntax highlighting derived from the language's Langium grammar rather than a hand-maintained TextMate file. The Starlight entry point also injects the component UI strings through Starlight's i18n; the plain-Astro entry point supplies the same compiler and fence transform without Starlight. The grammar is resolved while Astro loads its configuration, cached per repo@ref, and can be pinned, run offline from a bundled snapshot, or allowed to degrade to a warning, so a docs build is as reproducible as the package versions beside it.",
+        "origin": "Documentation about a system drifts from the system as soon as the diagram is a picture that someone has to redraw. LikeC4 keeps the diagram as a model in the repository, but a docs site that embeds it still had to wire the Vite plugin, write a transform for fences, and maintain a community TextMate grammar that fell behind every upstream release. Doing that once in a plugin, and deriving the grammar from the language definition itself, turned three per-site chores into one dependency and made the highlighting follow LikeC4 instead of being updated after it.",
+        "useWhen": "Your documentation is an Astro/Starlight site and the architecture it describes is already, or should be, a LikeC4 model in the repository: you want the diagram and the prose to be reviewed together, and code fences in the LikeC4 language to be coloured without owning an ec.config.mjs.",
+        "avoidWhen": "Your site is not Astro (both entry points compile the model through LikeC4's Vite plugin and ship React islands), or the architecture diagram is drawn once and does not need to stay in step with the code — a static image is cheaper than a model, a compiler and a browser island.",
+        "repository": "purview-dev/astroc4",
+        "category": "developer-tooling",
+        "status": "preview",
+        "order": 75,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "redirects": {
+            "architecture": "contributing/architecture",
+            "components": "guide/components",
+            "configuration-reference": "guide/configuration-reference",
+            "fences": "guide/fences",
+            "getting-started": "guide/getting-started",
+            "icons": "guide/icons",
+            "internationalization": "guide/internationalization",
+            "local-development": "contributing/local-development",
+            "repository-ci-cd": "contributing/repository-ci-cd",
+            "syntax-highlighting": "guide/syntax-highlighting"
+          }
+        },
+        "skills": true,
+        "packages": [
+          {
+            "id": "@purview-dev/astroc4",
+            "registry": "npm",
+            "description": "The Starlight plugin, the plain-Astro integration, the fence transform, the grammar pipeline and the Astro components.",
+            "primary": true
+          }
+        ],
+        "related": [
+          "aspirec4",
+          "engineering-playbook"
+        ],
+        "acknowledgments": [
+          {
+            "name": "LikeC4",
+            "url": "https://github.com/likec4/likec4",
+            "description": "The C4 modelling language, compiler and renderer the plugin embeds; the highlighting grammar is derived at build time from its Langium language definition."
+          }
+        ],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "A diagram and the prose around it in the same diff",
+            "scenario": "A page explains a request path, and the diagram beside it lives in a design tool that nobody updates when the path changes, so the two disagree and a reviewer cannot see it.",
+            "code": "````mdx\n---\ntitle: Request path\n---\n\n```likec4 title=\"Request path\" height=360\nspecification { element box }\nmodel {\n  browser = box 'Browser'\n  api = box 'API'\n  store = box 'Postgres'\n  browser -> api 'GET /orders'\n  api -> store 'select'\n}\nviews { view index { include * } }\n```\n````\n",
+            "language": "mdx",
+            "outcome": "The diagram is the page: the fence is compiled and laid out during the build, the layout is passed to the island as serialised JSON, and a change to the model is a line in the pull request a reviewer can read next to the prose.",
+            "evidence": "The fence runs LikeC4.fromSource plus layoutedModel at build time, so nothing is laid out in the browser; a typo fails astro build with the file name and parser message rather than shipping a blank frame, and layouts are memoised by a hash of the snippet so a page re-rendered on every dev edit pays for it once. The same fence in a .md page stays a code block deliberately, because Astro cannot put a component there."
+          },
+          {
+            "audience": "developer",
+            "title": "The same diagrams in a plain Astro site, without Starlight",
+            "scenario": "The documentation site is plain Astro rather than Starlight, so a Starlight plugin would be inert there and the diagrams have no way to reach the page.",
+            "code": "// astro.config.mjs\nimport { defineConfig } from 'astro/config';\nimport mdx from '@astrojs/mdx';\nimport expressiveCode from 'astro-expressive-code';\nimport astroc4 from '@purview-dev/astroc4/integration';\n\nexport default defineConfig({\n  integrations: [astroc4(), expressiveCode(), mdx()],\n});\n",
+            "language": "js",
+            "outcome": "The same <LikeC4View> component and ```likec4 fences work without Starlight: the integration compiles the site's .c4 model, appends the fence transform to the Markdown processor, and pre-bundles what the React island needs. The site keeps the parts that are its own decision — @astrojs/mdx and, when it wants ```c4 highlighting, Expressive Code with an ec.config.mjs that registers likec4Language.",
+            "evidence": "Both entry points call the same likec4Integration(): the plain-Astro example in the repository builds with astro check and astro build, and its dev server is driven in a browser to prove the island hydrates. @astrojs/react is the one integration astroc4 adds itself when the site has not — the islands are client:only=\"react\" — and React is not added twice when the site already configures it. What a plain site gives up is documented: Astro.locals.t is Starlight's, so the components render English, and the highlighting option exists only on the Starlight plugin."
+          },
+          {
+            "audience": "developer",
+            "title": "Highlighting that follows LikeC4, with no ec.config.mjs",
+            "scenario": "You want ```c4 and ```likec4 fences coloured in your docs, but Shiki has no LikeC4 grammar and the community TextMate file is missing the shapes and keywords upstream added this year.",
+            "code": "// astro.config.mjs — there is no ec.config.mjs anywhere in the site\nimport { defineConfig } from 'astro/config';\nimport starlight from '@astrojs/starlight';\nimport react from '@astrojs/react';\nimport astroc4 from '@purview-dev/astroc4';\n\nexport default defineConfig({\n  integrations: [\n    starlight({ plugins: [astroc4({ highlighting: { ref: 'v1.60.0' } })] }),\n    react(),\n  ],\n});\n",
+            "language": "js",
+            "outcome": "The plugin derives a TextMate grammar from likec4/likec4's Langium language definition and injects it into Starlight's Expressive Code options from the config:setup hook, so every LikeC4 fence is coloured and an existing ec.config.mjs keeps its own languages untouched.",
+            "evidence": "Only the word lists are generated; the structure (comments, triple-quoted strings, #tag versus #hex, tech:astro icons, -[https]-> connectors) is a curated layer on top. The difference is testable: ElementShape gained agent after v1.59.4, so a build pinned to that tag paints agent as a plain identifier while main paints it as a shape. Expressive Code concatenates shiki.langs, which is why a site with its own grammar ends up with both."
+          },
+          {
+            "audience": "architect",
+            "title": "One model in the repository, many diagram views in the docs",
+            "scenario": "Several documentation pages describe different slices of the same system, and you want them to read from one model so a change to a dependency cannot leave three diagrams telling three stories.",
+            "code": "```mdx\n---\ntitle: Deployment\n---\n\nimport LikeC4View from '@purview-dev/astroc4/components/LikeC4View.astro';\n\n<LikeC4View viewId=\"production\" projectId=\"platform\" height={560} />\n```\n",
+            "language": "mdx",
+            "outcome": "The .c4 model lives in src/likec4 and each page selects a view of it; the model is compiled once by LikeC4's Vite plugin, and every page hydrates the same islands, so a view cannot describe a system the model does not contain.",
+            "evidence": "The plugin compiles every likec4.config.json project under the site root into likec4:model, likec4:icons and likec4:projects virtual modules, and the first project found is the default for a view that omits projectId — which is also the failure mode, since a vendored example model can silently become the default. An unresolvable element kind fails the build instead of rendering a partial diagram."
+          },
+          {
+            "audience": "team-lead",
+            "title": "Prove the diagrams actually hydrate before calling the docs built",
+            "scenario": "A static build exits 0 even when every island fails to hydrate, so the pipeline is green and the published page shows empty frames.",
+            "code": "bun run build\nbun scripts/smoke.ts http://localhost:4321\nbun run test:site\n",
+            "language": "shell",
+            "outcome": "The browser smoke test and the packed-consumer build are the evidence: one drives a real page and checks hydration, icons, highlighting and translations, the other installs the tarball into a throwaway Starlight site so publishing mistakes surface before npm does.",
+            "evidence": "The smoke test asserts at least four distinct colour variables per highlighted block, counts prerendered pack icons and <img> icons, and fails on a file:// URL in an <img src> — the build-machine path that LikeC4's imageAliases bakes into the bundle. test:site catches the cases the playground cannot see: a file missing from files, an exports subpath pointing at an unpublished file, or an undeclared peer dependency.",
+            "docsPage": "troubleshooting"
+          },
+          {
+            "audience": "contributor",
+            "title": "Regenerate the grammar instead of hand-editing it",
+            "scenario": "Upstream LikeC4 adds a shape or a keyword, and the highlighting has to follow without someone patching a TextMate JSON file and hoping the next release does not overwrite it.",
+            "code": "bun run grammar:sync                 # from main\nbun run grammar:sync --ref v1.60.0   # or pin the tag you ship against\nbun run grammar:check                # fail if the committed snapshot is stale\n",
+            "language": "shell",
+            "outcome": "The Langium snapshot and the TextMate grammar are generated artefacts: the working tree says so, grammar:check fails when they drift from the pinned ref, and the next upstream addition reaches highlighting without a code change.",
+            "evidence": "src/grammar/likec4.tmLanguage.json is re-derived from the committed Langium text on every run (single-digit milliseconds), and snapshot.test.ts re-derives it again and compares, so a change to the derivation that is not followed by a regeneration fails bun run test. Because the icon packs come from LikeC4's LIB_ICON terminal, a pack upstream adds is highlighted and rendered without an edit here either."
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/build",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "build",
+        "name": "Build",
+        "shortDescription": "The shared build, test, and release system for purview-dev.",
+        "description": "The shared build/test/release system for the purview-dev organisation. A Modular Pipelines based .NET tool packaged as a pinned dotnet tool, exposed through a GitHub composite action and thin reusable workflows. Consuming repositories own configuration; they do not own pipeline source code.",
+        "origin": "Maintaining near-identical build, test, pack, and release logic across repositories turned the pipeline itself into reusable tooling.",
+        "useWhen": "You maintain a Purview repository and want the shared, centrally versioned build and release conventions used across the organisation.",
+        "avoidWhen": "Your repository is outside that convention set or needs a substantially different pipeline whose lifecycle should remain independent.",
+        "repository": "purview-dev/build",
+        "category": "build-tooling",
+        "status": "stable",
+        "order": 60,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "rootPage": "Getting-Started.md",
+          "exclude": [
+            "_Sidebar.md",
+            "Home.md",
+            "index.md"
+          ]
+        },
+        "targetFrameworks": [
+          "net10.0"
+        ],
+        "install": "dotnet-tool",
+        "packages": [
+          {
+            "id": "Purview.Build",
+            "description": "Pinned dotnet tool implementing the shared pipeline.",
+            "primary": true
+          }
+        ],
+        "assets": [
+          {
+            "path": "purview-build.schema.json",
+            "output": "schemas/purview-build.json",
+            "description": "The purview-build.json configuration schema, served from a stable purview.dev URL."
+          }
+        ],
+        "useCases": [
+          {
+            "audience": "team-lead",
+            "title": "One reusable pipeline for every repository",
+            "scenario": "You maintain several repositories that each repeat the same build, test, pack, and release logic, and the copies drift apart.",
+            "code": "# .github/workflows/pr.yml\njobs:\n  build:\n    uses: purview-dev/build/.github/workflows/purview-build.yml@main\n    secrets: inherit\n",
+            "language": "yaml",
+            "outcome": "Consumers reference the reusable workflow or composite action and configure behaviour with purview-build.json instead of owning pipeline source.",
+            "evidence": "Pipeline code lives in one repository; a consuming repository is a short workflow file plus configuration.",
+            "docsPage": "repository-ci-cd"
+          },
+          {
+            "audience": "contributor",
+            "title": "Dogfood the same pipeline the organisation uses",
+            "scenario": "You want local commands, pull-request CI, and releases to run the exact same tool and conventions, rather than three approximations.",
+            "outcome": "The pipeline is a Modular Pipelines .NET tool packaged as a pinned dotnet tool, callable from a composite action, reusable workflows, or the local command line.",
+            "evidence": "Purview's own repositories use the published pipeline, so the tool is exercised on every build.",
+            "docsPage": "pipeline-modules"
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/build-sdk",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "build-sdk",
+        "name": "Build SDK",
+        "shortDescription": "Convention-driven MSBuild SDK for .NET project defaults.",
+        "description": "A reusable MSBuild SDK NuGet package that delivers standardised .NET project defaults, code-style enforcement, test-framework wiring, and Central Package Management integration. Install it once per repo; every project beneath the repo root inherits everything automatically.",
+        "origin": "Repeating project properties, analyzers, test wiring, and package-management conventions in every repository made a centrally maintained MSBuild SDK the simpler option.",
+        "useWhen": "You want Purview's standard .NET project defaults applied consistently across an entire repository from one versioned SDK declaration.",
+        "avoidWhen": "Your repository follows different conventions or needs project-by-project control over the settings the SDK intentionally standardises.",
+        "repository": "purview-dev/build-sdk",
+        "category": "build-tooling",
+        "status": "stable",
+        "order": 70,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "rootPage": "Getting-Started.md",
+          "exclude": [
+            "_Sidebar.md",
+            "Home.md",
+            "index.md"
+          ]
+        },
+        "targetFrameworks": [
+          "msbuild"
+        ],
+        "install": "msbuild-sdk",
+        "packages": [
+          {
+            "id": "Purview.BuildSdk",
+            "description": "MSBuild SDK for standardised project defaults.",
+            "primary": true
+          }
+        ],
+        "useCases": [
+          {
+            "audience": "team-lead",
+            "title": "Apply repository-wide defaults from one declaration",
+            "scenario": "You want standard .NET project defaults, code-style enforcement, test wiring, and central package management without repeating the same properties in every project.",
+            "code": "{\n  \"msbuild-sdks\": {\n    \"Purview.BuildSdk\": \"1.0.0\"\n  }\n}\n",
+            "language": "json",
+            "outcome": "Install the SDK once via global.json and Directory.Build.props; every project beneath the repository root inherits everything automatically.",
+            "evidence": "One versioned SDK declaration replaces per-project property groups, so conventions are upgraded in one place.",
+            "docsPage": "configuration-reference"
+          },
+          {
+            "audience": "contributor",
+            "title": "Bootstrap a new repository",
+            "scenario": "You are starting a repository and want the organisation's conventions in place before the first project exists.",
+            "outcome": "The SDK can bootstrap a global.json at the repository root when one is missing, then applies project-type detection, analyzers, and test wiring.",
+            "evidence": "Repository bootstrap, analyzers, and testing wiring are documented and generated, not copied between repos by hand.",
+            "docsPage": "repository-bootstrap"
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/containers",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "containers",
+        "name": "Containers",
+        "shortDescription": "Throwaway Linux containers for .NET integration tests — on WSL Containers with no Docker installation, or on Docker.",
+        "description": "A Testcontainers-style library for .NET with one API and two interchangeable backends: Microsoft WSL Containers (WSLC) with no Docker installation, or Docker through Testcontainers. Containers are created through backend-neutral abstractions (Purview.Containers.Core) and the backend is resolved at run time, so the same test code runs on WSLC (Purview.Containers.Wsl) or Docker (Purview.Containers.Docker) unchanged. The WSLC backend talks to the WSLC managed C# API directly — no wslc.exe, no docker CLI, no Docker.DotNet. Typed service modules add PostgreSQL, Redis, SQL Server, MySQL, RabbitMQ, Azurite, and NATS, each with its own defaults, configuration, readiness wait strategy, and connection-string helper. The umbrella package Purview.Containers brings the abstractions plus both backends in a single reference.",
+        "origin": "Integration tests that use real infrastructure on Windows needed a Docker daemon installed and running first. WSL Containers makes the container runtime a Windows feature, so the same throwaway-container workflow could be built straight on its managed API — and the same abstractions could fall back to Docker wherever WSLC is not available, which is why the library grew a portable net10.0 facade and a Docker backend rather than staying Windows-only.",
+        "useWhen": "You want real PostgreSQL, Redis, SQL Server, MySQL, RabbitMQ, Azurite, or NATS instances in integration tests, and you want the same suite to run on WSL Containers on a Windows developer machine and on Docker in CI without changing a line of test code.",
+        "avoidWhen": "You need a container runtime other than WSL Containers or Docker, or you require API stability: the public API, defaults, and packaging rules can change between prereleases and there is no production support guarantee.",
+        "repository": "purview-dev/containers",
+        "category": "developer-tooling",
+        "status": "preview",
+        "experimental": true,
+        "order": 90,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "exclude": [
+            "_Sidebar.md",
+            "Home.md"
+          ]
+        },
+        "targetFrameworks": [
+          "net10.0",
+          "net10.0-windows10.0.19041.0",
+          "net11.0",
+          "net11.0-windows10.0.19041.0"
+        ],
+        "packages": [
+          {
+            "id": "Purview.Containers",
+            "description": "The umbrella — references the abstractions and both backends, so one reference runs the same tests on WSLC on Windows and Docker elsewhere.",
+            "primary": true
+          },
+          {
+            "id": "Purview.Containers.Core",
+            "description": "Backend-neutral abstractions — the container contract, builders, wait strategies, images, mounts, networking, diagnostics, and backend selection."
+          },
+          {
+            "id": "Purview.Containers.Wsl",
+            "description": "WSL Containers backend — sessions, images, ports, mounts, exec, logs, and diagnostics for WSLC; a portable facade plus the Windows implementation.",
+            "targetFrameworks": [
+              "net10.0",
+              "net10.0-windows10.0.19041.0",
+              "net11.0",
+              "net11.0-windows10.0.19041.0"
+            ]
+          },
+          {
+            "id": "Purview.Containers.Docker",
+            "description": "Docker backend — the same containers on any reachable Docker daemon, driven by Testcontainers."
+          },
+          {
+            "id": "Purview.Containers.PostgreSql",
+            "description": "PostgreSQL module — defaults, configuration, pg_isready readiness, and Npgsql connection string."
+          },
+          {
+            "id": "Purview.Containers.Redis",
+            "description": "Redis module — defaults, configuration, redis-cli ping readiness, and connection string."
+          },
+          {
+            "id": "Purview.Containers.MsSql",
+            "description": "SQL Server module — defaults, licence acceptance, configuration, and connection string."
+          },
+          {
+            "id": "Purview.Containers.MySql",
+            "description": "MySQL module — defaults, configuration, readiness wait strategy, and connection string."
+          },
+          {
+            "id": "Purview.Containers.RabbitMq",
+            "description": "RabbitMQ module — defaults, credentials, configuration, and AMQP connection string."
+          },
+          {
+            "id": "Purview.Containers.Azurite",
+            "description": "Azurite module — defaults, account key, and Azure Storage connection string."
+          },
+          {
+            "id": "Purview.Containers.Nats",
+            "description": "NATS module — defaults, configuration, and client endpoint."
+          }
+        ],
+        "acknowledgments": [
+          {
+            "name": "Testcontainers for .NET",
+            "url": "https://github.com/testcontainers/testcontainers-dotnet",
+            "description": "The Docker backend is driven by Testcontainers and the module connection-string shapes follow it; Purview.Containers is not affiliated with or endorsed by the Testcontainers project."
+          },
+          {
+            "name": "Microsoft WSL Containers",
+            "url": "https://www.nuget.org/packages/Microsoft.WSL.Containers",
+            "description": "The managed C# API behind WSLC that the WSL Containers backend is built against directly, with no wslc.exe or docker CLI."
+          }
+        ],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "The same test on WSL Containers or Docker",
+            "scenario": "Your integration suite needs real infrastructure, but the machines it runs on differ: a Windows developer laptop with WSL Containers and a Linux CI runner with a Docker daemon.",
+            "code": "await using var container = new ContainerBuilder()\n    .WithImage(\"docker.io/library/redis:latest\")\n    .WithPortBinding(6379, assignRandomHostPort: true)\n    .WithWaitStrategy(Wait.ForTcpPort(6379))\n    .Build();\n\nawait container.StartAsync();\nushort port = container.GetMappedPublicPort(6379);\n",
+            "language": "csharp",
+            "outcome": "The test never names a backend. Automatic selection prefers WSLC where it is usable and falls through to Docker everywhere else; PURVIEW_CONTAINERS_BACKEND pins one (wsl or docker) when a job should fail loudly instead of falling back.",
+            "evidence": "One API, two backends: the same builder, wait strategies, and connection-string helpers run on both Purview.Containers.Wsl and Purview.Containers.Docker with no code change.",
+            "docsPage": "backends"
+          },
+          {
+            "audience": "developer",
+            "title": "Zero-config tests that pick a backend themselves",
+            "scenario": "You want real PostgreSQL and Redis in your tests and would rather not choose a container runtime, add a backend package explicitly, or write any registration or environment configuration.",
+            "code": "await using var postgres = new PostgreSqlBuilder().WithDatabase(\"app\").Build();\nawait postgres.StartAsync();                         // waits for pg_isready\n\nawait using var connection = new NpgsqlConnection(postgres.GetConnectionString());\nawait connection.OpenAsync();\n",
+            "language": "csharp",
+            "outcome": "Add the umbrella Purview.Containers to a plain net10.0 project: each backend package's buildTransitive assets generate the registration in your assembly, so WSLC is used on a Windows machine and Docker everywhere else with no code or configuration.",
+            "evidence": "Each backend package ships buildTransitive assets that generate a module initializer in the consumer's assembly, so no registration line and no environment variable are required; those assets flow transitively through the umbrella.",
+            "docsPage": "using-in-your-tests"
+          },
+          {
+            "audience": "developer",
+            "title": "A typed service module instead of a bare image",
+            "scenario": "You need a throwaway PostgreSQL (or Redis, SQL Server, MySQL, RabbitMQ, Azurite, NATS) and do not want to look up its image, port, environment, and readiness probe every time.",
+            "code": "await using var postgres = new PostgreSqlBuilder()\n    .WithDatabase(\"tests\")\n    .WithPassword(\"postgres\")\n    .Build();\n\nawait postgres.StartAsync();   // returns once pg_isready succeeds\n",
+            "language": "csharp",
+            "outcome": "The module supplies the default image, port mapping, and readiness wait strategy, so StartAsync() returns once the instance is genuinely ready, and GetConnectionString() points at the mapped host port — the same shape Testcontainers modules use.",
+            "evidence": "Seven service modules ship (PostgreSQL, Redis, SQL Server, MySQL, RabbitMQ, Azurite, NATS), and a module contributes only its image, ports, environment, wait strategy, and connection string — never the shared runtime.",
+            "docsPage": "modules"
+          },
+          {
+            "audience": "architect",
+            "title": "One Windows prerequisite, Docker in CI",
+            "scenario": "You want integration tests that use real infrastructure on Windows developer machines and CI agents, without making Docker Desktop a requirement of the minimum Windows toolchain.",
+            "code": "foreach (var backend in await ContainerBackends.ProbeAllAsync())\n{\n    Console.WriteLine($\"{backend.Name}: usable={backend.IsUsable} version={backend.Version}\");\n}\n",
+            "language": "csharp",
+            "outcome": "The abstractions and modules are portable net10.0, so a platform-neutral project binds the WSLC facade on Windows and behaves as Docker-only everywhere else; ProbeAllAsync() reports exactly which runtime a machine has before a test runs.",
+            "evidence": "Purview.Containers.Wsl ships a portable net10.0 facade and a net10.0-windows10.0.19041.0 implementation, and the repository builds twenty-one throwaway consumer projects to prove the target-framework contract and the PCC0001/PCC0002 guards.",
+            "docsPage": "consumer-requirements"
+          },
+          {
+            "audience": "contributor",
+            "title": "Add a service module",
+            "scenario": "You want to add a module for another service, or fix one of the existing seven, and need to know exactly what a module is allowed to contribute.",
+            "outcome": "A module supplies only the default image, ports, environment, its own WithXxx configuration, a wait strategy, and connection-string helpers; the generic builder snapshots the accumulated state into an immutable configuration, so modules never duplicate container runtime infrastructure.",
+            "evidence": "Every module references Purview.Containers.Core only — never a backend package — which is what lets one module package run on WSLC or Docker, and each module has its own unit and integration test project to prove itself.",
+            "docsPage": "contributing-modules"
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/dotnet-logging-source-generators",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "dotnet-logging-source-generators",
+        "name": "Logging Source Generators",
+        "shortDescription": "Early interface-based logging generation (archived).",
+        "description": "The original experiment in interface-based logging generation for .NET. Archived and superseded by the Purview Telemetry SourceGenerator, which generates logging together with Activities and Metrics from the same interfaces.",
+        "origin": "This was the original exploration of interface-driven logging generation and established the approach that later grew into the broader Telemetry SourceGenerator.",
+        "useWhen": "Use it only when maintaining an existing dependency that cannot yet move to its successor.",
+        "avoidWhen": "For new work, use Telemetry SourceGenerator instead; this project is archived and no longer actively developed.",
+        "repository": "purview-dev/dotnet-logging-source-generators",
+        "category": "source-generation",
+        "status": "archived",
+        "supersededBy": "telemetry-sourcegenerator",
+        "order": 80,
+        "targetFrameworks": [
+          "net6.0",
+          "net7.0"
+        ],
+        "packages": [],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "Move to the supported successor",
+            "scenario": "You depend on the original interface-based logging generator and want logging, activities, and metrics generated together.",
+            "outcome": "Telemetry SourceGenerator generates logging alongside Activities and Metrics from the same interfaces, with DI registration and multi-targeting.",
+            "evidence": "This project is archived and no longer developed; the successor covers a superset of its behaviour from one interface."
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/engineering-playbook",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev.github.io/main/src/src/lib/manifest/schema.ts",
+        "id": "engineering-playbook",
+        "name": "Engineering Playbook",
+        "shortDescription": "The reusable Purview engineering conventions — repository shape, architecture as tests, verification tiers, and agent enablement.",
+        "description": "The conventions the Purview projects are built on, written down once with the failure each one prevents, the mechanism that makes it true, and what a smaller repository does instead. It covers how a repository is laid out and named, how the architecture is held by tests that read the compiled assemblies, which checks run in which verification tier, how value objects, schemas and results cross a boundary, how tests are written and where their data comes from, how a repository is made legible to a coding agent, and how its documentation is published. It is documentation-first and ships no library: it holds the conventions, ready-to-copy templates, and a small layered reference implementation whose dependency-direction rules fail the build, so the rules are demonstrated rather than asserted.",
+        "origin": "The conventions were already real and already enforced, but they were only discoverable by reading the repositories and inferring the pattern from the repetition. That worked while one person held the whole picture and stopped working as soon as a second contributor or a coding agent had to decide which of two plausible patterns was the intended one. Writing them down in one place — with the evidence attached, and scaled so a smaller repository can take the part that fits — turned an oral tradition into something a repository can be pointed at.",
+        "useWhen": "You are starting a repository that should look and behave like the Purview projects, adopting the SDK into an existing one, or deciding which of the conventions are worth the cost at your size. The playbook's profiles, templates and reference implementation are all meant to be taken in part.",
+        "avoidWhen": "You want the SDK's own behaviour documented rather than the conventions built on top of it — read the Build SDK's wiki instead — or you are looking for a scaffolding tool: the templates are files to read and copy, not a generator.",
+        "repository": "purview-dev/engineering-playbook",
+        "category": "developer-tooling",
+        "status": "preview",
+        "experimental": true,
+        "order": 95,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "rootPage": "Home.md",
+          "exclude": [
+            "_Sidebar.md"
+          ],
+          "redirects": {
+            "dependency-versions": "foundations/dependency-versions"
+          }
+        },
+        "related": [
+          "build-sdk",
+          "containers",
+          "value-objects",
+          "results",
+          "zodsharp"
+        ],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "A repository that satisfies every convention on its first build",
+            "scenario": "You are starting a repository and want the project defaults, code style, test wiring and assembly identity to be right from the first commit, instead of discovering the conventions one review comment at a time.",
+            "code": "{\n  \"sdk\": { \"version\": \"LATEST\", \"allowPrerelease\": false },\n  \"msbuild-sdks\": { \"Purview.BuildSdk\": \"LATEST\" },\n  \"test\": { \"runner\": \"Microsoft.Testing.Platform\" }\n}\n",
+            "language": "json",
+            "outcome": "A pinned SDK plus a `Directory.Build.props` that sets one namespace prefix is the whole of the repository's build configuration. Every project beneath it inherits the target framework, language version, nullable context, analyzers and assembly identity, so a project file is two lines and a test project file is empty. `LATEST` is the playbook's own placeholder for the newest version the runtime supports — the file requires a number, so the snippet shows a lookup rather than a claim that expires with the next release.",
+            "evidence": "Getting Started walks the steps in the order you would create the files, and every repository-level file has a copy-paste version in the templates folder with a comment explaining the one thing about it that is easy to get wrong.",
+            "docsPage": "getting-started"
+          },
+          {
+            "audience": "architect",
+            "title": "Architecture that fails the build when a dependency points the wrong way",
+            "scenario": "Your layering is documented and agreed, and you want it to stay true — rather than being eroded one convenient project reference at a time, each of which looks reasonable in isolation.",
+            "code": "[Test]\npublic async Task Application_GivenItsReferences_DependsOnTheDomainAndNotOnInfrastructure()\n{\n    // Arrange\n    var application = typeof(ConventionCatalogue).Assembly;\n\n    // Act\n    var referenced = ReferencedAssemblyNames(application);\n\n    // Assert\n    await Assert.That(referenced).Contains($\"{RepositoryPrefix}.Domain\");\n    await Assert.That(referenced).DoesNotContain($\"{RepositoryPrefix}.Infrastructure\");\n}\n",
+            "language": "csharp",
+            "outcome": "The allowed dependency directions are data in a test that reads the compiled assemblies' metadata references, so a reference that points the wrong way fails the build with the offending assembly named — no diagram to keep in step and no separate tool to run.",
+            "evidence": "The reference implementation's Architecture.UnitTests project asserts four rules against three real assemblies and is built by the same pipeline as everything else. The page also records the two traps found by writing it, including a source generator that emits public types into its own namespace."
+          },
+          {
+            "audience": "team-lead",
+            "title": "A verification gate that stays credible",
+            "scenario": "The pull-request build has started needing a database and four minutes of waiting, and somebody is about to make it optional — at which point nothing is gated at all.",
+            "code": "{\n  \"Build\": {\n    \"Solution\": \"src/Acme.slnx\",\n    \"TestRoot\": \"src/tests\",\n    \"TestPatterns\": \"*UnitTests.csproj\",\n    \"TestFilter\": \"/*/*/*/*[Category=Unit]\"\n  }\n}\n",
+            "language": "json",
+            "outcome": "Tiers are expressed by where a test lives rather than by an attribute: the SDK reads the test project's name suffix and emits the assembly-level category the pipeline filters on, so adding a slow suite keeps it out of the fast tier without editing a filter or remembering an attribute.",
+            "evidence": "The verification model page documents the shared workflow's inputs, the configuration probe order, and the two ways a repository and the shared workflow quietly disagree about what a green build means — and names the repository that runs its container-backed suites as a second job on the same runner."
+          },
+          {
+            "audience": "developer",
+            "title": "One builder for every test's domain content",
+            "scenario": "You are writing a test, need a domain object, and do not want to spell out a constructor that will change — nor leave the reader guessing which of the values you passed actually matter to the assertion.",
+            "code": "public static Domain.Convention Convention(\n    Domain.ConventionId? id = null,\n    string? title = null,\n    VerificationTier? tier = null,\n    bool? enforcedByBuild = null) =>\n    Domain.Convention.Create(\n        id ?? ConventionId(),\n        title ?? Faker.Lorem.Sentence(4),\n        tier ?? Faker.Random.Enum<VerificationTier>(),\n        enforcedByBuild ?? Faker.Random.Bool());\n",
+            "language": "csharp",
+            "outcome": "An omitted argument is generated and a supplied argument is used exactly, so a test reads as a list of the values it is actually proving and everything else is realistic without the test saying so. One constructor change is one edit rather than a repository-wide one.",
+            "evidence": "TestBuilder lives in a shared testing project the SDK references from every test project automatically. The page also explains the two SDK rules that shaped its flat, ungrouped shape, and the value-object exception where a test must name the rejected input itself."
+          },
+          {
+            "audience": "contributor",
+            "title": "A repository an agent can work in without hand-holding",
+            "scenario": "You want a coding agent to make a change that follows the repository's conventions rather than confidently generalising from whichever pattern it found first.",
+            "code": "| Path | Purpose |\n| -- | -- |\n| src/src/Domain | The reference implementation's value objects and aggregate |\n| src/src/Application | The port and the service that owns the rules |\n| src/tests/Architecture.UnitTests | Dependency-direction rules; a wrong reference fails the build |\n",
+            "language": "markdown",
+            "outcome": "AGENTS.md states the purpose, the layout, the conventions and the definition of done, and the build mirrors the SDK's own skills into the repository so the agent-facing guidance tracks the SDK version rather than the repository's memory of it.",
+            "evidence": "The agent enablement page documents the layout of the agent folder, why the SDK's mirror writes a generated .gitignore that lists exactly the files it owns, and why the guidance that makes a repository obvious to an agent is the same guidance that makes it obvious to a new joiner."
+          },
+          {
+            "audience": "architect",
+            "title": "Take only the part of the playbook that fits",
+            "scenario": "You are convinced by some of the conventions and not others, and you want to know which ones are worth the cost in a repository the size of yours — rather than adopting everything and discovering the ceremony.",
+            "outcome": "Three profiles — one project, a few layers, several packages — each list what to take and what to leave, and every page ends with an \"at your scale\" section that names the smaller version of the rule explicitly. The templates are mapped to the profile that needs them.",
+            "evidence": "The playbook also documents what not to adopt early, with the reason each one is more expensive out of order, and a migration order for an existing repository that keeps each step cheap and the build green."
+          },
+          {
+            "audience": "team-lead",
+            "title": "Data that crosses a boundary once, and is trusted after that",
+            "scenario": "Inbound payloads are validated in several places, an identifier is a string in one layer and a type in another, and expected failures are thrown as exceptions that callers catch by message.",
+            "code": "[Scalar]\npublic readonly partial record struct EmailAddress\n{\n    public string Value { get; }\n\n    static partial void OnNormalize(ref string value) => value = value?.Trim().ToLowerInvariant()!;\n}\n",
+            "language": "csharp",
+            "outcome": "A value is a type rather than a primitive, `Create` validates at the boundary and `Hydrate` trusts everything past it, normalisation runs before validation so there is exactly one canonical form, and expected failures are values while exceptional circumstances still throw.",
+            "evidence": "The contracts page names the three public repositories that implement the rules — source-generated value objects, result types with union errors, and a schema layer that also exports and imports JSON Schema — and shows how a validation result is read rather than parsed."
+          },
+          {
+            "audience": "contributor",
+            "title": "Extend the playbook without turning it into a second source of truth",
+            "scenario": "You have found a convention that is real, enforced and not written down, and you want to add it without duplicating something the SDK already documents.",
+            "outcome": "Four tests decide whether a rule belongs: it came from a real repository and a real failure, it is reusable at more than one size, it is not the SDK's to state, and it is either enforced or explicitly labelled a review obligation.",
+            "evidence": "The contributing page also sets the expectations for changing an existing rule — update every page that states it, check the reference implementation still demonstrates it, and re-check whether the enforcement moved between the build and review."
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/event-sourcing",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "event-sourcing",
+        "name": "Event Sourcing",
+        "shortDescription": "Aggregate-based event sourcing for .NET across any store.",
+        "description": "A .NET event sourcing framework for building aggregate-based applications. Provider-agnostic store facades, source-generated aggregates and events, transaction coordination for multi-aggregate saves, queryable snapshots and read models, and storage providers for SQL Server, PostgreSQL, MongoDB, Azure Storage, Azure Cosmos DB, and in-memory.",
+        "origin": "Aggregate, event, persistence, and transaction patterns kept recurring across applications, so the reusable parts were separated from any one storage provider.",
+        "useWhen": "Your domain benefits from aggregate-based event sourcing and you want storage choices, snapshots, read models, and transactions behind consistent abstractions.",
+        "avoidWhen": "A conventional state-based model is sufficient, or your application does not need the operational and modelling trade-offs that come with event sourcing.",
+        "repository": "purview-dev/event-sourcing",
+        "category": "application-framework",
+        "status": "preview",
+        "featured": true,
+        "order": 20,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "rootPage": "Getting-Started.md",
+          "exclude": [
+            "_Sidebar.md",
+            "Home.md",
+            "index.md"
+          ]
+        },
+        "targetFrameworks": [
+          "net10.0"
+        ],
+        "packages": [
+          {
+            "id": "Purview.EventSourcing",
+            "description": "Core abstractions, aggregates, facades, transactions, DI, and source generation.",
+            "primary": true
+          },
+          {
+            "id": "Purview.EventSourcing.SqlServer",
+            "description": "Azure SQL / SQL Server event stream and queryable snapshot stores."
+          },
+          {
+            "id": "Purview.EventSourcing.Postgres",
+            "description": "PostgreSQL event stream and queryable snapshot stores."
+          },
+          {
+            "id": "Purview.EventSourcing.AzureStorage",
+            "description": "Azure Table / Blob event store."
+          },
+          {
+            "id": "Purview.EventSourcing.MongoDB",
+            "description": "MongoDB event stream and queryable snapshot stores."
+          },
+          {
+            "id": "Purview.EventSourcing.CosmosDb",
+            "description": "Azure Cosmos DB queryable snapshot store."
+          },
+          {
+            "id": "Purview.EventSourcing.InMemory",
+            "description": "In-memory event and snapshot stores for local and test scenarios."
+          },
+          {
+            "id": "Purview.EventSourcing.Validation.FluentValidation",
+            "description": "FluentValidation adapter for aggregate save-time validation."
+          },
+          {
+            "id": "Purview.EventSourcing.Validation.ZodSharp",
+            "description": "Purview.ZodSharp adapter for aggregate save-time validation."
+          }
+        ],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "An aggregate that persists as events",
+            "scenario": "You want aggregate-based event sourcing without hand-writing the event stream, snapshot, and transaction plumbing.",
+            "code": "[Aggregate]\npublic partial class OrderAggregate : AggregateBase\n{\n    public string CustomerId { get; private set; } = default!;\n    public decimal Total { get; private set; }\n\n    [Event]\n    public partial void CreateOrder(string customerId);\n\n    [Event]\n    public partial void AddLineItem(string productId, string productName, int quantity, decimal unitPrice);\n}\n",
+            "language": "csharp",
+            "outcome": "The source generator produces the aggregate plumbing; provider packages add stores for SQL Server, PostgreSQL, MongoDB, Azure Storage, Cosmos DB, or in-memory.",
+            "evidence": "One [Aggregate] declaration, and switching storage means swapping a provider package rather than rewriting the domain.",
+            "docsPage": "solution-design-guide"
+          },
+          {
+            "audience": "architect",
+            "title": "Choose the store late, keep the domain stable",
+            "scenario": "You need to start on one database and move providers later, but you do not want persistence choices to leak into the domain model.",
+            "code": "builder.Services.AddSqlServerEventStore();\nbuilder.Services.AddSqlServerSnapshotQueryableEventStore();\n",
+            "language": "csharp",
+            "outcome": "Domain code depends on provider-agnostic facades, while concrete stores live behind separate packages and registration extensions.",
+            "evidence": "SQL Server, PostgreSQL, MongoDB, Azure Storage, and Cosmos DB are interchangeable at the registration level, so the domain never references a store.",
+            "docsPage": "sql-server-guide"
+          }
+        ],
+        "related": [
+          "zodsharp",
+          "value-objects"
+        ],
+        "discussions": false
+      }
+    },
+    {
+      "repository": "purview-dev/openapi-xmlcomments",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "openapi-xmlcomments",
+        "name": "OpenAPI XmlComments",
+        "shortDescription": "Keeps the ASP.NET Core OpenAPI XML-comment generator working when one documentation ID arrives twice.",
+        "description": "An MSBuild package for APIs that reference Microsoft.AspNetCore.OpenApi. The XML-comment source generator builds one dictionary from the documentation of every project reference and of the API's own compilation, and de-duplicates neither, so a documented type that arrives from more than one assembly makes /openapi/v1.json answer 500 with \"An item with the same key has already been added\". This package removes every colliding documentation ID from the referenced XML documentation before compile, and warns (POAX001) about an ID it can only see once the API has been built. The generator stays on, so every XML description stays in the OpenAPI document.",
+        "origin": "The same 500 appeared in several APIs at once as soon as a source generator started injecting the same attribute into every assembly (dotnet/aspnetcore#67192). The usual workaround — removing the generator — also removed every description from the document, so the fix became two MSBuild targets that filter only what actually collides.",
+        "useWhen": "Your API references Microsoft.AspNetCore.OpenApi with its XML-comment generator on, and a documented type with the same full name is compiled into more than one of its project references — typically an attribute or polyfill a source generator injects into every assembly.",
+        "avoidWhen": "The duplicate never passes through AdditionalFiles, or both copies come from the API's own compilation: the package cannot see those, and a type that is genuinely duplicated public API needs one of the declarations renamed rather than filtered.",
+        "repository": "purview-dev/openapi-xmlcomments",
+        "category": "build-tooling",
+        "status": "preview",
+        "order": 65,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "rootPage": "Getting-Started.md",
+          "exclude": [
+            "_Sidebar.md",
+            "Home.md",
+            "index.md"
+          ]
+        },
+        "skills": true,
+        "targetFrameworks": [
+          "msbuild"
+        ],
+        "packages": [
+          {
+            "id": "Purview.OpenAPI.XmlComments",
+            "description": "The deduplication and overlap-check MSBuild tasks, their props and targets, and POAX001; a development dependency with no runtime footprint.",
+            "primary": true,
+            "targetFrameworks": [
+              "netstandard2.0"
+            ]
+          }
+        ],
+        "related": [
+          "results"
+        ],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "Keep the generator on and filter only what collides",
+            "scenario": "/openapi/v1.json answers 500 with \"An item with the same key has already been added\" because a type your API documents is also documented in more than one referenced project, and the only workaround you have found turns the XML-comment generator off.",
+            "code": "<!-- the project that calls AddOpenApi() -->\n<PackageReference Include=\"Purview.OpenAPI.XmlComments\" Version=\"1.0.0\" PrivateAssets=\"all\" />\n",
+            "language": "xml",
+            "outcome": "Every colliding documentation ID is removed from the referenced documentation before compile, the generator runs on the filtered copies, and the description of every other endpoint and schema stays in the document.",
+            "evidence": "Every occurrence of a colliding ID goes, not all but the first, because the API usually declares the injected type as well: keeping a reference's copy would still collide with it. A duplicated ID is ambient code rather than API surface, and a copy is only rewritten when its content changes, so a no-change build still skips CoreCompile."
+          },
+          {
+            "audience": "developer",
+            "title": "List every colliding ID rather than the first one",
+            "scenario": "The exception names one documentation ID, and the build says nothing about the rest, so you do not know whether one exclude is enough or whether the generator fails again on the next build.",
+            "code": "pwsh skills/purview-openapi-xmlcomments-duplicates/scripts/find-duplicate-documentation-ids.ps1 `\n  -Project path/to/Api\n",
+            "language": "powershell",
+            "outcome": "The script asks MSBuild for exactly the documentation files the generator reads and reports every colliding ID, where each copy comes from, whether the current configuration already handles it, and the item to add when it does not.",
+            "evidence": "Each finding is classified: BetweenReferences is handled automatically by the package, while ReferenceAndProject needs the PurviewOpenAPIXmlCommentExclude item the script prints. It exits 0 when nothing would throw, 1 when something would, and 2 when it could not inspect the project.",
+            "docsPage": "troubleshooting"
+          },
+          {
+            "audience": "team-lead",
+            "title": "Fail the build on a collision instead of a 500 in production",
+            "scenario": "The overlap is only visible after the API compiles, so a warning is easy to ship, and the failure then surfaces as a 500 on the OpenAPI document rather than as a red build.",
+            "code": "<PropertyGroup>\n  <!-- fail the build instead of leaving the collision to run time -->\n  <MSBuildWarningsAsErrors>$(MSBuildWarningsAsErrors);POAX001</MSBuildWarningsAsErrors>\n</PropertyGroup>\n",
+            "language": "xml",
+            "outcome": "POAX001 fails the build and names the exact PurviewOpenAPIXmlCommentExclude item to add, so an unhandled collision is a pull-request failure instead of a runtime error.",
+            "evidence": "The check runs after CoreCompile and compares the API's fresh documentation file with the filtered reference documentation, which is the one case the before-compile pass cannot see: an ID documented in the API and in exactly one referenced project.",
+            "docsPage": "diagnostics"
+          },
+          {
+            "audience": "architect",
+            "title": "One repository-wide reference that costs nothing at run time",
+            "scenario": "Several API projects in the same repository reference the same generators, and you do not want per-project wiring or a build fix that becomes a runtime dependency.",
+            "code": "<!-- Directory.Packages.props: once for every project in the repository -->\n<GlobalPackageReference Include=\"Purview.OpenAPI.XmlComments\" Version=\"1.0.0\" />\n",
+            "language": "xml",
+            "outcome": "One declaration covers every project and does nothing in a project that does not reference Microsoft.AspNetCore.OpenApi, so libraries in the same repository need no exemption.",
+            "evidence": "The package ships only props, targets and a netstandard2.0 task assembly under tasks/; lib/, ref/ and runtimes/ are forbidden by pack validation, so it adds no runtime dependency and copies nothing into the consumer's build output.",
+            "docsPage": "configuration"
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/pm-skills",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev.github.io/main/src/src/lib/manifest/schema.ts",
+        "id": "pm-skills",
+        "name": "PM Skills",
+        "shortDescription": "Project-management skills that decide which feature an AI coding agent works on next.",
+        "description": "Twenty-four agent skills that give a solo developer a parking lot, challenged shaping, strategy, a roadmap, a task board, a risk register, and memory across sessions — installed above a development workflow skill set such as Superpowers. They decide which feature is worked on; the workflow skills decide how it is built. Ideas are captured in one line at any time, shaped into a brief whose ramifications are challenged before they reach the roadmap, and every decision is written to a file as it is made so a compacted session can resume from it. The skills write only to the configured planning directory, commit only that directory, and create no branch except the item's own.",
+        "origin": "The bottleneck on a solo project driven by a coding agent was not the code but the decision about what to build next: ideas arrived mid-task and were lost, a half-formed feature reached the roadmap unchallenged, and after a context compaction the thread of what was in flight had to be rebuilt from the conversation. Writing that discipline down as skills — a capture that works at any moment, a shaping step that argues with the idea first, and state files that survive compaction — turned it into something the agent runs rather than something the developer has to remember.",
+        "useWhen": "You drive a project with an AI coding agent and want the product decisions — what is next, what was dropped, and why a bet was taken — kept in files that outlive the session rather than in the conversation. It fits a solo developer or a small team that already has a development workflow skill set and wants the layer above it.",
+        "avoidWhen": "You want a hosted planning tool, a shared backlog for a large team, or a portfolio view: the state is plain markdown in your repository and the skills assume one developer plus an agent. With no agent workflow to sit above, there is nothing for the PM skills to hand off to.",
+        "repository": "purview-dev/pm-skills",
+        "category": "developer-tooling",
+        "status": "stable",
+        "order": 100,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "rootPage": "Home.md",
+          "exclude": [
+            "_Sidebar.md"
+          ]
+        },
+        "related": [
+          "engineering-playbook"
+        ],
+        "acknowledgments": [
+          {
+            "name": "Superpowers",
+            "url": "https://github.com/obra/superpowers",
+            "description": "The development workflow skill set the PM skills are installed above."
+          }
+        ],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "Capture a bug or an idea in one line, mid-task",
+            "scenario": "You are in the middle of an implementation when you spot an unrelated bug, or an idea arrives that you cannot act on now but do not want to lose.",
+            "code": "park this: the export button does nothing in Safari\n\nParked: planning/inbox/2026-11-01-0912-export-button-safari.md (bug). Back to step 3.\n",
+            "language": "plaintext",
+            "outcome": "One inbox file is written under the configured planning directory and the reply is a single line, so the agent resumes the step it was on. Only capture (pm-park, pm-risk) and checkpoint writes may run during an active workflow, so nothing else interrupts the build.",
+            "evidence": "pm-park writes in the main worktree rather than the current feature worktree, and its Output section allows exactly one line plus — only when no workflow is active — a single choice question, `Shape \"<title>\" now, or keep it parked?`, whose recommended answer is to keep it parked."
+          },
+          {
+            "audience": "team-lead",
+            "title": "A board and a roadmap that come from the same files",
+            "scenario": "You want to see what is in progress, what the agent will pick up next, and what is waiting on you, without maintaining a second copy of the plan in a tracker.",
+            "code": "| Column | ID | Title | Owner | Size | Detail |\n| --- | --- | --- | --- | --- | --- |\n| Now | R-007 | Tenant billing | agent | M | execute, 4/9 steps |\n| Next (agent) | R-008 | Invoice email | agent | S | ready |\n| For you | R-009 | Open a Stripe account | user | S | blocks R-008 |\n| Waiting | R-010 | Usage export | agent | M | needs R-008 |\n| Done | R-006 | Tenant model | agent | M | 2026-10-28 |\n",
+            "language": "markdown",
+            "outcome": "pm-board, pm-roadmap, and pm-status render the task board, the milestone roadmap, or just your own queue from the same state files the agent works from, and viewing is read-only: asking for the board or the status never changes the plan.",
+            "evidence": "The board's \"For you\" column is every Owner: user item in Next plus the open questions, and \"Waiting\" names the blocking item — the same roadmap items pm-next claims work from, so the board cannot drift from what is actually being built."
+          },
+          {
+            "audience": "architect",
+            "title": "The idea is challenged before it reaches the roadmap",
+            "scenario": "An idea sounds obviously good, and you want it argued with — the alternatives, the ramifications across data, security, performance, cost and maintenance, and the smallest version that still delivers the outcome — before it becomes work.",
+            "code": "## Who and evidence\n## Alternatives considered\n## Challenges and answers\n## Ramifications\n## Proposal\n## Done when\n## Open questions\n## Decision\n",
+            "language": "markdown",
+            "outcome": "A brief is written to the planning directory after every answer, so the discussion survives compaction and a later session resumes it from the first empty heading, and the run ends with one decision: add to Next, add to Later, build it now, keep it parked, or drop it.",
+            "evidence": "pm-shape writes at least three alternatives — do nothing, the smallest version, and the full idea — and completes a ramifications row for each of the eight Challenge protocol areas, writing \"none found\" rather than leaving one out; a dropped idea appends its reason to Dropped in LOG.md."
+          },
+          {
+            "audience": "contributor",
+            "title": "Add a skill without breaking the consistency checks",
+            "scenario": "You want to add a new pm-* skill, and the repository has to stay consistent: the README table, the managed section, the pm-setup inventory and the pm-help guide all have to describe the same set.",
+            "code": "just validate\njust lint-check\n",
+            "language": "bash",
+            "outcome": "Adding a skill is a directory plus the four listings that reference it. just validate checks skill frontmatter, the README and managed-section tables, the pm-setup inventory, the section markers and the template placeholders, and fails when one listing is missed.",
+            "evidence": "CI runs the same checks on every push and pull request to main, and lefthook runs commitlint on commit and just lint-check on push, so a half-registered skill cannot be merged."
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/results",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "results",
+        "name": "Results",
+        "shortDescription": "Result for .NET — expected failures as values the caller must handle.",
+        "description": "A small, dependency-free Result<TValue, TError> for .NET that makes expected failures part of a method's contract: not found, invalid, and conflict are values rather than exceptions. A Roslyn source generator adds C# 15 union ergonomics for the error cases, and companion packages carry the result into ASP.NET Core responses and ZodSharp validation problems.",
+        "origin": "Services kept re-declaring their own error types and hand-writing the same failure helpers and HTTP mapping, so the result type, the generated helpers, and the adapter packages became one shared package family.",
+        "useWhen": "Expected failures are part of your domain model and you want them returned as values the caller must handle, with a strongly typed error case that still reaches the client as a standard HTTP problem response.",
+        "avoidWhen": "You target a runtime below .NET 11 with C# 15 preview, or the failures you are modelling are exceptional circumstances that belong in exceptions.",
+        "repository": "purview-dev/results",
+        "category": "application-framework",
+        "status": "stable",
+        "order": 45,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "rootPage": "Getting-Started.md",
+          "exclude": [
+            "_Sidebar.md",
+            "Home.md",
+            "index.md"
+          ]
+        },
+        "targetFrameworks": [
+          "net10.0",
+          "net11.0"
+        ],
+        "packages": [
+          {
+            "id": "Purview.Results",
+            "description": "The result type, its factories, IResultValue, and the bundled union source generator. No dependencies.",
+            "primary": true
+          },
+          {
+            "id": "Purview.Results.AspNetCore",
+            "description": "Result-to-response mapping, endpoint filter, and dependency-injection registration."
+          },
+          {
+            "id": "Purview.Results.ZodSharp",
+            "description": "Bridges ZodSharp validation results into results."
+          },
+          {
+            "id": "Purview.Results.ZodSharp.AspNetCore",
+            "description": "Renders validation-carrying failures as HttpValidationProblemDetails."
+          }
+        ],
+        "related": [
+          "zodsharp",
+          "sourcegenerator-framework"
+        ],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "Return expected failures as values",
+            "scenario": "You call a store that can fail in ways you expect — not found, disabled, already exists — and you do not want a thrown exception or a generic error string to be the only way the caller learns what happened.",
+            "code": "Result<Tenant, TenantError> GetTenant(TenantId tenantId) =>\n    _tenants.TryGet(tenantId, out var tenant)\n        ? Result<Tenant, TenantError>.Success(tenant)\n        : new TenantNotFound(tenantId).AsFailure<Tenant>();\n",
+            "language": "csharp",
+            "outcome": "The caller branches on the error value itself, so TenantNotFound keeps carrying its TenantId instead of being flattened into a message.",
+            "evidence": "The core package has no dependencies: it ships the result type, its factories, and IResultValue without pulling anything else in.",
+            "docsPage": "core-concepts"
+          },
+          {
+            "audience": "developer",
+            "title": "Generate the failure helper for every union case",
+            "scenario": "You model errors as a C# 15 union and need each case to become the failure side of a result without writing one conversion helper per case by hand.",
+            "code": "[GenerateResult]\npublic readonly union TenantError(TenantNotFound, TenantDisabled, TenantAlreadyExists);\n",
+            "language": "csharp",
+            "outcome": "The generator emits AsFailure<TValue>() for every case of an annotated union, plus a code fix and a CA1815 suppression, so the declaration needs no pragma.",
+            "evidence": "C# forbids the implicit conversion a bare case value would need — no operators in static classes, no conversion operators in extension members, one user-defined conversion per sequence — which is why the helper is per case.",
+            "docsPage": "union-errors"
+          },
+          {
+            "audience": "architect",
+            "title": "Map one error union onto HTTP responses",
+            "scenario": "The same domain error union surfaces from many minimal-API endpoints, and you do not want a hand-written switch deciding the status code at each one.",
+            "code": "builder.Services.AddResultsHttp(options => options\n    .Map<TenantNotFound>(error => TypedResults.NotFound())\n    .Map<TenantError>(error => TypedResults.Problem(statusCode: StatusCodes.Status409Conflict))\n);\n\napp.MapGet(\"/tenants/{id:int}\", (int id) => GetTenant(id)).WithResultsHttp();\n",
+            "language": "csharp",
+            "outcome": "The mapping is declared once at startup, WithResultsHttp() applies it to the endpoints, and a host can replace IResultsHttpMapper when it needs different behaviour.",
+            "evidence": "Mappings resolve in declaration order — any mapping or failure mapper the host declared earlier always wins — so the most specific rule is registered first.",
+            "docsPage": "aspnetcore-integration"
+          },
+          {
+            "audience": "team-lead",
+            "title": "Let ZodSharp validation failures become validation problems",
+            "scenario": "Endpoints validate input with ZodSharp, and a failed validation should reach the client as the standard ASP.NET Core validation-problem payload rather than an error shape the API has to document separately.",
+            "code": "{\n  \"title\": \"One or more validation errors occurred.\",\n  \"status\": 400,\n  \"errors\": { \"TenantId\": [\"Required field 'TenantId' is null\"] },\n  \"issues\": [{ \"code\": \"missing_field\", \"path\": [\"TenantId\"], \"message\": \"Required field 'TenantId' is null\" }]\n}\n",
+            "language": "json",
+            "outcome": "A failure that implements IValidationErrorCarrier becomes HttpValidationProblemDetails without the host mapping it, unless a per-code or per-category rule answers that failure first.",
+            "evidence": "The response is ASP.NET Core's own HttpValidationProblemDetails contract, so API clients keep the error shape they already parse.",
+            "docsPage": "zodsharp-problemdetails"
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/sourcegenerator-framework",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "sourcegenerator-framework",
+        "name": "SourceGenerator Framework",
+        "shortDescription": "A typed framework for building incremental C# source generators.",
+        "description": "A strongly typed framework for building, testing, and maintaining incremental C# source generators with Roslyn. Includes structured code generation, attribute data models, type libraries, and a step-cache test runner for verifying incremental behaviour.",
+        "origin": "Building several incremental generators exposed the same needs for typed models, structured output, testing, and cache verification, so those foundations became a shared framework.",
+        "useWhen": "You are building a non-trivial incremental C# source generator and want reusable modelling, code-writing, packaging, and testing infrastructure.",
+        "avoidWhen": "Your generator is small enough for the Roslyn APIs directly, or adopting a framework would hide behaviour your implementation needs to control precisely.",
+        "repository": "purview-dev/sourcegenerator-framework",
+        "category": "source-generation",
+        "status": "stable",
+        "featured": true,
+        "order": 40,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "rootPage": "Getting-Started.md",
+          "exclude": [
+            "_Sidebar.md",
+            "Home.md",
+            "index.md"
+          ]
+        },
+        "targetFrameworks": [
+          "net10.0",
+          "net11.0"
+        ],
+        "packages": [
+          {
+            "id": "Purview.SourceGeneratorFramework",
+            "description": "Core helpers, models, and MSBuild integration for incremental generators.",
+            "primary": true,
+            "targetFrameworks": [
+              "netstandard2.0"
+            ]
+          },
+          {
+            "id": "Purview.SourceGeneratorFramework.Testing",
+            "description": "Framework-agnostic test runner and assertions for generator tests."
+          },
+          {
+            "id": "Purview.SourceGeneratorFramework.Testing.TUnit",
+            "description": "TUnit-specific test base classes and assertions."
+          }
+        ],
+        "useCases": [
+          {
+            "audience": "contributor",
+            "title": "Build an incremental generator on typed foundations",
+            "scenario": "You are writing a non-trivial incremental C# source generator and need typed attribute models, structured code output, and packaging that Roslyn will actually load.",
+            "code": "<ProjectReference\n  Include=\"..\\MyGenerator\\MyGenerator.csproj\"\n  PrivateAssets=\"all\"\n  OutputItemType=\"Analyzer\"\n  ReferenceOutputAssembly=\"false\"\n/>\n",
+            "language": "xml",
+            "outcome": "The framework supplies attribute-data models, a structured code writer, a type library, and packaging helpers so the generator stays focused on its own logic.",
+            "evidence": "The Purview generators themselves are built on the framework, so it is exercised by real generators rather than being an untested abstraction.",
+            "docsPage": "guide"
+          },
+          {
+            "audience": "contributor",
+            "title": "Verify incremental behaviour in tests",
+            "scenario": "You need to prove a generator is incremental and produces the code you expect, without assembling a Roslyn driver by hand in every test.",
+            "outcome": "The testing package provides SourceGeneratorTestRunner<TGenerator>, a framework-agnostic test base, and assertions such as AssertSingleGeneratedSource and AssertNoCompilationErrors.",
+            "evidence": "Step-cache tests and a TUnit integration ship alongside the runner, so incremental regressions surface in CI.",
+            "docsPage": "testing"
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/telemetry-sourcegenerator",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "telemetry-sourcegenerator",
+        "name": "Telemetry SourceGenerator",
+        "shortDescription": "Interface-based telemetry for .NET with zero boilerplate.",
+        "description": "A source generator that turns simple interface methods into OpenTelemetry-aligned Activities, structured ILogger logging, and Metrics. Define telemetry once on an interface; the generator emits the implementation, DI registration helpers, and multi-target generation — no runtime reflection, no boilerplate.",
+        "origin": "Repeating the same logging, activity, and metric wiring across services made telemetry a strong candidate for one interface-driven, compile-time implementation.",
+        "useWhen": "You want strongly typed OpenTelemetry-aligned telemetry from interfaces, with generated implementations and dependency-injection registration.",
+        "avoidWhen": "Your telemetry is highly dynamic, cannot be described at compile time, or is already handled consistently by another instrumentation layer.",
+        "repository": "purview-dev/telemetry-sourcegenerator",
+        "category": "observability",
+        "status": "stable",
+        "featured": true,
+        "order": 10,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "rootPage": "Getting-Started.md",
+          "exclude": [
+            "_Sidebar.md",
+            "Home.md",
+            "index.md"
+          ]
+        },
+        "targetFrameworks": [
+          "net8.0",
+          "net9.0",
+          "net10.0"
+        ],
+        "packages": [
+          {
+            "id": "Purview.Telemetry.SourceGenerator",
+            "description": "Core package with the Roslyn source generator and attribute library.",
+            "primary": true,
+            "targetFrameworks": [
+              "netstandard2.0"
+            ]
+          }
+        ],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "Tracing, logging, and metrics from a single interface",
+            "scenario": "You want OpenTelemetry activities, structured logs, and metrics around an order service, but you do not want to hand-write the ActivitySource, ILogger, and Meter wiring in every class.",
+            "code": "[ActivitySource]\n[Logger]\n[Meter]\npublic interface IOrderServiceTelemetry\n{\n    [Activity]\n    [Info]\n    [AutoCounter]\n    Activity? PlacingOrder(int orderId, [Baggage] string region);\n}\n",
+            "language": "csharp",
+            "outcome": "The generator emits the implementation and an AddOrderServiceTelemetry() DI extension; you register it once and inject the interface wherever telemetry is needed.",
+            "evidence": "One interface replaces the ActivitySource, ILogger, and Meter boilerplate you would otherwise repeat in every service."
+          },
+          {
+            "audience": "architect",
+            "title": "Standardise telemetry names across services",
+            "scenario": "You want consistent OpenTelemetry meter and activity-source names across many services instead of ad-hoc string literals scattered through the codebase.",
+            "code": "builder.AddServiceDefaults(\n    TelemetryNames.MeterNames,\n    TelemetryNames.ActivitySourceNames);\n",
+            "language": "csharp",
+            "outcome": "A generated TelemetryNames static class holds the names, so registration happens once at startup rather than in every service.",
+            "evidence": "Naming conventions are generated, so snake_case tags and hierarchical metrics stay consistent without a review checklist.",
+            "docsPage": "generation"
+          }
+        ],
+        "discussions": false
+      }
+    },
+    {
+      "repository": "purview-dev/unions",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "unions",
+        "name": "Unions",
+        "shortDescription": "Dependency-free C# 15 unions that do not box value-type cases.",
+        "description": "The C# 15 `union` keyword lowers to a single `object?` field, so every value-type case is boxed on entry. Purview.Unions generates the language's non-boxing custom-union shape instead: each case gets its own typed field, a public constructor, and a `TryGetValue` that never allocates. The compiler still sees a union — implicit conversions, exhaustive `switch`, and `is`/`null` patterns all work — plus a hand-written `Union<T1, T2>` for the two-case shape.",
+        "origin": "Discriminated unions were needed for error modelling and optional values, and the language's own `union` declaration boxes every value-type case on entry. The compiler already exposes the custom-union contract the boxing-free shape needs, so the generator that emits it became a shared package instead of a hand-written type in each project.",
+        "useWhen": "You model a closed set of cases — expected errors, optional results, a small state machine — and either the value-type cases are allocation-sensitive or you want one type the whole team matches on exhaustively.",
+        "avoidWhen": "You target a runtime below .NET 11 with C# 15, or a single shape with two reference-type cases is enough: the built-in `union` declaration is simpler and the boxing cost does not apply to reference types.",
+        "repository": "purview-dev/unions",
+        "category": "source-generation",
+        "status": "preview",
+        "order": 25,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "rootPage": "Getting-Started.md",
+          "exclude": [
+            "_Sidebar.md",
+            "Home.md",
+            "index.md"
+          ]
+        },
+        "targetFrameworks": [
+          "net10.0",
+          "net11.0"
+        ],
+        "packages": [
+          {
+            "id": "Purview.Unions",
+            "description": "The [GenerateUnion] attribute, the source generator with its code fixes, and the hand-written Union<T1, T2>.",
+            "primary": true
+          }
+        ],
+        "skills": true,
+        "related": [
+          "results",
+          "zodsharp",
+          "sourcegenerator-framework"
+        ],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "Match a value-type union without boxing a case",
+            "scenario": "A method returns one of a handful of value-type outcomes, and the caller must branch on which one it received — but the `union` keyword boxes every value-type case on entry and again while matching.",
+            "code": "[GenerateUnion(typeof(int), typeof(string))]\npublic readonly partial struct IntOrString;\n\nIntOrString value = 42;\n\nvar message = value switch\n{\n    int number => $\"int {number}\",\n    string text => $\"string {text}\",\n    null => \"empty\",\n};\n",
+            "language": "csharp",
+            "outcome": "The compiler treats the generated type as a union, so implicit conversions, exhaustive `switch` and `is`/`null` patterns all work, while construction, `TryGetValue`, `is` and `switch` never allocate.",
+            "evidence": "The committed BenchmarkDotNet suite measures construction, both `TryGetValue` directions, the miss path, `HasValue`, `is` and both `switch` shapes at 0 B; only reading `Value` allocates the 24-byte box for the `int` case, which is inherent to the union contract.",
+            "docsPage": "performance"
+          },
+          {
+            "audience": "developer",
+            "title": "Declare a union whose cases are type parameters",
+            "scenario": "You want a generic option or outcome type, but `typeof(T)` is not a legal attribute argument, so an ordinary `[GenerateUnion(typeof(…))]` list cannot name a type parameter.",
+            "code": "[GenerateUnion]\npublic readonly partial struct Option<T>\n{\n    internal static partial Option<T> Some(Some<T> value);\n    internal static partial Option<T> None(None value);\n}\n",
+            "language": "csharp",
+            "outcome": "Each partial factory signature names a case, the generator supplies the bodies and derives the public constructors from them, and the compiler reports `CS0416` only if you try to use a `typeof(T)` list instead.",
+            "evidence": "A generic union must name its cases in source because `CS0416` rejects `typeof(T)` in an attribute; a `typeof` list on a generic union is reported as `UNI0011`.",
+            "docsPage": "union-design"
+          },
+          {
+            "audience": "architect",
+            "title": "Let a second source generator see the union's cases",
+            "scenario": "Another Purview generator — Results, or the telemetry generator unwrapping a parameter — must read the case list, but Roslyn generators never see each other's generated output.",
+            "code": "[GenerateUnion]\npublic readonly partial struct Outcome<T> : Outcome<T>.IUnionMembers\n{\n    public interface IUnionMembers\n    {\n        static Outcome<T> Create(T? value) => Outcome<T>.CreateCase0(value);\n        static Outcome<T> Create(Exception? error) => Outcome<T>.CreateCase1(error);\n\n        bool TryGetValue(out T value);\n        bool TryGetValue(out Exception value);\n    }\n}\n",
+            "language": "csharp",
+            "outcome": "A public nested `IUnionMembers` provider exposes the case list in the source the other generator compiles against, while this generator still emits the storage and `CreateCaseN` methods.",
+            "evidence": "`Purview.Telemetry.SourceGenerator` 6.0.0 reads the source-visible case list in the same order as this package, and a `[GenerateUnion]` target with no source-visible case list is reported as `UNI0003` rather than unwrapped.",
+            "docsPage": "interop"
+          },
+          {
+            "audience": "contributor",
+            "title": "Fail fast on a malformed union declaration",
+            "scenario": "A union is declared without `partial`, with a duplicate case, or with a case type less accessible than the union, and the generated shape cannot be emitted coherently.",
+            "code": "error UNI0001: The union declaration is not partial\nerror UNI0004: Duplicate case type\nerror UNI0005: A case type is less accessible than the union\n",
+            "language": "plaintext",
+            "outcome": "Every error blocks its union's output rather than emitting a partial shape, and the package ships code fixes for the common declarations — add `partial` (`UNI0001`), widen an inaccessible case type (`UNI0005`), add `[Union]` on the fallback path (`UNI0007`).",
+            "evidence": "`UNI0015` (a single-case union) is the only warning; every other `UNI` rule blocks emission, so a malformed union fails the build instead of producing half a type.",
+            "docsPage": "diagnostics"
+          }
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/value-objects",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "value-objects",
+        "name": "Value Objects",
+        "shortDescription": "Source-generated scalar and complex value objects for .NET.",
+        "description": "F#-style single-case types for C#. Mark a partial struct or class with [Scalar] or [ValueObject] and an incremental source generator produces Create/Hydrate factories with normalization and validation, equality, comparison, implicit conversions, JSON converters, and contextual creation. Value objects serialize as their underlying value, map cleanly onto Entity Framework JSON columns, and can be validated with Purview.ZodSharp schemas.",
+        "origin": "Hand-writing the same factories, equality rules, conversions, serializers, and persistence integration for domain values made the pattern an obvious source-generation target.",
+        "useWhen": "Your domain uses meaningful scalar or complex value types and you want their repetitive implementation generated from a small, explicit declaration.",
+        "avoidWhen": "A primitive or record already expresses the concept clearly, or generated conversion and serialization behaviour would be more machinery than the domain needs.",
+        "repository": "purview-dev/value-objects",
+        "category": "source-generation",
+        "status": "stable",
+        "featured": true,
+        "order": 35,
+        "docs": {
+          "source": "github-path",
+          "path": "docs",
+          "rootPage": "Getting-Started.md",
+          "exclude": [
+            "_Sidebar.md",
+            "Home.md",
+            "index.md"
+          ]
+        },
+        "targetFrameworks": [
+          "net8.0",
+          "net9.0",
+          "net10.0",
+          "net11.0"
+        ],
+        "packages": [
+          {
+            "id": "Purview.ValueObjects",
+            "description": "Runtime contracts, source generator, and analyzer for scalar and complex value objects.",
+            "primary": true
+          }
+        ],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "A domain scalar without the boilerplate",
+            "scenario": "You want a strong EmailAddress type with normalisation and validation, without hand-writing factories, equality, conversions, and a JSON converter.",
+            "code": "[Scalar]\npublic readonly partial record struct EmailAddress\n{\n    public string Value { get; }\n\n    static partial void OnNormalize(ref string value)\n        => value = value?.Trim().ToLowerInvariant()!;\n}\n",
+            "language": "csharp",
+            "outcome": "The generator adds Create, Hydrate, TryCreate, and Empty, plus equality, comparison, implicit conversions, and a JSON converter.",
+            "evidence": "One declaration replaces the factory, equality, comparison, conversion, and serialization code you would otherwise maintain by hand.",
+            "docsPage": "value-object-design"
+          },
+          {
+            "audience": "developer",
+            "title": "Map a value object onto an Entity Framework column",
+            "scenario": "You use a value object in your domain and want it to persist transparently instead of writing converters at every mapping site.",
+            "code": "var email = EmailAddress.Create(\"  Demo@Example.COM  \");\n// email.Value == \"demo@example.com\"\n\nbool ok = EmailAddress.TryCreate(\"not-an-email\", out _);\n// ok == false\n",
+            "language": "csharp",
+            "outcome": "Value objects serialize as their underlying value and map onto Entity Framework JSON columns, with optional Purview.ZodSharp validation.",
+            "evidence": "Persistence and serialization come from the generated type, so mapping code is not duplicated per entity.",
+            "docsPage": "entity-framework"
+          }
+        ],
+        "related": [
+          "zodsharp",
+          "event-sourcing"
+        ]
+      }
+    },
+    {
+      "repository": "purview-dev/zodsharp",
+      "ref": "main",
+      "record": {
+        "$schema": "https://raw.githubusercontent.com/purview-dev/purview-dev/main/src/src/lib/manifest/schema.ts",
+        "id": "zodsharp",
+        "name": "ZodSharp",
+        "shortDescription": "Zero-allocation schema validation for C# — a Zod port.",
+        "description": "A high-performance schema validation library for C#, ported from TypeScript Zod by way of the guinhx/ZodSharp C# port. Struct-based rules, a fluent API, JSON Schema export and import, source-generated validators, and zero-allocation validation on every valid input path. Integrates with System.Text.Json, Newtonsoft.Json, and ASP.NET Core ProblemDetails.",
+        "origin": "Schema validation was repeatedly needed at application boundaries, but existing approaches did not combine a fluent Zod-style model with predictable, allocation-conscious execution.",
+        "useWhen": "You want composable C# schemas, compile-time validator generation, or JSON Schema interop with tight control over validation behaviour and allocations.",
+        "avoidWhen": "Data annotations or an existing validation library already cover your requirements, or Zod-style schemas would add an unnecessary second validation model.",
+        "repository": "purview-dev/zodsharp",
+        "category": "validation",
+        "status": "stable",
+        "featured": true,
+        "order": 30,
+        "docs": {
+          "source": "github-path",
+          "path": "docs/wiki",
+          "rootPage": "Getting-Started.md",
+          "exclude": [
+            "_Sidebar.md",
+            "Home.md",
+            "index.md"
+          ],
+          "channels": {
+            "live": {
+              "ref": "latest-stable"
+            },
+            "prerelease": {
+              "ref": "default"
+            }
+          },
+          "redirects": {
+            "core-concepts": "concepts/core-concepts",
+            "composition-and-transforms": "concepts/composition-and-transforms",
+            "string-validation": "schemas/string-validation",
+            "number-validation": "schemas/number-validation",
+            "object-validation": "schemas/object-validation",
+            "arrays-and-other-schemas": "schemas/arrays-and-other-schemas",
+            "unions-and-discriminated-unions": "schemas/unions-and-discriminated-unions",
+            "validation-rules-reference": "schemas/validation-rules-reference",
+            "custom-rules": "schemas/custom-rules",
+            "value-objects-integration": "schemas/value-objects-integration",
+            "compiled-validators-and-caching": "schemas/compiled-validators-and-caching",
+            "source-generator": "generator/source-generator",
+            "source-generator-dataannotations": "generator/source-generator-dataannotations",
+            "source-generator-diagnostics": "generator/source-generator-diagnostics",
+            "jsonschema-export": "serialization/jsonschema-export",
+            "jsonschema-import": "serialization/jsonschema-import",
+            "systemtextjson-integration": "serialization/systemtextjson-integration",
+            "newtonsoftjson-integration": "serialization/newtonsoftjson-integration",
+            "microsoft-extensions-validation": "hosting/microsoft-extensions-validation",
+            "openapi-integration": "hosting/openapi-integration",
+            "blazor-integration": "hosting/blazor-integration",
+            "http-integration": "hosting/http-integration",
+            "dependency-injection": "hosting/dependency-injection",
+            "localization": "hosting/localization",
+            "guarantees-and-limitations": "quality/guarantees-and-limitations",
+            "performance": "quality/performance",
+            "trimming-and-aot": "quality/trimming-and-aot",
+            "cross-platform-interop": "quality/cross-platform-interop",
+            "contributing": "development/contributing",
+            "release-flow": "development/release-flow"
+          }
+        },
+        "targetFrameworks": [
+          "net8.0",
+          "net9.0",
+          "net10.0",
+          "net11.0"
+        ],
+        "packages": [
+          {
+            "id": "Purview.ZodSharp",
+            "description": "Core validation library and source generator.",
+            "primary": true
+          },
+          {
+            "id": "Purview.ZodSharp.SystemTextJson",
+            "description": "System.Text.Json integration and JSON Schema import."
+          },
+          {
+            "id": "Purview.ZodSharp.NewtonsoftJson",
+            "description": "Newtonsoft.Json integration and JSON Schema import."
+          },
+          {
+            "id": "Purview.ZodSharp.AspNetCore",
+            "description": "ASP.NET Core ProblemDetails integration."
+          },
+          {
+            "id": "Purview.ZodSharp.Http",
+            "description": "HttpClient integration — validates request and response bodies and maps validation problems back to ZodSharp errors."
+          },
+          {
+            "id": "Purview.ZodSharp.Blazor",
+            "description": "Blazor EditForm validation on Server, WebAssembly and Auto render modes."
+          },
+          {
+            "id": "Purview.ZodSharp.AspNetCore.OpenApi",
+            "description": "OpenAPI transformers for the constraints, formats and error contract ZodSharp enforces."
+          },
+          {
+            "id": "Purview.ZodSharp.Extensions.Validation",
+            "description": "Microsoft.Extensions.Validation resolver so minimal APIs and Blazor validate with ZodSharp."
+          }
+        ],
+        "related": [
+          "value-objects"
+        ],
+        "acknowledgments": [
+          {
+            "name": "Zod",
+            "url": "https://github.com/colinhacks/zod",
+            "description": "The original JavaScript/TypeScript schema validation library."
+          },
+          {
+            "name": "ZodSharp (guinhx)",
+            "url": "https://github.com/guinhx/ZodSharp",
+            "description": "The C# port of Zod, and the fork this project is based on."
+          }
+        ],
+        "useCases": [
+          {
+            "audience": "developer",
+            "title": "Validate input without exceptions or allocations",
+            "scenario": "You need to validate values at an application boundary and prefer a result you can inspect over exception-driven control flow.",
+            "code": "var nameSchema = Z.String().Min(3).Max(50);\nvar result = nameSchema.Validate(\"John\");\n\nif (result.IsSuccess)\n    Console.WriteLine($\"Valid name: {result.Value}\");\n",
+            "language": "csharp",
+            "outcome": "Validate/SafeParse return a ValidationResult<T> with no exceptions, while Parse still throws ZodException when you want that behaviour.",
+            "evidence": "Validation is zero-allocation on every valid input path, so the performance claim is a property of the code rather than an aspiration.",
+            "docsPage": "fluent-schema-api"
+          },
+          {
+            "audience": "team-lead",
+            "title": "Return standard ProblemDetails for invalid requests",
+            "scenario": "You want failed validation in ASP.NET Core to surface as standard ProblemDetails payloads rather than a bespoke error shape that clients must learn.",
+            "code": "dotnet add package Purview.ZodSharp.AspNetCore\n",
+            "language": "bash",
+            "outcome": "The AspNetCore adapter converts failed validation results into the standard ProblemDetails / HttpValidationProblemDetails payloads.",
+            "evidence": "One adapter package, and API consumers keep the error contract they already expect.",
+            "docsPage": "aspnetcore-integration"
+          }
+        ]
+      }
+    }
+  ]
+}

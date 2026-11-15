@@ -1,6 +1,6 @@
 ---
 name: project-manifest-reference
-description: Field-by-field reference for the catalogue records under src/src/data/projects/ (schema vocabulary, defaults, loader-enforced rules, and the invariants the site build depends on). Use whenever authoring or reviewing a catalogue record.
+description: Field-by-field reference for the catalogue records a project publishes at .config/purview-docs.yml and the ones still under src/src/data/projects/ (schema vocabulary, defaults, loader-enforced rules, and the invariants the site build depends on). Use whenever authoring or reviewing a catalogue record.
 category: purview-dev-website
 roles:
     - catalogue
@@ -13,9 +13,13 @@ tags:
 
 # project-manifest-reference Skill
 
-The catalogue is one file per project under `src/src/data/projects/` (plus
-`src/src/data/external-projects.yml` for collaborations), typed by `src/src/lib/manifest/schema.ts` and validated
-by `src/src/lib/manifest/load.ts`. `$schema: ../lib/manifest/schema.ts` is the first line of the file.
+The catalogue is one record per project. A project publishes its own at `.config/purview-docs.yml` in
+its repository, and that is what the site reads at build time (ADR 0013); the records a project does
+not own yet are under `src/src/data/projects/`, and `src/src/data/external-projects.yml` holds the
+collaborations. All of them are typed by `src/src/lib/manifest/schema.ts` and validated by
+`src/src/lib/manifest/load.ts`. A record held here opens with `$schema: ../lib/manifest/schema.ts`;
+a project-owned record names the schema by absolute URL, because the relative path resolves to nothing
+from another repository.
 
 ## Vocabularies (do not invent values)
 

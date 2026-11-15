@@ -1,6 +1,6 @@
 import type { Autofix } from './check-projects';
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { DEFAULT_PROJECTS_DIR } from '../src/lib/manifest/load';
@@ -8,7 +8,9 @@ import { checkProjects } from './check-projects';
 
 /**
  * Apply the catalogue guard's machine-applicable fixes to the project records
- * under `src/src/data/projects/`.
+ * under `src/src/data/projects/`. A record a project owns (ADR 0013) is not one of
+ * them — it lives in that project's repository — so such a fix is reported as
+ * skipped rather than written here.
  *
  * The advisory observations in `check-projects.ts` carry an optional structured
  * `autofix`; this script applies those and leaves everything else (blockers,
@@ -143,6 +145,13 @@ function run(): number {
   let changed = 0;
   for (const [projectId, autofixes] of byProject) {
     const file = join(DEFAULT_PROJECTS_DIR, `${projectId}.yml`);
+    if (!existsSync(file)) {
+      console.log(
+        `  skipped ${projectId}: the record is owned by its repository ` +
+          `(.config/purview-docs.yml, ADR 0013)`,
+      );
+      continue;
+    }
     const original = readFileSync(file, 'utf8');
     let lines = original.split('\n');
     for (const autofix of autofixes) {

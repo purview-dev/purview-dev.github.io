@@ -16,7 +16,7 @@ package is `src/`.
 - Treat `just validate` as the definition of done. It chains format-check, lint, typecheck, unit
   tests, asset checks, build, link crawl, generated-output checks, built-output tests, and the
   catalogue guard (`just check-projects`).
-- Edit the catalogue under `src/src/data/` only (one file per project, plus `external-projects.yml`), and keep every invariant listed in
+- Catalogue records live in each project repository at `.config/purview-docs.yml` (ADR 0013), in `src/src/data/projects/` for projects that do not own one yet, and in `src/src/data/external-projects.yml` for collaborations. Keep every invariant listed in
   `AGENTS.md` (unique ids/orders/packages, `name` slugifying to `id` for documented projects, at
   least one use case per non-archived project, `code` paired with `language`, resolvable `docsPage`).
 - Keep declared `status` and `targetFrameworks` honest: `just check-projects` prints advisory

@@ -1,7 +1,15 @@
 import { describe, expect, test } from 'bun:test';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 
-import { loadExternalProjects, loadProjects, parseManifest } from '../../src/lib/manifest/load';
-import { ManifestValidationError, readRawManifest } from '../../src/lib/manifest/load';
+import {
+  DEFAULT_PROJECTS_DIR,
+  ManifestValidationError,
+  loadExternalProjects,
+  loadProjects,
+  parseManifest,
+  readRawManifest,
+} from '../../src/lib/manifest/load';
 import { AUDIENCES } from '../../src/lib/manifest/schema';
 
 describe('catalogue records', () => {
@@ -35,6 +43,18 @@ describe('project manifest', () => {
     expect(ids).toContain('event-sourcing');
     expect(ids).toContain('zodsharp');
     expect(ids).toContain('aspirec4');
+  });
+
+  test('resolves a project that owns its record in its own repository (ADR 0013)', () => {
+    const projects = loadProjects();
+    const zodsharp = projects.find((project) => project.id === 'zodsharp');
+    expect(zodsharp).toBeDefined();
+    expect(zodsharp?.repository).toBe('purview-dev/zodsharp');
+    // The record is the project's: nothing of it is written here any more, and a
+    // second copy would be reported as a duplicate rather than merged.
+    const local = join(DEFAULT_PROJECTS_DIR, 'zodsharp.yml');
+    expect(readRawManifest().duplicatedIds).toEqual([]);
+    expect(existsSync(local)).toBe(false);
   });
 
   test('loads external (collaboration) projects', () => {

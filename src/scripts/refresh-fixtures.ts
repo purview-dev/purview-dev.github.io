@@ -5,6 +5,11 @@ import { dirname, resolve } from 'node:path';
 
 import { loadProjects } from '../src/lib/manifest/load';
 import {
+  MANIFEST_CACHE_SCHEMA_VERSION,
+  fetchProjectManifests,
+  listOrganizationRepositories,
+} from '../src/lib/manifest/remote';
+import {
   fetchGitHubReleasesRaw,
   fetchGitHubRepoRaw,
   fetchNuGetIndexRaw,
@@ -20,6 +25,7 @@ const GITHUB_FIXTURES = resolve('fixtures', 'github');
 const NUGET_FIXTURES = resolve('fixtures', 'nuget');
 const NUGET_NUSPEC_FIXTURES = resolve(NUGET_FIXTURES, 'nuspec');
 const NPM_FIXTURES = resolve('fixtures', 'npm');
+const MANIFEST_FIXTURES = resolve('fixtures', 'manifests');
 const RELEASE_FIXTURES = resolve('fixtures', 'releases');
 
 /** A package name safe for a fixture file name (`@scope/name` → `scope-name`). */
@@ -47,6 +53,21 @@ function writeText(file: string, data: string): void {
  * themselves, so no test updates are required after a refresh.
  */
 async function main(): Promise<void> {
+  // Project-owned catalogue records (ADR 0013) come first: everything below is keyed
+  // by the repositories the catalogue resolves, and on a machine with no manifest
+  // cache — a fresh clone — the fixture written here is what `loadProjects()` reads.
+  try {
+    const manifests = await fetchProjectManifests(await listOrganizationRepositories());
+    writeJson(resolve(MANIFEST_FIXTURES, 'index.json'), {
+      schema: MANIFEST_CACHE_SCHEMA_VERSION,
+      retrievedAt: new Date().toISOString(),
+      manifests,
+    });
+    console.log(`  manifests: ${manifests.length} project-owned record(s)`);
+  } catch (error) {
+    console.warn(`  manifests: ${(error as Error).message}`);
+  }
+
   const projects = loadProjects();
   const data: ReleaseCacheData = {
     schema: RELEASE_CACHE_SCHEMA_VERSION,

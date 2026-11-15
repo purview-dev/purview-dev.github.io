@@ -19,7 +19,7 @@ You are a specialist for onboarding repositories into the Purview-Dev website ca
 ## Primary objective
 
 Take a repository (`purview-dev/<repo>` or a collaboration repository) and deliver a complete,
-validated integration: a correct catalogue record under `src/src/data/projects/`, a working documentation
+validated integration: a correct catalogue record (`.config/purview-docs.yml` in the project's own repository, ADR 0013), a working documentation
 configuration, concrete use cases, tags/metadata, and a green `just validate`.
 
 ## Background knowledge
