@@ -43,7 +43,7 @@ purview-dev/                  # workspace root
     ├── src/
     │   ├── content.config.ts # Starlight docs collection schema
     │   ├── content/docs/     # GENERATED documentation mirror (gitignored)
-    │   ├── data/projects/    # Typed, validated catalogue: one file per project
+    │   ├── data/projects/    # Records this repo still owns (a project owns its own - ADR 0013)
     │   ├── data/external-projects.yml # Collaborations the organisation does not own
     │   ├── lib/              # manifest, releases, docs, urls, site constants
     │   ├── components/       # shared chrome, Starlight overrides, islands
@@ -173,7 +173,9 @@ just dev
 ```
 
 The dev server starts after a data sync. Edit `src/src/pages/` for marketing
-pages and `src/src/data/projects/<id>.yml` for catalogue content. Documentation pages
+pages and a project's own `.config/purview-docs.yml` for that project's catalogue record —
+the records a project does not own yet are still under `src/src/data/projects/`, and are edited here.
+Documentation pages
 are generated under `src/src/content/docs/` and should not be edited by hand —
 change the source repository instead and re-run `just data-sync`.
 
@@ -198,15 +200,20 @@ generated copies.
 
 ## Project catalogue
 
-`src/src/data/projects/<id>.yml` (one file per project, plus
-`src/src/data/external-projects.yml` for collaborations) is the single source of truth for the catalogue. It
-is validated at build time by a typed Zod schema
-(`src/src/lib/manifest/schema.ts`). Validation failures report the source file,
-the offending property, the expected shape, and a remediation hint.
+Every project publishes its catalogue record at `.config/purview-docs.yml` in its own repository
+(ADR 0013), which the site reads at build time from that repository's default branch, so a record
+changes in the same pull request as the project it describes. Records a project does not own yet live
+under `src/src/data/projects/` — a project-owned record wins when both exist — and
+`src/src/data/external-projects.yml` holds the collaborations the organisation does not own.
+
+Everything is validated at build time by a typed Zod schema
+(`src/src/lib/manifest/schema.ts`). Validation failures name the record's owner, the
+offending property, the expected shape, and a remediation hint.
 
 ### Adding a new Purview-Dev project
 
-1. Add a record at `src/src/data/projects/<id>.yml` with a unique `id`, `name`,
+1. Add the record at `.config/purview-docs.yml` in the project's repository (or under
+   `src/src/data/projects/<id>.yml` here, until the project owns one) with a unique `id`, `name`,
    `shortDescription`, `description`, `repository` (a purview-dev repo),
    `category`, `status`, and optional `order`. Set `experimental: true` for an
    exploratory project — it is a flag orthogonal to `status` (ADR 0004).

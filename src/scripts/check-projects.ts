@@ -10,6 +10,7 @@ import {
   ManifestValidationError,
   loadExternalProjects,
   loadProjects,
+  readRawManifest,
 } from '../src/lib/manifest/load';
 import { readReleaseCache, readReleaseFixture } from '../src/lib/releases/cache';
 import { selectStableVersion } from '../src/lib/releases/normalize';
@@ -29,10 +30,11 @@ import { listMirroredSkills } from '../src/lib/skills';
 /**
  * Deterministic catalogue guard (ADR 0003).
  *
- * Proves the invariants of the catalogue (`src/src/data/projects/*.yml` plus
- * `src/src/data/external-projects.yml`) against the generated
- * docs mirror/cache and the release cache/fixtures. Offline only: it never
- * performs network I/O, so it can run inside `just validate` and CI.
+ * Proves the invariants of the catalogue — the records under
+ * `src/src/data/projects/*.yml` that this repository still owns, the records the
+ * project repositories own (ADR 0013), plus `src/src/data/external-projects.yml` —
+ * against the generated docs mirror/cache and the release cache/fixtures. Offline
+ * only: it never performs network I/O, so it can run inside `just validate` and CI.
  *
  * It fails (exit 1) on blockers and drift; quality observations are printed as
  * warnings so they do not break the build.
@@ -744,6 +746,22 @@ export function checkProjects(): { errors: Finding[]; warnings: Finding[] } {
       return { errors, warnings };
     }
     throw error;
+  }
+
+  // A project that owns its record (ADR 0013) wins over a local file with the same
+  // id, so a leftover local copy is a second record that is no longer read. It is an
+  // observation rather than a blocker because the move is two pull requests in two
+  // repositories, and the site must not fail in the gap between them.
+  for (const id of readRawManifest().duplicatedIds) {
+    warn({
+      project: id,
+      field: 'manifest',
+      observed: `record declared both here and by ${OWNER}/${id}`,
+      expected: 'one record, owned by the project repository',
+      remediation:
+        `delete src/src/data/projects/${id}.yml: the project's own ` +
+        '.config/purview-docs.yml wins',
+    });
   }
 
   const data = readReleaseCache() ?? readReleaseFixture('index');

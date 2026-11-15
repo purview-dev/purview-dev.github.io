@@ -5,7 +5,7 @@ import type { ReleaseCacheData } from '../releases/types';
 import type { DiscoverableKind, DiscoverableResource } from './types';
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 import { DOCS_OUTPUT_DIR, readDocsManifest } from '../docs/aggregate';
 import { loadProjects } from '../manifest/load';
@@ -46,9 +46,14 @@ export const PAGE_SOURCES: Readonly<Record<string, string>> = {
   'use-cases': 'src/src/pages/use-cases/index.astro',
 };
 
-/** Repo-relative catalogue file for a project id. */
-export function projectManifestFile(id: string): string {
-  return `src/src/data/projects/${id}.yml`;
+/**
+ * Repo-relative catalogue file for a project id, or `null` when the project owns
+ * its record in its own repository (ADR 0013). This repository then has no commit
+ * to date the record from, so the caller falls back to the release date.
+ */
+export function projectManifestFile(id: string): string | null {
+  const file = `src/src/data/projects/${id}.yml`;
+  return existsSync(resolve(file)) ? file : null;
 }
 
 export interface DiscoveryContext {
@@ -187,9 +192,10 @@ function latestReleaseDate(data: ReleaseCacheData, repository: string | undefine
 /** `lastmod` for a project's HTML page: manifest commit or latest release. */
 export function projectLastModified(id: string, ctx: DiscoveryContext): string | undefined {
   const project = ctx.projects.find((candidate) => candidate.id === id);
+  const manifestFile = projectManifestFile(id);
   return preferTimestamp(
     [
-      ctx.fileDates.get(projectManifestFile(id)),
+      manifestFile === null ? undefined : ctx.fileDates.get(manifestFile),
       latestReleaseDate(ctx.releaseData, project?.repository),
     ],
     ctx.fallbackDate,
@@ -209,9 +215,10 @@ export function documentationLastModified(
   channelId?: string,
 ): string | undefined {
   const key = channelId ? `${projectId}/${channelId}/${slug}` : `${projectId}/${slug}`;
+  const manifestFile = projectManifestFile(projectId);
   return firstTimestamp([
     ctx.docsLastReviewed.get(key),
-    ctx.fileDates.get(projectManifestFile(projectId)),
+    manifestFile === null ? undefined : ctx.fileDates.get(manifestFile),
     ctx.fallbackDate,
   ]);
 }

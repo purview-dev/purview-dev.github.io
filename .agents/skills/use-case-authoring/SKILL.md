@@ -14,7 +14,7 @@ tags:
 # use-case-authoring Skill
 
 Use cases are the "what does it actually do for me" evidence on the home page, on each project page,
-and on `/use-cases/`. They are authored in the catalogue records (`src/src/data/projects/<id>.yml`) and validated by the manifest
+and on `/use-cases/`. They are authored in the catalogue records (`src/src/data/projects/<id>.yml` here, or a project's own `.config/purview-docs.yml`) and validated by the manifest
 schema. The governing decision is `docs/decisions/0002-concrete-use-cases.md`.
 
 ## Shape

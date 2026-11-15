@@ -15,14 +15,17 @@ import { z } from 'zod';
 
 import { getReleaseIndex } from '../releases/runtime';
 import { OWNER } from '../site';
+import { PROJECT_MANIFEST_PATH } from './remote';
+import { getManifestIndex } from './runtime';
 import { PROJECT_DEFAULTS, manifestSchema } from './schema';
 
 /**
- * The catalogue is one file per project (ADR 0005): `src/data/projects/<id>.yml`,
+ * The catalogue records this repository still owns (ADR 0005): `src/data/projects/<id>.yml`,
  * plus `src/data/external-projects.yml` for the collaborations the organisation
  * does not own. One file per project keeps a project's history and review
  * self-contained, and stops concurrent catalogue pull requests from conflicting
- * on one growing list.
+ * on one growing list. A project that publishes its own record at
+ * `.config/purview-docs.yml` wins over the file here (ADR 0013).
  */
 export const DEFAULT_PROJECTS_DIR = resolve('src/data/projects');
 export const DEFAULT_EXTERNAL_PROJECTS_PATH = resolve('src/data/external-projects.yml');
@@ -65,6 +68,17 @@ export type ResolvedExternalProject = Omit<
   featured: boolean;
   order: number;
 };
+
+/** The raw catalogue records, with the provenance of each one. */
+export interface RawManifest {
+  /** One record per `src/src/data/projects/*.yml` and per owning repository. */
+  projects: unknown[];
+  externalProjects: unknown[];
+  /** Project id → the file or repository that owns the record, for error messages. */
+  sources: Map<string, string>;
+  /** Project ids declared both here and by the repository that owns them. */
+  duplicatedIds: string[];
+}
 
 export class ManifestValidationError extends Error {
   constructor(message: string) {
@@ -127,7 +141,7 @@ function withDefaults(record: ProjectRecord, repositories: RepositoryFlags): Res
 
 /**
  * Label an issue with the project id rather than its array index, so a schema
- * failure names the project whose file is wrong (`projects[containers].name`)
+ * failure names the project whose record is wrong (`projects[containers].name`)
  * instead of a position the author has to map back to a file.
  */
 function issuePath(raw: unknown, path: readonly PropertyKey[]): string {
@@ -135,12 +149,22 @@ function issuePath(raw: unknown, path: readonly PropertyKey[]): string {
   if (head !== 'projects' || typeof index !== 'number') {
     return path.join('.');
   }
+  const id = issueProjectId(raw, path);
+  const label = `projects[${id ?? index}]`;
+  return rest.length > 0 ? `${label}.${rest.join('.')}` : label;
+}
+
+/** The project id a schema issue path names, when it names one. */
+function issueProjectId(raw: unknown, path: readonly PropertyKey[]): string | undefined {
+  const [head, index] = path;
+  if (head !== 'projects' || typeof index !== 'number') {
+    return undefined;
+  }
   const entries = (raw as { projects?: unknown[] } | null)?.projects;
   const entry = Array.isArray(entries) ? entries[index] : undefined;
   const id =
     typeof entry === 'object' && entry !== null ? (entry as { id?: unknown }).id : undefined;
-  const label = `projects[${typeof id === 'string' ? id : index}]`;
-  return rest.length > 0 ? `${label}.${rest.join('.')}` : label;
+  return typeof id === 'string' ? id : undefined;
 }
 
 /**
@@ -151,19 +175,31 @@ function issuePath(raw: unknown, path: readonly PropertyKey[]): string {
  * `repositories` feeds the values that are detected from GitHub rather than
  * authored (today: whether Discussions are enabled); it defaults to the release
  * cache, so a record never repeats what the repository already says.
+ *
+ * `sources` maps a project id to the file or repository that owns its record, so
+ * a failure points at the record the author has to edit: a local
+ * `src/src/data/projects/<id>.yml` here, or a project's own
+ * `.config/purview-docs.yml` in the repository that publishes it (ADR 0013).
  */
 export function parseManifest(
   raw: unknown,
   source: string,
   repositories: RepositoryFlags = getReleaseIndex().data.repos,
+  sources: ReadonlyMap<string, string> = new Map(),
 ): ResolvedProject[] {
+  const sourceOf = (id: string): string => sources.get(id) ?? source;
   let parsed: ProjectManifest;
   try {
     parsed = manifestSchema.parse(raw);
   } catch (error) {
     if (error instanceof z.ZodError) {
       const issues = error.issues
-        .map((issue) => `  ${issuePath(raw, issue.path)}: ${issue.message}`)
+        .map((issue) => {
+          const id = issueProjectId(raw, issue.path);
+          const owner = id === undefined ? undefined : sources.get(id);
+          const label = issuePath(raw, issue.path);
+          return `  ${owner === undefined ? label : `${label} (${owner})`}: ${issue.message}`;
+        })
         .join('\n');
       throw new ManifestValidationError(
         [
@@ -186,7 +222,7 @@ export function parseManifest(
     if (project.repository.split('/')[0] !== OWNER) {
       throw new ManifestValidationError(
         [
-          `Invalid project manifest: ${source}`,
+          `Invalid project manifest: ${sourceOf(project.id)}`,
           `  projects[${project.id}].repository: Expected the repository to belong to the "${OWNER}" organisation.`,
           `  Got: ${project.repository}`,
           '',
@@ -202,7 +238,7 @@ export function parseManifest(
       if (!ids.has(ref)) {
         throw new ManifestValidationError(
           [
-            `Invalid project manifest: ${source}`,
+            `Invalid project manifest: ${sourceOf(project.id)}`,
             `  projects[${project.id}]: Relationship references "${ref}", which is not a known project id.`,
             '',
             `Remediation: add a project with id "${ref}" or remove the relationship.`,
@@ -216,7 +252,7 @@ export function parseManifest(
       if (existing !== undefined) {
         throw new ManifestValidationError(
           [
-            `Invalid project manifest: ${source}`,
+            `Invalid project manifest: ${sourceOf(project.id)}`,
             `  projects[${project.id}].packages: Package "${pkg.id}" (${pkg.registry}) is also declared by "${existing}".`,
             '',
             `Remediation: associate each package with exactly one project.`,
@@ -230,7 +266,7 @@ export function parseManifest(
       if (existing !== undefined) {
         throw new ManifestValidationError(
           [
-            `Invalid project manifest: ${source}`,
+            `Invalid project manifest: ${sourceOf(project.id)}`,
             `  projects[${project.id}].assets: output "${asset.output}" is also declared by "${existing}".`,
             '',
             `Remediation: give each mirrored asset a distinct output path.`,
@@ -263,30 +299,50 @@ function stripSchemaHint(value: unknown): unknown {
 }
 
 /**
- * Read the catalogue from disk into the raw shape `manifestSchema` validates:
- * one record per `*.yml` file in the projects directory, sorted by file name so
- * the result is deterministic whatever order the filesystem reports, plus the
- * collaborations file. Validation (including every cross-record invariant)
- * stays in `parseManifest`.
+ * Read the catalogue into the raw shape `manifestSchema` validates: one record per
+ * `*.yml` file in the projects directory, sorted by file name so the result is
+ * deterministic whatever order the filesystem reports, plus the collaborations
+ * file — and one record per project repository that publishes
+ * `.config/purview-docs.yml` (ADR 0013).
+ *
+ * A project that owns its record wins over a local file with the same id, which is
+ * the migration path: moving a record into the project repository is a change to
+ * that repository, and the local copy is deleted in the same commit. The clash is
+ * reported in `duplicatedIds` rather than merged silently, so the catalogue guard
+ * can say that a leftover local copy has stopped being the source of truth.
+ *
+ * Validation (including every cross-record invariant) stays in `parseManifest`.
  */
 export function readRawManifest(
   projectsDir = DEFAULT_PROJECTS_DIR,
   externalProjectsPath = DEFAULT_EXTERNAL_PROJECTS_PATH,
-): { projects: unknown[]; externalProjects: unknown[] } {
-  const files = readdirSync(projectsDir)
-    .filter((file) => file.endsWith('.yml') || file.endsWith('.yaml'))
-    .toSorted();
+): RawManifest {
+  // The directory may be absent: once every project owns its own record (ADR 0013) there is
+  // nothing left to read here, and git does not keep an empty directory.
+  const files = existsSync(projectsDir)
+    ? readdirSync(projectsDir)
+        .filter((file) => file.endsWith('.yml') || file.endsWith('.yaml'))
+        .toSorted()
+    : [];
 
-  const projects = files.map((file) => {
+  const sources = new Map<string, string>();
+  const projects: unknown[] = [];
+  for (const file of files) {
     const text = readFileSync(join(projectsDir, file), 'utf8');
+    let record: unknown;
     try {
-      return stripSchemaHint(parse(text));
+      record = stripSchemaHint(parse(text));
     } catch (error) {
       throw new ManifestValidationError(
         `Invalid YAML in ${file}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
-  });
+    const id = recordId(record);
+    if (id !== undefined) {
+      sources.set(id, file);
+    }
+    projects.push(record);
+  }
 
   const externalProjects: unknown[] = [];
   if (existsSync(externalProjectsPath)) {
@@ -296,12 +352,44 @@ export function readRawManifest(
     externalProjects.push(...(parsed.externalProjects ?? []));
   }
 
-  return { projects, externalProjects };
+  const duplicatedIds: string[] = [];
+  const owned = getManifestIndex().data.manifests.toSorted((a, b) =>
+    a.repository.localeCompare(b.repository),
+  );
+  for (const manifest of owned) {
+    const record = stripSchemaHint(manifest.record);
+    const id = recordId(record);
+    if (id === undefined) {
+      continue;
+    }
+    if (sources.has(id)) {
+      duplicatedIds.push(id);
+      // The owner wins, so validation sees one record: drop the local copy.
+      const index = projects.findIndex((entry) => recordId(entry) === id);
+      if (index !== -1) {
+        projects.splice(index, 1);
+      }
+    }
+    sources.set(id, `${manifest.repository} (${PROJECT_MANIFEST_PATH} at ${manifest.ref})`);
+    projects.push(record);
+  }
+
+  return { projects, externalProjects, sources, duplicatedIds };
 }
 
-/** Load, parse and validate the catalogue (one file per project) from disk. */
+/** The id of a raw record, when it declares one. */
+function recordId(record: unknown): string | undefined {
+  const id = (record as { id?: unknown } | null)?.id;
+  return typeof id === 'string' ? id : undefined;
+}
+
+/**
+ * Load, parse and validate the catalogue from this repository and from the
+ * project repositories that own their records (ADR 0013).
+ */
 export function loadProjects(): ResolvedProject[] {
-  return parseManifest(readRawManifest(), DEFAULT_PROJECTS_DIR);
+  const raw = readRawManifest();
+  return parseManifest(raw, DEFAULT_PROJECTS_DIR, undefined, raw.sources);
 }
 
 function withExternalDefaults(record: ExternalProjectRecord): ResolvedExternalProject {

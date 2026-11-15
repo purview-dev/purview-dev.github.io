@@ -76,7 +76,9 @@ description/topics.
 
 ## Step 3 — author the record
 
-Add the entry as `src/src/data/projects/<id>.yml` (see `project-manifest-reference` for every field):
+Add the record as `.config/purview-docs.yml` in the project's repository (ADR 0013), or as
+`src/src/data/projects/<id>.yml` here until the project owns one (see `project-manifest-reference` for
+every field):
 
 ```yaml
   - id: <slug>
