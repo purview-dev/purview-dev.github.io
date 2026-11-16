@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - package.json
+  # A release that failed can be retried without touching package.json: the
+  # pipeline is resolved at job time, so a re-dispatch runs the current one.
+  workflow_dispatch:
 
 # Serialize releases; the reusable workflow skips when the v{version} tag already exists.
 concurrency:
@@ -15,10 +18,8 @@ jobs:
   release:
     uses: purview-dev/build/.github/workflows/purview-release.yml@main
     with:
-      # Pin the shared build tool and SDK so the release is reproducible rather
-      # than resolving the latest Purview.Build and .NET SDK at job time.
-      build-version: 0.8.1
-      dotnet-version: 10.0.x
+      # Resolved at job time, like the PR gate (see pr.yml).
+      dotnet-version: 11.0.x
       # The site publishes no NuGet package; tag + GitHub release (with the dist zip attached) only.
       release-mode: GitHubRelease
       upload-artifacts: true
