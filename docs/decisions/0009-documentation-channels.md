@@ -113,13 +113,21 @@ A withheld channel must not turn its pages into 404s for readers following a
 bookmark. Because purview.dev is served from GitHub Pages (static files only, no
 redirect configuration), the build writes a meta-refresh page for every withheld
 channel URL — `/docs/<id>/prerelease/` and each
-`/docs/<id>/prerelease/<page>/` — pointing at the live page with the same slug
-(`lib/docs/redirects.ts`, run by `config/docs-redirects-integration.ts` at
-`astro:build:done`). Each redirect carries `rel="canonical"`, `noindex, follow`
-and `data-pagefind-ignore`, and is written outside Astro's route list so it never
-enters the sitemap, `discover.json`, the llms bundles or the search index. The
-redirect set is derived from the live channel's own slugs, so no generated
-history has to survive between builds, and an existing page is never overwritten.
+`/docs/<id>/prerelease/<page>/` (`lib/docs/redirects.ts`, run by
+`config/docs-redirects-integration.ts` at `astro:build:done`). Each redirect
+carries `rel="canonical"`, `noindex, follow` and `data-pagefind-ignore`, and is
+written outside Astro's route list so it never enters the sitemap, `discover.json`,
+the llms bundles or the search index. The redirect set is derived from the live
+channel's own slugs, so no generated history has to survive between builds, and an
+existing page is never overwritten.
+
+The retired tree is not synced, so a slug it published cannot be recovered from
+anywhere: the live channel's slugs supply the destination for a page that still
+has the same address, and the project's declared `docs.redirects` supplies it for a
+page the reorganised live tree now publishes under a new one. A flat URL that only
+ever existed in the retired channel therefore forwards straight to the live
+channel's new address instead of to a second hop inside the withdrawn base.
+
 
 ## Consequences
 

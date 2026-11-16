@@ -56,9 +56,21 @@ export function redirectFilePath(redirect: DocChannelRedirect): string {
 }
 
 /**
- * URLs of every declared-but-withheld channel, mapped to the live page with the
- * same slug. Projects without channels, archived projects, and channels that are
- * currently published produce no redirects.
+ * URLs of every declared-but-withheld channel, mapped to the live page that now
+ * carries the same content. Projects without channels, archived projects, and
+ * channels that are currently published produce no redirects.
+ *
+ * Two kinds of URL are retired, because a retired channel is not synced at all:
+ *
+ * - every slug the live channel publishes, forwarded slug-for-slug (`R/T` → `L/T`);
+ * - every slug the project declared as moved (`docs.redirects`), whose flat
+ *   address only ever existed in the retired channel, forwarded to the live
+ *   channel's new address (`R/F` → `L/T`). The live channel has no such page to
+ *   copy the slug from, so the declared map is the only record that the old
+ *   address ever resolved to that content.
+ *
+ * A moved pair whose old slug is still a live page is skipped: that URL is a real
+ * page on the canonical channel, so its own slug is the honest destination.
  */
 export function retiredChannelRedirects(
   projects: readonly ResolvedProject[],
@@ -79,18 +91,33 @@ export function retiredChannelRedirects(
       continue;
     }
     const published = new Set((entry?.channels ?? []).map((channel) => channel.id));
+    const liveSlugs = new Set(live.pages.map((page) => page.slug));
+    const moved = project.docs.source === 'github-path' ? (project.docs.redirects ?? {}) : {};
     for (const channelId of DOC_CHANNELS) {
       if (declared[channelId] === undefined || published.has(channelId)) {
         continue;
       }
+      const emitted = new Set<string>();
+      const push = (from: string, to: string) => {
+        if (emitted.has(from)) {
+          return;
+        }
+        emitted.add(from);
+        redirects.push({ from, to });
+      };
       for (const page of live.pages) {
-        redirects.push({
-          from:
-            page.slug === 'index'
-              ? `/docs/${project.id}/${channelId}/`
-              : `/docs/${project.id}/${channelId}/${page.slug}/`,
-          to: page.slug === 'index' ? `/docs/${project.id}/` : `/docs/${project.id}/${page.slug}/`,
-        });
+        push(
+          page.slug === 'index'
+            ? `/docs/${project.id}/${channelId}/`
+            : `/docs/${project.id}/${channelId}/${page.slug}/`,
+          page.slug === 'index' ? `/docs/${project.id}/` : `/docs/${project.id}/${page.slug}/`,
+        );
+      }
+      for (const [from, to] of Object.entries(moved)) {
+        if (!liveSlugs.has(to) || liveSlugs.has(from)) {
+          continue;
+        }
+        push(`/docs/${project.id}/${channelId}/${from}/`, `/docs/${project.id}/${to}/`);
       }
     }
   }
@@ -106,14 +133,15 @@ export function retiredChannelRedirects(
  * the declaration timing-safe - while the `live` channel still reads an older tag,
  * the old slug is a real page and the redirect is simply not written.
  *
- * Every published channel owns URLs of its own, so a move is forwarded from each
- * base the project publishes: the default channel at `/docs/<id>/` and, when the
- * project declares both channels, the prerelease one at `/docs/<id>/prerelease/`.
- * A tree can be reorganised on the default branch long before the release that
- * carries it is promoted, and the readers on the prerelease channel are following
- * URLs that change at the same moment. Whether a pair is real is decided by the
- * write guards exactly as for the default channel, so a withheld channel writes
- * nothing here (its URLs are retired-channel redirects instead).
+ * Every channel this build publishes owns URLs of its own, so a move is forwarded
+ * from each published base: the default channel at `/docs/<id>/` and, when the
+ * project publishes it, the prerelease one at `/docs/<id>/prerelease/`. A tree can
+ * be reorganised on the default branch long before the release that carries it is
+ * promoted, and the readers on the prerelease channel are following URLs that
+ * change at the same moment. A declared-but-withheld channel is deliberately not a
+ * base: it publishes nothing in this build, so its retired addresses belong to
+ * `retiredChannelRedirects`, which forwards them to the live page (and, for a slug
+ * that only ever lived in the retired channel, to the live channel's new address).
  *
  * A repository may also record its own moves in `_redirects.yml` (ADR 0013).
  * That file is read at each channel's ref, so its pairs apply to that channel's
@@ -143,22 +171,16 @@ export function docsPageRedirects(
     if (!project.docs || project.docs.source === 'readme' || project.status === 'archived') {
       continue;
     }
+    const entry = manifest?.projects.find((candidate) => candidate.projectId === project.id);
     if (project.docs.source === 'github-path') {
       const moved = project.docs.redirects ?? {};
-      const bases = [`/docs/${project.id}`];
-      // `prerelease` is only a second channel when `live` is declared with it;
-      // on its own it would be the default channel and own the canonical URLs.
-      const declared = project.docs.channels;
-      if (declared?.live !== undefined && declared.prerelease !== undefined) {
-        bases.push(`/docs/${project.id}/prerelease`);
-      }
+      const bases = publishedBases(project.id, entry);
       for (const [from, to] of Object.entries(moved)) {
         for (const base of bases) {
           add(base, from, to);
         }
       }
     }
-    const entry = manifest?.projects.find((candidate) => candidate.projectId === project.id);
     for (const channel of entry?.channels ?? []) {
       const base = channel.default ? `/docs/${project.id}` : `/docs/${project.id}/${channel.id}`;
       for (const [from, to] of Object.entries(channel.redirects ?? {})) {
@@ -167,6 +189,27 @@ export function docsPageRedirects(
     }
   }
   return redirects;
+}
+
+/**
+ * The site bases a project publishes in this build: its canonical
+ * `/docs/<id>/` base, plus one per extra published channel.
+ *
+ * Without a docs manifest the build cannot tell which channels survived the
+ * release gate, so only the canonical base is assumed: the writer's guards still
+ * refuse to shadow a real page or forward into a 404.
+ */
+function publishedBases(
+  projectId: string,
+  entry: DocsManifest['projects'][number] | undefined,
+): string[] {
+  const canonical = `/docs/${projectId}`;
+  if (!entry || entry.channels.length === 0) {
+    return [canonical];
+  }
+  return entry.channels.map((channel) =>
+    channel.default ? canonical : `${canonical}/${channel.id}`,
+  );
 }
 
 /** Site path of a page slug under a docs base; `index` is the base itself. */

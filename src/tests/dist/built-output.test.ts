@@ -354,6 +354,26 @@ describe('built use cases', () => {
 });
 
 describe('built package versions', () => {
+  // Packages whose newest published version is a prerelease: they have never
+  // shipped a stable release, so their stable cell is empty by design. The set
+  // comes from the release data the site was built with rather than a pinned
+  // package, so a release turning one of them stable moves the test on instead of
+  // turning the build red for a product decision that was made on purpose.
+  const prereleaseOnly = (() => {
+    const index = getReleaseIndex();
+    return loadProjects()
+      .filter((project) => project.status !== 'archived')
+      .flatMap((project) =>
+        projectReleaseSummary(project, index.data, index.source)
+          .packages.filter((pkg) => pkg.latestStable === null && pkg.latestPrerelease !== null)
+          .map((pkg) => ({
+            projectId: project.id,
+            packageId: pkg.packageId,
+            version: pkg.latestPrerelease!,
+          })),
+      );
+  })();
+
   test('a package prerelease that trails its stable release is withheld', () => {
     const telemetry = loadProjects().find((project) => project.id === 'telemetry-sourcegenerator');
     expect(telemetry).toBeDefined();
@@ -371,27 +391,19 @@ describe('built package versions', () => {
     expect(content).not.toContain(pkg!.latestPrerelease!);
   });
 
-  test('a package with only prereleases is still listed', () => {
-    // Purview.ZodSharp.Http has never published a stable version. The package
-    // listing is not a stable-only view: the stable cell is empty and the
-    // prerelease version is shown (and pinned in its install snippet).
-    const zodsharp = loadProjects().find((project) => project.id === 'zodsharp');
-    expect(zodsharp).toBeDefined();
-    const index = getReleaseIndex();
-    const summary = projectReleaseSummary(zodsharp!, index.data, index.source);
-    const pkg = summary.packages.find((entry) => entry.packageId === 'Purview.ZodSharp.Http');
-    expect(pkg).toBeDefined();
-    expect(pkg?.latestStable).toBeNull();
-    // The package line keeps moving, so the expectation comes from the release
-    // data the site was built with rather than a pinned version. Otherwise every
-    // new prerelease turns a green build red without a product regression.
-    const latestPrerelease = pkg?.latestPrerelease;
-    expect(latestPrerelease).not.toBeNull();
-
-    const content = requireBuilt('projects/zodsharp/index.html');
-    expect(content).toContain('Purview.ZodSharp.Http');
-    expect(content).toContain(latestPrerelease!);
-  });
+  test.skipIf(prereleaseOnly.length === 0)(
+    'a package with only prereleases is still listed',
+    () => {
+      // The package listing is not a stable-only view: a package that has never
+      // published a stable version still appears, with its prerelease shown (and
+      // pinned in its install snippet) instead of an empty row.
+      for (const { projectId, packageId, version } of prereleaseOnly) {
+        const content = requireBuilt(`projects/${projectId}/index.html`);
+        expect(content, `${projectId} omits ${packageId}`).toContain(packageId);
+        expect(content, `${projectId} does not show ${packageId} ${version}`).toContain(version);
+      }
+    },
+  );
 });
 
 describe('built llms links', () => {
@@ -654,9 +666,17 @@ describe('built documentation channels', () => {
       expect(redirect).toContain('<link rel="canonical" href="https://purview.dev/docs/zodsharp/"');
       expect(redirect).toContain('<meta name="robots" content="noindex, follow"');
       expect(redirect).toContain('data-pagefind-ignore');
-      // A deep page keeps its slug, so an old bookmark still lands on that page.
+      // An old bookmark of a page the live channel still publishes lands on that
+      // page, not on the retired tree.
+      expect(requireBuilt('docs/zodsharp/prerelease/concepts/core-concepts/index.html')).toContain(
+        'url=/docs/zodsharp/concepts/core-concepts/',
+      );
+      // A deep page whose slug only existed in the retired channel follows the
+      // move the project declared: the release that promoted the channel also
+      // reorganised its pages into topic folders, so the retired flat URL points
+      // straight at the live page rather than at a redirect inside the dead base.
       expect(requireBuilt('docs/zodsharp/prerelease/core-concepts/index.html')).toContain(
-        'url=/docs/zodsharp/core-concepts/',
+        'url=/docs/zodsharp/concepts/core-concepts/',
       );
     },
   );

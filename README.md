@@ -371,9 +371,10 @@ release tags with NuGet versions — so publishing `3.0.0` retires the docs for
 `3.0.0-prerelease.N` on the next deploy with no manifest change. The channel
 returns by itself when the next prerelease is cut. Nothing here requires a
 clone-and-PR step before a deploy. Retired URLs are not left broken: the build
-writes a `noindex` meta-refresh page for each one that points at the live page
-with the same slug (GitHub Pages serves files only, so there is no redirect
-config to declare).
+writes a `noindex` meta-refresh page for each one that points at the live page with
+the same slug, or — for a slug the reorganised live tree now publishes somewhere
+else — at the new address the project declared in `docs.redirects` (GitHub Pages
+serves files only, so there is no redirect config to declare).
 
 ## Agent skills
 

@@ -35,7 +35,10 @@ const PAGES = [
   },
 ];
 
-function manifestWith(channelIds: ('live' | 'prerelease')[]): DocsManifest {
+function manifestWith(
+  channelIds: ('live' | 'prerelease')[],
+  pages: DocsManifest['projects'][number]['channels'][number]['pages'] = PAGES,
+): DocsManifest {
   return {
     schema: DOCS_MANIFEST_SCHEMA,
     syncedAt: '2026-03-11T00:00:00.000Z',
@@ -50,12 +53,24 @@ function manifestWith(channelIds: ('live' | 'prerelease')[]): DocsManifest {
           version: id === 'live' ? '2.4.2' : null,
           label: id === 'live' ? '2.4.2' : 'main',
           default: id === 'live',
-          pages: PAGES,
+          pages,
         })),
       },
     ],
   };
 }
+
+/** The live tree after the reorganisation: the page lives under its topic folder. */
+const NESTED_PAGES = [
+  PAGES[0]!,
+  {
+    slug: 'concepts/core-concepts',
+    title: 'Core concepts',
+    order: 1,
+    sourcePath: 'docs/wiki/concepts/Core-Concepts.md',
+    hash: 'live-core',
+  },
+];
 
 describe('retired documentation channel redirects', () => {
   test('a published channel owns its URLs, so nothing is redirected', () => {
@@ -120,6 +135,16 @@ describe('retired documentation channel redirects', () => {
     }
   });
 
+  test('a moved page it used to publish points at the live address', () => {
+    // The reorganised live tree publishes `core-concepts` under its topic folder,
+    // but the flat slug only ever existed in the prerelease channel. The retired
+    // URL is forwarded straight to the live page rather than to another redirect.
+    expect(retiredChannelRedirects(projects, manifestWith(['live'], NESTED_PAGES))).toContainEqual({
+      from: '/docs/zodsharp/prerelease/core-concepts/',
+      to: '/docs/zodsharp/concepts/core-concepts/',
+    });
+  });
+
   test('a page that moved writes a redirect to its new home', () => {
     const dist = mkdtempSync(join(tmpdir(), 'purview-redirects-'));
     try {
@@ -165,14 +190,25 @@ describe('moved documentation page redirects', () => {
   test('a move is forwarded on every channel that publishes the tree', () => {
     // The prerelease channel publishes the reorganised tree long before the
     // release that carries it is promoted, so its readers follow the same move:
-    // every pair exists under both bases, and the write guards decide which of
-    // them are real in the build at hand.
-    expect(docsPageRedirects(projects)).toContainEqual({
+    // every pair exists under both published bases, and the write guards decide
+    // which of them are real in the build at hand.
+    expect(docsPageRedirects(projects, manifestWith(['live', 'prerelease']))).toContainEqual({
       from: '/docs/zodsharp/prerelease/performance/',
       to: '/docs/zodsharp/prerelease/quality/performance/',
       title: 'This documentation page moved…',
       message: 'The page now lives at its new address.',
     });
+  });
+
+  test('a withheld channel is not a base for a move', () => {
+    // Once the line is promoted the prerelease tree is not published at all, so
+    // it owns no URL of its own: `retiredChannelRedirects` forwards what it used
+    // to serve, and the move must not write a second hop inside a dead base.
+    expect(
+      docsPageRedirects(projects, manifestWith(['live'])).filter((redirect) =>
+        redirect.from.startsWith('/docs/zodsharp/prerelease/'),
+      ),
+    ).toEqual([]);
   });
 
   test('a single-channel project forwards the canonical base only', () => {
