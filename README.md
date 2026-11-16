@@ -565,8 +565,10 @@ Do not try to force the GitHub toggle on: it would require temporarily setting
 the Cloudflare DNS record to **DNS only** (grey cloud) so GitHub can issue the
 certificate, and renewals can fail again once the record is proxied.
 
-The workflow validates (`just validate`), refreshes live release/documentation
-data, builds, and uploads `./src/dist`.
+The workflow resolves the deployment base and site URL, then runs
+`just validate` once: that syncs the release and documentation data live (a
+fresh checkout has no cache), builds the site with the resolved base applied,
+and runs every check against it. It uploads `./src/dist`.
 
 ### Repository-dispatch integration
 

@@ -28,7 +28,7 @@ tags:
 | Unit tests | `just test` (`bun test tests/unit`) | Manifest/schema rules, catalogue guard, docs aggregation rules, release transform, urls, staleness, branding |
 | Assets | `just check-assets` | Branding sources vs generated public assets |
 | Catalogue | `just check-projects` | Catalogue invariants (see below) |
-| Build | `just build` (runs live data sync first) | Astro/Starlight build, sidebar/llms plugin wiring |
+| Build | `just build` (runs a cache-first data sync first) | Astro/Starlight build, sidebar/llms plugin wiring |
 | Links | `just check-links` | Broken internal links **and missing anchors** across `dist/**/*.html` |
 | Generated output | `just check-generated` | Docs cache/mirror agreement, release cache shape, mirrored project assets exist and are valid JSON, `llms*.txt`, sitemap, robots, no secrets/local paths |
 | Dist tests | `just test:dist` | Per-project LLM bundles, rendered project/use-case surfaces, footer version, SEO outputs |
