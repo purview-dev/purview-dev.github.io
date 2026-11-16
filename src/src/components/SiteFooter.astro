@@ -45,6 +45,18 @@ const releasesUrl = `${SITE.githubUrl}/${OWNER}.github.io/releases`;
               </li>
             ))
           }
+          {/* The browse surfaces: server-rendered indexes of the catalogue that a
+              reader (and a crawler) can follow without using the client-side
+              filter on /projects/. */}
+          <li>
+            <a href={withBase('/topics/')} class="pv-link">Topics</a>
+          </li>
+          <li>
+            <a href={withBase('/categories/')} class="pv-link">Categories</a>
+          </li>
+          <li>
+            <a href={withBase('/packages/')} class="pv-link">Packages</a>
+          </li>
         </ul>
       </nav>
 

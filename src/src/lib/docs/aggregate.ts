@@ -10,10 +10,15 @@ import { dirname, join, resolve } from 'node:path';
 
 import { resolveGitHubToken } from '../github/token';
 import { getReleaseIndex } from '../releases/runtime';
-import { metaDescription } from '../seo';
+import { docsDescription } from '../seo';
 import { OWNER } from '../site';
 import { convertGithubAlerts } from './alerts';
-import { channelLayout, releaseDateForRef, resolveDocChannels } from './channels';
+import {
+  channelDisplayLabel,
+  channelLayout,
+  releaseDateForRef,
+  resolveDocChannels,
+} from './channels';
 import { applyDiagramBlocks, diagramModelPaths } from './diagrams';
 import {
   extractDescription,
@@ -538,12 +543,23 @@ async function buildPage(
   const repo = getReleaseIndex().data.repos[project.repository];
   const repoTags = repo?.topics ?? [];
   const repoDescription = repo?.description?.trim() || null;
-  const description = metaDescription(
-    (slug === 'index' ? project.shortDescription : extractDescription(cleaned)) ||
-      repoDescription ||
-      project.shortDescription,
-    `${project.name} documentation — open-source .NET tooling from Purview Dev.`,
-  );
+  // A non-default channel is the same product at another version: its pages get
+  // the same words in a different order, never the same title (ADR 0009).
+  const channelQualifier = channel.default ? undefined : channelDisplayLabel(channel);
+  // Extract more than a description's worth of the first paragraph: the
+  // description is then cut at a sentence boundary inside the 160-character
+  // range rather than at a word, so a snippet reads as prose instead of as
+  // scraped text with a trailing ellipsis.
+  const summary =
+    (slug === 'index' ? project.shortDescription : extractDescription(cleaned, 400)) ||
+    repoDescription ||
+    project.shortDescription;
+  const description = docsDescription({
+    summary,
+    pageTitle: title,
+    projectName: project.name,
+    qualifier: channelQualifier,
+  });
   const editSourcePath = raw.path.replace(/^\/+/, '');
   // A branch can be edited in place; a tag is immutable, so the same link is a
   // "view source" link. `docsRefKind` tells the EditLink override which it is.

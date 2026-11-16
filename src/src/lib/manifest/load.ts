@@ -392,6 +392,22 @@ export function loadProjects(): ResolvedProject[] {
   return parseManifest(raw, DEFAULT_PROJECTS_DIR, undefined, raw.sources);
 }
 
+let projectsCache: ResolvedProject[] | undefined;
+
+/**
+ * The catalogue, parsed once per process.
+ *
+ * Rendering asks for the catalogue many times in one build — every project page,
+ * and every documentation page that needs its project's display name or category.
+ * The catalogue cannot change while a build runs, so it is parsed once. A script
+ * that *writes* manifests and then reads them back runs in its own process
+ * (`just check-projects`, `just fix-projects`), so it is unaffected.
+ */
+export function getProjects(): ResolvedProject[] {
+  projectsCache ??= loadProjects();
+  return projectsCache;
+}
+
 function withExternalDefaults(record: ExternalProjectRecord): ResolvedExternalProject {
   return {
     ...record,

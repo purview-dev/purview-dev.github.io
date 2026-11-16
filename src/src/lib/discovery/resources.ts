@@ -5,11 +5,12 @@ import type { ReleaseCacheData } from '../releases/types';
 import type { DiscoverableKind, DiscoverableResource } from './types';
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 
 import { DOCS_OUTPUT_DIR, readDocsManifest } from '../docs/aggregate';
 import { loadProjects } from '../manifest/load';
 import { getReleaseIndex } from '../releases/runtime';
+import { findWorkspaceRoot } from '../site-version';
 import {
   firstTimestamp,
   latestTimestamp,
@@ -35,16 +36,88 @@ import {
 /**
  * Repo-relative source file for each hand-authored page, so its `lastmod` can be
  * the commit that last touched it. Keys are normalised route paths (no leading
- * or trailing slash).
+ * or trailing slash); dynamic routes are keyed by a `null` segment.
+ *
+ * The index is built by walking `src/pages` rather than being a hand-kept map: a
+ * page that is not in the map silently falls back to the release cache's
+ * retrieval time, which is the build time, which is exactly the signal a sitemap
+ * must never send. Deriving it means a new page (or a new page family) is dated
+ * correctly the moment it exists.
  */
-export const PAGE_SOURCES: Readonly<Record<string, string>> = {
-  '': 'src/src/pages/index.astro',
-  about: 'src/src/pages/about.astro',
-  docs: 'src/src/pages/docs/index.astro',
-  projects: 'src/src/pages/projects/index.astro',
-  releases: 'src/src/pages/releases/index.astro',
-  'use-cases': 'src/src/pages/use-cases/index.astro',
-};
+const PAGES_DIR = 'src/src/pages';
+
+interface PageSourceIndex {
+  exact: Map<string, string>;
+  patterns: { segments: readonly (string | null)[]; file: string }[];
+}
+
+function buildPageSourceIndex(pagesDir = PAGES_DIR): PageSourceIndex {
+  const index: PageSourceIndex = { exact: new Map(), patterns: [] };
+  // Git paths are workspace-relative, and the scripts run from the `src/`
+  // package, so the walk has to start at the workspace root to produce keys that
+  // match `git log --name-only`.
+  let root: string;
+  try {
+    root = findWorkspaceRoot();
+  } catch {
+    return index;
+  }
+  const walk = (directory: string, prefix: readonly string[]): void => {
+    let entries;
+    try {
+      entries = readdirSync(directory, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        walk(join(directory, entry.name), [...prefix, entry.name]);
+        continue;
+      }
+      const extension = /\.(astro|md|mdx)$/.exec(entry.name);
+      if (!extension) {
+        continue;
+      }
+      const base = entry.name.slice(0, -extension[0].length);
+      const segments = base === 'index' ? [...prefix] : [...prefix, base];
+      const file = relative(root, join(directory, entry.name)).replace(/\\/g, '/');
+      // `[topic]` addresses any value, so the route it produces cannot be a key.
+      const patterned = segments.map((segment) => (/^\[.+\]$/.test(segment) ? null : segment));
+      if (patterned.some((segment) => segment === null)) {
+        index.patterns.push({ segments: patterned, file });
+      } else {
+        index.exact.set(segments.join('/'), file);
+      }
+    }
+  };
+  walk(resolve(root, pagesDir), []);
+  return index;
+}
+
+let pageSourceIndexCache: PageSourceIndex | undefined;
+
+/** The source file that renders a normalised route, or undefined. */
+export function pageSourceFor(route: string): string | undefined {
+  const index = (pageSourceIndexCache ??= buildPageSourceIndex());
+  const direct = index.exact.get(route);
+  if (direct !== undefined) {
+    return direct;
+  }
+  const segments = route === '' ? [] : route.split('/');
+  for (const pattern of index.patterns) {
+    if (pattern.segments.length !== segments.length) {
+      continue;
+    }
+    if (
+      pattern.segments.every(
+        (segment, position) => segment === null || segment === segments[position],
+      )
+    ) {
+      return pattern.file;
+    }
+  }
+  return undefined;
+}
 
 /**
  * Repo-relative catalogue file for a project id, or `null` when the project owns
@@ -282,7 +355,7 @@ export function buildResources(
       );
     } else {
       lastModified = firstTimestamp([
-        ctx.fileDates.get(PAGE_SOURCES[normalized] ?? ''),
+        ctx.fileDates.get(pageSourceFor(normalized) ?? ''),
         ctx.fallbackDate,
       ]);
     }

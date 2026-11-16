@@ -1,0 +1,86 @@
+---
+import HubBody from '~/components/HubBody.astro';
+import SiteLayout from '~/layouts/SiteLayout.astro';
+import { getHubs } from '~/lib/hubs';
+import { SITE } from '~/lib/site';
+import { absoluteUrl, withBase } from '~/lib/urls';
+
+export function getStaticPaths() {
+  return getHubs().categories.map((hub) => ({ params: { category: hub.slug }, props: { hub } }));
+}
+
+interface Props {
+  hub: ReturnType<typeof getHubs>['categories'][number];
+}
+
+const { hub } = Astro.props;
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CollectionPage',
+      name: hub.title,
+      description: hub.description,
+      url: absoluteUrl(hub.path),
+      inLanguage: 'en',
+      isPartOf: { '@type': 'WebSite', name: SITE.fullName, url: SITE.url },
+      publisher: { '@type': 'Organization', name: SITE.orgName, url: SITE.url },
+    },
+    {
+      '@type': 'ItemList',
+      name: `${hub.label} projects`,
+      numberOfItems: hub.projects.length,
+      itemListElement: hub.projects.map((project, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: project.name,
+        url: absoluteUrl(project.url),
+      })),
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: absoluteUrl('/') },
+        { '@type': 'ListItem', position: 2, name: 'Categories', item: absoluteUrl('/categories/') },
+        { '@type': 'ListItem', position: 3, name: hub.label, item: absoluteUrl(hub.path) },
+      ],
+    },
+  ],
+};
+---
+
+<SiteLayout
+  title={`${hub.title} | ${SITE.fullName}`}
+  description={hub.description}
+  structuredData={structuredData}
+>
+  <div class="pv-container py-12 md:py-16">
+    <nav aria-label="Breadcrumb" class="mb-6 text-sm text-muted">
+      <a href={withBase('/')} class="pv-link">Home</a>
+      <span aria-hidden="true"> / </span>
+      <a href={withBase('/categories/')} class="pv-link">Categories</a>
+      <span aria-hidden="true"> / </span>
+      <span class="text-foreground">{hub.label}</span>
+    </nav>
+
+    <div class="max-w-3xl">
+      <p class="pv-chip mb-4 border-brand/30 bg-brand/5 text-brand">Category</p>
+      <h1 class="text-3xl font-bold tracking-tight md:text-4xl">{hub.label}</h1>
+      <p class="mt-4 text-lg text-muted">
+        {hub.projects.length} Purview projects in the {hub.label} category, with the documentation
+        they publish. Each one is a .NET library or tool you can adopt on its own.
+      </p>
+    </div>
+
+    <HubBody hub={hub} kind="category" />
+
+    <section class="mt-12 rounded-xl border border-border bg-surface p-6 md:p-8">
+      <h2 class="text-xl font-semibold">Browse differently</h2>
+      <p class="mt-3 max-w-2xl text-sm text-muted">
+        See the whole <a href={withBase('/projects/')} class="pv-link">project catalogue</a>, browse{' '}
+        <a href={withBase('/topics/')} class="pv-link">topics</a> such as C#, Roslyn or Aspire, or
+        every <a href={withBase('/packages/')} class="pv-link">package</a> the family publishes.
+      </p>
+    </section>
+  </div>
+</SiteLayout>

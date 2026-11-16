@@ -11,6 +11,8 @@ import StarOnGitHub from '~/components/StarOnGitHub.astro';
 import StatusBadge from '~/components/StatusBadge.astro';
 import UseCaseCard from '~/components/UseCaseCard.astro';
 import { buildBadge, nugetDownloadsBadge, nugetVersionBadge, actionsUrl } from '~/lib/badges';import { readDocsManifest, type DocsManifestChannel } from '~/lib/docs/aggregate';
+import { topicHubHrefs } from '~/lib/hubs';
+import { projectPageDescription, projectPageTitle } from '~/lib/seo';
 import { channelBasePath, channelDisplayLabel } from '~/lib/docs/channels';
 import { projectChannelLlmsFullPath, projectChannelLlmsPath } from '~/lib/discovery/urls';
 import { installAnchorId, installKindFor, installTabs } from '~/lib/install';
@@ -130,12 +132,37 @@ const structuredData: Record<string, unknown> = {
       // omitted rather than asserted.
       ...(primaryPackage?.registry === 'nuget' ? { programmingLanguage: 'C#' } : {}),
       license: 'https://opensource.org/licenses/MIT',
+      author: { '@type': 'Organization', name: SITE.orgName, url: SITE.url },
       ...(tags.length > 0 ? { keywords: tags.join(', ') } : {}),
       ...(primaryPackage ?
         {
           sameAs: packagePageUrl(primaryPackage.registry, primaryPackage.id),
           identifier: primaryPackage.id,
         }
+      : {}),
+      ...(releases.latestRelease?.tagName ? { softwareVersion: releases.latestRelease.tagName } : {}),
+    },
+    {
+      // The package is what a reader actually installs, so it is also described
+      // as an application: free, cross-platform and versioned by the release the
+      // page shows. Only accurate values are asserted.
+      '@type': 'SoftwareApplication',
+      name: project.name,
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Windows, macOS, Linux',
+      url: absoluteUrl(`/projects/${project.id}/`),
+      description: project.shortDescription,
+      license: 'https://opensource.org/licenses/MIT',
+      author: { '@type': 'Organization', name: SITE.orgName, url: SITE.url },
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      ...(primaryPackage ?
+        {
+          identifier: primaryPackage.id,
+          downloadUrl: packagePageUrl(primaryPackage.registry, primaryPackage.id),
+        }
+      : {}),
+      ...((project.targetFrameworks ?? []).length > 0 ?
+        { softwareRequirements: `Targets ${(project.targetFrameworks ?? []).join(', ')}` }
       : {}),
       ...(releases.latestRelease?.tagName ? { softwareVersion: releases.latestRelease.tagName } : {}),
     },
@@ -160,6 +187,27 @@ const structuredData: Record<string, unknown> = {
 };
 const targetFrameworks = project.targetFrameworks ?? [];
 const installKind = installKindFor(project);
+// Search-result metadata is derived from the catalogue, so the title leads with
+// the words a reader searches for and cannot drift from the manifest.
+const seoFacts = {
+  name: project.name,
+  shortDescription: project.shortDescription,
+  category: project.category,
+  packages: project.packages,
+  tags,
+  targetFrameworks,
+};
+// Topic hubs are generated from the same GitHub topics the chips show, so a chip
+// links only when its hub really exists (see `lib/hubs`).
+const topicHrefs = topicHubHrefs();
+// Each use case names the documentation page it opens, so the link text carries
+// the words of its destination instead of one repeated generic label.
+const docsPageTitles = new Map(
+  (docsEntry?.channels.find((channel) => channel.default)?.pages ?? []).map((page) => [
+    page.slug,
+    page.title,
+  ]),
+);
 const installSections =
   status !== 'archived' ?
     project.packages.map((pkg) => {
@@ -197,8 +245,8 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
 ---
 
 <SiteLayout
-  title={`${project.name} — ${SITE.fullName}`}
-  description={project.shortDescription}
+  title={projectPageTitle(seoFacts, { brand: SITE.fullName })}
+  description={projectPageDescription(seoFacts)}
   structuredData={structuredData}
   alternateLinks={alternateLinks}
 >
@@ -219,11 +267,25 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
       {
         tags.length > 0 && (
           <div class="mt-4 flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <span class="pv-chip" title={`Repository topic: ${tag}`}>
-                {tag}
-              </span>
-            ))}
+            {tags.map((tag) => {
+              const href = topicHrefs.get(tag);
+              return href ? (
+                <a
+                  href={href}
+                  class="pv-chip no-underline"
+                  title={`All projects and guides tagged ${tag}`}
+                >
+                  {tag}
+                </a>
+              ) : (
+                <span class="pv-chip" title={`Repository topic: ${tag}`}>
+                  {tag}
+                </span>
+              );
+            })}
+            <a href={withBase('/topics/')} class="pv-chip no-underline text-muted">
+              All topics →
+            </a>
           </div>
         )
       }
@@ -500,6 +562,7 @@ const packageRows: PackageRow[] = releases.packages.map((pkg) => ({
                     projectName={project.name}
                     projectId={project.id}
                     docsBase={docsPath}
+                    docsLabel={useCase.docsPage ? docsPageTitles.get(useCase.docsPage) : undefined}
                     showProject={false}
                   />
                 ))}

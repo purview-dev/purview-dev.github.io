@@ -26,6 +26,7 @@ Everything else in the table below is build-time.
 | Site surface | Source | Notes |
 | --- | --- | --- |
 | Tag chips (cards, docs portal, docs-page front matter `tags`) | GitHub **topics** | `projectRepoEnrichment()` in `src/src/lib/releases/repo.ts` |
+| The `/topics/<topic>/` browse hub a chip links to | GitHub **topics** | A topic shared by two or more projects gets a hub page (ADR 0015); a topic only one project carries links nowhere, and one hub's worth of links is lost |
 | `shortDescription` fallback | GitHub **description** | Used only when the manifest value is empty |
 | "supplemental" description on the project page | GitHub description | Shown when it differs from the manifest description |
 | Successor/archived messaging | GitHub **archived** flag + `status`/`supersededBy` | |
@@ -72,6 +73,9 @@ Discussions on an organisation repository requires organisation permission; repo
   searches behave predictably.
 - Topics are the **only** way tags reach the site. There is no `tags` field in a catalogue record — do
   not add one.
+- Spell a shared concept the standard way and only the standard way: `csharp`, not `c-sharp`. The
+  site groups the two spellings into one `/topics/csharp/` hub, but a topic nobody else uses gets no
+  hub at all, so a project's topics are also how it joins the site's browse surfaces (ADR 0015).
 
 ## Stability signals to check against `status`
 

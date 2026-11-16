@@ -33,8 +33,24 @@ The site's catalogue entry for your project (in `purview-dev/purview-dev`,
 | 9 | **Diagrams are never ASCII art.** A diagram is a LikeC4 model paired with a Mermaid fence (below). | ASCII art is unreadable on a phone, unsearchable, and drifts silently. |
 | 10 | Moving or renaming a page adds a line to `_redirects.yml` in the same commit. | The old URL is in bookmarks, search results and other repositories. |
 | 11 | `_Sidebar.md` lists every page once, grouped by section, in reading order. | The site orders pages by it; a page missing from it has no place in the navigation. |
+| 12 | **The first paragraph names the technology in the words a reader would search with**, and the H1 stays the page's own name. | The first paragraph becomes the meta description and the H1 becomes the page title; a page that never says "C# union types" cannot be found by someone searching for exactly that. The site builds the search-result title (`Union design — Unions documentation`), so the H1 does not need the project name in it. |
 
 Full layout rules, a worked tree and what the site rewrites: [references/layout.md](references/layout.md).
+
+## Where the published copy lives
+
+`https://purview.dev/docs/<project-id>/` is the canonical home of these pages; the same Markdown on
+GitHub is a mirror, not a second edition. Link the published URL from the repository's README (rule 5
+of `purview-site-integration`) and keep prose in one place: a page duplicated in the README competes
+with the site for the same query, on a domain that wins.
+
+The site titles and describes each page for search from the catalogue and the page itself
+(ADR 0015). Two consequences for writing here:
+
+- the H1 is the page's name, and a folder is a section: `schemas/Custom-Rules.md` is published as
+  `/docs/<id>/schemas/custom-rules/` and titled `Schemas · Custom rules — <Project> documentation`;
+- the first paragraph is the description, trimmed to about 160 characters at a sentence boundary, so
+  make its first sentence the answer to "what does this page cover?".
 
 ## Hierarchy: the default shape
 

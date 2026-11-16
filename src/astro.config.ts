@@ -101,10 +101,10 @@ const HEAD = [
     tag: 'meta' as const,
     attrs: { name: 'theme-color', content: BRAND.inkLight, media: '(prefers-color-scheme: dark)' },
   },
-  {
-    tag: 'meta' as const,
-    attrs: { property: 'og:type', content: 'website' },
-  },
+  // `og:type` is deliberately NOT set here. Starlight emits `article` for a
+  // documentation page; a global `website` in the config overrides that on every
+  // one of the aggregated documentation pages. The site's own pages set their own
+  // `og:type` (see `SiteLayout.astro`).
   {
     tag: 'meta' as const,
     attrs: { property: 'og:site_name', content: SITE.fullName },

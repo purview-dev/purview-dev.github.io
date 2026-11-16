@@ -87,6 +87,10 @@ check-generated:
 check-projects:
     bun run check:projects
 
+# Validate search-engine metadata in the built site (titles, canonicals, headings, structured data).
+check-seo:
+    bun run check:seo
+
 # Apply the guard's auto-fixes to the project records (dry run; pass --write to apply).
 fix-projects *ARGS:
     bun run fix:projects {{ARGS}}
@@ -124,5 +128,5 @@ clean:
     bun run clean
 
 # Authoritative validation: run everything needed to prove the site is safe to merge.
-validate: format-check lint typecheck test check-assets check-projects build discovery-validate check-links check-generated test-dist
+validate: format-check lint typecheck test check-assets check-projects build discovery-validate check-seo check-links check-generated test-dist
     @echo "Validation passed."
