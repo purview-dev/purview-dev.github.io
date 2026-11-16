@@ -18,6 +18,13 @@ tags:
 (`purview-build.json` → `bun run ci:build`; deploy.yml runs `just validate` first). Treat a green
 `just validate` as the definition of done.
 
+The same chain deliberately runs twice on one change: once in the PR gate (the merge condition, via
+the shared Purview.Build pipeline) and once on `main` in `deploy.yml` (the publish gate). They are
+not shared because `main` is a different commit on a different runner — the change is validated
+before it merges, but what is published is validated again, from its own fresh data sync, before it
+is published. Anything that removes that second run has to be a decision about what the deployment
+no longer has to prove; it is not a free saving.
+
 ## The chain, in order
 
 | Step | Command | Catches |
@@ -83,6 +90,13 @@ each declared repository file with the docs aggregator's `fetchRawFile`, writes 
 caches it under `.cache/assets/`. A declared asset that cannot be resolved fails the sync, so a
 missing schema never silently ships a broken URL.
 
+The same mode governs the **skills mirror** (`skills:` in a record): the skill set and its files are
+read from the project's documentation ref and cached under `.cache/skills/<project>/<skill>/`, each
+with a `<skill>.ref` marker naming the ref it was fetched from. `live` re-reads everything; `auto`
+reuses the cache; and `cache`/`fixture` make no request at all — they mirror the skills the cache
+holds for the resolved ref and fail loudly when a declared skill was never fetched, because those
+modes promise a sync that touches no network.
+
 `DATA_FALLBACK_TO_FIXTURES=false` makes `auto` fail loudly instead of silently using fixtures. Set
 `GITHUB_TOKEN` (or `gh auth token`) to avoid unauthenticated rate limits.
 
@@ -115,6 +129,6 @@ just build && just check-links
 # Catalogue drift in isolation
 just check-projects
 
-# Release-data problems without network
+# Release-data problems without network (the skills mirror reads the cache too)
 DATA_MODE=fixture just build && just test-dist
 ```

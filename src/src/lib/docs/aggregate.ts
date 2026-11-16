@@ -271,11 +271,33 @@ type SourceFileReader = (path: string) => Promise<string | null>;
  */
 const DOC_FETCH_CONCURRENCY = 8;
 
-export async function listRepositoryFiles(repository: string, branch: string): Promise<string[]> {
-  const tree = (await githubJson(`/repos/${repository}/git/trees/${branch}?recursive=1`)) as {
-    tree?: { path?: string }[];
-  };
-  return (tree.tree ?? []).map((entry) => entry.path ?? '');
+/**
+ * The repository tree, memoized for the process.
+ *
+ * One `just data-sync` lists the same tree twice for most projects — once for
+ * the documentation channels and once for the skills mirror — and every listing
+ * is a REST call. The cache is keyed by repository and ref, and a failed listing
+ * is dropped again so a transient error is retried rather than remembered.
+ */
+const repositoryTrees = new Map<string, Promise<string[]>>();
+
+export function listRepositoryFiles(repository: string, branch: string): Promise<string[]> {
+  const key = `${repository}@${branch}`;
+  const cached = repositoryTrees.get(key);
+  if (cached) {
+    return cached;
+  }
+  const request = githubJson(`/repos/${repository}/git/trees/${branch}?recursive=1`)
+    .then((body) => {
+      const tree = body as { tree?: { path?: string }[] };
+      return (tree.tree ?? []).map((entry) => entry.path ?? '');
+    })
+    .catch((error: unknown) => {
+      repositoryTrees.delete(key);
+      throw error;
+    });
+  repositoryTrees.set(key, request);
+  return request;
 }
 
 async function cloneWiki(

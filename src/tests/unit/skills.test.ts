@@ -3,7 +3,8 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { discoverSkills } from '../../scripts/sync-skills';
+import { cachedSkills, cachedSkillsRef, discoverSkills } from '../../scripts/sync-skills';
+import { loadProjects } from '../../src/lib/manifest/load';
 import { manifestSchema } from '../../src/lib/manifest/schema';
 import {
   listMirroredSkillFiles,
@@ -189,5 +190,57 @@ describe('skills in the manifest', () => {
       projects: [{ ...base, skills: [{ name: 'PM Park' }] }],
     });
     expect(invalid.success).toBe(false);
+  });
+  describe('cached skill set', () => {
+    test('offers the skills cached for the requested ref, and only those', () => {
+      const project = loadProjects().find((candidate) => candidate.id === PROJECT);
+      if (!project) {
+        throw new Error(`the ${PROJECT} catalogue record is missing`);
+      }
+      const root = mkdtempSync(join(tmpdir(), 'purview-skill-cache-'));
+      try {
+        mkdirSync(join(root, PROJECT, 'pm-park'), { recursive: true });
+        writeFileSync(join(root, PROJECT, 'pm-park.ref'), 'main\n');
+        mkdirSync(join(root, PROJECT, 'pm-review'), { recursive: true });
+        writeFileSync(join(root, PROJECT, 'pm-review.ref'), 'v3.0.0');
+        // A file beside the skills is not a skill, and an entry cached for another
+        // ref is not offered for this one.
+        writeFileSync(join(root, PROJECT, 'notes.txt'), 'x');
+
+        expect(cachedSkills(project, 'main', root).map((skill) => skill.name)).toEqual(['pm-park']);
+        expect(cachedSkills(project, 'v3.0.0', root).map((skill) => skill.name)).toEqual([
+          'pm-review',
+        ]);
+        expect(cachedSkills(project, 'main', root)[0]).toEqual({
+          projectId: PROJECT,
+          repository: REPOSITORY,
+          name: 'pm-park',
+          sourcePath: 'skills/pm-park',
+          ref: 'main',
+        });
+        expect(cachedSkills(project, 'v9.9.9', root)).toEqual([]);
+      } finally {
+        rmSync(root, { recursive: true, force: true });
+      }
+    });
+
+    test('a project with no cache directory has no cached skills', () => {
+      const project = loadProjects().find((candidate) => candidate.id === PROJECT);
+      if (!project) {
+        throw new Error(`the ${PROJECT} catalogue record is missing`);
+      }
+      const root = mkdtempSync(join(tmpdir(), 'purview-skill-cache-'));
+      try {
+        expect(cachedSkills(project, 'main', root)).toEqual([]);
+        // Nothing has ever been synced for it, which is not the same as "it has
+        // no skills" — `skillsForRef` tells those apart by this marker.
+        expect(cachedSkillsRef(project, root)).toBeNull();
+        mkdirSync(join(root, PROJECT), { recursive: true });
+        writeFileSync(join(root, PROJECT, '.ref'), 'main\n');
+        expect(cachedSkillsRef(project, root)).toBe('main');
+      } finally {
+        rmSync(root, { recursive: true, force: true });
+      }
+    });
   });
 });
