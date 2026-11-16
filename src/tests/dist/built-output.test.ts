@@ -93,7 +93,7 @@ describe('built per-project llms outputs', () => {
       // The full bundle is the header plus every aggregated page, so it must be
       // longer than the concise index. Asserting a word such as "Purview" only
       // holds for projects whose documentation happens to mention the
-      // organisation: astroc4 documents an npm package and never does.
+      // organisation: AstroC4 documents an npm package and never does.
       expect(full.length, `${project.id} llms-full.txt lacks aggregated content`).toBeGreaterThan(
         summary.length,
       );
@@ -715,5 +715,101 @@ describe('built documentation channels', () => {
         expect(page).not.toContain('class="doc-sections');
       }
     }
+  });
+});
+
+describe('search metadata and browse surfaces (ADR 0015)', () => {
+  const active = loadProjects().filter((project) => project.status !== 'archived');
+  const documented = active.filter((project) => project.docs);
+
+  function titleOf(file: string): string {
+    return /<title>([^<]*)<\/title>/.exec(requireBuilt(file))?.[1] ?? '';
+  }
+
+  type CatalogueProject = ReturnType<typeof loadProjects>[number];
+
+  function requireProject(predicate: (candidate: CatalogueProject) => boolean): CatalogueProject {
+    const found = active.find(predicate);
+    if (!found) {
+      throw new Error('the catalogue must define a project that satisfies this test');
+    }
+    return found;
+  }
+
+  function requireDocumentedProject(): CatalogueProject {
+    const found = documented.find((candidate) => candidate.id === 'zodsharp') ?? documented[0];
+    if (!found) {
+      throw new Error('the catalogue must document at least one project');
+    }
+    return found;
+  }
+
+  test('a documentation title names the project it documents, and the site', () => {
+    // `Unions | Purview Dev` is not findable; `… — Unions documentation | Purview Dev` is.
+    for (const project of documented) {
+      const title = titleOf(`docs/${project.id}/index.html`);
+      expect(title).toContain(project.name);
+      expect(title.endsWith('| Purview Dev')).toBe(true);
+      // The brand is appended once, not once per render.
+      expect(title.split('Purview Dev')).toHaveLength(2);
+      // And the title is what a result actually shows.
+      expect(title.length, `${title} (${title.length})`).toBeLessThanOrEqual(70);
+    }
+  });
+
+  test('the catalogue page title leads with the product, not the display name', () => {
+    const project = requireProject((candidate) => candidate.packages.length > 0);
+    const primary = project.packages.find((pkg) => pkg.primary) ?? project.packages[0];
+    const title = titleOf(`projects/${project.id}/index.html`);
+    // The package id is what a reader searches for; the display name is not.
+    expect(title.startsWith(`${primary?.id} — `)).toBe(true);
+    expect(title).toContain('| Purview Dev');
+  });
+
+  test('a project page is described as source code and as an application', () => {
+    const project = requireProject((candidate) => candidate.packages.length > 0);
+    const html = requireBuilt(`projects/${project.id}/index.html`);
+    expect(html).toContain('"@type":"SoftwareSourceCode"');
+    expect(html).toContain('"@type":"SoftwareApplication"');
+    expect(html).toContain('"@type":"BreadcrumbList"');
+  });
+
+  test('a documentation page carries a TechArticle and a breadcrumb trail', () => {
+    const html = requireBuilt(`docs/${requireDocumentedProject().id}/index.html`);
+    expect(html).toContain('"@type":"TechArticle"');
+    expect(html).toContain('"@type":"BreadcrumbList"');
+    expect(html).toContain('"name":"Documentation"');
+  });
+
+  test('a documentation page is an article to a social crawler, not a website', () => {
+    const html = requireBuilt(`docs/${requireDocumentedProject().id}/index.html`);
+    // The site sets no `og:type` globally, so Starlight's `article` survives.
+    expect(html).toMatch(/<meta property="og:type" content="article"\s*\/?>/);
+    expect(html).not.toMatch(/<meta property="og:type" content="website"\s*\/?>/);
+  });
+
+  test('the browse hubs are built', () => {
+    expect(existsSync(resolve(DIST, 'topics/index.html'))).toBe(true);
+    expect(existsSync(resolve(DIST, 'categories/index.html'))).toBe(true);
+    expect(existsSync(resolve(DIST, 'packages/index.html'))).toBe(true);
+  });
+
+  test('the catalogue links the browse surfaces', () => {
+    const html = requireBuilt('projects/index.html');
+    expect(html).toContain('/topics/');
+    expect(html).toContain('/categories/');
+    expect(requireBuilt('index.html')).toContain('/topics/');
+  });
+
+  test('a documentation page links the topics it carries', () => {
+    // Every hub that exists is reachable from the documentation as well as from
+    // the catalogue, which is what makes the docs pages a crawl path.
+    const topicsIndex = requireBuilt('topics/index.html');
+    const href = /href="\/topics\/([a-z0-9-]+)\/"/.exec(topicsIndex)?.[1];
+    expect(href).toBeDefined();
+    const linked = documented.some((project) =>
+      requireBuilt(`docs/${project.id}/index.html`).includes(`/topics/${href}/`),
+    );
+    expect(linked).toBe(true);
   });
 });

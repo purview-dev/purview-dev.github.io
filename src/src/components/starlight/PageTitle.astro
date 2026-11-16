@@ -8,6 +8,7 @@ import { channelBasePath, channelDisplayLabel } from '~/lib/docs/channels';
 import { docSectionTrail } from '~/lib/docs/sidebar';
 import { isStale, STALE_AFTER_DAYS } from '~/lib/docs/staleness';
 import { projectChannelLlmsFullPath, projectChannelLlmsPath } from '~/lib/discovery/urls';
+import { topicHubHrefs } from '~/lib/hubs';
 import { LLMS_LINK_ATTRS } from '~/lib/llms';
 import { getReleaseIndex } from '~/lib/releases/runtime';
 import { displayStatus } from '~/lib/status';
@@ -18,6 +19,9 @@ const { entry } = Astro.locals.starlightRoute;
 const data = entry?.data;
 const lastReviewed = typeof data?.lastReviewed === 'string' ? data.lastReviewed : undefined;
 const tags = Array.isArray(data?.tags) ? data.tags : [];
+// Only topics that really have a hub page become links, and an alias links the
+// canonical hub (see `lib/hubs`).
+const topicHrefs = topicHubHrefs();
 const experimental = data?.experimental === true;
 const status = data?.status ? displayStatus({ status: data.status, experimental }) : undefined;
 
@@ -212,11 +216,25 @@ const starCount =
       {
         tags.length > 0 && (
           <span class="doc-meta-item doc-meta-tags">
-            {tags.map((tag) => (
-              <span class="doc-tag" title={`Repository topic: ${tag}`}>
-                {tag}
-              </span>
-            ))}
+            {/* A topic with a hub page becomes a link: the documentation is where a
+                reader lands from search, so it is also where the browse surface
+                has to be reachable from. */}
+            {tags.map((tag) => {
+              const href = topicHrefs.get(tag);
+              return href ? (
+                <a
+                  href={href}
+                  class="doc-tag"
+                  title={`All projects and guides tagged ${tag}`}
+                >
+                  {tag}
+                </a>
+              ) : (
+                <span class="doc-tag" title={`Repository topic: ${tag}`}>
+                  {tag}
+                </span>
+              );
+            })}
           </span>
         )
       }

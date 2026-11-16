@@ -36,7 +36,7 @@ and the dist test suite, so the script and the tests cannot drift apart.
 ### 4. Cache and dependency directories must sit on an absolute path
 
 *(Amendment, 2026-11-09.)* The `.cache`/`node_modules` rule originally matched those segments anywhere.
-Aggregated documentation legitimately names a location relative to the reader's own project — astroc4
+Aggregated documentation legitimately names a location relative to the reader's own project — AstroC4
 documents its cache as `node_modules/.cache/astroc4` — and that is content, not a build-machine path.
 The rule now requires an absolute path (a drive prefix or a root `/`) before the segment, so a real
 leak such as `/home/runner/work/…/node_modules/…` or `D:\build\node_modules\…` is still caught while

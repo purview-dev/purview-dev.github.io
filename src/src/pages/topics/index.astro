@@ -1,0 +1,102 @@
+---
+import SiteLayout from '~/layouts/SiteLayout.astro';
+import { getHubs, hubHref } from '~/lib/hubs';
+import { SITE } from '~/lib/site';
+import { absoluteUrl, withBase } from '~/lib/urls';
+
+const { topics, categories } = getHubs();
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CollectionPage',
+      name: 'Topics',
+      description: 'Every topic the Purview .NET projects are tagged with.',
+      url: absoluteUrl('/topics/'),
+      inLanguage: 'en',
+      isPartOf: { '@type': 'WebSite', name: SITE.fullName, url: SITE.url },
+      publisher: { '@type': 'Organization', name: SITE.orgName, url: SITE.url },
+    },
+    {
+      '@type': 'ItemList',
+      name: 'Purview topics',
+      numberOfItems: topics.length,
+      itemListElement: topics.map((hub, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: hub.label,
+        url: absoluteUrl(hub.path),
+      })),
+    },
+  ],
+};
+---
+
+<SiteLayout
+  title={`Topics — Purview .NET projects | ${SITE.fullName}`}
+  description="Browse Purview's open-source .NET projects and documentation by topic — C#, Roslyn source generators, value types, unions, Aspire, telemetry and validation."
+  structuredData={structuredData}
+>
+  <div class="pv-container py-12 md:py-16">
+    <nav aria-label="Breadcrumb" class="mb-6 text-sm text-muted">
+      <a href={withBase('/')} class="pv-link">Home</a>
+      <span aria-hidden="true"> / </span>
+      <span class="text-foreground">Topics</span>
+    </nav>
+
+    <div class="max-w-3xl">
+      <p class="pv-chip mb-4 border-brand/30 bg-brand/5 text-brand">Topics</p>
+      <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Topics</h1>
+      <p class="mt-4 text-lg text-muted">
+        Every topic the Purview projects are tagged with on GitHub. Each one opens the projects that
+        carry it and the documentation pages behind them.
+      </p>
+    </div>
+
+    <ul class="mt-10 grid list-none gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+      {
+        topics.map((hub) => (
+          <li>
+            <a
+              href={hubHref(hub)}
+              class="pv-card pv-card-interactive flex items-center justify-between gap-3 p-4 no-underline"
+            >
+              <span class="font-medium">{hub.label}</span>
+              <span class="pv-chip shrink-0">
+                {hub.projects.length} project{hub.projects.length === 1 ? '' : 's'}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <section class="mt-16">
+      <h2 class="text-2xl font-bold tracking-tight md:text-3xl">Categories</h2>
+      <p class="mt-2 max-w-2xl text-muted">
+        The catalogue groups the same projects by what they are for.
+      </p>
+      <ul class="mt-6 flex flex-wrap list-none gap-2">
+        {
+          categories.map((hub) => (
+            <li>
+              <a href={hubHref(hub)} class="pv-chip no-underline">
+                {hub.label} <span class="text-muted">({hub.projects.length})</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="mt-12 rounded-xl border border-border bg-surface p-6 md:p-8">
+      <h2 class="text-xl font-semibold">Looking for the tools themselves?</h2>
+      <p class="mt-3 max-w-2xl text-sm text-muted">
+        Open the <a href={withBase('/projects/')} class="pv-link">project catalogue</a>, the{' '}
+        <a href={withBase('/packages/')} class="pv-link">published packages</a>, or the{' '}
+        <a href={withBase('/use-cases/')} class="pv-link">use cases</a> that show what each project
+        does.
+      </p>
+    </section>
+  </div>
+</SiteLayout>

@@ -101,10 +101,10 @@ const HEAD = [
     tag: 'meta' as const,
     attrs: { name: 'theme-color', content: BRAND.inkLight, media: '(prefers-color-scheme: dark)' },
   },
-  {
-    tag: 'meta' as const,
-    attrs: { property: 'og:type', content: 'website' },
-  },
+  // `og:type` is deliberately NOT set here. Starlight emits `article` for a
+  // documentation page; a global `website` in the config overrides that on every
+  // one of the aggregated documentation pages. The site's own pages set their own
+  // `og:type` (see `SiteLayout.astro`).
   {
     tag: 'meta' as const,
     attrs: { property: 'og:site_name', content: SITE.fullName },
@@ -129,14 +129,14 @@ export default defineConfig({
   },
   compressHTML: true,
   markdown: {
-    // Astro 7.4 made Sätteri the default processor. Astroc4's ```likec4 fence
+    // Astro 7.4 made Sätteri the default processor. AstroC4's ```likec4 fence
     // transform is a Sätteri mdast plugin appended to this processor, and the
     // Mermaid bridge had to move with it (see config/satteri-mermaid.ts).
     processor: satteri({ mdastPlugins: [mermaidFences] }),
   },
   integrations: [
     // Two JSX renderers are in play: Preact for the site's own islands, React
-    // for astroc4's LikeC4 islands. Without include/exclude each integration
+    // for AstroC4's LikeC4 islands. Without include/exclude each integration
     // claims every .tsx file and Astro warns that behaviour is undefined.
     preact({ exclude: ['**/node_modules/**'] }),
     react({ include: ['**/node_modules/**'] }),
@@ -170,7 +170,7 @@ export default defineConfig({
       expressiveCode: {
         themes: ['starlight-light', 'starlight-dark'],
         // Languages Shiki does not bundle, which the mirrored documentation
-        // uses anyway (see config/expressive-code-languages.ts). astroc4 appends
+        // uses anyway (see config/expressive-code-languages.ts). AstroC4 appends
         // its LikeC4 grammar to this list rather than replacing it.
         shiki: { langs: [...siteLanguages] },
         styleOverrides: {
@@ -198,7 +198,7 @@ export default defineConfig({
         Sidebar: './src/components/starlight/Sidebar.astro',
       },
       plugins: [
-        // The live astroc4 demo (src/pages/examples/astroc4.mdx) is the site
+        // The live AstroC4 demo (src/pages/examples/astroc4.mdx) is the site
         // dogfooding the plugin it catalogues: real fences and real views.
         //
         // This is the Starlight entry point, so it belongs in `plugins` — the
@@ -211,7 +211,7 @@ export default defineConfig({
           // Markdown (see skills/docs-aggregation-rules). Those pages were
           // written for GitHub or mkdocs, so a ```likec4 fence there is often a
           // partial snippet rather than a diagram: relax validation for the
-          // collection so one cannot fail this site's build — astroc4 warns and
+          // collection so one cannot fail this site's build — AstroC4 warns and
           // leaves the fence as a highlighted code block. Pages the site authors
           // are not in the collection, so they keep strict validation.
           validation: { collections: ['docs'] },
@@ -296,7 +296,7 @@ export default defineConfig({
     }),
     // MDX must come after Starlight: Starlight registers
     // astro-expressive-code, and the MDX integration has to see it to
-    // highlight code blocks on .mdx pages (the live astroc4 example).
+    // highlight code blocks on .mdx pages (the live AstroC4 example).
     mdx(),
   ],
   vite: {
@@ -306,7 +306,7 @@ export default defineConfig({
       // and the React runtime means a cold dev start pre-bundles them instead
       // of serving them raw and producing "504 Outdated Optimize Dep".
       //
-      // `react/compiler-runtime` is deliberately absent: astroc4 1.0.0-prerelease.5
+      // `react/compiler-runtime` is deliberately absent: AstroC4 1.0.0-prerelease.5
       // adds it to this list itself (only when the site has not), which is what
       // keeps the LikeC4 islands hydrating in `astro dev`.
       include: [

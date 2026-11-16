@@ -1,6 +1,6 @@
 ---
 name: add-project-intake
-description: Use when starting to add a repository to the Purview-Dev website catalogue — the intake interview: what to ask the human, what recon answers instead, and how each answer maps to a manifest field, its vocabulary, its recommended default, and the invariant it protects.
+description: Use when starting to add a repository to the Purview-Dev website catalogue — the intake interview, covering what to ask the human, what recon answers instead, and how each answer maps to a manifest field, its vocabulary, its recommended default, and the invariant it protects.
 category: purview-dev-website
 roles:
     - catalogue
@@ -103,7 +103,7 @@ resolve to a real page under `/docs/<id>/` (see `use-case-authoring`).
 
 | # | Question | Decides |
 | --- | --- | --- |
-| 23 | Repository topics are missing or poor — they are the site's tag chips. May I set them? | tags (`check-projects` **fails** on no topics) |
+| 23 | Repository topics are missing or poor — they are the site's tag chips and the `/topics/` hubs a project appears in. May I set them? | tags (`check-projects` **fails** on no topics); browse hubs (ADR 0015) |
 | 24 | The description is thin — it backs the `shortDescription` fallback and social metadata. May I improve it? | `shortDescription` fallback, `og:` metadata |
 | 25 | Is there a schema or artefact worth mirroring to a stable `purview.dev` URL (an `assets:` entry), or is it already published elsewhere? | `assets` |
 

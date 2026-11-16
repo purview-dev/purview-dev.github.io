@@ -53,7 +53,8 @@ just validate
 ```
 
 runs format-check → lint → typecheck → unit tests → asset checks → catalogue checks → build →
-link crawl → generated-output checks → built-output tests. It is the same pipeline CI uses
+discovery validation → search-metadata checks → link crawl → generated-output checks → built-output
+tests. It is the same pipeline CI uses
 (`purview-build.json` → `bun run ci:build`), so a green `just validate` is the definition of "safe to
 merge". `just check-projects` is part of that chain and fails the build on catalogue drift. It also
 prints advisory observations (which never fail the build) when a project's declared `status` or
@@ -186,9 +187,10 @@ src/src/data/projects/<id>.yml` against a clone of its repository.
 | Docs aggregation | `src/src/lib/docs/aggregate.ts` (+ `frontmatter`, `links`, `sidebar`, `staleness`, `diagrams`, `redirect-file`) |
 | Consumer skills for product repositories | `skills/purview-site-{integration,docs,assessment}/` |
 | Release data | `src/src/lib/releases/*`, `src/scripts/fetch-releases.ts` |
+| Search metadata and browse hubs (titles, descriptions, `/topics/`, `/categories/`, `/packages/`) | `src/src/lib/seo.ts`, `src/src/lib/hubs.ts` (ADR 0015) |
 | Mirrored project assets | `src/scripts/sync-assets.ts` (`assets:` in the manifest) |
 | Pages | `src/src/pages/{index,about,use-cases,docs,projects,releases}/` |
 | Live examples | `src/src/pages/examples/<project-id>.mdx` (linked from the project page automatically) |
-| Validation | `justfile`, `src/scripts/{check-links,check-generated,check-assets,check-projects}.ts` |
+| Validation | `justfile`, `src/scripts/{check-links,check-generated,check-assets,check-projects,check-seo}.ts` |
 | Upstream-triggered rebuilds | `.github/workflows/upstream-refresh.yml`, `src/scripts/upstream-state.ts`, `src/src/lib/upstream.ts` (ADR 0014) |
 | Architecture decisions | `docs/decisions/*.md` |

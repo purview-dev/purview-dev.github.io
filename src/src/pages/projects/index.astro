@@ -4,11 +4,13 @@ import InlineProse from '~/components/InlineProse.astro';
 import ProjectCard from '~/components/ProjectCard.astro';
 import ProjectFilter from '~/components/islands/ProjectFilter.tsx';
 import StatusBadge from '~/components/StatusBadge.astro';
+import { getHubs, hubHref } from '~/lib/hubs';
 import { loadExternalProjects, loadProjects } from '~/lib/manifest/load';
 import { projectRepoEnrichment } from '~/lib/releases/repo';
 import { getReleaseIndex } from '~/lib/releases/runtime';
 import { SITE } from '~/lib/site';
 import { displayStatus } from '~/lib/status';
+import { absoluteUrl, withBase } from '~/lib/urls';
 
 
 const projects = loadProjects();
@@ -16,11 +18,40 @@ const externalProjects = loadExternalProjects();
 const releaseIndex = getReleaseIndex();
 const categories = [...new Set(projects.map((project) => project.category))].toSorted();
 const statuses = ['stable', 'preview', 'experimental'];
+// Topics with their own hub page, for the crawlable browse strip.
+const topics = getHubs().topics;
+// The catalogue is an index of real projects, so it says so.
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CollectionPage',
+      name: 'Projects',
+      description: 'The Purview-Dev catalogue of open-source .NET projects.',
+      url: absoluteUrl('/projects/'),
+      inLanguage: 'en',
+      isPartOf: { '@type': 'WebSite', name: SITE.fullName, url: SITE.url },
+      publisher: { '@type': 'Organization', name: SITE.orgName, url: SITE.url },
+    },
+    {
+      '@type': 'ItemList',
+      name: 'Purview projects',
+      numberOfItems: projects.length,
+      itemListElement: projects.map((project, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: project.name,
+        url: absoluteUrl(`/projects/${project.id}/`),
+      })),
+    },
+  ],
+};
 ---
 
 <SiteLayout
   title={`Projects — ${SITE.fullName}`}
   description="Explore Purview's open-source .NET tools for event sourcing, telemetry, validation, source generation, Aspire, and build automation."
+  structuredData={structuredData}
 >
   <div class="pv-container py-12 md:py-16">
     <div class="max-w-3xl">
@@ -35,6 +66,28 @@ const statuses = ['stable', 'preview', 'experimental'];
     <div class="mt-8">
       <ProjectFilter client:visible categories={categories} statuses={statuses} />
     </div>
+
+    {
+      /* A crawlable way through the catalogue. The filter above is client-side,
+         so without this the only server-rendered path between projects is the
+         full list itself. */
+      topics.length > 0 && (
+        <nav aria-label="Browse projects" class="mt-8 flex flex-wrap items-center gap-2">
+          <span class="text-sm text-muted">Browse by topic:</span>
+          {topics.slice(0, 12).map((hub) => (
+            <a href={hubHref(hub)} class="pv-chip no-underline">
+              {hub.label}
+            </a>
+          ))}
+          <a href={withBase('/topics/')} class="pv-chip no-underline text-muted">
+            All topics →
+          </a>
+          <a href={withBase('/categories/')} class="pv-chip no-underline text-muted">
+            Categories
+          </a>
+        </nav>
+      )
+    }
 
     <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
       {

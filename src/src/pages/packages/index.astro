@@ -1,0 +1,117 @@
+---
+import SiteLayout from '~/layouts/SiteLayout.astro';
+import { loadProjects } from '~/lib/manifest/load';
+import { getReleaseIndex } from '~/lib/releases/runtime';
+import { projectReleaseSummary } from '~/lib/releases/transform';
+import { SITE } from '~/lib/site';
+import { absoluteUrl, packagePageUrl, registryLabel, withBase } from '~/lib/urls';
+
+// Every package the family publishes, with the version a reader can install
+// today. Derived from the catalogue and the release cache, so the page cannot
+// list a package that no longer ships.
+const projects = loadProjects().filter((project) => project.status !== 'archived');
+const releaseIndex = getReleaseIndex();
+const rows = projects.flatMap((project) => {
+  const summary = projectReleaseSummary(project, releaseIndex.data, releaseIndex.source);
+  return project.packages.map((pkg) => {
+    const release = summary.packages.find((candidate) => candidate.packageId === pkg.id);
+    return {
+      projectId: project.id,
+      projectName: project.name,
+      packageId: pkg.id,
+      registry: pkg.registry,
+      primary: pkg.primary ?? false,
+      version: release?.latestStable ?? release?.latestPrerelease ?? null,
+      deprecated: release?.deprecated ?? false,
+      pageUrl: packagePageUrl(pkg.registry, pkg.id),
+    };
+  });
+});
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Packages',
+  description: 'Every NuGet and npm package the Purview .NET projects publish.',
+  url: absoluteUrl('/packages/'),
+  inLanguage: 'en',
+  isPartOf: { '@type': 'WebSite', name: SITE.fullName, url: SITE.url },
+  publisher: { '@type': 'Organization', name: SITE.orgName, url: SITE.url },
+};
+---
+
+<SiteLayout
+  title={`Packages — Purview .NET libraries and tools | ${SITE.fullName}`}
+  description={`Every package the Purview family publishes — ${rows.length} NuGet and npm packages across ${projects.length} projects, with the version each one ships today.`}
+  structuredData={structuredData}
+>
+  <div class="pv-container py-12 md:py-16">
+    <nav aria-label="Breadcrumb" class="mb-6 text-sm text-muted">
+      <a href={withBase('/')} class="pv-link">Home</a>
+      <span aria-hidden="true"> / </span>
+      <span class="text-foreground">Packages</span>
+    </nav>
+
+    <div class="max-w-3xl">
+      <p class="pv-chip mb-4 border-brand/30 bg-brand/5 text-brand">Packages</p>
+      <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Packages</h1>
+      <p class="mt-4 text-lg text-muted">
+        {rows.length} packages across {projects.length} open-source .NET projects. Install one, or read
+        the project page for what it does and when it fits.
+      </p>
+    </div>
+
+    <div class="mt-10 overflow-x-auto">
+      <table class="w-full min-w-[42rem] border-collapse text-sm">
+        <caption class="sr-only">Purview packages by project</caption>
+        <thead>
+          <tr class="border-b border-border text-left text-muted">
+            <th scope="col" class="py-3 pr-4 font-medium">Package</th>
+            <th scope="col" class="py-3 pr-4 font-medium">Project</th>
+            <th scope="col" class="py-3 pr-4 font-medium">Registry</th>
+            <th scope="col" class="py-3 pr-4 font-medium">Version</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.map((row) => (
+              <tr class="border-b border-border align-top">
+                <th scope="row" class="py-3 pr-4 text-left font-mono text-xs font-medium">
+                  <a
+                    href={row.pageUrl}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    class="pv-link inline-flex items-center gap-1.5"
+                  >
+                    {row.packageId}
+                  </a>
+                  {row.primary && <span class="pv-chip ml-2">primary</span>}
+                </th>
+                <td class="py-3 pr-4">
+                  <a href={withBase(`/projects/${row.projectId}/`)} class="pv-link">
+                    {row.projectName}
+                  </a>
+                </td>
+                <td class="py-3 pr-4">{registryLabel(row.registry)}</td>
+                <td class="py-3 pr-4 font-mono text-xs">
+                  {row.version ?? '—'}
+                  {row.deprecated && <span class="pv-chip ml-2">deprecated</span>}
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <section class="mt-12 rounded-xl border border-border bg-surface p-6 md:p-8">
+      <h2 class="text-xl font-semibold">Where to go next</h2>
+      <p class="mt-3 max-w-2xl text-sm text-muted">
+        The <a href={withBase('/projects/')} class="pv-link">project catalogue</a> explains what each
+        package is for; the <a href={withBase('/docs/')} class="pv-link">documentation</a> has the
+        guides, and the <a href={withBase('/releases/')} class="pv-link">releases page</a> tracks
+        versions over time.
+      </p>
+    </section>
+  </div>
+</SiteLayout>

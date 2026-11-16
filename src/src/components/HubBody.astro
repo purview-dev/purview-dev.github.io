@@ -1,0 +1,75 @@
+---
+import InlineProse from '~/components/InlineProse.astro';
+import StatusBadge from '~/components/StatusBadge.astro';
+import type { Hub } from '~/lib/hubs';
+import { withBase } from '~/lib/urls';
+
+/**
+ * The body of a topic or category hub.
+ *
+ * A hub earns its place by listing real things, not by repeating a keyword: the
+ * projects tagged with the topic (with their status, description and a link into
+ * their documentation) followed by the documentation pages those projects
+ * publish. Both lists are derived from the catalogue and the docs manifest.
+ */
+interface Props {
+  hub: Hub;
+  kind: 'topic' | 'category';
+}
+
+const { hub, kind } = Astro.props;
+const subject = kind === 'topic' ? `tagged ${hub.label}` : `in ${hub.label}`;
+---
+
+<section class="mt-10">
+  <h2 class="text-2xl font-bold tracking-tight md:text-3xl">Projects</h2>
+  <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      hub.projects.map((project) => (
+        <div class="pv-card flex flex-col gap-3 p-5">
+          <div class="flex items-start justify-between gap-3">
+            <h3 class="min-w-0 text-lg font-semibold leading-snug">
+              <a href={withBase(project.url)} class="pv-link">
+                {project.name}
+              </a>
+            </h3>
+            <StatusBadge status={project.status} class="shrink-0" />
+          </div>
+          <p class="text-sm text-muted">
+            <InlineProse text={project.description} />
+          </p>
+          <div class="mt-auto flex flex-wrap items-center gap-2 pt-2">
+            <span class="pv-chip">{project.category}</span>
+            {project.docsUrl && (
+              <a href={withBase(project.docsUrl)} class="pv-chip no-underline">
+                {project.docsPageCount} documentation page
+                {project.docsPageCount === 1 ? '' : 's'}
+              </a>
+            )}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+{
+  hub.pages.length > 0 && (
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold tracking-tight md:text-3xl">Documentation</h2>
+      <p class="mt-2 max-w-2xl text-muted">
+        Every page below belongs to a project {subject}. Follow one to read the guide, reference or
+        examples behind the topic.
+      </p>
+      <ul class="mt-6 grid list-none gap-x-8 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
+        {hub.pages.map((page) => (
+          <li>
+            <a href={withBase(page.url)} class="pv-link">
+              {page.title} <span class="text-muted">— {page.projectName}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
