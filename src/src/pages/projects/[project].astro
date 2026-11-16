@@ -125,7 +125,7 @@ const structuredData: Record<string, unknown> = {
       description: project.shortDescription,
       url: absoluteUrl(`/projects/${project.id}/`),
       codeRepository: project.sourceUrl,
-      // A NuGet package is a .NET claim. A project that publishes none (astroc4
+      // A NuGet package is a .NET claim. A project that publishes none (AstroC4
       // is an npm package) may be written in another language, so the field is
       // omitted rather than asserted.
       ...(primaryPackage?.registry === 'nuget' ? { programmingLanguage: 'C#' } : {}),

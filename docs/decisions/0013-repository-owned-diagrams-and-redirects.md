@@ -9,7 +9,7 @@
 Three gaps showed up as more repositories reorganised their documentation for the portal:
 
 1. **Diagrams had no good form.** GitHub renders Mermaid but shows LikeC4 as source; the portal renders
-   LikeC4 (through astroc4) and Mermaid. Repositories fell back to ASCII art (`pm-skills`' "The loop",
+   LikeC4 (through AstroC4) and Mermaid. Repositories fell back to ASCII art (`pm-skills`' "The loop",
    the engineering playbook's architecture sketches) or to Mermaid source inside a ```` ```text ````
    fence, which neither side draws. A ```` ```likec4 ```` fence in a mirrored page renders here but is
    unreadable on GitHub.
@@ -35,7 +35,7 @@ Three gaps showed up as more repositories reorganised their documentation for th
    GitHub hides the comments. The docs sync (`src/lib/docs/diagrams.ts`) replaces the whole block with
    a ```` ```likec4 ```` fence whose body is the `.c4` file, read from the repository at the channel's
    ref, so the portal shows only the LikeC4 view. The model is one self-contained file per diagram,
-   because astroc4 compiles a fence on its own. A block whose model is missing or lacks the view keeps
+   because AstroC4 compiles a fence on its own. A block whose model is missing or lacks the view keeps
    its Mermaid and the sync logs why: an upstream mistake costs fidelity, never the page or the build.
    Markers inside code fences are ignored.
 2. **`_redirects.yml` in the docs root.** A repository records its own moves as `previous: current`

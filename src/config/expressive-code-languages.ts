@@ -1,6 +1,6 @@
 /**
  * Languages the site registers with Expressive Code itself, alongside the
- * LikeC4 grammar astroc4 contributes.
+ * LikeC4 grammar AstroC4 contributes.
  *
  * `gitignore` exists because the aggregated documentation mirror contains
  * `.gitignore` snippets — product repositories fence them as `gitignore` — and
