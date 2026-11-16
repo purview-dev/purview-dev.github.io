@@ -8,6 +8,7 @@ import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 
+import { mapWithConcurrency } from '../concurrency';
 import { resolveGitHubToken } from '../github/token';
 import { getReleaseIndex } from '../releases/runtime';
 import { docsDescription } from '../seo';
@@ -242,14 +243,33 @@ export async function fetchRawFile(
   return { path, content, lastModified };
 }
 
-/** A repository file's text at a ref, or null when it cannot be read. No commit date is looked up. */
-async function fetchRawText(repository: string, ref: string, path: string): Promise<string | null> {
+/**
+ * A repository file's text at a ref, or null when it cannot be read, with no
+ * commit-date lookup. `fetchRawFile` adds the page's `lastModified` (a second
+ * request to the commit feed); the skill and asset mirrors only need the bytes,
+ * so they use this and skip it.
+ */
+export async function fetchRawFileContent(
+  repository: string,
+  ref: string,
+  path: string,
+): Promise<string | null> {
   const response = await fetch(`https://raw.githubusercontent.com/${repository}/${ref}/${path}`);
   return response.ok ? response.text() : null;
 }
 
 /** Reads a repository file for the page being built (a diagram's `.c4` model, ADR 0013). */
 type SourceFileReader = (path: string) => Promise<string | null>;
+
+/**
+ * How many repository files one channel fetches at a time. A live sync reads
+ * every page, its commit feed, the wiki sidebar, the README and any redirects
+ * file, and doing that one request at a time dominated the sync's wall time.
+ * Eight keeps the burst modest for GitHub's raw and commit-feed endpoints
+ * (neither consumes the REST API rate limit, but neither appreciates a
+ * stampede).
+ */
+const DOC_FETCH_CONCURRENCY = 8;
 
 export async function listRepositoryFiles(repository: string, branch: string): Promise<string[]> {
   const tree = (await githubJson(`/repos/${repository}/git/trees/${branch}?recursive=1`)) as {
@@ -645,7 +665,7 @@ async function collectGithubPathChannel(
   const files = await listRepositoryFiles(project.repository, ref);
   const tree = new Set(files);
   const readSourceFile: SourceFileReader = (path) =>
-    tree.has(path) ? fetchRawText(project.repository, ref, path) : Promise.resolve(null);
+    tree.has(path) ? fetchRawFileContent(project.repository, ref, path) : Promise.resolve(null);
   // The tree is already in hand, so noticing a repository site configuration
   // costs nothing — and it is reported, never enforced.
   warnLegacySiteConfig(project.id, files);
@@ -655,13 +675,11 @@ async function collectGithubPathChannel(
     .filter((path) => !isExcluded(path.split('/').pop() ?? '', layout.exclude))
     .toSorted();
 
-  const rawFiles: RawSourceFile[] = [];
-  for (const path of docFiles) {
-    const raw = await fetchRawFile(project.repository, ref, path);
-    if (raw) {
-      rawFiles.push(raw);
-    }
-  }
+  const rawFiles = (
+    await mapWithConcurrency(docFiles, DOC_FETCH_CONCURRENCY, (path) =>
+      fetchRawFile(project.repository, ref, path),
+    )
+  ).filter((raw): raw is RawSourceFile => raw !== null);
 
   // A tag never moves, so a pinned channel dates its pages with the release
   // instead of the branch's commit feed (which would drift on every commit).
@@ -875,7 +893,7 @@ async function collectReadmeChannel(
   // A README is one page, so it has nothing to redirect, but it can still pair a
   // diagram with a model elsewhere in the repository.
   const readSourceFile: SourceFileReader = (path) =>
-    fetchRawText(project.repository, channel.ref, path);
+    fetchRawFileContent(project.repository, channel.ref, path);
   return {
     pages: [
       await buildPage(

@@ -3,14 +3,14 @@ import type { ResolvedProject } from '../src/lib/manifest/load';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
-import { fetchRawFile } from '../src/lib/docs/aggregate';
+import { fetchRawFileContent } from '../src/lib/docs/aggregate';
 import { loadProjects } from '../src/lib/manifest/load';
 
 /**
  * Mirror the repository files declared in a project's `assets` into `public/`,
  * so a stable purview.dev URL can serve an artefact that lives in a product
  * repository (for example a JSON Schema). Assets are read from the repository's
- * `main` branch with the docs aggregator's `fetchRawFile`, cached under
+ * `main` branch with the docs aggregator's `fetchRawFileContent`, cached under
  * `.cache/assets/`, and backed by committed fixtures under `fixtures/assets/`
  * for the offline `fixture` mode.
  */
@@ -60,14 +60,14 @@ function writeFile(target: string, content: string): void {
 }
 
 async function fetchAsset(asset: DeclaredAsset): Promise<string> {
-  const raw = await fetchRawFile(asset.repository, 'main', asset.path);
-  if (!raw) {
+  const content = await fetchRawFileContent(asset.repository, 'main', asset.path);
+  if (content === null) {
     throw new Error(
       `Declared asset not found: ${asset.repository}/${asset.path} (project "${asset.projectId}"). ` +
         "Publish the file on the repository's main branch or correct the manifest.",
     );
   }
-  return raw.content;
+  return content;
 }
 
 /** Resolve one asset's content for the requested data mode. */

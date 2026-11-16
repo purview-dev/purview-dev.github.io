@@ -4,7 +4,7 @@ import type { DataMode } from './sync-assets';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
-import { fetchRawFile, listRepositoryFiles } from '../src/lib/docs/aggregate';
+import { fetchRawFileContent, listRepositoryFiles } from '../src/lib/docs/aggregate';
 import { resolveDocChannels } from '../src/lib/docs/channels';
 import { loadProjects } from '../src/lib/manifest/load';
 import { getReleaseIndex } from '../src/lib/releases/runtime';
@@ -94,13 +94,13 @@ async function fetchAndPublish(skill: SkillTarget, tree: string[]): Promise<stri
   const cache = resolve(SKILLS_CACHE_DIR, skill.projectId, skill.name);
   const target = resolve(SKILLS_PUBLIC_DIR, skill.projectId, skill.name);
   for (const path of tree.filter((entry) => entry.startsWith(`${skill.sourcePath}/`))) {
-    const raw = await fetchRawFile(skill.repository, skill.ref, path);
-    if (!raw) {
+    const content = await fetchRawFileContent(skill.repository, skill.ref, path);
+    if (content === null) {
       continue;
     }
     const relativePath = path.slice(skill.sourcePath.length + 1);
-    write(join(cache, ...relativePath.split('/')), raw.content);
-    write(join(target, ...relativePath.split('/')), raw.content);
+    write(join(cache, ...relativePath.split('/')), content);
+    write(join(target, ...relativePath.split('/')), content);
     written.push(relativePath);
   }
   return written;
