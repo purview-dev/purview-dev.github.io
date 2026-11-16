@@ -12,9 +12,15 @@ interface Props {
   docsBase: string | null;
   /** Hide the owning project chip when the card is already scoped to that project. */
   showProject?: boolean;
+  /**
+   * Title of the documentation page the guide link opens. Naming the destination
+   * is what makes the link text meaningful to a reader (and to a crawler): the
+   * same card on a different page then says which guide it leads to.
+   */
+  docsLabel?: string;
 }
 
-const { useCase, projectName, projectId, docsBase, showProject = true } = Astro.props;
+const { useCase, projectName, projectId, docsBase, showProject = true, docsLabel } = Astro.props;
 const audienceLabel = AUDIENCE_LABELS[useCase.audience];
 const docsLink =
   docsBase && useCase.docsPage ? `${docsBase}${useCase.docsPage}/` : (docsBase ?? null);
@@ -49,7 +55,7 @@ const docsLink =
   {
     docsLink && (
       <a href={docsLink} class="pv-link mt-auto text-sm" data-use-case-project={projectId}>
-        Read the guide →
+        Read {docsLabel ?? 'the guide'} →
       </a>
     )
   }

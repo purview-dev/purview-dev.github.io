@@ -1,12 +1,16 @@
 ---
-layout: ../../layouts/SiteLayout.astro
 title: AstroC4 in action — Purview Dev
 description: A live LikeC4 model, an inline fence, a deployment view and LikeC4 syntax highlighting, rendered by AstroC4 on this page.
 ---
 
 import LikeC4View from '@purview-dev/astroc4/components/LikeC4View.astro';
+import SiteLayout from '~/layouts/SiteLayout.astro';
 import { withBase } from '~/lib/urls';
 
+<SiteLayout
+  title="AstroC4 in action — Purview Dev"
+  description="A live LikeC4 model, an inline fence, a deployment view and LikeC4 syntax highlighting, rendered by AstroC4 on this page."
+>
 <div class="pv-container py-12 md:py-16">
   <div class="max-w-4xl">
     <nav aria-label="Breadcrumb" class="text-muted mb-6 text-sm">
@@ -226,3 +230,4 @@ model {
 
   </div>
 </div>
+</SiteLayout>

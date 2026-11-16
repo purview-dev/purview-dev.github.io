@@ -336,6 +336,30 @@ for (const site of ['mkdocs.yml', 'mkdocs.yaml', 'docs/mkdocs.yml', 'docs/wiki/m
 }
 
 // ---------------------------------------------------------------------------
+// Search visibility
+// ---------------------------------------------------------------------------
+
+// purview.dev's only *followed* inbound links come from this repository: NuGet
+// renders the project URL and README links `rel="nofollow"`, and the GitHub
+// Website field is a followed link into the catalogue page. Without one of them
+// the published page cannot rank for the topic it documents, however good it is
+// (ADR 0015).
+if (readmePath) {
+  const readmeText = read(readmePath);
+  const relativeReadme = toPosix(relative(root, readmePath));
+  if (!/purview\.dev/.test(readmeText)) {
+    report(
+      'SEO-001',
+      'warning',
+      relativeReadme,
+      undefined,
+      'The README does not link the published site, so purview.dev has no followed inbound link from this repository.',
+      'Link the published documentation (https://purview.dev/docs/<id>/) near the top, with link text a reader would search with ("Union design", "Installation guide").',
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Documentation
 // ---------------------------------------------------------------------------
 

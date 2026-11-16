@@ -44,7 +44,11 @@ under `docsChannels` (schemaVersion 2).
 ### Sitemap partitioning
 
 - **pages.xml** — hand-authored pages (`/`, `/about/`, `/docs/`, `/projects/`,
-  `/releases/`, `/use-cases/`).
+  `/releases/`, `/use-cases/`) and the generated browse hubs
+  (`/topics/`, `/topics/<topic>/`, `/categories/`, `/categories/<category>/`,
+  `/packages/`). See ADR 0015: the hubs are ordinary Astro pages derived from the
+  catalogue's GitHub topics and category, so they enter the sitemap through the
+  same model as every other page.
 - **projects.xml** — every project landing page (`/projects/<id>/`) and all of
   its aggregated documentation (`/docs/<id>/…`), derived from the catalogue and
   the docs manifest.
@@ -52,6 +56,27 @@ under `docsChannels` (schemaVersion 2).
 
 Error pages (`404`, `500`), non-canonical aliases and non-indexable pages are
 excluded.
+
+### Titles, canonicals and structured data
+
+Being *findable* is not only about being crawled. ADR 0015 derives every
+`<title>` and meta description from the catalogue (`src/src/lib/seo.ts`, composed
+into the page by the `Head` override), publishes the browse hubs above, and keeps
+the page's own title as its visible H1 while the search-result title names the
+product. Every derived title is budgeted to the ~70 characters a result shows,
+with the folder trail and the word "documentation" dropped before anything that
+identifies the page. That is enforced against the built output
+by `bun run check:seo` (`src/scripts/check-seo.ts`), which is part of
+`just validate`: one `<h1>` per page, unique non-empty titles, self-referencing
+canonicals, a documentation title that names its project, and valid JSON-LD.
+Length guidance is reported as an advisory and never fails the build.
+
+The one signal this repository cannot create for itself is an inbound link from
+another site: NuGet renders its project-URL and README links `rel="nofollow"`, so
+the followed links come from each product repository's README and GitHub
+**Website** field. The consumer skills (`purview-site-integration`,
+`purview-site-docs`) require them, and `purview-site-assessment` reports when one
+is missing.
 
 ### Meaningful `lastmod`
 
@@ -195,6 +220,8 @@ Automated (nothing to do per deploy):
 - [x] IndexNow key file written from the secret by the deploy workflow
 - [x] IndexNow notifies changed URLs after a successful deploy
 - [x] `discovery:validate` enforced in CI
+- [x] `check:seo` enforced in CI (titles, canonicals, one H1, project-named docs
+      titles, valid JSON-LD) — ADR 0015
 
 One-time (operator):
 

@@ -1,26 +1,32 @@
 ---
 import DefaultHead from '@astrojs/starlight/components/Head.astro';
 import { readDocsManifest } from '~/lib/docs/aggregate';
+import { CHANNEL_LABELS, channelBasePath, channelDisplayLabel } from '~/lib/docs/channels';
+import { docSectionTrail } from '~/lib/docs/sidebar';
 import { projectChannelLlmsFullUrl } from '~/lib/discovery/urls';
+import { getProjects } from '~/lib/manifest/load';
+import { docsIndexTitle, docsPageTitle } from '~/lib/seo';
 import { SITE } from '~/lib/site';
 import { absoluteUrl } from '~/lib/urls';
 
 // Documentation pages are aggregated from the product repositories. Expose the
 // machine-readable bundle of the version the page came from as an alternate
-// representation and a `TechArticle` JSON-LD block. A project can publish more
-// than one version (ADR 0009), and each version has its own bundle, so the link
-// follows the page's channel rather than the project's default. Only accurate
-// values are emitted; the canonical HTML page remains the primary content.
+// representation and describe the page for search engines. A project can publish
+// more than one version (ADR 0009), and each version has its own bundle, so the
+// link follows the page's channel rather than the project's default.
 const data = Astro.locals.starlightRoute?.entry?.data;
 const sourceProject = typeof data?.sourceProject === 'string' ? data.sourceProject : undefined;
 const hasMachineReadable = sourceProject !== undefined && data?.status !== 'archived';
 const docsChannel = typeof data?.docsChannel === 'string' ? data.docsChannel : undefined;
+const docsManifest = sourceProject === undefined ? null : readDocsManifest();
+const projectEntry = docsManifest?.projects.find((entry) => entry.projectId === sourceProject);
 const channel =
-  sourceProject === undefined
-    ? undefined
-    : readDocsManifest()
-        ?.projects.find((project) => project.projectId === sourceProject)
-        ?.channels.find((candidate) => candidate.id === docsChannel);
+  projectEntry?.channels.find((candidate) => candidate.id === docsChannel) ??
+  projectEntry?.channels.find((candidate) => candidate.default);
+const page = channel?.pages.find((candidate) => candidate.sourcePath === data?.sourcePath);
+// The folder a page lives in is part of its URL (ADR 0011), so the breadcrumb
+// names the sections above the page, not only the project.
+const sectionTrail = page ? docSectionTrail(page.slug) : [];
 const fullUrl =
   sourceProject === undefined
     ? null
@@ -37,18 +43,102 @@ const alternateLinks =
   : [];
 
 const canonical = absoluteUrl(Astro.url.pathname === '' ? '/' : Astro.url.pathname);
+// The search-result title is composed here rather than in the aggregated front
+// matter: the docs mirror is a mirror of the documentation, not of this site's
+// metadata, and the title needs the catalogue and the manifest, both of which are
+// in hand at render time (ADR 0015). Starlight's own title is replaced, not
+// appended to, so no page can end up with two of them.
+const head = Astro.locals.starlightRoute?.head;
+const titleEntry = head?.find((entry) => entry.tag === 'title');
+if (titleEntry !== undefined && sourceProject !== undefined) {
+  const project = getProjects().find((candidate) => candidate.id === sourceProject);
+  const indexPage = (page?.slug ?? 'index') === 'index';
+  const qualifier =
+    channel && !channel.default ?
+      indexPage ? channelDisplayLabel(channel) : CHANNEL_LABELS[channel.id]
+    : undefined;
+  const brand = SITE.fullName;
+  titleEntry.content =
+    indexPage ?
+      docsIndexTitle(project ?? { name: data?.projectName ?? sourceProject, shortDescription: '', category: '' }, { qualifier, brand })
+    : docsPageTitle({
+        pageTitle: data?.title ?? sourceProject,
+        projectName: data?.projectName ?? sourceProject,
+        sectionTrail,
+        qualifier,
+        brand,
+      });
+} else if (titleEntry?.content && !titleEntry.content.includes(SITE.fullName)) {
+  titleEntry.content = `${titleEntry.content} | ${SITE.fullName}`;
+}
+const projectDocsUrl =
+  sourceProject === undefined
+    ? null
+    : channel
+      ? absoluteUrl(channelBasePath(sourceProject, channel.id, channel.default))
+      : absoluteUrl(`/docs/${sourceProject}/`);
+const keywords = Array.isArray(data?.tags) ? (data.tags as string[]) : [];
 const structuredData =
   data ?
     {
       '@context': 'https://schema.org',
-      '@type': 'TechArticle',
-      headline: data.title,
-      ...(typeof data.description === 'string' ? { description: data.description } : {}),
-      url: canonical,
-      ...(typeof data.lastReviewed === 'string' ? { dateModified: data.lastReviewed } : {}),
-      inLanguage: 'en',
-      isPartOf: { '@type': 'WebSite', name: SITE.fullName, url: SITE.url },
-      publisher: { '@type': 'Organization', name: SITE.orgName, url: SITE.url },
+      '@graph': [
+        {
+          '@type': 'TechArticle',
+          headline: data.title,
+          ...(typeof data.description === 'string' ? { description: data.description } : {}),
+          url: canonical,
+          mainEntityOfPage: canonical,
+          ...(typeof data.lastReviewed === 'string' ? { dateModified: data.lastReviewed } : {}),
+          inLanguage: 'en',
+          ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
+          ...(sectionTrail.length > 0 ? { articleSection: sectionTrail.join(' › ') } : {}),
+          author: { '@type': 'Organization', name: SITE.orgName, url: SITE.url },
+          publisher: { '@type': 'Organization', name: SITE.orgName, url: SITE.url },
+          isPartOf: {
+            '@type': projectDocsUrl ? 'CollectionPage' : 'WebSite',
+            name: projectDocsUrl
+              ? `${data.projectName ?? sourceProject} documentation`
+              : SITE.fullName,
+            url: projectDocsUrl ?? SITE.url,
+          },
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: absoluteUrl('/') },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Documentation',
+              item: absoluteUrl('/docs/'),
+            },
+            ...(projectDocsUrl ?
+              [
+                {
+                  '@type': 'ListItem',
+                  position: 3,
+                  name: data.projectName ?? sourceProject,
+                  item: projectDocsUrl,
+                },
+              ]
+            : []),
+            // A folder is a place in the tree, not a page (ADR 0011), so a
+            // section is named without a URL rather than pointed at nothing.
+            ...sectionTrail.map((section, index) => ({
+              '@type': 'ListItem',
+              position: 4 + index,
+              name: section,
+            })),
+            {
+              '@type': 'ListItem',
+              position: 4 + sectionTrail.length,
+              name: data.title,
+              item: canonical,
+            },
+          ],
+        },
+      ],
     }
   : null;
 ---

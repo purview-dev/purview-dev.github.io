@@ -36,6 +36,7 @@ So integration has two halves: make this repository **readable** (this skill and
 | Build badge | the repository's GitHub Actions | A workflow that runs on the default branch |
 | Discussions link | repository settings | Enable Discussions if you want readers to ask there |
 | Star count | GitHub | — |
+| **Inbound links to the published pages** | the repository's `README.md` and its GitHub **Website** field | Link `https://purview.dev/docs/<id>/` from the README (and set the Website field to `https://purview.dev/projects/<id>/`). This is not polish: NuGet renders the project URL and every README link `rel="nofollow"`, so the README and the Website field are the site's only *followed* inbound links — without them a page cannot rank for its own topic, however good it is |
 
 The default branch must be `main` unless the entry says otherwise; the docs, the edit links and the
 "last reviewed" dates all follow it.
@@ -58,10 +59,16 @@ The default branch must be `main` unless the entry says otherwise; the docs, the
 5. **README** — the GitHub front door: what it is, install, a minimal example, a link into the docs.
    It points into the docs rather than duplicating them (a `readme`-sourced project is the exception:
    the README *is* the docs).
-6. **The entry** — collect what [references/catalogue-contract.md](references/catalogue-contract.md)
+6. **Publish the pointer** — the README links its published documentation
+   (`https://purview.dev/docs/<id>/`) and the repository's Website field is
+   `https://purview.dev/projects/<id>/`. GitHub README links are followed and NuGet's
+   are not, so this is where the site's inbound links come from. Write the link as the
+   reader would say it ("Installation guide", "Union design") rather than "click here":
+   the link text is part of what the destination ranks for.
+7. **The entry** — collect what [references/catalogue-contract.md](references/catalogue-contract.md)
    asks for, and hand it to the site maintainers (an issue or pull request on
    `purview-dev/purview-dev`). The site's own agents onboard projects from that information.
-7. **Assess** — run the `purview-site-assessment` skill and fix every error before asking for the
+8. **Assess** — run the `purview-site-assessment` skill and fix every error before asking for the
    entry.
 
 ## Live examples and diagrams on the project page

@@ -2,12 +2,25 @@
 import SiteLayout from '~/layouts/SiteLayout.astro';
 import UseCaseCard from '~/components/UseCaseCard.astro';
 import UseCaseFilter from '~/components/islands/UseCaseFilter.tsx';
+import { defaultDocsChannel, readDocsManifest } from '~/lib/docs/aggregate';
 import { loadProjects } from '~/lib/manifest/load';
 import { AUDIENCES, AUDIENCE_LABELS } from '~/lib/manifest/schema';
 import { SITE } from '~/lib/site';
 import { withBase } from '~/lib/urls';
 
 const projects = loadProjects().filter((project) => project.useCases.length > 0);
+const docsManifest = readDocsManifest();
+/**
+ * Title of the documentation page a use case links to, so the link text names
+ * its destination ("Read Union design") instead of repeating one generic label.
+ */
+const docsTitlesFor = (projectId: string, slug: string | undefined): string | undefined => {
+  if (slug === undefined) {
+    return undefined;
+  }
+  const entry = docsManifest?.projects.find((project) => project.projectId === projectId);
+  return defaultDocsChannel(entry)?.pages.find((page) => page.slug === slug)?.title;
+};
 const entries = projects.flatMap((project) =>
   project.useCases.map((useCase) => ({
     useCase,
@@ -61,6 +74,7 @@ const audiences = AUDIENCES.map((value) => ({ value, label: AUDIENCE_LABELS[valu
               projectName={project.name}
               projectId={project.id}
               docsBase={docsBase}
+              docsLabel={docsTitlesFor(project.id, useCase.docsPage)}
             />
           </div>
         ))

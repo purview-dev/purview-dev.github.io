@@ -55,6 +55,18 @@ The text-fence classifier skips folder trees (`├──`, `└──`), which a
 RED-004 reads the last 300 commits that touched the docs folder. A page that existed only between two
 site builds was never published; ignore those.
 
+## Search visibility
+
+| Rule | Severity | Finding | Fix |
+| -- | -- | -- | -- |
+| SEO-001 | warning | the README does not link `purview.dev`, so the site has no followed inbound link from this repository | link the published documentation (`https://purview.dev/docs/<id>/`) near the top of the README, with link text a reader would search with |
+| SEO-002 | info | the repository has no Website/Homepage field (checked by hand with `gh api repos/<owner>/<repo> --jq .homepage`) | set it to `https://purview.dev/projects/<id>/`; the published pages already link back with their own URL |
+| SEO-003 | info | a docs page whose first paragraph does not name the technology it documents | make the first sentence answer "what does this page cover?" — the site uses it as the meta description (ADR 0015) |
+
+NuGet renders the project URL and every README link `rel="nofollow"`, and the
+GitHub Website field is followed, so SEO-001/SEO-002 are the only inbound links
+the site can earn from a repository. Not a formatting nicety.
+
 ## Catalogue (with `--catalogue`)
 
 | Rule | Severity | Finding | Fix |
