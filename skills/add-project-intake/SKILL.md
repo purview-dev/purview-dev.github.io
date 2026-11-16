@@ -1,6 +1,6 @@
 ---
 name: add-project-intake
-description: Use when starting to add a repository to the Purview-Dev website catalogue — the intake interview: what to ask the human, what recon answers instead, and how each answer maps to a manifest field, its vocabulary, its recommended default, and the invariant it protects.
+description: Use when starting to add a repository to the Purview-Dev website catalogue — the intake interview, covering what to ask the human, what recon answers instead, and how each answer maps to a manifest field, its vocabulary, its recommended default, and the invariant it protects.
 category: purview-dev-website
 roles:
     - catalogue
