@@ -70,11 +70,13 @@ A project may publish two views of its documentation:
   published: …` line, not an error) and the next prerelease restores it. Never
   remove the declaration just to stop publishing it.
 - **Retired URLs redirect to live.** For each withheld channel URL the build
-  writes a `noindex` meta-refresh page (canonical + `data-pagefind-ignore`)
-  pointing at the live page with the same slug — GitHub Pages serves files only,
-  so `_redirects` is not an option. These files are written at
-  `astro:build:done` (`config/docs-redirects-integration.ts`), outside Astro's
-  route list, so they stay out of the sitemap, `discover.json` and the llms
+  writes a `noindex` meta-refresh page (canonical + `data-pagefind-ignore`). A page
+  the live channel still publishes forwards slug-for-slug; a page that only ever
+  existed in the retired tree follows the project's declared `docs.redirects` to
+  the live channel's new address, so a bookmark never lands on a second redirect.
+  GitHub Pages serves files only, so `_redirects` is not an option. These files are
+  written at `astro:build:done` (`config/docs-redirects-integration.ts`), outside
+  Astro's route list, so they stay out of the sitemap, `discover.json` and the llms
   bundles.
 - Per-project `llms-full.txt` publishes the default channel only; `llms.txt`
   also links the prerelease channel when one exists.

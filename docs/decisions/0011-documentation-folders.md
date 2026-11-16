@@ -75,13 +75,15 @@ the newer tree, the new address is unpublished too, so forwarding the reader wou
 be forwarding into a 404 — the post-build link crawl fails the build on exactly
 that, which is how this was found. Both halves activate per page, at promotion.
 
-A pair is emitted for every base the project publishes: the default channel at
-`/docs/<id>/` and, when `live` and `prerelease` are both declared, the prerelease
+A pair is emitted for every base the project publishes in this build: the default
+channel at `/docs/<id>/` and, while both channels are published, the prerelease
 channel at `/docs/<id>/prerelease/`. The reorganised tree is usually published on
 the prerelease channel *first* — that is what a default-branch docs change is —
 and its readers follow URLs that move at the same moment the default channel's
-do later. The same two guards decide which pairs are real, so a withheld channel
-still writes nothing here; its URLs belong to the retired-channel redirects.
+do later. The same two guards decide which pairs are real. A declared-but-withheld
+channel is not a base at all: it publishes nothing in this build, so its retired
+URLs belong to the retired-channel redirects, which forward a flat slug that only
+ever existed there to the live channel's new address (ADR 0009).
 
 ### 4. The sidebar and the page show the tree the URL describes
 
