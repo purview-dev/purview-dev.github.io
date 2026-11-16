@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/SiteLayout.astro
-title: Astroc4 in action — Purview Dev
-description: A live LikeC4 model, an inline fence, a deployment view and LikeC4 syntax highlighting, rendered by astroc4 on this page.
+title: AstroC4 in action — Purview Dev
+description: A live LikeC4 model, an inline fence, a deployment view and LikeC4 syntax highlighting, rendered by AstroC4 on this page.
 ---
 
 import LikeC4View from '@purview-dev/astroc4/components/LikeC4View.astro';
@@ -12,17 +12,17 @@ import { withBase } from '~/lib/urls';
     <nav aria-label="Breadcrumb" class="text-muted mb-6 text-sm">
       <a href={withBase('/projects/')} class="pv-link">Projects</a>
       <span aria-hidden="true"> / </span>
-      <a href={withBase('/projects/astroc4/')} class="pv-link">Astroc4</a>
+      <a href={withBase('/projects/astroc4/')} class="pv-link">AstroC4</a>
       <span aria-hidden="true"> / </span>
       <span class="text-foreground">Live example</span>
     </nav>
 
     <div class="max-w-3xl">
       <p class="pv-chip border-brand/30 bg-brand/5 text-brand mb-4">Live example</p>
-      <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Astroc4 in action</h1>
+      <h1 class="text-3xl font-bold tracking-tight md:text-4xl">AstroC4 in action</h1>
       <p class="text-muted mt-4 text-lg">
         This page is the plugin dogfooding itself. Every diagram below is compiled by
-        <a class="pv-link" href={withBase('/projects/astroc4/')}>astroc4</a> during this site's
+        <a class="pv-link" href={withBase('/projects/astroc4/')}>AstroC4</a> during this site's
         build, from a real <code>.c4</code> model of purview.dev, and hydrated as a React island in
         your browser. Nothing here is a screenshot.
       </p>
@@ -51,7 +51,7 @@ import { withBase } from '~/lib/urls';
       <section>
         <h2 class="text-2xl font-bold tracking-tight">1. One component, the site's own model</h2>
         <p class="text-muted mt-2">
-          The model lives in <code>src/likec4</code>. Astroc4 compiles it once with LikeC4's Vite
+          The model lives in <code>src/likec4</code>. AstroC4 compiles it once with LikeC4's Vite
           plugin, and <code>&lt;LikeC4View&gt;</code> picks a view from it. The view is interactive:
           hover a node, scroll to zoom, click an element to open its details.
         </p>
@@ -129,7 +129,7 @@ views { view index { include * } }
           4. LikeC4 source, highlighted without config
         </h2>
         <p class="text-muted mt-2">
-          Shiki has no LikeC4 grammar, so astroc4 derives one from LikeC4's own Langium language
+          Shiki has no LikeC4 grammar, so AstroC4 derives one from LikeC4's own Langium language
           definition and injects it into Starlight's Expressive Code options. There is no
           <code>ec.config.mjs</code> in this repository. A <code>```c4</code> fence shows the source
           rather than drawing it.
@@ -193,7 +193,7 @@ model {
             <p class="text-muted mt-2 text-sm">
               The diagram has no useful server-rendered form, so it is a
               <code>client:only="react"</code> island with a placeholder that carries the frame
-              height. A static build passes even when islands fail to hydrate, which is why astroc4's
+              height. A static build passes even when islands fail to hydrate, which is why AstroC4's
               own CI runs a browser smoke test rather than trusting the exit code.
             </p>
           </div>
@@ -203,7 +203,7 @@ model {
       <section>
         <h2 class="text-2xl font-bold tracking-tight">Use it in your own site</h2>
         <p class="text-muted mt-2">
-          Astroc4 is published to npm. The full set of options — fences, the Vite plugin workspace,
+          AstroC4 is published to npm. The full set of options — fences, the Vite plugin workspace,
           highlighting, cache and failure policy — is in the
           <a class="pv-link" href={withBase('/docs/astroc4/guide/configuration-reference/')}>
             configuration reference
@@ -218,7 +218,7 @@ model {
             Get started
           </a>
           <a class="pv-btn pv-btn-secondary pv-btn-sm" href={withBase('/projects/astroc4/')}>
-            Back to Astroc4
+            Back to AstroC4
           </a>
         </div>
       </section>

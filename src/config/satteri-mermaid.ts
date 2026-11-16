@@ -13,7 +13,7 @@ import { defineMdastPlugin } from 'satteri';
  * deliberate — the output is exactly the element the Mermaid runtime expects,
  * and it does not depend on the converter honouring `data.hName`.
  *
- * `markdown.processor` is the site's own; astroc4 appends its ```likec4 fence
+ * `markdown.processor` is the site's own; AstroC4 appends its ```likec4 fence
  * transform to whatever processor the site registered, so the two coexist.
  */
 function escapeHtml(value: string): string {

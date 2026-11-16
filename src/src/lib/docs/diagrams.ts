@@ -5,7 +5,7 @@ import { posix } from 'node:path';
  *
  * A product repository's documentation is read in two places — on GitHub, which
  * renders Mermaid but not LikeC4, and on purview.dev, which renders LikeC4
- * through astroc4. A repository marks a Mermaid fence as the GitHub rendering of
+ * through AstroC4. A repository marks a Mermaid fence as the GitHub rendering of
  * a LikeC4 view by wrapping it in a pair of HTML comments:
  *
  * ````md
@@ -30,7 +30,7 @@ export const DIAGRAM_OPEN = /^ {0,3}<!--\s*purview:likec4\b(.*?)-->\s*$/;
 export const DIAGRAM_CLOSE = /^ {0,3}<!--\s*\/purview:likec4\s*-->\s*$/;
 const FENCE = /^ {0,3}(`{3,}|~{3,})/;
 
-/** Fence options astroc4 understands; `file` is consumed by the sync instead. */
+/** Fence options AstroC4 understands; `file` is consumed by the sync instead. */
 const PASSTHROUGH_OPTIONS = [
   'view',
   'project',
