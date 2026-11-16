@@ -82,19 +82,10 @@ jobs:
             echo "No previous discovery manifest (first deployment)."
           fi
 
-      - name: Run validation
-        # `just validate` runs a live data sync on fresh checkouts (no cache /
-        # docs mirror yet), so pass a token to avoid unauthenticated rate limits.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: just validate
-
-      - name: Refresh live release and documentation data
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: DATA_MODE=live bun run data:sync
-
       - name: Resolve deployment base and site URL
+        # Resolved before validation, not after it: `just validate` is also what
+        # builds the site, so the base and the site URL have to be in the
+        # environment for that build to be the artifact that ships.
         id: pages-config
         env:
           REPO_NAME: ${{ github.event.repository.name }}
@@ -118,13 +109,22 @@ jobs:
           echo "pages-base=$BASE" >> "$GITHUB_OUTPUT"
           echo "site-url=$SITE" >> "$GITHUB_OUTPUT"
 
-      - name: Build site with live data
+      - name: Run validation
+        # One pass: `just validate` runs the live data sync (a fresh checkout has
+        # no cache or docs mirror, so pass a token to avoid unauthenticated rate
+        # limits), builds, and runs every check. The deployment base and site URL
+        # are in the environment, so the build it produces is the one that is
+        # uploaded and the link, SEO and dist checks see the URLs the deployment
+        # actually serves. This used to re-sync all data and rebuild the site
+        # afterwards, with nothing in between to invalidate the first result.
+        #
         # The build never receives the IndexNow key: the key verification file is
         # written from the secret by a separate step below (see docs/discovery.md).
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PAGES_BASE: ${{ steps.pages-config.outputs.pages-base }}
           SITE_URL: ${{ steps.pages-config.outputs.site-url }}
-        run: bun run build
+        run: just validate
 
       - name: Write the IndexNow key verification file
         # The key is supplied only by the INDEXNOW_KEY repository secret and is

@@ -19,6 +19,9 @@ install:
 install-hooks:
     bunx lefthook install
 
+# Cache-first so a recipe that runs after another sync does not re-fetch every
+# release, package and documentation page a second time. `just validate` relies
+# on this: its first sync is live on a fresh checkout and its build reuses it.
 # Refresh docs mirrors and release data (cache-first).
 data-sync:
     bun run data:sync
@@ -59,8 +62,13 @@ test:
 test-dist:
     bun run test:dist
 
-# Produce a production build (runs data sync first).
-build: live-data-sync
+# The data sync is cache-first: on a fresh checkout it fetches live, and
+# otherwise it reuses the release cache and the docs mirror built from it, so a
+# recipe that runs after another sync does not re-fetch everything a second
+# time. Run `just live-data-sync` first when a build must use freshly fetched
+# data.
+# Produce a production build (dependency: data sync).
+build: data-sync
     bun run build
 
 # Full CI validation chain used by the shared build pipeline (data sync → typecheck → build → checks).
