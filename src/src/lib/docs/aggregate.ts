@@ -35,6 +35,7 @@ import {
   resolveDoclinks,
 } from './links';
 import { stripMkdocsMarkup } from './mkdocs';
+import { fetchRawText } from './raw-fetch';
 import { parseRedirectFile, REDIRECTS_FILE } from './redirect-file';
 
 export const DOCS_OUTPUT_DIR = resolve('src/content/docs');
@@ -233,29 +234,28 @@ export async function fetchRawFile(
   branch: string,
   path: string,
 ): Promise<RawSourceFile | null> {
-  const url = `https://raw.githubusercontent.com/${repository}/${branch}/${path}`;
-  const response = await fetch(url);
-  if (!response.ok) {
+  const content = await fetchRawFileContent(repository, branch, path);
+  if (content === null) {
     return null;
   }
-  const content = await response.text();
   const lastModified = await lastCommitDate(repository, branch, path);
   return { path, content, lastModified };
 }
 
 /**
- * A repository file's text at a ref, or null when it cannot be read, with no
- * commit-date lookup. `fetchRawFile` adds the page's `lastModified` (a second
+ * A repository file's text at a ref, or null when it does not exist (404), with
+ * no commit-date lookup. `fetchRawFile` adds the page's `lastModified` (a second
  * request to the commit feed); the skill and asset mirrors only need the bytes,
- * so they use this and skip it.
+ * so they use this and skip it. A transient failure is retried and a persistent
+ * one throws (`fetchRawText`), so a throttled request can never pass for a
+ * missing file.
  */
-export async function fetchRawFileContent(
+export function fetchRawFileContent(
   repository: string,
   ref: string,
   path: string,
 ): Promise<string | null> {
-  const response = await fetch(`https://raw.githubusercontent.com/${repository}/${ref}/${path}`);
-  return response.ok ? response.text() : null;
+  return fetchRawText(`https://raw.githubusercontent.com/${repository}/${ref}/${path}`);
 }
 
 /** Reads a repository file for the page being built (a diagram's `.c4` model, ADR 0013). */
